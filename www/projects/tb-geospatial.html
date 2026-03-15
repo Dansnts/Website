@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travail de Bachelor - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/projects.html" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-blue">Kubernetes</span>
+            <span class="tag tag-purple">Ray</span>
+            <span class="tag tag-purple">SAM3</span>
+            <span class="tag tag-blue">S3</span>
+            <span class="tag tag-teal">PostGIS</span>
+            <span class="tag tag-green">Python</span>
+          </div>
+          <h1 data-i18n="tb-title">Pipeline Distribué d'Annotation d'Images Panoramiques par IA</h1>
+          <p class="project-subtitle" data-i18n="tb-subtitle">Travail de Bachelor - HEIG-VD 2026</p>
+          <span class="tag" style="background: var(--accent); color: white; margin-top: 1rem;" data-i18n="tb-status">En cours</span>
+        </header>
+
+        <section class="project-section">
+          <h2 data-i18n="tb-context-title">Contexte</h2>
+          <p data-i18n="tb-context-text">L'annotation automatique d'objets dans de vastes collections d'images panoramiques haute définition est une tâche complexe nécessitant une puissance de calcul importante. Ce projet de Bachelor propose de concevoir et implémenter un pipeline de traitement distribué, exploitant le modèle d'IA SAM3 (Segment Anything Model 3), pour générer des annotations vectorielles de haute qualité sur 300 000 images. Le déploiement s'effectue sur le cluster Kubernetes de l'école en utilisant le framework Ray pour orchestrer les calculs.</p>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="tb-objective-title">Objectif</h2>
+          <p data-i18n="tb-objective-text">Développer une plateforme robuste et optimisée capable d'ingérer des images HD (8000x4000 px), d'exécuter à grande échelle un modèle de segmentation avancé (SAM3), et de stocker les annotations géométriques résultantes dans une base de données géospatiale, tout en étudiant les compromis performance/qualité via des techniques de downsampling.</p>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="tb-work-title">Travail attendu</h2>
+          <ul class="benefits-list">
+            <li data-i18n="tb-work-1">Déployer et configurer un environnement de calcul distribué avec Ray sur Kubernetes</li>
+            <li data-i18n="tb-work-2">Intégrer le modèle SAM3 au sein de tâches Ray et concevoir un pipeline d'annotation par lots</li>
+            <li data-i18n="tb-work-3">Mettre en place un stockage objet S3 pour les images sources, intermédiaires et les masques bruts</li>
+            <li data-i18n="tb-work-4">Implémenter une stratégie de downsampling et analyser son impact sur la qualité et les performances</li>
+            <li data-i18n="tb-work-5">Développer un module de post-traitement pour convertir les masques SAM3 en géométries vectorielles (polygones)</li>
+            <li data-i18n="tb-work-6">Concevoir et peupler un schéma PostgreSQL/PostGIS pour le stockage et l'interrogation spatiale des annotations</li>
+            <li data-i18n="tb-work-7">Évaluer le pipeline en termes de scalabilité, de précision et d'efficacité des ressources</li>
+          </ul>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="tb-arch-title">Architecture technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Orchestration</strong>
+              <span data-i18n="tb-arch-orchestration">Kubernetes (cluster HEIG-VD)</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="tb-arch-label-compute">Calcul distribué</strong>
+              <span data-i18n="tb-arch-processing">Ray Framework</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="tb-arch-label-model">Modèle IA</strong>
+              <span data-i18n="tb-arch-model">SAM3 (Segment Anything Model 3)</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="tb-arch-label-storage">Stockage images</strong>
+              <span data-i18n="tb-arch-storage">Object Storage compatible S3</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="tb-arch-label-db">Base de données</strong>
+              <span data-i18n="tb-arch-db">PostgreSQL / PostGIS</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="tb-arch-label-data">Données</strong>
+              <span data-i18n="tb-arch-data">Images HD (8000×4000) → Polygones vectoriels</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="tb-deliverables-title">Livrables</h2>
+          <ul class="benefits-list">
+            <li data-i18n="tb-deliverables-1">Pipeline de traitement distribué complet et fonctionnel (ingestion S3 → écriture PostGIS)</li>
+            <li data-i18n="tb-deliverables-2">Base de données PostGIS avec jeu d'annotations de démonstration géoréférencées</li>
+            <li data-i18n="tb-deliverables-3">Étude comparative documentée sur les stratégies de downsampling (qualité vs. performance)</li>
+            <li data-i18n="tb-deliverables-4">Scripts de déploiement, de monitoring et de validation des résultats</li>
+            <li data-i18n="tb-deliverables-5">Rapport final : architecture, choix techniques, analyse des performances et recommandations</li>
+          </ul>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="tb-skills-title">Compétences développées</h2>
+          <div class="bento-tags" style="gap: 0.5rem;">
+            <span class="tag" data-i18n="tb-skill-1">Traitement distribué (Ray)</span>
+            <span class="tag" data-i18n="tb-skill-2">Inférence IA à grande échelle</span>
+            <span class="tag" data-i18n="tb-skill-3">Optimisation de pipelines de données</span>
+            <span class="tag">Kubernetes</span>
+            <span class="tag" data-i18n="tb-skill-5">PostGIS</span>
+            <span class="tag" data-i18n="tb-skill-6">Stockage cloud (S3)</span>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/js/i18n.js"></script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template Projet, Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/#projects" class="back-link">&larr; Retour aux projets</a>
+
+      <article class="project-detail">
+
+        <!-- ══════════════════════════════════════
+             EN-TÊTE DU PROJET
+             ══════════════════════════════════════ -->
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-blue">Docker</span>
+            <span class="tag tag-green">Python</span>
+            <span class="tag tag-orange">Bash</span>
+            <span class="tag tag-purple">Ansible</span>
+          </div>
+          <h1>Nom du Projet</h1>
+          <p class="project-subtitle">Sous-titre court : ce que ça fait en une ligne</p>
+        </header>
+
+
+        <!-- ══════════════════════════════════════
+             CONTEXTE / DESCRIPTION
+             ══════════════════════════════════════ -->
+        <section class="project-section" data-anim="up">
+          <h2>Contexte</h2>
+          <p>Description du projet, pourquoi il a été créé, quel problème il résout. Remplacer ce texte par le vrai contenu. Garder ça concis. 2 à 4 phrases suffisent pour donner le contexte.</p>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             BLOC DE CODE YAML
+             Utilisation : coller le vrai code dans <pre><code>
+             Changer "code-filename" et "code-lang"
+             ══════════════════════════════════════ -->
+        <section class="project-section" data-anim="up">
+          <h2>Configuration</h2>
+          <p>Description rapide de ce que fait ce fichier.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">docker-compose.yml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-keyword">services</span><span class="tok-operator">:</span>
+  <span class="tok-property">app</span><span class="tok-operator">:</span>
+    <span class="tok-keyword">image</span><span class="tok-operator">:</span> <span class="tok-string">mon-app:latest</span>
+    <span class="tok-keyword">container_name</span><span class="tok-operator">:</span> <span class="tok-string">mon-app</span>
+    <span class="tok-keyword">ports</span><span class="tok-operator">:</span>
+      <span class="tok-operator">-</span> <span class="tok-string">"8080:80"</span>
+    <span class="tok-keyword">volumes</span><span class="tok-operator">:</span>
+      <span class="tok-operator">-</span> <span class="tok-string">./data:/app/data:ro</span>
+    <span class="tok-keyword">environment</span><span class="tok-operator">:</span>
+      <span class="tok-property">ENV</span><span class="tok-operator">:</span> <span class="tok-string">production</span>
+      <span class="tok-property">DEBUG</span><span class="tok-operator">:</span> <span class="tok-string">"false"</span>
+    <span class="tok-keyword">restart</span><span class="tok-operator">:</span> <span class="tok-string">unless-stopped</span></code></pre>
+          </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             BLOC DE CODE BASH
+             ══════════════════════════════════════ -->
+        <section class="project-section" data-anim="up">
+          <h2>Déploiement</h2>
+          <p>Script utilisé pour builder et déployer l'application.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">deploy.sh</span>
+              <span class="code-lang">Bash</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment">#!/bin/bash</span>
+<span class="tok-comment"># Script de déploiement automatisé</span>
+
+<span class="tok-keyword">set</span> <span class="tok-operator">-</span>euo pipefail
+
+<span class="tok-variable">APP_DIR</span><span class="tok-operator">=</span><span class="tok-string">"/opt/mon-app"</span>
+<span class="tok-variable">IMAGE</span><span class="tok-operator">=</span><span class="tok-string">"mon-app:latest"</span>
+
+<span class="tok-fn">echo</span> <span class="tok-string">"→ Pull des dernières modifications..."</span>
+<span class="tok-fn">git</span> <span class="tok-keyword">-C</span> <span class="tok-variable">$APP_DIR</span> pull origin main
+
+<span class="tok-fn">echo</span> <span class="tok-string">"→ Build de l'image Docker..."</span>
+<span class="tok-fn">docker</span> build <span class="tok-operator">-t</span> <span class="tok-variable">$IMAGE</span> <span class="tok-variable">$APP_DIR</span>
+
+<span class="tok-fn">echo</span> <span class="tok-string">"→ Redémarrage du container..."</span>
+<span class="tok-fn">docker</span> compose <span class="tok-operator">-f</span> <span class="tok-variable">$APP_DIR</span>/compose.yaml up <span class="tok-operator">-d</span> <span class="tok-operator">--force-recreate</span>
+
+<span class="tok-fn">echo</span> <span class="tok-string">"✓ Déploiement terminé."</span></code></pre>
+          </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             BLOC DE CODE PYTHON
+             ══════════════════════════════════════ -->
+        <section class="project-section" data-anim="up">
+          <h2>Exemple de code applicatif</h2>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">monitor.py</span>
+              <span class="code-lang">Python</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-keyword">import</span> <span class="tok-variable">requests</span>
+<span class="tok-keyword">from</span> <span class="tok-variable">datetime</span> <span class="tok-keyword">import</span> <span class="tok-variable">datetime</span>
+
+<span class="tok-keyword">def</span> <span class="tok-fn">check_service</span>(<span class="tok-variable">url</span><span class="tok-operator">:</span> <span class="tok-variable">str</span>) <span class="tok-operator">-></span> <span class="tok-variable">bool</span><span class="tok-operator">:</span>
+    <span class="tok-string">"""Vérifie si un service HTTP répond correctement."""</span>
+    <span class="tok-keyword">try</span><span class="tok-operator">:</span>
+        <span class="tok-variable">resp</span> <span class="tok-operator">=</span> <span class="tok-variable">requests</span>.<span class="tok-fn">get</span>(<span class="tok-variable">url</span>, timeout<span class="tok-operator">=</span><span class="tok-number">5</span>)
+        <span class="tok-keyword">return</span> <span class="tok-variable">resp</span>.<span class="tok-property">status_code</span> <span class="tok-operator">==</span> <span class="tok-number">200</span>
+    <span class="tok-keyword">except</span> <span class="tok-variable">requests</span>.<span class="tok-property">exceptions</span>.<span class="tok-variable">RequestException</span><span class="tok-operator">:</span>
+        <span class="tok-keyword">return</span> <span class="tok-variable">False</span>
+
+<span class="tok-keyword">if</span> <span class="tok-variable">__name__</span> <span class="tok-operator">==</span> <span class="tok-string">"__main__"</span><span class="tok-operator">:</span>
+    <span class="tok-variable">services</span> <span class="tok-operator">=</span> [<span class="tok-string">"http://localhost:8080"</span>, <span class="tok-string">"http://localhost:9090"</span>]
+    <span class="tok-keyword">for</span> <span class="tok-variable">svc</span> <span class="tok-keyword">in</span> <span class="tok-variable">services</span><span class="tok-operator">:</span>
+        <span class="tok-variable">status</span> <span class="tok-operator">=</span> <span class="tok-string">"✓ UP"</span> <span class="tok-keyword">if</span> <span class="tok-fn">check_service</span>(<span class="tok-variable">svc</span>) <span class="tok-keyword">else</span> <span class="tok-string">"✗ DOWN"</span>
+        <span class="tok-fn">print</span>(<span class="tok-string">f"[{datetime.now():%H:%M:%S}] {svc} — {status}"</span>)</code></pre>
+          </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             FIGURE SIMPLE (une image)
+             Remplacer le .fig-placeholder par un vrai <img>
+             Ex: <img src="/img/projects/mon-projet/schema.png" alt="...">
+             ══════════════════════════════════════ -->
+        <section class="project-section" data-anim="up">
+          <h2>Architecture</h2>
+          <p>Description de l'image : ce qu'elle montre, pourquoi c'est important.</p>
+
+          <figure class="project-figure">
+            <!-- ↓ Remplacer par : <img src="/img/projects/MON-PROJET/schema.png" alt="Schéma d'architecture"> -->
+            <div class="fig-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>1200 × 630, schéma d'architecture</span>
+            </div>
+            <figcaption><strong>Fig. 1</strong> — Remplacer par une vraie capture ou schéma. Format recommandé : PNG 1200×630, fond transparent ou var(--surface).</figcaption>
+          </figure>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             FIGURE GRID (deux images côte à côte)
+             ══════════════════════════════════════ -->
+        <section class="project-section" data-anim="up">
+          <h2>Captures d'écran</h2>
+          <p>Vue de l'interface principale et du dashboard de monitoring.</p>
+
+          <div class="figure-grid">
+            <figure class="project-figure">
+              <!-- ↓ Remplacer par : <img src="/img/projects/MON-PROJET/ui-main.png" alt="Interface principale"> -->
+              <div class="fig-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Interface principale</span>
+              </div>
+              <figcaption><strong>Fig. 2</strong> — Vue principale de l'application.</figcaption>
+            </figure>
+
+            <figure class="project-figure">
+              <!-- ↓ Remplacer par : <img src="/img/projects/MON-PROJET/ui-dashboard.png" alt="Dashboard"> -->
+              <div class="fig-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Dashboard</span>
+              </div>
+              <figcaption><strong>Fig. 3</strong> — Dashboard de monitoring.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             FIGURE GRID 3 colonnes
+             ══════════════════════════════════════ -->
+        <section class="project-section" data-anim="up">
+          <h2>Étapes du workflow</h2>
+
+          <div class="figure-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <figure class="project-figure">
+              <div class="fig-placeholder" style="min-height: 140px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Étape 1</span>
+              </div>
+              <figcaption><strong>1.</strong> Première étape.</figcaption>
+            </figure>
+            <figure class="project-figure">
+              <div class="fig-placeholder" style="min-height: 140px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Étape 2</span>
+              </div>
+              <figcaption><strong>2.</strong> Deuxième étape.</figcaption>
+            </figure>
+            <figure class="project-figure">
+              <div class="fig-placeholder" style="min-height: 140px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Étape 3</span>
+              </div>
+              <figcaption><strong>3.</strong> Troisième étape.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             STACK TECHNIQUE (réutilisable tel quel)
+             ══════════════════════════════════════ -->
+        <section class="project-section" data-anim="up">
+          <h2>Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Technologie 1</strong>
+              <span>Ce qu'elle fait dans le projet</span>
+            </div>
+            <div class="tech-item">
+              <strong>Technologie 2</strong>
+              <span>Ce qu'elle fait dans le projet</span>
+            </div>
+            <div class="tech-item">
+              <strong>Technologie 3</strong>
+              <span>Ce qu'elle fait dans le projet</span>
+            </div>
+            <div class="tech-item">
+              <strong>Technologie 4</strong>
+              <span>Ce qu'elle fait dans le projet</span>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ══════════════════════════════════════
+             LIEN REPO (optionnel)
+             ══════════════════════════════════════ -->
+        <section class="project-section" data-anim="up">
+          <h2>Dépôt</h2>
+          <a href="#" class="project-repo-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+            <span>github.com/Dansnts/MON-PROJET</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/js/i18n.js"></script>
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      const text = pre.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copié !';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copier';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

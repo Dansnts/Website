@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InGenius Streaming Setup - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/projects.html" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-purple">OBS Studio</span>
+            <span class="tag tag-purple">Streaming</span>
+            <span class="tag tag-purple">Video Production</span>
+            <span class="tag tag-purple">Live Events</span>
+          </div>
+          <h1 data-i18n="ingenius-title">InGenius - Setup Streaming</h1>
+          <p class="project-subtitle" data-i18n="ingenius-subtitle">Infrastructure de diffusion en direct pour l'événement d'innovation interne Nestlé</p>
+        </header>
+
+        <section class="project-section">
+          <h2 data-i18n="ingenius-context-heading">Contexte</h2>
+          <p data-i18n="ingenius-context-text">InGenius est un événement interne à Nestlé, comparable à un "Shark Tank" où les employés présentent leurs idées innovantes. J'ai été chargé de mettre en place l'infrastructure complète de streaming pour diffuser l'événement en interne à travers l'entreprise.</p>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="ingenius-objectives-heading">Objectifs</h2>
+          <ul class="benefits-list">
+            <li data-i18n="ingenius-objective-1">Diffuser l'événement en direct à tous les employés Nestlé</li>
+            <li data-i18n="ingenius-objective-2">Assurer une qualité professionnelle de la diffusion</li>
+            <li data-i18n="ingenius-objective-3">Gérer plusieurs sources vidéo (présentateurs, slides, démos)</li>
+            <li data-i18n="ingenius-objective-4">Garantir la fiabilité du stream pendant toute la durée de l'événement</li>
+          </ul>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="ingenius-setup-heading">Setup technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>OBS Studio</strong>
+              <span data-i18n="ingenius-tech-obs">Logiciel de production et streaming</span>
+            </div>
+            <div class="tech-item">
+              <strong>Capture Cards</strong>
+              <span data-i18n="ingenius-tech-capture">Elgato pour capture des sources HDMI</span>
+            </div>
+            <div class="tech-item">
+              <strong>Audio Mixer</strong>
+              <span data-i18n="ingenius-tech-audio">Gestion des sources audio multiples</span>
+            </div>
+            <div class="tech-item">
+              <strong>Streaming Platform</strong>
+              <span data-i18n="ingenius-tech-platform">Diffusion vers la plateforme interne Nestlé</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="ingenius-obs-heading">Configuration OBS</h2>
+          <ul class="benefits-list">
+            <li data-i18n="ingenius-obs-1">Scènes multiples : intro, présentations, Q&A, transitions</li>
+            <li data-i18n="ingenius-obs-2">Overlays personnalisés avec branding InGenius</li>
+            <li data-i18n="ingenius-obs-3">Lower thirds pour identifier les présentateurs</li>
+            <li data-i18n="ingenius-obs-4">Transitions fluides entre les différentes sources</li>
+            <li data-i18n="ingenius-obs-5">Monitoring audio avec niveaux optimisés</li>
+          </ul>
+        </section>
+
+        <!-- ── Streaming pipeline diagram ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Architecture du pipeline de streaming</h2>
+          <p>Flux de donnees complet du signal source jusqu'aux spectateurs. Chaque source HDMI est capturee independamment via carte d'acquisition, mixee dans OBS Studio, puis encodee et envoyee vers la plateforme interne Nestle.</p>
+          <div class="mermaid">
+flowchart LR
+    subgraph Sources["Sources d'entree"]
+        CAM1["Camera principale\nPresentateur HDMI"]
+        CAM2["Camera secondaire\nPublic / salle HDMI"]
+        SLIDES["PC Presentation\nSlides HDMI"]
+        MIC["Micro sans fil\nTableau / XLR"]
+        AMBIENT["Ambiance salle\nXLR stereo"]
+    end
+
+    subgraph Capture["Capture et mixage"]
+        ELG1["Elgato 4K60\nCapture card #1"]
+        ELG2["Elgato HD60\nCapture card #2"]
+        AMIX["Audio Mixer\nYamaha MG10"]
+        OBS["OBS Studio\nMixage video + audio\nScenes / Overlays\nLower thirds"]
+    end
+
+    subgraph Encode["Encodage"]
+        ENC["Encoder\nH.264 1080p 30fps\n6 Mbps CBR\nAAC 128kbps"]
+        REC["Enregistrement local\nFichier .mkv\nbackup"]
+    end
+
+    subgraph Output["Diffusion"]
+        RTMP["RTMP push\nvers relay interne"]
+        INTRA["Plateforme interne\nNestle\nHLS / Smooth Streaming"]
+        VIEWERS["Employes Nestle\nNavigateur / Teams"]
+    end
+
+    CAM1 --> ELG1
+    CAM2 --> ELG2
+    SLIDES --> ELG1
+    MIC --> AMIX
+    AMBIENT --> AMIX
+    ELG1 --> OBS
+    ELG2 --> OBS
+    AMIX -->|"USB audio"| OBS
+    OBS --> ENC
+    OBS --> REC
+    ENC --> RTMP
+    RTMP --> INTRA
+    INTRA --> VIEWERS
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="ingenius-workflow-heading">Workflow de production</h2>
+          <div class="project-flow">
+            <div class="flow-step">
+              <div class="flow-number">1</div>
+              <h3 data-i18n="ingenius-step1-title">Préparation</h3>
+              <p data-i18n="ingenius-step1-text">Setup du matériel, tests de connexion et répétitions.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">2</div>
+              <h3 data-i18n="ingenius-step2-title">Live</h3>
+              <p data-i18n="ingenius-step2-text">Gestion en temps réel des sources et transitions.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">3</div>
+              <h3 data-i18n="ingenius-step3-title">Monitoring</h3>
+              <p data-i18n="ingenius-step3-text">Surveillance de la qualité du stream et des métriques.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">4</div>
+              <h3 data-i18n="ingenius-step4-title">Backup</h3>
+              <p data-i18n="ingenius-step4-text">Enregistrement local en parallèle du stream.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="ingenius-results-heading">Résultats</h2>
+          <ul class="benefits-list">
+            <li data-i18n="ingenius-result-1">Diffusion réussie sans interruption</li>
+            <li data-i18n="ingenius-result-2">Qualité vidéo professionnelle (1080p 30fps)</li>
+            <li data-i18n="ingenius-result-3">Retours positifs des spectateurs internes</li>
+            <li data-i18n="ingenius-result-4">Documentation du setup pour les événements futurs</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+  <script src="/js/i18n.js"></script>
+</body>
+</html>

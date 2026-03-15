@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backup Automation - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/projects.html" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-blue">Rclone</span>
+            <span class="tag tag-green">Bash</span>
+            <span class="tag tag-green">Cron</span>
+            <span class="tag tag-teal">Logging</span>
+          </div>
+          <h1 data-i18n="backup-title">Backup Automation</h1>
+          <p class="project-subtitle" data-i18n="backup-subtitle">Solution de sauvegarde automatisée avec suivi des erreurs</p>
+        </header>
+
+        <section class="project-section">
+          <h2 data-i18n="backup-overview-title">Vue d'ensemble</h2>
+          <p data-i18n="backup-overview-text">Solution de backup automatisée utilisant rclone pour synchroniser les données vers différents backends de stockage cloud. Le système inclut un suivi complet des logs et une gestion intelligente des erreurs.</p>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="backup-features-title">Fonctionnalités</h2>
+          <ul class="benefits-list">
+            <li data-i18n="backup-feature-1">Synchronisation incrémentale avec rclone</li>
+            <li data-i18n="backup-feature-2">Support multi-destinations (S3, Google Drive, etc.)</li>
+            <li data-i18n="backup-feature-3">Logging détaillé de chaque opération</li>
+            <li data-i18n="backup-feature-4">Suivi et alertes sur les erreurs</li>
+            <li data-i18n="backup-feature-5">Politique de rétention configurable</li>
+            <li data-i18n="backup-feature-6">Rapports de backup par email</li>
+          </ul>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2>Configuration rclone</h2>
+          <p>Fichier de configuration rclone definissant le remote Google Drive. Le token OAuth est stocke de maniere securisee (secret Kubernetes ou fichier protege).</p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">rclone.conf</span>
+              <span class="code-lang">INI</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code>[gdrive]
+type = drive
+scope = drive
+token = {"access_token":"...","token_type":"Bearer","refresh_token":"...","expiry":"..."}
+root_folder_id = 1xXxXxXxXxXxXxXxXxXxXxXxXxXxXx
+
+[nas]
+type = smb
+host = 192.168.1.240
+user = backup-user
+pass = OBFUSCATED_PASSWORD
+domain = WORKGROUP</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">backup.sh</span>
+              <span class="code-lang">Bash</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code>#!/bin/bash
+set -euo pipefail
+
+LOCKFILE=/tmp/backup-nas.lock
+LOG=/var/log/backup/rclone-$(date +%Y%m%d).log
+SRC=/mnt/nas
+REMOTE_GD="gdrive:backup/nas"
+RETENTION_DAYS=30
+
+# Eviter les executions concurrentes
+if [ -f "$LOCKFILE" ]; then
+  echo "$(date): Job deja en cours, sortie." >> "$LOG"
+  exit 0
+fi
+trap 'rm -f "$LOCKFILE"' EXIT
+touch "$LOCKFILE"
+
+echo "$(date): Debut backup NAS -> cloud" >> "$LOG"
+
+# Sync vers Google Drive
+if rclone sync "$SRC" "$REMOTE_GD" \
+    --log-file="$LOG" \
+    --log-level INFO \
+    --stats 1m \
+    --transfers 4 \
+    --checkers 8 \
+    --bwlimit 50M; then
+  echo "$(date): Google Drive OK" >> "$LOG"
+else
+  echo "$(date): ERREUR Google Drive (exit $?)" >> "$LOG"
+  # Notification via webhook Slack
+  curl -s -X POST "$SLACK_WEBHOOK" \
+    -H 'Content-type: application/json' \
+    --data "{\"text\":\"Backup NAS->GDrive FAILED sur $(hostname)\"}"
+fi
+
+# Politique de retention : supprimer fichiers de plus de 30 jours
+find /var/log/backup/ -name "rclone-*.log" -mtime +"$RETENTION_DAYS" -delete
+
+echo "$(date): Backup termine" >> "$LOG"</code></pre>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="backup-arch-title">Architecture</h2>
+          <div class="project-flow">
+            <div class="flow-step">
+              <div class="flow-number">1</div>
+              <h3 data-i18n="backup-flow1-title">Déclenchement</h3>
+              <p data-i18n="backup-flow1-text">Cron job planifié ou déclenchement manuel.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">2</div>
+              <h3 data-i18n="backup-flow2-title">Sync</h3>
+              <p data-i18n="backup-flow2-text">Rclone synchronise les données vers le cloud.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">3</div>
+              <h3 data-i18n="backup-flow3-title">Logging</h3>
+              <p data-i18n="backup-flow3-text">Enregistrement des opérations et erreurs.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">4</div>
+              <h3 data-i18n="backup-flow4-title">Alerting</h3>
+              <p data-i18n="backup-flow4-text">Notification en cas d'erreur ou de succès.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="backup-stack-title">Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Rclone</strong>
+              <span data-i18n="backup-tech-rclone">Outil de synchronisation cloud</span>
+            </div>
+            <div class="tech-item">
+              <strong>Bash Scripts</strong>
+              <span data-i18n="backup-tech-bash">Orchestration et logique métier</span>
+            </div>
+            <div class="tech-item">
+              <strong>Cron</strong>
+              <span data-i18n="backup-tech-cron">Planification des tâches</span>
+            </div>
+            <div class="tech-item">
+              <strong>Logrotate</strong>
+              <span data-i18n="backup-tech-logrotate">Gestion des fichiers de log</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="backup-errors-title">Gestion des erreurs</h2>
+          <ul class="benefits-list">
+            <li data-i18n="backup-error-1">Parsing automatique des logs rclone</li>
+            <li data-i18n="backup-error-2">Classification des erreurs (réseau, permission, espace disque)</li>
+            <li data-i18n="backup-error-3">Retry automatique avec backoff exponentiel</li>
+            <li data-i18n="backup-error-4">Alertes email/Slack en cas d'échec</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/js/i18n.js"></script>
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copie !';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoIP Asterisk - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/projects.html" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-orange">Asterisk</span>
+            <span class="tag tag-orange">VoIP</span>
+            <span class="tag tag-orange">SIP</span>
+            <span class="tag tag-orange">Linux</span>
+          </div>
+          <h1 data-i18n="voip-title">Infrastructure VoIP Multi-sites</h1>
+          <p class="project-subtitle" data-i18n="voip-subtitle">Système de téléphonie inter-sites avec Asterisk - Projet CFC ETML</p>
+        </header>
+
+        <section class="project-section">
+          <h2 data-i18n="voip-context-title">Contexte</h2>
+          <p data-i18n="voip-context-text">Projet réalisé durant mon CFC à l'ETML sous la supervision de M. Karim Bourahla. Chaque groupe d'étudiants était responsable d'un site géographique différent. J'étais en charge du site de Lausanne et devais configurer l'infrastructure pour communiquer avec les autres sites.</p>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="voip-objectives-title">Objectifs</h2>
+          <ul class="benefits-list">
+            <li data-i18n="voip-objective-1">Déployer un serveur Asterisk pour la téléphonie VoIP</li>
+            <li data-i18n="voip-objective-2">Configurer la communication inter-sites via SIP</li>
+            <li data-i18n="voip-objective-3">Mettre en place un plan de numérotation cohérent</li>
+            <li data-i18n="voip-objective-4">Assurer la qualité de service (QoS) pour les appels</li>
+          </ul>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="voip-arch-title">Architecture</h2>
+          <div class="project-flow">
+            <div class="flow-step">
+              <div class="flow-number">1</div>
+              <h3 data-i18n="voip-flow1-title">Site Lausanne</h3>
+              <p data-i18n="voip-flow1-text">Serveur Asterisk principal avec extensions locales et trunk SIP vers autres sites.</p>
+            </div>
+            <div class="flow-arrow">&harr;</div>
+            <div class="flow-step">
+              <div class="flow-number">2</div>
+              <h3 data-i18n="voip-flow2-title">Trunk SIP</h3>
+              <p data-i18n="voip-flow2-text">Connexions sécurisées entre les serveurs Asterisk de chaque site.</p>
+            </div>
+            <div class="flow-arrow">&harr;</div>
+            <div class="flow-step">
+              <div class="flow-number">3</div>
+              <h3 data-i18n="voip-flow3-title">Autres sites</h3>
+              <p data-i18n="voip-flow3-text">Communication transparente avec les sites des autres groupes.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── SIP call flow diagram ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Flux d'appel SIP inter-sites</h2>
+          <p>Sequence de signalisation SIP lors d'un appel entre le poste 1001 du site Lausanne et le poste 2001 du site Geneva. Le media audio (RTP) s'etablit en direct entre les endpoints une fois la negociation SDP terminee.</p>
+          <div class="mermaid">
+sequenceDiagram
+    participant Phone1 as Telephone 1001\nLausanne
+    participant AstLSN as Asterisk Lausanne\n10.0.1.10
+    participant AstGVA as Asterisk Geneva\n10.0.2.10
+    participant Phone2 as Telephone 2001\nGeneva
+
+    Phone1->>AstLSN: INVITE sip:2001@lausanne (SDP offer)
+    AstLSN->>AstLSN: Lookup dialplan: exten 2001 => trunk-gva
+    AstLSN->>AstGVA: INVITE sip:2001@10.0.2.10 (SDP offer)
+    AstGVA->>AstGVA: Lookup dialplan: exten 2001 => local
+    AstGVA->>Phone2: INVITE sip:2001@phone2 (SDP offer)
+    Phone2-->>AstGVA: 100 Trying
+    Phone2-->>AstGVA: 180 Ringing
+    AstGVA-->>AstLSN: 180 Ringing
+    AstLSN-->>Phone1: 180 Ringing
+
+    Phone2-->>AstGVA: 200 OK (SDP answer)
+    AstGVA-->>AstLSN: 200 OK (SDP answer)
+    AstLSN-->>Phone1: 200 OK (SDP answer)
+
+    Phone1->>AstLSN: ACK
+    AstLSN->>AstGVA: ACK
+    AstGVA->>Phone2: ACK
+
+    Note over Phone1,Phone2: Media RTP audio direct (G.711 ulaw)
+
+    Phone1->>AstLSN: BYE
+    AstLSN->>AstGVA: BYE
+    AstGVA->>Phone2: BYE
+    Phone2-->>AstGVA: 200 OK
+    AstGVA-->>AstLSN: 200 OK
+    AstLSN-->>Phone1: 200 OK
+          </div>
+        </section>
+
+        <!-- ── Asterisk dialplan code block ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Plan de numerotation Asterisk</h2>
+          <p>Extrait du fichier <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">extensions.conf</code> du site Lausanne. Les extensions locales (1XXX) sont gerees en interne ; les appels vers les autres sites utilisent les trunks SIP definis dans <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">sip.conf</code>.</p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">extensions.conf</span>
+              <span class="code-lang">Asterisk Dialplan</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code>[general]
+static=yes
+writeprotect=no
+autofallthrough=yes
+
+; ─── Extensions locales site Lausanne (1XXX) ───────────────────────────────
+[lausanne-local]
+; Postes SIP locaux
+exten => 1001,1,Dial(SIP/1001,20,tr)
+exten => 1001,2,VoiceMail(1001@default,u)
+exten => 1001,n,Hangup()
+
+exten => 1002,1,Dial(SIP/1002,20,tr)
+exten => 1002,2,VoiceMail(1002@default,u)
+exten => 1002,n,Hangup()
+
+; Messagerie vocale
+exten => *97,1,VoiceMailMain(${CALLERID(num)}@default)
+exten => *97,n,Hangup()
+
+; ─── Trunk SIP vers Geneva (2XXX) ──────────────────────────────────────────
+[lausanne-outbound]
+exten => _2XXX,1,NoOp(Appel vers Geneva: ${EXTEN})
+exten => _2XXX,n,Dial(SIP/trunk-geneva/${EXTEN},30,tr)
+exten => _2XXX,n,Congestion()
+exten => _2XXX,n,Hangup()
+
+; Trunk SIP vers Bern (3XXX)
+exten => _3XXX,1,NoOp(Appel vers Bern: ${EXTEN})
+exten => _3XXX,n,Dial(SIP/trunk-bern/${EXTEN},30,tr)
+exten => _3XXX,n,Congestion()
+exten => _3XXX,n,Hangup()
+
+; ─── Trunk entrant depuis autres sites ─────────────────────────────────────
+[from-trunk]
+; Appels entrants : router vers les extensions locales
+exten => _1XXX,1,Goto(lausanne-local,${EXTEN},1)
+exten => _1XXX,n,Hangup()</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">sip.conf (extrait trunk)</span>
+              <span class="code-lang">Asterisk SIP</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code>[general]
+context=from-trunk
+bindport=5060
+bindaddr=0.0.0.0
+transport=udp
+
+; ─── Trunk SIP vers Geneva ──────────────────────────────────────────────────
+[trunk-geneva]
+type=friend
+host=10.0.2.10
+port=5060
+username=trunk-lsn
+secret=s3cret_trunk
+context=from-trunk
+disallow=all
+allow=ulaw
+allow=alaw
+qualify=yes
+insecure=port,invite
+dtmfmode=rfc2833
+
+; ─── Poste local 1001 ───────────────────────────────────────────────────────
+[1001]
+type=friend
+host=dynamic
+context=lausanne-local
+disallow=all
+allow=ulaw
+callerid="Alice Dupont" &lt;1001&gt;
+mailbox=1001@default
+nat=yes</code></pre>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="voip-stack-title">Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Asterisk PBX</strong>
+              <span data-i18n="voip-tech-asterisk">Serveur de téléphonie open source</span>
+            </div>
+            <div class="tech-item">
+              <strong>SIP Protocol</strong>
+              <span data-i18n="voip-tech-sip">Signalisation des appels VoIP</span>
+            </div>
+            <div class="tech-item">
+              <strong>Dialplan</strong>
+              <span data-i18n="voip-tech-dialplan">Plan de numérotation personnalisé</span>
+            </div>
+            <div class="tech-item">
+              <strong>Linux Server</strong>
+              <span data-i18n="voip-tech-linux">Debian comme OS serveur</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="voip-skills-title">Compétences acquises</h2>
+          <ul class="benefits-list">
+            <li data-i18n="voip-skill-1">Configuration avancée d'Asterisk (sip.conf, extensions.conf)</li>
+            <li data-i18n="voip-skill-2">Compréhension des protocoles VoIP (SIP, RTP)</li>
+            <li data-i18n="voip-skill-3">Gestion de la qualité de service réseau</li>
+            <li data-i18n="voip-skill-4">Dépannage des problèmes de téléphonie</li>
+            <li data-i18n="voip-skill-5">Collaboration inter-équipes pour l'interconnexion</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+  <script src="/js/i18n.js"></script>
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copie !';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
