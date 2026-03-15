@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infrastructure Azure AD - TPI ETML - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/#projects" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-blue">Azure AD</span>
+            <span class="tag tag-blue">Azure VNet</span>
+            <span class="tag tag-blue">Azure VM</span>
+            <span class="tag tag-teal">RDP / Bastion</span>
+            <span class="tag tag-green">Windows 10</span>
+            <span class="tag tag-purple">VirtualBox</span>
+          </div>
+          <h1 data-i18n="azure-title">Infrastructure Azure AD</h1>
+          <p class="project-subtitle" data-i18n="azure-subtitle">TPI ETML 2021 : Évaluation et comparaison de deux architectures Azure AD (hybride vs cloud) pour l'enseignement. 5 semaines, 90 heures.</p>
+        </header>
+
+        <!-- ── Contexte ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="azure-context-title">Contexte</h2>
+          <p data-i18n="azure-context-text">Travail Pratique Individuel (TPI) réalisé à l'ETML en mai–juin 2021 (classe CIN4A). L'objectif est d'évaluer la migration d'une infrastructure de labo scolaire vers Microsoft Azure Active Directory, et d'en comparer deux scénarios types : une solution <strong>hybride</strong> (VMs locales + Azure AD) et une solution <strong>100% cloud</strong> (Azure VMs + Azure AD via RBAC). Chaque scénario fait l'objet d'une analyse financière détaillée. Le tout est documenté pour servir de base de cours cloud à l'école.</p>
+        </section>
+
+        <!-- ── Différence AD / Azure AD / AADDS ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="azure-concepts-title">AD · Azure AD · Azure ADDS</h2>
+          <p data-i18n="azure-concepts-text">Une partie analyse du rapport est consacrée à la différenciation entre les trois services Microsoft, souvent confondus :</p>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Active Directory (AD)</strong>
+              <span data-i18n="azure-concepts-ad">LDAP on-premise, gestion des objets (utilisateurs, groupes, OU), GPO, arbres/forêts/domaines. Authentification Kerberos/NTLM.</span>
+            </div>
+            <div class="tech-item">
+              <strong>Azure Active Directory (AAD)</strong>
+              <span data-i18n="azure-concepts-aad">Service cloud-only. Pas de GPO, pas de LDAP/Kerberos/NTLM, pas d'arbre/forêt. Authentification OAuth2/SAML. Parfait pour SSO SaaS (Office 365, Dynamics 365).</span>
+            </div>
+            <div class="tech-item">
+              <strong>Azure ADDS</strong>
+              <span data-i18n="azure-concepts-aadds">Étend l'AAD avec LDAP, Kerberos, GPO et des contrôleurs de domaine managés. Permet la synchronisation bidirectionnelle avec un AD on-premise via Azure AD Connect.</span>
+            </div>
+            <div class="tech-item">
+              <strong>Azure Bastion</strong>
+              <span data-i18n="azure-concepts-bastion">PaaS, accès RDP/SSH aux VMs Azure via le navigateur sur le port HTTPS 443. Évite d'exposer le port 3389 sur internet. Coût additionnel par rapport aux VMs seules.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Deux scénarios ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="azure-scenarios-title">Les deux scénarios</h2>
+
+          <div class="project-flow">
+            <div class="flow-step">
+              <div class="flow-number">1</div>
+              <h3 data-i18n="azure-sc1-title">Hybride</h3>
+              <p data-i18n="azure-sc1-text">VM Windows 10 locale (VirtualBox) rejoignant un tenant Azure AD via HTTPS. Simulation du réseau bleu scolaire. Coût total : <strong>0 CHF</strong>.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">2</div>
+              <h3 data-i18n="azure-sc2-title">100% Cloud (RBAC)</h3>
+              <p data-i18n="azure-sc2-text">VM Windows 10 déployée sur Azure dans un VNet (4 sous-réseaux), jointure Azure AD avec RBAC. Accès initialement prévu via Azure Bastion, finalement via RDP direct.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Problèmes rencontrés ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="azure-challenges-title">Problèmes rencontrés &amp; solutions</h2>
+
+          <p data-i18n="azure-challenges-intro">Trois obstacles techniques majeurs ont nécessité des adaptations en cours de projet :</p>
+
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong data-i18n="azure-ch1-title">Crédits liés au tenant par défaut</strong>
+              <span data-i18n="azure-ch1-text">Les 100 $ de crédits étudiant sont liés au répertoire par défaut et ne peuvent pas être transférés vers un autre tenant. La VM Azure et l'Azure AD doivent donc coexister dans le <em>même</em> tenant.</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="azure-ch2-title">Azure Bastion ≠ Azure AD auth</strong>
+              <span data-i18n="azure-ch2-text">Azure Bastion ne supporte pas l'authentification Azure AD (AADLoginForWindows), seul RDP direct est pris en charge. Solution : passer à RDP direct, en utilisant le partage de connexion du téléphone pour contourner le blocage du port 3389 par le réseau de l'école.</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="azure-ch3-title">NLA bloque la connexion AAD via RDP</strong>
+              <span data-i18n="azure-ch3-text">La connexion RDP avec un compte Azure AD échoue si NLA (Network Level Authentication) est actif. Il faut désactiver NLA sur la VM et injecter des paramètres spécifiques dans le fichier <code style="font-family:var(--mono);font-size:0.85em;color:var(--accent)">.rdp</code> pour contourner la pop-up de credentials.</span>
+            </div>
+          </div>
+
+          <div class="code-block" style="margin-top:1.25rem">
+            <div class="code-header">
+              <span class="code-filename">connexion-azure-ad.rdp</span>
+              <span class="code-lang">RDP</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment"># Paramètres requis pour connexion RDP avec compte Azure AD (NLA désactivé)</span>
+<span class="tok-property">full address</span><span class="tok-operator">:s:</span><span class="tok-string">51.107.86.22:3389</span>
+<span class="tok-property">prompt for credentials</span><span class="tok-operator">:i:</span><span class="tok-number">0</span>
+<span class="tok-property">authentication level</span><span class="tok-operator">:i:</span><span class="tok-number">2</span>
+<span class="tok-property">enablecredsspsupport</span><span class="tok-operator">:i:</span><span class="tok-number">0</span>       <span class="tok-comment"># désactive NLA côté client</span>
+<span class="tok-property">username</span><span class="tok-operator">:s:</span><span class="tok-string">AzureAD\Eleve_C@jesuisunetudiantoutlook.onmicrosoft.com</span>
+<span class="tok-property">domain</span><span class="tok-operator">:s:</span><span class="tok-string">AzureAD</span></code></pre>
+          </div>
+        </section>
+
+        <!-- ── Infrastructure déployée ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="azure-infra-title">Infrastructure déployée</h2>
+
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong data-i18n="azure-infra-rg">Resource Groups</strong>
+              <span data-i18n="azure-infra-rg-text"><code style="font-family:var(--mono);font-size:0.85em">Scenario_N1</code> et <code style="font-family:var(--mono);font-size:0.85em">Scenario_N2</code> dans la région <strong>Suisse Nord</strong> — isolation des ressources et suivi des coûts par scénario.</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="azure-infra-tenants">2 tenants Azure AD</strong>
+              <span data-i18n="azure-infra-tenants-text"><code style="font-family:var(--mono);font-size:0.85em">ScenarioNumero1.onmicrosoft.com</code> (scénario hybride) et <code style="font-family:var(--mono);font-size:0.85em">jesuisunetudiant.onmicrosoft.com</code> (scénario cloud RBAC).</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="azure-infra-vnet">Azure VNet</strong>
+              <span data-i18n="azure-infra-vnet-text">Réseau virtuel avec 4 sous-réseaux pour le scénario 2. Sous-réseau <code style="font-family:var(--mono);font-size:0.85em">AzureBastionSubnet</code> dédié. NSG pour contrôle du trafic entrant/sortant.</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="azure-infra-vm">Azure VM Windows 10</strong>
+              <span data-i18n="azure-infra-vm-text">Plan minimal (1 vCPU, 0.5 GB RAM, environ 4.48 CHF/mois) suffisant pour les tests d'authentification. Connexion via RDP 3389 depuis hotspot mobile (réseau école bloque 3389).</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="azure-infra-rbac">RBAC sur la VM</strong>
+              <span data-i18n="azure-infra-rbac-text">Rôles <em>Virtual Machine User Login</em> et <em>Virtual Machine Administrator Login</em> assignés aux utilisateurs/administrateurs de l'Azure AD pour contrôle d'accès fin.</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="azure-infra-backup">Power Automate backup</strong>
+              <span data-i18n="azure-infra-backup-text">Flux automatisé pour sauvegardes journalières de la documentation vers OneDrive et Google Drive. Nommage automatique des dossiers par date.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Analyse des coûts ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="azure-costs-title">Analyse des coûts</h2>
+          <p data-i18n="azure-costs-text">Un des livrables clés du TPI est la projection financière des deux scénarios pour une école qui voudrait implémenter l'un ou l'autre :</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">Scénario N°1 : Hybride (VirtualBox + Azure AD Free)</span>
+              <span class="code-lang">Coût</span>
+            </div>
+            <pre><code><span class="tok-comment"># Scénario 1 : solution hybride</span>
+<span class="tok-property">Machine Virtuelle – VirtualBox</span>   <span class="tok-number">0.00</span> CHF  <span class="tok-comment"># logiciel libre, hébergé localement</span>
+<span class="tok-property">Azure Active Directory – Free</span>    <span class="tok-number">0.00</span> CHF  <span class="tok-comment"># jusqu'à 500'000 objets gratuits</span>
+                                  <span class="tok-operator">──────────────</span>
+<span class="tok-keyword">TOTAL mensuel</span>                     <span class="tok-number">0.00</span> CHF
+
+<span class="tok-comment"># Seuls coûts : connexion internet + électricité des PCs</span></code></pre>
+          </div>
+
+          <div class="code-block" style="margin-top:0.75rem">
+            <div class="code-header">
+              <span class="code-filename">Scénario N°2 : 100% Cloud (Azure VM + Azure AD)</span>
+              <span class="code-lang">Coût</span>
+            </div>
+            <pre><code><span class="tok-comment"># Scénario 2 : solution cloud RBAC</span>
+<span class="tok-property">Azure VM Windows 10</span>              <span class="tok-number">4.48</span> CHF/mois  <span class="tok-comment"># plan min. : 1 vCPU, 0.5 GB RAM</span>
+<span class="tok-property">Azure Active Directory – Free</span>    <span class="tok-number">0.00</span> CHF/mois  <span class="tok-comment"># même tier, suffit pour les tests</span>
+<span class="tok-property">Azure VNet</span>                       <span class="tok-number">0.00</span> CHF/mois  <span class="tok-comment"># VNet gratuit en lui-même</span>
+<span class="tok-property">Azure Bastion</span>            <span class="tok-keyword">non retenu</span>            <span class="tok-comment"># coût additionnel + pas d'AAD auth</span>
+                                  <span class="tok-operator">──────────────────────</span>
+<span class="tok-keyword">TOTAL mensuel (min.)</span>             <span class="tok-number">≥ 4.48</span> CHF/mois par VM
+
+<span class="tok-comment"># 100 $ crédits étudiant = ~90 CHF → ~20 mois de VM plan min.</span></code></pre>
+          </div>
+        </section>
+
+        <!-- ── Résultats des tests ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="azure-results-title">Résultats</h2>
+          <p data-i18n="azure-results-text">Tous les tests du dossier de tests ont été concluants sur les deux scénarios :</p>
+          <ul class="benefits-list">
+            <li data-i18n="azure-results-li1">Azure AD scénario 1 (hybride) : tenant opérationnel, ajout/suppression d'utilisateurs et groupes fonctionnel</li>
+            <li data-i18n="azure-results-li2">VMs VirtualBox jointes au domaine Azure AD, connexion avec 3 comptes utilisateurs différents validée</li>
+            <li data-i18n="azure-results-li3">Azure AD scénario 2 (RBAC) : VM Azure jointe au tenant, connexion RDP avec compte Azure AD confirmée</li>
+            <li data-i18n="azure-results-li4">Accès réseau inter-VMs via ICMP validé, accès internet confirmé depuis les VMs Azure</li>
+            <li data-i18n="azure-results-li5">Scénario 1 : coût total 0 CHF. Crédits $100 intacts après le TPI</li>
+          </ul>
+        </section>
+
+        <!-- ── Stack technique ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="azure-stack-title">Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Azure Active Directory</strong>
+              <span data-i18n="azure-stack-aad">Tenant Free, gestion utilisateurs, groupes, RBAC, AADLoginForWindows</span>
+            </div>
+            <div class="tech-item">
+              <strong>Azure VNet + NSG</strong>
+              <span data-i18n="azure-stack-vnet">Réseau virtuel 4 sous-réseaux, Suisse Nord, AzureBastionSubnet, pare-feu NSG</span>
+            </div>
+            <div class="tech-item">
+              <strong>Azure VM</strong>
+              <span data-i18n="azure-stack-vm">Windows 10 Pro, Intel Xeon Platinum 8272CL, plan Y1 Consumption, IP publique fixe</span>
+            </div>
+            <div class="tech-item">
+              <strong>VirtualBox</strong>
+              <span data-i18n="azure-stack-vbox">Hyperviseur type 2, VMs Windows 10 pour scénario hybride, réseau bleu ETML</span>
+            </div>
+            <div class="tech-item">
+              <strong>RDP v10 / Azure Bastion</strong>
+              <span data-i18n="azure-stack-rdp">Accès distant, NLA désactivé pour compatibilité AAD, fichier .rdp personnalisé</span>
+            </div>
+            <div class="tech-item">
+              <strong>Power Automate</strong>
+              <span data-i18n="azure-stack-automate">Flux LCDP, backup journalier automatique vers OneDrive + Google Drive (nommage par date)</span>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/js/i18n.js"></script>
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copié !';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

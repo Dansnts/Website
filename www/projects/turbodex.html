@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboDex - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/#projects" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-blue">Azure</span>
+            <span class="tag tag-blue">Terraform</span>
+            <span class="tag tag-blue">Kubernetes</span>
+            <span class="tag tag-teal">Ansible</span>
+            <span class="tag tag-green">Python</span>
+            <span class="tag tag-purple">Flutter</span>
+          </div>
+          <h1 data-i18n="turbodex-title">TurboDex</h1>
+          <p class="project-subtitle" data-i18n="turbodex-subtitle">Pokédex pour voitures. App mobile Flutter, infra Azure IaC (Terraform/Ansible/K8s). PDG 2025 HEIG-VD</p>
+        </header>
+
+        <!-- ── Contexte ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="turbodex-context-title">Contexte</h2>
+          <p data-i18n="turbodex-context-text">Projet de groupe (4 personnes) réalisé en 2025 à la HEIG-VD. TurboDex est un Pokédex pour passionnés d'automobiles : photographier un véhicule, l'IA identifie la marque/modèle, et la voiture rejoint ta collection. Mon rôle : <strong>DevOps</strong>, infrastructure Azure complète en IaC, CI/CD, et déploiement des microservices IA sur AKS.</p>
+        </section>
+
+        <!-- ── App screenshots ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="turbodex-app-title">Application</h2>
+          <p data-i18n="turbodex-app-text">Interface Flutter cross-platform (iOS/Android) et feature de floutage automatique des visages et plaques d'immatriculation (privacy-first).</p>
+
+          <div class="figure-grid">
+            <figure class="project-figure">
+              <img src="https://raw.githubusercontent.com/Turbo-Dex/deliverables/main/week2/images/frontend.png" alt="TurboDex, interface mobile Flutter" loading="lazy">
+              <figcaption><strong>Fig. 1</strong> — Interface mobile Flutter (iOS/Android)</figcaption>
+            </figure>
+            <figure class="project-figure">
+              <img src="https://raw.githubusercontent.com/Turbo-Dex/deliverables/main/week2/images/blurred_car2.png" alt="TurboDex, floutage automatique IA" loading="lazy">
+              <figcaption><strong>Fig. 2</strong> — Floutage IA des plaques et visages (privacy-first)</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <!-- ── Architecture ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="turbodex-arch-azure-title">Architecture Azure</h2>
+
+          <figure class="project-figure" data-anim="up">
+            <img src="https://raw.githubusercontent.com/Turbo-Dex/deliverables/main/week2/images/arch.png" alt="TurboDex, architecture Azure complète" loading="lazy">
+            <figcaption><strong>Fig. 3</strong> — Architecture Azure complète : AKS, ACR, Cosmos DB MongoDB, Blob Storage, Function App, Application Insights</figcaption>
+          </figure>
+        </section>
+
+        <!-- ── Terraform main.tf ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="turbodex-terraform-title">Infrastructure as Code : Terraform</h2>
+          <p data-i18n="turbodex-terraform-text">L'ensemble de l'infrastructure Azure est déclarée en HCL. Un <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">terraform apply</code> provisionne le Resource Group, l'ACR, l'AKS, la Cosmos DB MongoDB, le Blob Storage et la Function App.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">Azureinfra/terraform/main.tf</span>
+              <span class="code-lang">HCL</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment"># AKS Cluster — SystemAssigned identity</span>
+<span class="tok-keyword">resource</span> <span class="tok-string">"azurerm_kubernetes_cluster"</span> <span class="tok-string">"aks"</span> {
+  <span class="tok-property">name</span>                = <span class="tok-string">"${var.project_name}-${var.environment}-aks"</span>
+  <span class="tok-property">location</span>            = azurerm_resource_group.rg.location
+  <span class="tok-property">resource_group_name</span> = azurerm_resource_group.rg.name
+  <span class="tok-property">dns_prefix</span>          = <span class="tok-string">"${var.project_name}-${var.environment}"</span>
+
+  <span class="tok-keyword">default_node_pool</span> {
+    <span class="tok-property">name</span>       = <span class="tok-string">"system"</span>
+    <span class="tok-property">node_count</span> = var.aks_node_count   <span class="tok-comment"># default 2</span>
+    <span class="tok-property">vm_size</span>    = var.aks_vm_size      <span class="tok-comment"># Standard_DS2_v2</span>
+  }
+  <span class="tok-keyword">identity</span> { <span class="tok-property">type</span> = <span class="tok-string">"SystemAssigned"</span> }
+}
+
+<span class="tok-comment"># Cosmos DB MongoDB — Session consistency, shard sur _id</span>
+<span class="tok-keyword">resource</span> <span class="tok-string">"azurerm_cosmosdb_account"</span> <span class="tok-string">"cosmos"</span> {
+  <span class="tok-property">name</span>        = local.cosmos_account_name
+  <span class="tok-property">kind</span>        = <span class="tok-string">"MongoDB"</span>
+  <span class="tok-property">offer_type</span>  = <span class="tok-string">"Standard"</span>
+
+  <span class="tok-keyword">capabilities</span>       { <span class="tok-property">name</span> = <span class="tok-string">"EnableMongo"</span> }
+  <span class="tok-keyword">consistency_policy</span> { <span class="tok-property">consistency_level</span> = <span class="tok-string">"Session"</span> }
+  <span class="tok-keyword">geo_location</span>       { <span class="tok-property">location</span> = azurerm_resource_group.rg.location; <span class="tok-property">failover_priority</span> = <span class="tok-number">0</span> }
+}
+
+<span class="tok-keyword">resource</span> <span class="tok-string">"azurerm_cosmosdb_mongo_collection"</span> <span class="tok-string">"collection"</span> {
+  <span class="tok-property">throughput</span> = <span class="tok-number">400</span>
+  <span class="tok-property">shard_key</span>  = <span class="tok-string">"_id"</span>
+  <span class="tok-keyword">index</span>      { <span class="tok-property">keys</span> = [<span class="tok-string">"_id"</span>] }
+}
+
+<span class="tok-comment"># Function App Linux Consumption (Y1) + Application Insights</span>
+<span class="tok-keyword">resource</span> <span class="tok-string">"azurerm_linux_function_app"</span> <span class="tok-string">"func"</span> {
+  <span class="tok-property">https_only</span>  = <span class="tok-string">true</span>
+  <span class="tok-keyword">identity</span>    { <span class="tok-property">type</span> = <span class="tok-string">"SystemAssigned"</span> }
+
+  <span class="tok-keyword">site_config</span> {
+    <span class="tok-keyword">application_stack</span> { <span class="tok-property">python_version</span> = <span class="tok-string">"3.11"</span> }
+    <span class="tok-keyword">cors</span>              { <span class="tok-property">allowed_origins</span> = [<span class="tok-string">"*"</span>] }
+  }
+
+  <span class="tok-property">app_settings</span> = {
+    <span class="tok-string">APPINSIGHTS_INSTRUMENTATIONKEY</span>        = azurerm_application_insights.appi.instrumentation_key
+    <span class="tok-string">COSMOS_CONNECTION_STRING</span>              = azurerm_cosmosdb_account.cosmos.connection_strings[<span class="tok-number">0</span>]
+    <span class="tok-string">BLOB_CONNECTION_STRING</span>                = azurerm_storage_account.sa.primary_connection_string
+    <span class="tok-string">FUNCTIONS_WORKER_RUNTIME</span>              = var.function_runtime
+  }
+}
+
+<span class="tok-keyword">resource</span> <span class="tok-string">"azurerm_service_plan"</span> <span class="tok-string">"func_plan"</span> {
+  <span class="tok-property">os_type</span>  = <span class="tok-string">"Linux"</span>
+  <span class="tok-property">sku_name</span> = <span class="tok-string">"Y1"</span>   <span class="tok-comment"># Consumption plan</span>
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- ── k8s.tf ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="turbodex-k8s-title">Déploiement K8s des microservices IA</h2>
+          <p data-i18n="turbodex-k8s-text">Les deux microservices IA (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">blur</code> et <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">analyse</code>) sont déployés sur AKS via Terraform. Les secrets ACR et Cosmos DB sont injectés depuis un Kubernetes Secret.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">Azureinfra/terraform/k8s.tf</span>
+              <span class="code-lang">HCL</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment"># Secret K8s — ACR + Cosmos DB + Blob Storage</span>
+<span class="tok-keyword">resource</span> <span class="tok-string">"kubernetes_secret"</span> <span class="tok-string">"app_secrets"</span> {
+  <span class="tok-keyword">metadata</span> { <span class="tok-property">name</span> = <span class="tok-string">"app-secrets"</span>; <span class="tok-property">namespace</span> = <span class="tok-string">"default"</span> }
+  <span class="tok-property">data</span> = {
+    <span class="tok-string">DOCKER_REGISTRY_SERVER_URL</span>      = var.acr_login_server
+    <span class="tok-string">DOCKER_REGISTRY_SERVER_USERNAME</span> = azurerm_container_registry.acr.admin_username
+    <span class="tok-string">DOCKER_REGISTRY_SERVER_PASSWORD</span> = azurerm_container_registry.acr.admin_password
+    <span class="tok-string">COSMOS_CONNECTION_STRING</span>         = azurerm_cosmosdb_account.cosmos.connection_strings[<span class="tok-number">0</span>]
+    <span class="tok-string">BLOB_CONNECTION_STRING</span>           = azurerm_storage_account.sa.primary_connection_string
+  }
+}
+
+<span class="tok-comment"># Deployment Blur IA — 2 replicas, image depuis ACR</span>
+<span class="tok-keyword">resource</span> <span class="tok-string">"kubernetes_deployment"</span> <span class="tok-string">"blur"</span> {
+  <span class="tok-keyword">spec</span> {
+    <span class="tok-property">replicas</span> = <span class="tok-number">2</span>
+    <span class="tok-keyword">template</span> {
+      <span class="tok-keyword">spec</span> {
+        <span class="tok-keyword">container</span> {
+          <span class="tok-property">name</span>  = <span class="tok-string">"blur"</span>
+          <span class="tok-property">image</span> = <span class="tok-string">"${var.acr_login_server}/${var.blur_image_name}:${var.blur_image_tag}"</span>
+          <span class="tok-keyword">env_from</span> {
+            <span class="tok-keyword">secret_ref</span> { <span class="tok-property">name</span> = kubernetes_secret.app_secrets.metadata[<span class="tok-number">0</span>].name }
+          }
+        }
+      }
+    }
+  }
+}
+
+<span class="tok-comment"># LoadBalancer public pour le service Blur</span>
+<span class="tok-keyword">resource</span> <span class="tok-string">"kubernetes_service"</span> <span class="tok-string">"blur_lb"</span> {
+  <span class="tok-keyword">spec</span> {
+    <span class="tok-property">type</span>             = <span class="tok-string">"LoadBalancer"</span>
+    <span class="tok-property">selector</span>         = { app = <span class="tok-string">"blur"</span> }
+    <span class="tok-property">load_balancer_ip</span> = var.blur_lb_ip   <span class="tok-comment"># IP fixe optionnelle</span>
+    <span class="tok-keyword">port</span> { <span class="tok-property">port</span> = <span class="tok-number">80</span>; <span class="tok-property">target_port</span> = var.blur_container_port }
+  }
+}
+
+<span class="tok-comment"># Deployment Analyse IA — même pattern, port 5000</span>
+<span class="tok-keyword">resource</span> <span class="tok-string">"kubernetes_deployment"</span> <span class="tok-string">"analyse"</span> {
+  <span class="tok-keyword">spec</span> {
+    <span class="tok-property">replicas</span> = <span class="tok-number">2</span>
+    <span class="tok-keyword">template</span> {
+      <span class="tok-keyword">spec</span> {
+        <span class="tok-keyword">container</span> {
+          <span class="tok-property">image</span> = <span class="tok-string">"${var.acr_login_server}/${var.analyse_image_name}:${var.analyse_image_tag}"</span>
+          <span class="tok-keyword">env_from</span> {
+            <span class="tok-keyword">secret_ref</span> { <span class="tok-property">name</span> = kubernetes_secret.app_secrets.metadata[<span class="tok-number">0</span>].name }
+          }
+        }
+      }
+    }
+  }
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- ── GitHub Actions ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="turbodex-cicd-title">CI/CD : GitHub Actions</h2>
+          <p data-i18n="turbodex-cicd-text">Le pipeline Terraform tourne sur chaque push. L'<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">apply</code> est déclenché manuellement uniquement (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">workflow_dispatch</code>) pour éviter tout provisioning involontaire. Ansible s'exécute après Terraform en dry-run (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">--check</code>).</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">.github/workflows/infra.yml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Infra CI/CD</span>
+<span class="tok-keyword">on</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">push</span><span class="tok-operator">:</span>    { <span class="tok-keyword">branches</span><span class="tok-operator">:</span> [<span class="tok-string">main</span>] }
+  <span class="tok-keyword">pull_request</span><span class="tok-operator">:</span> { <span class="tok-keyword">branches</span><span class="tok-operator">:</span> [<span class="tok-string">main</span>] }
+  <span class="tok-keyword">workflow_dispatch</span><span class="tok-operator">:</span>   <span class="tok-comment"># apply uniquement si déclenché manuellement</span>
+
+<span class="tok-keyword">jobs</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">terraform</span><span class="tok-operator">:</span>
+    <span class="tok-keyword">runs-on</span><span class="tok-operator">:</span> <span class="tok-string">ubuntu-latest</span>
+    <span class="tok-keyword">defaults</span><span class="tok-operator">:</span>
+      <span class="tok-keyword">run</span><span class="tok-operator">:</span>
+        <span class="tok-keyword">working-directory</span><span class="tok-operator">:</span> <span class="tok-string">./Azureinfra/terraform</span>
+    <span class="tok-keyword">env</span><span class="tok-operator">:</span>
+      <span class="tok-property">ARM_CLIENT_ID</span><span class="tok-operator">:</span>       <span class="tok-string">${{ secrets.ARM_CLIENT_ID }}</span>
+      <span class="tok-property">ARM_CLIENT_SECRET</span><span class="tok-operator">:</span>   <span class="tok-string">${{ secrets.ARM_CLIENT_SECRET }}</span>
+      <span class="tok-property">ARM_SUBSCRIPTION_ID</span><span class="tok-operator">:</span> <span class="tok-string">${{ secrets.ARM_SUBSCRIPTION_ID }}</span>
+      <span class="tok-property">ARM_TENANT_ID</span><span class="tok-operator">:</span>       <span class="tok-string">${{ secrets.ARM_TENANT_ID }}</span>
+    <span class="tok-keyword">steps</span><span class="tok-operator">:</span>
+      - <span class="tok-keyword">uses</span><span class="tok-operator">:</span> <span class="tok-string">actions/checkout@v4</span>
+      - <span class="tok-keyword">uses</span><span class="tok-operator">:</span> <span class="tok-string">hashicorp/setup-terraform@v3</span>
+        <span class="tok-keyword">with</span><span class="tok-operator">:</span>
+          <span class="tok-property">terraform_version</span><span class="tok-operator">:</span> <span class="tok-string">1.9.8</span>
+      - <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-fn">terraform</span> init
+      - <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-fn">terraform</span> validate
+      - <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-fn">terraform</span> plan -out=tfplan
+      - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Terraform Apply</span>
+        <span class="tok-keyword">if</span><span class="tok-operator">:</span> <span class="tok-string">github.event_name == 'workflow_dispatch'</span>
+        <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-fn">terraform</span> apply -auto-approve tfplan
+
+  <span class="tok-keyword">ansible</span><span class="tok-operator">:</span>
+    <span class="tok-keyword">needs</span><span class="tok-operator">:</span> <span class="tok-string">terraform</span>
+    <span class="tok-keyword">runs-on</span><span class="tok-operator">:</span> <span class="tok-string">ubuntu-latest</span>
+    <span class="tok-keyword">steps</span><span class="tok-operator">:</span>
+      - <span class="tok-keyword">uses</span><span class="tok-operator">:</span> <span class="tok-string">actions/checkout@v4</span>
+      - <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-fn">sudo</span> apt-get install -y ansible
+      - <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-fn">ansible-playbook</span> Azureinfra/ansible/playbooks/site.yml
+              -i Azureinfra/ansible/inventory.ini --check  <span class="tok-comment"># dry-run</span></code></pre>
+          </div>
+        </section>
+
+        <!-- ── Ansible ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="turbodex-ansible-title">Ansible : Configuration PostgreSQL &amp; App Service</h2>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">Azureinfra/ansible/playbooks/site.yml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code>- <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Configure PostgreSQL</span>
+  <span class="tok-keyword">hosts</span><span class="tok-operator">:</span> <span class="tok-string">postgres</span>
+  <span class="tok-keyword">gather_facts</span><span class="tok-operator">:</span> <span class="tok-string">no</span>
+  <span class="tok-keyword">roles</span><span class="tok-operator">:</span>
+    - <span class="tok-string">postgres</span>
+
+- <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Deploy FastAPI to WebApp</span>
+  <span class="tok-keyword">hosts</span><span class="tok-operator">:</span> <span class="tok-string">webapp</span>
+  <span class="tok-keyword">gather_facts</span><span class="tok-operator">:</span> <span class="tok-string">no</span>
+  <span class="tok-keyword">roles</span><span class="tok-operator">:</span>
+    - <span class="tok-string">webapp</span></code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">Azureinfra/ansible/group_vars/all.yml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment"># PostgreSQL Azure</span>
+<span class="tok-keyword">db_host</span><span class="tok-operator">:</span>     <span class="tok-string">"turbodex-staging-pg.postgres.database.azure.com"</span>
+<span class="tok-keyword">db_name</span><span class="tok-operator">:</span>     <span class="tok-string">"turbodex"</span>
+<span class="tok-keyword">db_user</span><span class="tok-operator">:</span>     <span class="tok-string">"pgadmin@turbodex-staging-pg"</span>
+<span class="tok-keyword">db_password</span><span class="tok-operator">:</span> <span class="tok-string">"{{ vault_db_password }}"</span>
+
+<span class="tok-comment"># App Service</span>
+<span class="tok-keyword">webapp_name</span><span class="tok-operator">:</span>     <span class="tok-string">"turbodex-staging-api"</span>
+<span class="tok-keyword">resource_group</span><span class="tok-operator">:</span>  <span class="tok-string">"turbodex-staging-rg"</span>
+
+<span class="tok-comment"># Azure Container Registry</span>
+<span class="tok-keyword">acr_login_server</span><span class="tok-operator">:</span> <span class="tok-string">"turbodexacr.azurecr.io"</span>
+<span class="tok-keyword">backend_port</span><span class="tok-operator">:</span>     <span class="tok-number">8000</span></code></pre>
+          </div>
+        </section>
+
+        <!-- ── DevOps : Docker build, test & push ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="turbodex-devops-title">DevOps : Build, Test &amp; Push</h2>
+          <p data-i18n="turbodex-devops-text">Pipeline dédié pour les microservices IA : l'image Docker est buildée, les tests pytest tournent <em>dans le container</em>, et le push vers l'ACR n'a lieu que si les tests passent. Seuls les merges sur <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">main</code> déclenchent le push.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">.github/workflows/docker-build.yml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Docker Build &amp; Push</span>
+
+<span class="tok-keyword">on</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">push</span><span class="tok-operator">:</span>         { <span class="tok-keyword">branches</span><span class="tok-operator">:</span> [<span class="tok-string">main</span>, <span class="tok-string">dev</span>] }
+  <span class="tok-keyword">pull_request</span><span class="tok-operator">:</span> { <span class="tok-keyword">branches</span><span class="tok-operator">:</span> [<span class="tok-string">main</span>] }
+
+<span class="tok-keyword">env</span><span class="tok-operator">:</span>
+  <span class="tok-property">REGISTRY</span><span class="tok-operator">:</span>   <span class="tok-string">turbodexacr.azurecr.io</span>
+  <span class="tok-property">IMAGE_NAME</span><span class="tok-operator">:</span> <span class="tok-string">backend</span>
+
+<span class="tok-keyword">jobs</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">build-test-push</span><span class="tok-operator">:</span>
+    <span class="tok-keyword">runs-on</span><span class="tok-operator">:</span> <span class="tok-string">ubuntu-latest</span>
+
+    <span class="tok-keyword">steps</span><span class="tok-operator">:</span>
+      - <span class="tok-keyword">uses</span><span class="tok-operator">:</span> <span class="tok-string">actions/checkout@v4</span>
+
+      <span class="tok-comment"># 1 — Build</span>
+      - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Build image</span>
+        <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-operator">|</span>
+          <span class="tok-fn">docker</span> build \
+            -t <span class="tok-string">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}</span> \
+            -t <span class="tok-string">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest</span> .
+
+      <span class="tok-comment"># 2 — Test (pytest s'exécute dans le container)</span>
+      - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Run tests</span>
+        <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-operator">|</span>
+          <span class="tok-fn">docker</span> run --rm \
+            -e <span class="tok-property">TESTING</span>=<span class="tok-string">true</span> \
+            <span class="tok-string">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}</span> \
+            <span class="tok-fn">pytest</span> tests/ -v --tb=short
+
+      <span class="tok-comment"># 3 — Push uniquement si tests OK + merge sur main</span>
+      - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Login to ACR</span>
+        <span class="tok-keyword">if</span><span class="tok-operator">:</span> <span class="tok-string">github.ref == 'refs/heads/main' &amp;&amp; github.event_name == 'push'</span>
+        <span class="tok-keyword">uses</span><span class="tok-operator">:</span> <span class="tok-string">azure/docker-login@v1</span>
+        <span class="tok-keyword">with</span><span class="tok-operator">:</span>
+          <span class="tok-property">login-server</span><span class="tok-operator">:</span> <span class="tok-string">${{ env.REGISTRY }}</span>
+          <span class="tok-property">username</span><span class="tok-operator">:</span>     <span class="tok-string">${{ secrets.ACR_USERNAME }}</span>
+          <span class="tok-property">password</span><span class="tok-operator">:</span>     <span class="tok-string">${{ secrets.ACR_PASSWORD }}</span>
+
+      - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Push to ACR</span>
+        <span class="tok-keyword">if</span><span class="tok-operator">:</span> <span class="tok-string">github.ref == 'refs/heads/main' &amp;&amp; github.event_name == 'push'</span>
+        <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-operator">|</span>
+          <span class="tok-fn">docker</span> push <span class="tok-string">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}</span>
+          <span class="tok-fn">docker</span> push <span class="tok-string">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest</span></code></pre>
+          </div>
+        </section>
+
+        <!-- ── Stack ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="turbodex-stack-title">Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Terraform + HCL</strong>
+              <span>IaC : ACR, AKS, Cosmos DB, Function App, App Insights</span>
+            </div>
+            <div class="tech-item">
+              <strong>Azure Kubernetes Service</strong>
+              <span>2 nœuds Standard_DS2_v2, microservices blur &amp; analyse</span>
+            </div>
+            <div class="tech-item">
+              <strong>Cosmos DB MongoDB</strong>
+              <span>API MongoDB, consistency Session, shard sur _id, 400 RU</span>
+            </div>
+            <div class="tech-item">
+              <strong>Azure Function App</strong>
+              <span>Consumption Y1, Python 3.11, SystemAssigned identity</span>
+            </div>
+            <div class="tech-item">
+              <strong>GitHub Actions</strong>
+              <span>Plan auto sur push, apply sur workflow_dispatch uniquement</span>
+            </div>
+            <div class="tech-item">
+              <strong>Flutter / FastAPI</strong>
+              <span>App mobile cross-platform + API Python (équipe)</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="turbodex-links-title">Dépôts</h2>
+          <a href="https://github.com/Turbo-Dex" target="_blank" rel="noopener" class="project-repo-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+            <span>github.com/Turbo-Dex</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/js/i18n.js"></script>
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copié !';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

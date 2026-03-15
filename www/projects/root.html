@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROOT - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/#projects" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-green">TypeScript</span>
+            <span class="tag tag-blue">Next.js</span>
+            <span class="tag tag-purple">AES-GCM</span>
+            <span class="tag tag-blue">Docker</span>
+          </div>
+          <h1 data-i18n="root-title">ROOT</h1>
+          <p class="project-subtitle" data-i18n="root-subtitle">Zero-knowledge personal workspace : Notes, Kanban, Calendrier</p>
+        </header>
+
+        <section class="project-section">
+          <h2 data-i18n="root-context-title">Contexte</h2>
+          <p data-i18n="root-context-text">ROOT est un workspace personnel entièrement local et chiffré, conçu pour ne jamais exposer de données à un serveur. L'objectif : avoir un espace de travail complet (notes, tâches, agenda) sans dépendre d'un service cloud, sans compte, sans télémétrie.</p>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="root-modules-title">Modules</h2>
+          <div class="project-flow">
+            <div class="flow-step">
+              <div class="flow-number">1</div>
+              <h3 data-i18n="root-module1-title">Notes</h3>
+              <p data-i18n="root-module1-text">Éditeur de blocs riche (TipTap 3) : titres, listes, code, tableaux, images. Arborescence de pages avec drag-and-drop.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">2</div>
+              <h3 data-i18n="root-module2-title">Kanban</h3>
+              <p data-i18n="root-module2-text">Board de tâches persistant avec colonnes de statut, priorités, dates d'échéance et tags. Drag-and-drop via dnd-kit.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">3</div>
+              <h3 data-i18n="root-module3-title">Calendrier</h3>
+              <p data-i18n="root-module3-text">FullCalendar 6 avec sync CalDAV bidirectionnelle (iCloud, Nextcloud, Fastmail). Le proxy nginx local garantit que les données ne quittent jamais la machine.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="root-security-title">Architecture de sécurité</h2>
+          <ul class="benefits-list">
+            <li data-i18n="root-sec1">Dérivation de clé PBKDF2-SHA256, 600 000 itérations, sel aléatoire 256 bits</li>
+            <li data-i18n="root-sec2">Chiffrement AES-GCM 256 bits avec IV unique 96 bits par ciphertext</li>
+            <li data-i18n="root-sec3">Le mot de passe maître n'est jamais stocké, génère une CryptoKey non-extractible en RAM</li>
+            <li data-i18n="root-sec4">Tout ce qui est écrit dans IndexedDB (titres, contenu, réglages, credentials) est du ciphertext</li>
+            <li data-i18n="root-sec5">HTTPS obligatoire (Web Crypto API), servi par nginx en local sur port 8443</li>
+          </ul>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="root-stack-title">Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Next.js 15</strong>
+              <span data-i18n="root-tech-nextjs">Export statique, rendu côté client</span>
+            </div>
+            <div class="tech-item">
+              <strong>TypeScript</strong>
+              <span data-i18n="root-tech-ts">Typage strict sur l'ensemble du projet</span>
+            </div>
+            <div class="tech-item">
+              <strong>Web Crypto API</strong>
+              <span data-i18n="root-tech-crypto">Chiffrement natif du navigateur</span>
+            </div>
+            <div class="tech-item">
+              <strong>Dexie.js</strong>
+              <span data-i18n="root-tech-dexie">Wrapper IndexedDB pour le stockage local</span>
+            </div>
+            <div class="tech-item">
+              <strong>TipTap 3</strong>
+              <span data-i18n="root-tech-tiptap">Éditeur de blocs extensible</span>
+            </div>
+            <div class="tech-item">
+              <strong>FullCalendar 6</strong>
+              <span data-i18n="root-tech-calendar">UI calendrier + sync CalDAV</span>
+            </div>
+            <div class="tech-item">
+              <strong>Zustand</strong>
+              <span data-i18n="root-tech-zustand">Gestion d'état légère</span>
+            </div>
+            <div class="tech-item">
+              <strong>Docker + nginx</strong>
+              <span data-i18n="root-tech-docker">Déploiement local, proxy CalDAV</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="root-repo-title">Dépôt</h2>
+          <a href="https://github.com/Dansnts/ROOT" target="_blank" rel="noopener" class="project-repo-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+            <span>github.com/Dansnts/ROOT</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/js/i18n.js"></script>
+</body>
+</html>

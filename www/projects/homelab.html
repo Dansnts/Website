@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homelab Infrastructure - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/#projects" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-blue">Kubernetes</span>
+            <span class="tag tag-teal">ELK Stack</span>
+            <span class="tag tag-green">Prometheus</span>
+            <span class="tag tag-orange">rclone</span>
+          </div>
+          <h1 data-i18n="homelab-title">Homelab Infrastructure</h1>
+          <p class="project-subtitle" data-i18n="homelab-subtitle">Infrastructure Kubernetes personnelle : media, monitoring, logs, backups</p>
+        </header>
+
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="homelab-overview-title">Vue d'ensemble</h2>
+          <p data-i18n="homelab-overview-text">Cluster Kubernetes single-node (Ubuntu 192.168.1.16) avec stockage NAS FreeNAS via SMB CSI driver. Tous les services sont déclarés en YAML, versionnés et déployables en une commande. Les backups sont automatisés vers Google Drive via rclone CronJob.</p>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="homelab-services-title">Services hébergés</h2>
+          <ul class="benefits-list">
+            <li>Jellyfin : Media server (500 Gi NAS en read-only)</li>
+            <li>ELK Stack : Elasticsearch + Logstash + Kibana + Filebeat DaemonSet</li>
+            <li>Prometheus + node-exporter : Métriques cluster et système</li>
+            <li>Grafana : Dashboards et visualisation</li>
+            <li>TeamSpeak : Serveur vocal (NodePort)</li>
+            <li>Backup rclone : CronJob quotidien NAS → Google Drive</li>
+            <li>ROOT : Application personnelle exposée avec TLS Let's Encrypt</li>
+          </ul>
+        </section>
+
+        <!-- ── deploy.sh ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Déploiement automatisé</h2>
+          <p>Un seul script installe le CSI driver SMB, crée le namespace, et déploie l'ensemble des services dans l'ordre correct, en attendant qu'Elasticsearch soit healthy avant de démarrer Logstash.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">deploy.sh</span>
+              <span class="code-lang">Bash</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment">#!/bin/bash</span>
+<span class="tok-comment"># Déploiement complet du homelab Kubernetes</span>
+<span class="tok-keyword">set</span> -euo pipefail
+
+<span class="tok-fn">echo</span> <span class="tok-string">"=== Installation du CSI driver SMB ==="</span>
+curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16.0/deploy/install-driver.sh \
+  | <span class="tok-fn">bash</span> -s v1.16.0 --
+
+<span class="tok-fn">echo</span> <span class="tok-string">"=== Création du namespace ==="</span>
+<span class="tok-fn">kubectl</span> apply -f namespace.yaml
+
+<span class="tok-fn">echo</span> <span class="tok-string">"=== Création du secret SMB ==="</span>
+<span class="tok-fn">read</span> -p <span class="tok-string">"Secret SMB configuré ? (y/n) "</span> -n 1 -r; <span class="tok-fn">echo</span>
+<span class="tok-keyword">if</span> [[ <span class="tok-variable">$REPLY</span> =~ ^[Yy]$ ]]; then
+  <span class="tok-fn">kubectl</span> apply -f smb-secret.yaml
+<span class="tok-keyword">fi</span>
+
+<span class="tok-fn">echo</span> <span class="tok-string">"=== Déploiement Jellyfin ==="</span>
+<span class="tok-fn">kubectl</span> apply -f jellyfin/
+
+<span class="tok-fn">echo</span> <span class="tok-string">"=== Déploiement Backup CronJob ==="</span>
+<span class="tok-fn">kubectl</span> apply -f backup/configmap.yaml
+<span class="tok-fn">kubectl</span> apply -f backup/pvc.yaml
+<span class="tok-fn">kubectl</span> apply -f backup/cronjob.yaml
+
+<span class="tok-fn">echo</span> <span class="tok-string">"=== Déploiement ELK Stack ==="</span>
+<span class="tok-fn">kubectl</span> apply -f elk/elasticsearch.yaml
+<span class="tok-fn">echo</span> <span class="tok-string">"Attente Elasticsearch ready..."</span>
+<span class="tok-fn">kubectl</span> wait --for=condition=ready pod -l app=elasticsearch \
+  -n homelab --timeout=300s
+<span class="tok-fn">kubectl</span> apply -f elk/logstash.yaml
+<span class="tok-fn">kubectl</span> apply -f elk/kibana.yaml
+<span class="tok-fn">kubectl</span> apply -f elk/filebeat.yaml
+
+<span class="tok-fn">kubectl</span> get pods -n homelab</code></pre>
+          </div>
+        </section>
+
+        <!-- ── CronJob backup ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Backup NAS → Google Drive</h2>
+          <p>CronJob Kubernetes qui exécute rclone chaque nuit à 3h UTC. Le montage NAS est en read-only, le token Google Drive est stocké dans un Secret K8s. <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">concurrencyPolicy: Forbid</code> garantit qu'un seul job tourne à la fois.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">backup/cronjob.yaml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">batch/v1</span>
+<span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">CronJob</span>
+<span class="tok-keyword">metadata</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">nas-backup-gdrive</span>
+  <span class="tok-keyword">namespace</span><span class="tok-operator">:</span> <span class="tok-string">homelab</span>
+<span class="tok-keyword">spec</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">schedule</span><span class="tok-operator">:</span> <span class="tok-string">"0 3 * * *"</span>         <span class="tok-comment"># 3h UTC quotidien</span>
+  <span class="tok-keyword">concurrencyPolicy</span><span class="tok-operator">:</span> <span class="tok-string">Forbid</span>    <span class="tok-comment"># pas de job simultané</span>
+  <span class="tok-keyword">successfulJobsHistoryLimit</span><span class="tok-operator">:</span> <span class="tok-number">3</span>
+  <span class="tok-keyword">failedJobsHistoryLimit</span><span class="tok-operator">:</span> <span class="tok-number">3</span>
+  <span class="tok-keyword">jobTemplate</span><span class="tok-operator">:</span>
+    <span class="tok-keyword">spec</span><span class="tok-operator">:</span>
+      <span class="tok-keyword">backoffLimit</span><span class="tok-operator">:</span> <span class="tok-number">2</span>
+      <span class="tok-keyword">template</span><span class="tok-operator">:</span>
+        <span class="tok-keyword">spec</span><span class="tok-operator">:</span>
+          <span class="tok-keyword">restartPolicy</span><span class="tok-operator">:</span> <span class="tok-string">OnFailure</span>
+          <span class="tok-keyword">containers</span><span class="tok-operator">:</span>
+            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">rclone</span>
+              <span class="tok-keyword">image</span><span class="tok-operator">:</span> <span class="tok-string">rclone/rclone:latest</span>
+              <span class="tok-keyword">command</span><span class="tok-operator">:</span> [<span class="tok-string">"/bin/sh"</span>, <span class="tok-string">"/scripts/backup.sh"</span>]
+              <span class="tok-keyword">volumeMounts</span><span class="tok-operator">:</span>
+                - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">script</span>
+                  <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/scripts</span>
+                - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">rclone-config</span>
+                  <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/config/rclone</span>
+                  <span class="tok-keyword">readOnly</span><span class="tok-operator">:</span> <span class="tok-string">true</span>
+                - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">nas-data</span>
+                  <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/mnt/nas</span>
+                  <span class="tok-keyword">readOnly</span><span class="tok-operator">:</span> <span class="tok-string">true</span>
+              <span class="tok-keyword">resources</span><span class="tok-operator">:</span>
+                <span class="tok-keyword">requests</span><span class="tok-operator">:</span> { <span class="tok-keyword">cpu</span><span class="tok-operator">:</span> <span class="tok-string">250m</span>, <span class="tok-keyword">memory</span><span class="tok-operator">:</span> <span class="tok-string">256Mi</span> }
+                <span class="tok-keyword">limits</span><span class="tok-operator">:</span>   { <span class="tok-keyword">cpu</span><span class="tok-operator">:</span> <span class="tok-string">"1"</span>,   <span class="tok-keyword">memory</span><span class="tok-operator">:</span> <span class="tok-string">512Mi</span> }
+          <span class="tok-keyword">volumes</span><span class="tok-operator">:</span>
+            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">script</span>
+              <span class="tok-keyword">configMap</span><span class="tok-operator">:</span>
+                <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">backup-script</span>
+                <span class="tok-keyword">defaultMode</span><span class="tok-operator">:</span> <span class="tok-number">0755</span>
+            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">rclone-config</span>
+              <span class="tok-keyword">secret</span><span class="tok-operator">:</span>
+                <span class="tok-keyword">secretName</span><span class="tok-operator">:</span> <span class="tok-string">rclone-config</span>   <span class="tok-comment"># token OAuth Google Drive</span>
+            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">nas-data</span>
+              <span class="tok-keyword">persistentVolumeClaim</span><span class="tok-operator">:</span>
+                <span class="tok-keyword">claimName</span><span class="tok-operator">:</span> <span class="tok-string">backup-source</span>    <span class="tok-comment"># 1Ti SMB FreeNAS</span></code></pre>
+          </div>
+        </section>
+
+        <!-- ── Filebeat DaemonSet ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Collecte centralisée des logs : Filebeat DaemonSet</h2>
+          <p>Filebeat tourne sur chaque nœud en tant que DaemonSet, collecte tous les logs des containers depuis <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">/var/log/containers/</code>, enrichit avec les métadonnées Kubernetes, et envoie à Logstash. Le ClusterRole donne accès en lecture à l'API K8s pour l'enrichissement.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">elk/filebeat.yaml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">v1</span>
+<span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">ConfigMap</span>
+<span class="tok-keyword">metadata</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">filebeat-config</span>
+  <span class="tok-keyword">namespace</span><span class="tok-operator">:</span> <span class="tok-string">homelab</span>
+<span class="tok-keyword">data</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">filebeat.yml</span><span class="tok-operator">:</span> |
+    <span class="tok-keyword">filebeat.inputs</span><span class="tok-operator">:</span>
+      - <span class="tok-keyword">type</span><span class="tok-operator">:</span> <span class="tok-string">container</span>
+        <span class="tok-keyword">paths</span><span class="tok-operator">:</span>
+          - <span class="tok-string">/var/log/containers/*.log</span>
+        <span class="tok-keyword">processors</span><span class="tok-operator">:</span>
+          - <span class="tok-keyword">add_kubernetes_metadata</span><span class="tok-operator">:</span>
+              <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">${NODE_NAME}</span>
+              <span class="tok-keyword">matchers</span><span class="tok-operator">:</span>
+                - <span class="tok-keyword">logs_path</span><span class="tok-operator">:</span>
+                    <span class="tok-keyword">logs_path</span><span class="tok-operator">:</span> <span class="tok-string">"/var/log/containers/"</span>
+    <span class="tok-keyword">output.logstash</span><span class="tok-operator">:</span>
+      <span class="tok-keyword">hosts</span><span class="tok-operator">:</span> [<span class="tok-string">"logstash:5044"</span>]
+---
+<span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">apps/v1</span>
+<span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">DaemonSet</span>              <span class="tok-comment"># un pod par nœud automatiquement</span>
+<span class="tok-keyword">metadata</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">filebeat</span>
+  <span class="tok-keyword">namespace</span><span class="tok-operator">:</span> <span class="tok-string">homelab</span>
+<span class="tok-keyword">spec</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">template</span><span class="tok-operator">:</span>
+    <span class="tok-keyword">spec</span><span class="tok-operator">:</span>
+      <span class="tok-keyword">serviceAccountName</span><span class="tok-operator">:</span> <span class="tok-string">filebeat</span>
+      <span class="tok-keyword">containers</span><span class="tok-operator">:</span>
+        - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">filebeat</span>
+          <span class="tok-keyword">image</span><span class="tok-operator">:</span> <span class="tok-string">docker.elastic.co/beats/filebeat:8.13.0</span>
+          <span class="tok-keyword">env</span><span class="tok-operator">:</span>
+            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">NODE_NAME</span>
+              <span class="tok-keyword">valueFrom</span><span class="tok-operator">:</span>
+                <span class="tok-keyword">fieldRef</span><span class="tok-operator">:</span> { <span class="tok-keyword">fieldPath</span><span class="tok-operator">:</span> <span class="tok-string">spec.nodeName</span> }
+          <span class="tok-keyword">volumeMounts</span><span class="tok-operator">:</span>
+            - { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">varlog</span>,       <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/var/log</span>,                        <span class="tok-keyword">readOnly</span><span class="tok-operator">:</span> <span class="tok-string">true</span> }
+            - { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">containerlog</span>, <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/var/lib/docker/containers</span>, <span class="tok-keyword">readOnly</span><span class="tok-operator">:</span> <span class="tok-string">true</span> }
+      <span class="tok-keyword">volumes</span><span class="tok-operator">:</span>
+        - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">varlog</span>
+          <span class="tok-keyword">hostPath</span><span class="tok-operator">:</span> { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/var/log</span> }           <span class="tok-comment"># logs du nœud hôte</span>
+        - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">containerlog</span>
+          <span class="tok-keyword">hostPath</span><span class="tok-operator">:</span> { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/var/lib/docker/containers</span> }
+---
+<span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">rbac.authorization.k8s.io/v1</span>
+<span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">ClusterRole</span>
+<span class="tok-keyword">metadata</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">filebeat</span>
+<span class="tok-keyword">rules</span><span class="tok-operator">:</span>
+  - <span class="tok-keyword">apiGroups</span><span class="tok-operator">:</span> [<span class="tok-string">""</span>]
+    <span class="tok-keyword">resources</span><span class="tok-operator">:</span> [<span class="tok-string">"pods"</span>, <span class="tok-string">"namespaces"</span>, <span class="tok-string">"nodes"</span>]
+    <span class="tok-keyword">verbs</span><span class="tok-operator">:</span> [<span class="tok-string">"get"</span>, <span class="tok-string">"list"</span>, <span class="tok-string">"watch"</span>]</code></pre>
+          </div>
+        </section>
+
+        <!-- ── Ingress Traefik ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Ingress Traefik + TLS Let's Encrypt</h2>
+          <p>Toutes les routes HTTP sont déclarées dans un seul Ingress. cert-manager gère automatiquement les certificats TLS via Let's Encrypt pour le domaine public. Les services internes (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">.home</code>) sont accessibles en local uniquement.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">ingress.yaml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">networking.k8s.io/v1</span>
+<span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">Ingress</span>
+<span class="tok-keyword">metadata</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">homelab-ingress</span>
+  <span class="tok-keyword">namespace</span><span class="tok-operator">:</span> <span class="tok-string">homelab</span>
+  <span class="tok-keyword">annotations</span><span class="tok-operator">:</span>
+    <span class="tok-property">kubernetes.io/ingress.class</span><span class="tok-operator">:</span> <span class="tok-string">"traefik"</span>
+    <span class="tok-property">traefik.ingress.kubernetes.io/router.entrypoints</span><span class="tok-operator">:</span> <span class="tok-string">websecure</span>
+    <span class="tok-property">cert-manager.io/cluster-issuer</span><span class="tok-operator">:</span> <span class="tok-string">letsencrypt-prod</span>
+<span class="tok-keyword">spec</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">tls</span><span class="tok-operator">:</span>
+    - <span class="tok-keyword">hosts</span><span class="tok-operator">:</span> [<span class="tok-string">root.fariadossantos.com</span>]
+      <span class="tok-keyword">secretName</span><span class="tok-operator">:</span> <span class="tok-string">root-tls</span>            <span class="tok-comment"># cert auto-renew via cert-manager</span>
+  <span class="tok-keyword">rules</span><span class="tok-operator">:</span>
+    - <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">kibana.home</span>
+      <span class="tok-keyword">http</span><span class="tok-operator">:</span>
+        <span class="tok-keyword">paths</span><span class="tok-operator">:</span>
+          - { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/</span>, <span class="tok-keyword">pathType</span><span class="tok-operator">:</span> <span class="tok-string">Prefix</span>, <span class="tok-keyword">backend</span><span class="tok-operator">:</span> { <span class="tok-keyword">service</span><span class="tok-operator">:</span> { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">kibana</span>, <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">5601</span> } } } }
+    - <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">jellyfin.home</span>
+      <span class="tok-keyword">http</span><span class="tok-operator">:</span>
+        <span class="tok-keyword">paths</span><span class="tok-operator">:</span>
+          - { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/</span>, <span class="tok-keyword">pathType</span><span class="tok-operator">:</span> <span class="tok-string">Prefix</span>, <span class="tok-keyword">backend</span><span class="tok-operator">:</span> { <span class="tok-keyword">service</span><span class="tok-operator">:</span> { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">jellyfin</span>, <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">8096</span> } } } }
+    - <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">grafana.home</span>
+      <span class="tok-keyword">http</span><span class="tok-operator">:</span>
+        <span class="tok-keyword">paths</span><span class="tok-operator">:</span>
+          - { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/</span>, <span class="tok-keyword">pathType</span><span class="tok-operator">:</span> <span class="tok-string">Prefix</span>, <span class="tok-keyword">backend</span><span class="tok-operator">:</span> { <span class="tok-keyword">service</span><span class="tok-operator">:</span> { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">grafana</span>, <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">3000</span> } } } }
+    - <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">root.fariadossantos.com</span>      <span class="tok-comment"># domaine public avec TLS</span>
+      <span class="tok-keyword">http</span><span class="tok-operator">:</span>
+        <span class="tok-keyword">paths</span><span class="tok-operator">:</span>
+          - { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/</span>, <span class="tok-keyword">pathType</span><span class="tok-operator">:</span> <span class="tok-string">Prefix</span>, <span class="tok-keyword">backend</span><span class="tok-operator">:</span> { <span class="tok-keyword">service</span><span class="tok-operator">:</span> { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">root-svc</span>, <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">80</span> } } } }</code></pre>
+          </div>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="homelab-arch-title">Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Kubernetes</strong>
+              <span>Orchestration : single node Ubuntu 22.04</span>
+            </div>
+            <div class="tech-item">
+              <strong>SMB CSI driver</strong>
+              <span>Montage NAS FreeNAS (192.168.1.240) en PVC</span>
+            </div>
+            <div class="tech-item">
+              <strong>ELK 8.13</strong>
+              <span>Elasticsearch StatefulSet + Logstash + Kibana</span>
+            </div>
+            <div class="tech-item">
+              <strong>Prometheus + Grafana</strong>
+              <span>Métriques node-exporter + dashboards</span>
+            </div>
+            <div class="tech-item">
+              <strong>rclone + CronJob</strong>
+              <span>Backup quotidien NAS → Google Drive</span>
+            </div>
+            <div class="tech-item">
+              <strong>Traefik + cert-manager</strong>
+              <span>Ingress + TLS auto Let's Encrypt</span>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/js/i18n.js"></script>
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copié !';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

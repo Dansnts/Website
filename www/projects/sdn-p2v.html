@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SDN P2V Automation - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/#projects" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-teal">Ansible</span>
+            <span class="tag tag-green">Python</span>
+            <span class="tag tag-orange">EVE-NG</span>
+            <span class="tag tag-blue">Aruba AOS-CX</span>
+          </div>
+          <h1>SDN P2V Automation</h1>
+          <p class="project-subtitle" data-i18n="sdn-subtitle">Physical to Virtual : Pipeline d'automatisation réseau Aruba AOS-CX vers EVE-NG</p>
+        </header>
+
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="sdn-problem-title">Problématique</h2>
+          <p data-i18n="sdn-problem-text">Tester des modifications sur un réseau de production Aruba est risqué et coûteux. Les erreurs de configuration peuvent entraîner des interruptions de service. Comment valider des changements sans impacter l'infrastructure existante ?</p>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="sdn-solution-title">Pipeline</h2>
+          <div class="project-flow">
+            <div class="flow-step">
+              <div class="flow-number">1</div>
+              <h3 data-i18n="sdn-step1-title">Collecte</h3>
+              <p data-i18n="sdn-step1-text">Ansible collecte les configs running et les tables LLDP de chaque switch Aruba AOS-CX.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">2</div>
+              <h3 data-i18n="sdn-step2-title">Nettoyage</h3>
+              <p data-i18n="sdn-step2-text">ArubaConfigCleaner supprime les commandes non supportées en virtuel (VSF, UBT, DHCP) et remappe les ports uplink.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">3</div>
+              <h3 data-i18n="sdn-step3-title">Topologie</h3>
+              <p data-i18n="sdn-step3-text">LLDPToUNL parse les tables LLDP, déduplique les liens, et génère le fichier UNL avec les configs en base64.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">4</div>
+              <h3 data-i18n="sdn-step4-title">Import EVE-NG</h3>
+              <p data-i18n="sdn-step4-text">Le ZIP généré s'importe directement dans EVE-NG, topologie et configs ready-to-boot.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Input LLDP ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Input : Table LLDP Aruba AOS-CX</h2>
+          <p>Format brut collecté par Ansible depuis <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">show lldp neighbor-info detail</code>. Chaque bloc décrit un voisin découvert sur un port local.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">lldp-SWB-CHE-LAB-1.conf</span>
+              <span class="code-lang">LLDP output</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code>--------------------------------------------------------------------------------
+Port                           : 1/1/47
+Neighbor System-Name           : SWC-CHE-LAB-1
+Neighbor Chassis-ID            : ec:67:94:53:56:80
+Neighbor Management-Address    : 172.18.0.49
+Neighbor Port-ID               : 1/1/1
+Neighbor Port-Desc             : Link to Leaf id 01
+TTL                            : 120
+--------------------------------------------------------------------------------
+Port                           : 1/1/48
+Neighbor System-Name           : SWC-CHE-LAB-2
+Neighbor Chassis-ID            : e4:de:40:a8:91:40
+Neighbor Management-Address    : 172.18.0.50
+Neighbor Port-ID               : 1/1/1
+Neighbor Port-Desc             : Link to Leaf id 01
+TTL                            : 120
+--------------------------------------------------------------------------------
+Port                           : mgmt
+Neighbor System-Name           : SWE-CHE-LAB-1
+Neighbor Chassis-ID            : ec:67:94:54:01:40
+Neighbor Port-ID               : mgmt
+Neighbor Port-Desc             : mgmt
+TTL                            : 120</code></pre>
+          </div>
+        </section>
+
+        <!-- ── ArubaConfigCleaner ── -->
+        <section class="project-section" data-anim="up">
+          <h2>ArubaConfigCleaner.py : Pipeline de nettoyage</h2>
+          <p>Les switches physiques Aruba utilisent des fonctionnalités non disponibles sur les images virtuelles : VSF (stacking), UBT, PoE, et des ports uplink numérotés 1/1/47-49. Le cleaner adapte automatiquement chaque config.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">ArubaConfigCleaner.py</span>
+              <span class="code-lang">Python</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment"># Remapping ports physiques uplink → virtuels (limite 9 ports max)</span>
+<span class="tok-variable">PORT_MAPPING</span> <span class="tok-operator">=</span> {
+    <span class="tok-string">"1/1/47"</span><span class="tok-operator">:</span> <span class="tok-string">"1/1/8"</span>,
+    <span class="tok-string">"1/1/48"</span><span class="tok-operator">:</span> <span class="tok-string">"1/1/9"</span>,
+    <span class="tok-string">"1/1/49"</span><span class="tok-operator">:</span> <span class="tok-string">"1/1/7"</span>
+}
+
+<span class="tok-comment"># Patterns de lignes supprimées (non supportées en virtuel)</span>
+<span class="tok-variable">SKIP_PATTERNS</span> <span class="tok-operator">=</span> [
+    <span class="tok-string">r"user\s+admin\s+group\s+administrators\s+password\s+ciphertext"</span>,
+    <span class="tok-string">r"active-gateway l3-src-mac"</span>,
+    <span class="tok-string">r"client track ip"</span>,
+    <span class="tok-string">r"ip source-interface ubt"</span>,
+    <span class="tok-string">r"replication-mode"</span>,
+    <span class="tok-string">r"^ip dhcp$"</span>,
+    <span class="tok-string">r"^no ipv6 dhcp$"</span>
+]
+
+<span class="tok-keyword">def</span> <span class="tok-fn">modifier_contenu</span>(texte, vxlan_config<span class="tok-operator">=</span><span class="tok-variable">None</span>):
+    <span class="tok-string">"""Pipeline complet : extraction → VSF → lignes → ports → VXLANs."""</span>
+    version <span class="tok-operator">=</span> <span class="tok-fn">extraire_version</span>(texte)
+    config  <span class="tok-operator">=</span> <span class="tok-fn">extraire_config</span>(texte)       <span class="tok-comment"># strip Ansible wrapper</span>
+    config  <span class="tok-operator">=</span> <span class="tok-fn">supprimer_vsf</span>(config)         <span class="tok-comment"># remove VSF member blocks</span>
+    config  <span class="tok-operator">=</span> <span class="tok-fn">filtrer_lignes</span>(config)        <span class="tok-comment"># remove SKIP_PATTERNS lines</span>
+    config  <span class="tok-operator">=</span> <span class="tok-fn">remapper_interfaces</span>(config)   <span class="tok-comment"># 1/1/47→1/1/8, etc.</span>
+    config  <span class="tok-operator">=</span> <span class="tok-fn">filtrer_vxlans</span>(config, vxlan_config)  <span class="tok-comment"># limit to 32 VXLANs</span>
+
+    <span class="tok-keyword">return</span> <span class="tok-string">f"!Version AOS-CX {version}\nauto-confirm\nconfigure terminal\n\n{config}\n"</span></code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">vxlan_config.yaml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment"># VXLANs à conserver (limite hardware virtuelle : 32 max)</span>
+<span class="tok-keyword">vxlans_to_keep</span><span class="tok-operator">:</span>
+  <span class="tok-operator">-</span> <span class="tok-number">1951</span>
+  <span class="tok-operator">-</span> <span class="tok-number">3544</span>
+  <span class="tok-operator">-</span> <span class="tok-number">3577</span>
+  <span class="tok-operator">-</span> <span class="tok-number">3800</span>
+  <span class="tok-operator">-</span> <span class="tok-number">3900</span>
+
+<span class="tok-keyword">vlans_to_keep</span><span class="tok-operator">:</span>
+  <span class="tok-operator">-</span> <span class="tok-number">1951</span>
+  <span class="tok-operator">-</span> <span class="tok-number">3544</span>
+  <span class="tok-operator">-</span> <span class="tok-number">3577</span>
+  <span class="tok-operator">-</span> <span class="tok-number">3800</span>
+  <span class="tok-operator">-</span> <span class="tok-number">3900</span></code></pre>
+          </div>
+        </section>
+
+        <!-- ── LLDPToUNL ── -->
+        <section class="project-section" data-anim="up">
+          <h2>LLDPToUNL.py : Parsing topologique</h2>
+          <p>Depuis les fichiers LLDP collectés, le script reconstruit la topologie complète, déduplique les liens bidirectionnels, et génère un fichier XML/UNL avec les configs encodées en base64 directement embarquées.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">LLDPToUNL.py</span>
+              <span class="code-lang">Python</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-keyword">def</span> <span class="tok-fn">remap_port</span>(self, sw, port):
+    <span class="tok-string">"""Remappe les ports physiques hors plage vers virtuels (max 1/1/9)."""</span>
+    m <span class="tok-operator">=</span> re.<span class="tok-fn">match</span>(<span class="tok-string">r'(\d+/\d+/)(\d+)'</span>, port)
+    <span class="tok-keyword">if</span> m:
+        <span class="tok-keyword">if</span> <span class="tok-fn">int</span>(m.<span class="tok-fn">group</span>(<span class="tok-number">2</span>)) <span class="tok-operator">&lt;=</span> <span class="tok-number">9</span><span class="tok-operator">:</span>
+            <span class="tok-keyword">return</span> port  <span class="tok-comment"># déjà dans la plage virtuelle</span>
+        <span class="tok-keyword">if</span> port <span class="tok-keyword">in</span> PORT_MAP:
+            self.remapped[(sw, port)] <span class="tok-operator">=</span> PORT_MAP[port]
+            <span class="tok-keyword">return</span> PORT_MAP[port]
+    <span class="tok-keyword">return</span> port
+
+<span class="tok-keyword">def</span> <span class="tok-fn">parse_file</span>(self, filepath):
+    <span class="tok-string">"""Parse un fichier LLDP et extrait les connexions switch↔switch."""</span>
+    <span class="tok-keyword">with</span> <span class="tok-fn">open</span>(filepath, <span class="tok-string">'r'</span>, encoding<span class="tok-operator">=</span><span class="tok-string">'utf-8'</span>) <span class="tok-keyword">as</span> f:
+        content <span class="tok-operator">=</span> f.<span class="tok-fn">read</span>()
+
+    <span class="tok-comment"># Nom du switch local depuis le nom de fichier : lldp-SWB-CHE-LAB-1.conf</span>
+    m <span class="tok-operator">=</span> re.<span class="tok-fn">search</span>(<span class="tok-string">r'lldp-(.+)\.conf'</span>, os.path.<span class="tok-fn">basename</span>(filepath))
+    local_sw <span class="tok-operator">=</span> self.<span class="tok-fn">add_switch</span>(m.<span class="tok-fn">group</span>(<span class="tok-number">1</span>))
+
+    <span class="tok-keyword">for</span> block <span class="tok-keyword">in</span> re.<span class="tok-fn">split</span>(<span class="tok-string">r'-{20,}'</span>, content):
+        port_m  <span class="tok-operator">=</span> re.<span class="tok-fn">search</span>(<span class="tok-string">r'^Port\s+:\s+(\S+)'</span>, block, re.MULTILINE)
+        name_m  <span class="tok-operator">=</span> re.<span class="tok-fn">search</span>(<span class="tok-string">r'Neighbor System-Name\s+:\s+(.+)'</span>, block)
+        nport_m <span class="tok-operator">=</span> re.<span class="tok-fn">search</span>(<span class="tok-string">r'Neighbor Port-ID\s+:\s+(\S+)'</span>, block)
+
+        <span class="tok-keyword">if not</span> (port_m <span class="tok-keyword">and</span> name_m <span class="tok-keyword">and</span> nport_m):
+            <span class="tok-keyword">continue</span>
+
+        local_port   <span class="tok-operator">=</span> port_m.<span class="tok-fn">group</span>(<span class="tok-number">1</span>)
+        neighbor     <span class="tok-operator">=</span> name_m.<span class="tok-fn">group</span>(<span class="tok-number">1</span>).<span class="tok-fn">strip</span>()
+        neighbor_port <span class="tok-operator">=</span> nport_m.<span class="tok-fn">group</span>(<span class="tok-number">1</span>).<span class="tok-fn">strip</span>()
+
+        <span class="tok-keyword">if</span> local_port <span class="tok-operator">==</span> <span class="tok-string">'mgmt'</span> <span class="tok-keyword">or</span> neighbor <span class="tok-keyword">in</span> [<span class="tok-string">'6300'</span>, <span class="tok-string">'GS1350'</span>]:
+            <span class="tok-keyword">continue</span>  <span class="tok-comment"># ignorer ports mgmt et équipements non-Aruba</span>
+
+        lp <span class="tok-operator">=</span> self.<span class="tok-fn">remap_port</span>(local_sw, local_port)
+        np <span class="tok-operator">=</span> self.<span class="tok-fn">remap_port</span>(neighbor, neighbor_port)
+        self.connections.<span class="tok-fn">append</span>((local_sw, lp, neighbor, np))
+
+<span class="tok-keyword">def</span> <span class="tok-fn">normalize_connections</span>(self):
+    <span class="tok-string">"""Déduplique les liens bidirectionnels (A→B == B→A)."""</span>
+    unique <span class="tok-operator">=</span> <span class="tok-fn">set</span>()
+    <span class="tok-keyword">for</span> s1, p1, s2, p2 <span class="tok-keyword">in</span> self.connections:
+        key <span class="tok-operator">=</span> (s1, p1, s2, p2) <span class="tok-keyword">if</span> (s1, p1) <span class="tok-operator">&lt;</span> (s2, p2) <span class="tok-keyword">else</span> (s2, p2, s1, p1)
+        unique.<span class="tok-fn">add</span>(key)
+    <span class="tok-keyword">return</span> <span class="tok-fn">sorted</span>(unique)</code></pre>
+          </div>
+        </section>
+
+        <!-- ── P2V orchestration ── -->
+        <section class="project-section" data-anim="up">
+          <h2>P2V.py : Orchestration du workflow</h2>
+          <p>Script principal qui enchaîne les 4 étapes, gère les dossiers temporaires, et produit le ZIP prêt à l'import EVE-NG.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">P2V.py</span>
+              <span class="code-lang">Python</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-keyword">def</span> <span class="tok-fn">run</span>(self):
+    <span class="tok-string">"""Workflow complet : validation → nettoyage → UNL → ZIP."""</span>
+    <span class="tok-keyword">try</span>:
+        <span class="tok-keyword">if not</span> self.<span class="tok-fn">validate_input</span>():
+            sys.<span class="tok-fn">exit</span>(<span class="tok-number">1</span>)
+
+        converted <span class="tok-operator">=</span> self.<span class="tok-fn">convert_configs</span>()   <span class="tok-comment"># → ArubaConfigCleaner</span>
+        self.<span class="tok-fn">generate_unl</span>(converted)          <span class="tok-comment"># → LLDPToUNL</span>
+        zip_path  <span class="tok-operator">=</span> self.<span class="tok-fn">create_zip</span>()          <span class="tok-comment"># → .zip pour EVE-NG</span>
+
+        <span class="tok-fn">print</span>(<span class="tok-string">f"UNL : {os.path.abspath(self.output_unl)}"</span>)
+        <span class="tok-fn">print</span>(<span class="tok-string">f"ZIP : {os.path.abspath(zip_path)}"</span>)
+        <span class="tok-fn">print</span>(<span class="tok-string">"Import EVE-NG : File → Import → Browse → .zip"</span>)
+
+    <span class="tok-keyword">except</span> Exception <span class="tok-keyword">as</span> e:
+        <span class="tok-fn">print</span>(<span class="tok-string">f"ERREUR: {e}"</span>)
+        sys.<span class="tok-fn">exit</span>(<span class="tok-number">1</span>)
+
+    <span class="tok-keyword">finally</span>:
+        self.<span class="tok-fn">cleanup</span>()  <span class="tok-comment"># supprime les fichiers temporaires</span>
+
+
+<span class="tok-comment"># Usage</span>
+<span class="tok-comment"># python3 P2V.py ./data/ output.unl</span></code></pre>
+          </div>
+        </section>
+
+        <!-- ── P2V topology migration diagram ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Topologie : Physique vers Virtuel</h2>
+          <p>Le pipeline reconstruit fidelement la topologie physique Aruba dans EVE-NG. Les ports uplink sont remappes (1/1/47-49 vers 1/1/7-9) pour respecter la limite des images virtuelles. La topologie decouverte via LLDP est automatiquement reproduite dans le fichier UNL.</p>
+          <div class="mermaid">
+graph TD
+    subgraph Physical["Infrastructure physique Aruba AOS-CX"]
+        SWA["SWA-CHE-LAB-1\n172.18.0.47\nCore L3"]
+        SWB["SWB-CHE-LAB-1\n172.18.0.48\nDistribution"]
+        SWC1["SWC-CHE-LAB-1\n172.18.0.49\nAccess"]
+        SWC2["SWC-CHE-LAB-2\n172.18.0.50\nAccess"]
+        SWE["SWE-CHE-LAB-1\nMgmt switch"]
+
+        SWA -->|"1/1/47 to 1/1/48"| SWB
+        SWB -->|"1/1/47 to 1/1/1"| SWC1
+        SWB -->|"1/1/48 to 1/1/1"| SWC2
+        SWE -.->|mgmt| SWA
+        SWE -.->|mgmt| SWB
+    end
+
+    subgraph Pipeline["Pipeline P2V"]
+        direction TB
+        ANS["Ansible\ncollecte configs et LLDP"]
+        CLEAN["ArubaConfigCleaner.py\nsupprime VSF/UBT/PoE\nremappe ports"]
+        TOPO["LLDPToUNL.py\nparse LLDP\ndeduplique liens\ngenere XML/UNL"]
+        ZIP["P2V.py\narchive .zip"]
+        ANS --> CLEAN --> TOPO --> ZIP
+    end
+
+    subgraph Virtual["EVE-NG : Topologie virtuelle"]
+        VSWA["vSWA-CHE-LAB-1\nAOS-CX virt"]
+        VSWB["vSWB-CHE-LAB-1\nAOS-CX virt"]
+        VSWC1["vSWC-CHE-LAB-1\nAOS-CX virt"]
+        VSWC2["vSWC-CHE-LAB-2\nAOS-CX virt"]
+
+        VSWA -->|"e0/7 to e0/8"| VSWB
+        VSWB -->|"e0/8 to e0/1"| VSWC1
+        VSWB -->|"e0/9 to e0/1"| VSWC2
+    end
+
+    Physical -->|"show run\nshow lldp neighbor-info"| ANS
+    ZIP -->|Import EVE-NG\nFile Import| Virtual
+          </div>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="sdn-benefits-title">Bénéfices</h2>
+          <ul class="benefits-list">
+            <li data-i18n="sdn-benefit1">Réduction des risques : tester avant de déployer en production</li>
+            <li data-i18n="sdn-benefit2">Gains financiers : pas besoin d'équipements de test physiques</li>
+            <li data-i18n="sdn-benefit3">Formation : environnement de lab pour les équipes réseau</li>
+            <li data-i18n="sdn-benefit4">Supporte Aruba AOS-CX, support Arista EOS en cours</li>
+          </ul>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="sdn-stack-title">Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Python 3</strong>
+              <span data-i18n="sdn-tech-python">Parsing, nettoyage et génération XML/UNL</span>
+            </div>
+            <div class="tech-item">
+              <strong>Ansible</strong>
+              <span data-i18n="sdn-tech-ansible">Collecte des configs et tables LLDP</span>
+            </div>
+            <div class="tech-item">
+              <strong>EVE-NG</strong>
+              <span data-i18n="sdn-tech-eveng">Plateforme de virtualisation réseau</span>
+            </div>
+            <div class="tech-item">
+              <strong>Aruba AOS-CX</strong>
+              <span data-i18n="sdn-tech-lldp">LLDP, VXLAN, EVPN, VSF</span>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+  <script src="/js/i18n.js"></script>
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copié !';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

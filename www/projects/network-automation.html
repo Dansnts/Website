@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Automation - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/projects.html" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-green">Python</span>
+            <span class="tag tag-teal">Ansible</span>
+            <span class="tag tag-orange">Cisco</span>
+            <span class="tag tag-orange">Mikrotik</span>
+          </div>
+          <h1>Network Automation</h1>
+          <p class="project-subtitle" data-i18n="netauto-subtitle">Scripts d'automatisation pour équipements réseau</p>
+        </header>
+
+        <section class="project-section">
+          <h2 data-i18n="netauto-overview-title">Vue d'ensemble</h2>
+          <p data-i18n="netauto-overview-text">Collection de scripts et playbooks pour automatiser la configuration et la gestion d'équipements réseau multi-vendeurs. Réduction du temps de déploiement et minimisation des erreurs humaines.</p>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="netauto-features-title">Fonctionnalités</h2>
+          <ul class="benefits-list">
+            <li data-i18n="netauto-feature1">Backup automatique des configurations</li>
+            <li data-i18n="netauto-feature2">Déploiement de VLANs en masse</li>
+            <li data-i18n="netauto-feature3">Audit de conformité des configurations</li>
+            <li data-i18n="netauto-feature4">Génération de rapports d'inventaire</li>
+            <li data-i18n="netauto-feature5">Templates Jinja2 pour configurations standardisées</li>
+          </ul>
+        </section>
+
+        <!-- ── Automation pipeline flowchart ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Pipeline d'automatisation reseau</h2>
+          <p>Workflow Ansible pour la gestion multi-vendeurs : inventaire dynamique, collecte de l'etat courant, application des configurations depuis templates Jinja2, verification de conformite et rapport final.</p>
+          <div class="mermaid">
+flowchart LR
+    subgraph Inventory["Inventaire"]
+        INV["hosts.yaml\nGroupes par vendeur\ncisco / mikrotik / aruba"]
+    end
+
+    subgraph Playbook["Playbook Ansible"]
+        GATHER["Gather facts\nversion IOS/EOS/RouterOS"]
+        BACKUP["Backup config\nrunning-config"]
+        TEMPLATE["Jinja2 templates\nVLAN / ACL / BGP"]
+        PUSH["Push config\nnapalm / netmiko / SSH"]
+        VERIFY["Verification\nping / route check"]
+        REPORT["Rapport HTML\nchanges et compliance"]
+
+        GATHER --> BACKUP --> TEMPLATE --> PUSH --> VERIFY --> REPORT
+    end
+
+    subgraph Targets["Equipements"]
+        CISCO["Cisco IOS-XE\nSwitches / Routeurs"]
+        MIKRO["Mikrotik RouterOS\nRouters / AP"]
+        ARUBA["Aruba AOS-CX\nSwitches"]
+        ARISTA["Arista EOS\nDatacenter"]
+    end
+
+    INV --> GATHER
+    PUSH -->|SSH / NETCONF| CISCO
+    PUSH -->|SSH / API| MIKRO
+    PUSH -->|REST API| ARUBA
+    PUSH -->|eAPI| ARISTA
+          </div>
+        </section>
+
+        <!-- ── Ansible playbook code block ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Playbook Ansible : Deploiement VLAN multi-vendeurs</h2>
+          <p>Exemple de playbook deploiant une liste de VLANs sur l'ensemble du parc. Les templates Jinja2 generent la syntaxe specifique a chaque OS cible.</p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">deploy_vlans.yml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code>---
+- name: Deploy VLANs - Cisco IOS-XE
+  hosts: cisco
+  gather_facts: false
+  vars:
+    vlans:
+      - { id: 100, name: "PRODUCTION" }
+      - { id: 200, name: "MANAGEMENT" }
+      - { id: 300, name: "DMZ" }
+
+  tasks:
+    - name: Backup running-config
+      cisco.ios.ios_config:
+        backup: true
+      register: backup_output
+
+    - name: Configure VLANs
+      cisco.ios.ios_vlans:
+        config:
+          - vlan_id: "{{ item.id }}"
+            name: "{{ item.name }}"
+            state: active
+        state: merged
+      loop: "{{ vlans }}"
+
+    - name: Verify VLANs present
+      cisco.ios.ios_command:
+        commands: show vlan brief
+      register: vlan_output
+
+    - name: Assert VLAN visible
+      ansible.builtin.assert:
+        that: "'{{ item.name }}' in vlan_output.stdout[0]"
+        fail_msg: "VLAN {{ item.name }} absent de la table"
+      loop: "{{ vlans }}"
+
+---
+- name: Deploy VLANs - Mikrotik RouterOS
+  hosts: mikrotik
+  gather_facts: false
+  vars:
+    vlans:
+      - { id: 100, name: "PRODUCTION", interface: "bridge" }
+      - { id: 200, name: "MANAGEMENT", interface: "bridge" }
+
+  tasks:
+    - name: Create VLAN bridge ports
+      community.routeros.api:
+        path: interface bridge vlan
+        add:
+          bridge: bridge
+          vlan-ids: "{{ item.id }}"
+          tagged: "{{ item.interface }}"
+          comment: "{{ item.name }}"
+      loop: "{{ vlans }}"
+
+---
+- name: Audit compliance - tous vendeurs
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Collect device info
+      ansible.builtin.include_role:
+        name: network_audit
+      vars:
+        output_dir: "./reports/{{ inventory_hostname }}"</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">hosts.yaml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code>all:
+  children:
+    cisco:
+      hosts:
+        sw-core-01:
+          ansible_host: 10.0.0.1
+          ansible_network_os: cisco.ios.ios
+          ansible_connection: network_cli
+          ansible_user: admin
+          ansible_ssh_pass: "{{ vault_cisco_pass }}"
+
+        sw-access-01:
+          ansible_host: 10.0.0.2
+          ansible_network_os: cisco.ios.ios
+          ansible_connection: network_cli
+
+    mikrotik:
+      hosts:
+        rtr-gw-01:
+          ansible_host: 10.0.1.1
+          ansible_network_os: routeros
+          ansible_connection: network_cli
+          ansible_user: admin
+
+    aruba:
+      hosts:
+        sw-distrib-01:
+          ansible_host: 10.0.2.1
+          ansible_network_os: arubanetworks.aoscx.aoscx
+          ansible_connection: arubanetworks.aoscx.aoscx</code></pre>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="netauto-vendors-title">Équipements supportés</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Cisco IOS/IOS-XE</strong>
+              <span data-i18n="netauto-vendor-cisco">Switches et routeurs</span>
+            </div>
+            <div class="tech-item">
+              <strong>Mikrotik RouterOS</strong>
+              <span data-i18n="netauto-vendor-mikrotik">Routeurs et points d'accès</span>
+            </div>
+            <div class="tech-item">
+              <strong>Aruba</strong>
+              <span data-i18n="netauto-vendor-aruba">Switches et contrôleurs WiFi</span>
+            </div>
+            <div class="tech-item">
+              <strong>Arista EOS</strong>
+              <span data-i18n="netauto-vendor-arista">Switches datacenter</span>
+            </div>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+  <script src="/js/i18n.js"></script>
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copie !';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

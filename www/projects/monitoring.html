@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoring Dashboard - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/projects.html" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-teal">Grafana</span>
+            <span class="tag tag-teal">Prometheus</span>
+            <span class="tag tag-blue">Docker</span>
+            <span class="tag tag-teal">Alerting</span>
+          </div>
+          <h1>Monitoring Dashboard</h1>
+          <p class="project-subtitle" data-i18n="monitoring-subtitle">Stack de monitoring complète pour infrastructure</p>
+        </header>
+
+        <section class="project-section">
+          <h2 data-i18n="monitoring-overview-title">Vue d'ensemble</h2>
+          <p data-i18n="monitoring-overview-text">Solution de monitoring centralisée basée sur Prometheus et Grafana. Collecte de métriques, visualisation et alerting pour garder un oeil sur l'infrastructure.</p>
+        </section>
+
+        <!-- ── Prometheus scrape flow diagram ── -->
+        <section class="project-section" data-anim="up">
+          <h2>Flux de collecte Prometheus</h2>
+          <p>Prometheus scrute chaque cible selon un intervalle configuré. node-exporter expose les métriques système, cAdvisor les métriques containers. Alertmanager achemine les alertes vers les canaux de notification.</p>
+          <div class="mermaid">
+graph LR
+    subgraph Targets["Cibles scrapées"]
+        NE["node-exporter\n:9100\nCPU / RAM / Disk / Net"]
+        CA["cAdvisor\n:8080\nMetriques containers"]
+        BL["blackbox-exporter\n:9115\nHTTP / TCP probes"]
+        PH["Prometheus lui-meme\n:9090\n/metrics"]
+    end
+
+    subgraph Core["Coeur du stack"]
+        PROM["Prometheus\nTSDB locale\n15s scrape interval"]
+        AM["Alertmanager\n:9093"]
+        LOKI["Loki\nAgregation logs"]
+    end
+
+    subgraph Viz["Visualisation"]
+        GF["Grafana\n:3000\nDashboards"]
+    end
+
+    subgraph Notify["Notifications"]
+        MAIL["Email / SMTP"]
+        SLACK["Webhook Slack"]
+    end
+
+    NE -->|HTTP GET /metrics| PROM
+    CA -->|HTTP GET /metrics| PROM
+    BL -->|HTTP GET /metrics| PROM
+    PH -->|HTTP GET /metrics| PROM
+    PROM -->|AlertRule fired| AM
+    AM -->|route: critical| MAIL
+    AM -->|route: warning| SLACK
+    PROM -->|PromQL datasource| GF
+    LOKI -->|LogQL datasource| GF
+          </div>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2>Configuration Prometheus</h2>
+          <p>Fichier de configuration principal definissant les intervalles de scrape, les cibles statiques et les regles d'alerte chargees depuis des fichiers externes.</p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">prometheus.yml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code>global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'homelab'
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node'
+    static_configs:
+      - targets:
+          - '192.168.1.16:9100'   # k8s node Ubuntu
+          - '192.168.1.240:9100'  # NAS FreeNAS (si node-exporter installe)
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  - job_name: 'blackbox-http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - https://root.fariadossantos.com
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115</code></pre>
+          </div>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2>Regles d'alerte</h2>
+          <p>Exemple de regles Prometheus pour surveiller la disponibilite des noeuds et l'utilisation des ressources.</p>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">rules/node-alerts.yml</span>
+              <span class="code-lang">YAML</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code>groups:
+  - name: node
+    rules:
+      - alert: NodeDown
+        expr: up{job="node"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Noeud {{ $labels.instance }} injoignable"
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU eleve sur {{ $labels.instance }}: {{ $value | printf \"%.1f\" }}%"
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 &lt; 15
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Espace disque faible sur {{ $labels.instance }}: {{ $value | printf \"%.1f\" }}% libre"
+
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "RAM elevee sur {{ $labels.instance }}: {{ $value | printf \"%.1f\" }}%"</code></pre>
+          </div>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="monitoring-stack-title">Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Prometheus</strong>
+              <span data-i18n="monitoring-tech-prometheus">Collecte et stockage des métriques</span>
+            </div>
+            <div class="tech-item">
+              <strong>Grafana</strong>
+              <span data-i18n="monitoring-tech-grafana">Visualisation et dashboards</span>
+            </div>
+            <div class="tech-item">
+              <strong>Alertmanager</strong>
+              <span data-i18n="monitoring-tech-alertmanager">Gestion des alertes</span>
+            </div>
+            <div class="tech-item">
+              <strong>Node Exporter</strong>
+              <span data-i18n="monitoring-tech-node">Métriques système</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="monitoring-metrics-title">Métriques collectées</h2>
+          <ul class="benefits-list">
+            <li data-i18n="monitoring-metric1">CPU, RAM, disque, réseau</li>
+            <li data-i18n="monitoring-metric2">Disponibilité des services</li>
+            <li data-i18n="monitoring-metric3">Métriques Docker containers</li>
+            <li data-i18n="monitoring-metric4">Latence et temps de réponse</li>
+            <li data-i18n="monitoring-metric5">Logs centralisés avec Loki</li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true,theme:'dark'});</script>
+  <script src="/js/i18n.js"></script>
+  <script>
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copie !';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrunchTime LPV - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/#projects" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-blue">Kubernetes</span>
+            <span class="tag tag-purple">AI / LLM</span>
+            <span class="tag tag-green">Python</span>
+            <span class="tag tag-teal">Next.js</span>
+            <span class="tag tag-orange">PostgreSQL</span>
+            <span class="tag tag-blue">Docker</span>
+          </div>
+          <h1 data-i18n="crunch-title">CrunchTime, Ligue Pulmonaire Vaudoise</h1>
+          <p class="project-subtitle" data-i18n="crunch-subtitle">Infrastructure K8s on-premise pour la classification automatique de mails par IA. Sprint d'innovation HEIG-VD 2026.</p>
+        </header>
+
+        <!-- ── Contexte ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="crunch-context-title">Contexte</h2>
+          <p data-i18n="crunch-context-text">CrunchTime Innovation est un challenge hebdomadaire organisé par la HEIG-VD : cinq jours pour comprendre un mandat client réel, concevoir une solution, prototyper et pitcher. En mars 2026, notre équipe de 5 étudiants interdisciplinaires a travaillé pour la <strong>Ligue Pulmonaire Vaudoise (LPV)</strong>, association lausannoise de 80 collaborateurs spécialisée dans les maladies respiratoires. Mon rôle : <strong>conception et design de l'infrastructure Kubernetes on-premise</strong> proposée au client.</p>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label" data-i18n="crunch-event-label">Événement</span>
+              <span class="info-value">CrunchTime Innovation 2026</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label" data-i18n="crunch-client-label">Client</span>
+              <span class="info-value">Ligue Pulmonaire Vaudoise</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label" data-i18n="crunch-duration-label">Durée</span>
+              <span class="info-value" data-i18n="crunch-duration-value">5 jours (sprint)</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label" data-i18n="crunch-role-label">Mon rôle</span>
+              <span class="info-value" data-i18n="crunch-role-value">Architecture K8s &amp; infra on-premise</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Mandat ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="crunch-mandate-title">Le mandat</h2>
+          <blockquote class="project-quote">
+            <p data-i18n="crunch-mandate-quote">Comment mettre en place un système de tri et d'aiguillage automatique des emails entrants sur info@lpvd.ch, capable de les classifier et de les redistribuer vers les bonnes boîtes selon leur nature (demandes médicales, administratives ou financières), tout en garantissant la protection des données médicales sensibles ?</p>
+          </blockquote>
+        </section>
+
+        <!-- ── Problème ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="crunch-problem-title">Le problème</h2>
+          <p data-i18n="crunch-problem-text">La LPV gère une boîte mail partagée avec une quinzaine de sous-boîtes internes. Chaque email entrant doit être traité manuellement : lire le contenu, ouvrir les pièces jointes, comprendre de quoi il s'agit, puis rediriger vers le bon service. Dans un contexte médical, une erreur de routage n'est pas un simple colis perdu.</p>
+
+          <div class="challenge-list">
+            <div class="challenge-item">
+              <svg class="challenge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <div>
+                <strong data-i18n="crunch-ch1-title">Charge cognitive élevée</strong>
+                <p data-i18n="crunch-ch1-text">Lire, comprendre et trier chaque email manuellement plusieurs dizaines de fois par jour.</p>
+              </div>
+            </div>
+            <div class="challenge-item">
+              <svg class="challenge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+              <div>
+                <strong data-i18n="crunch-ch2-title">Risque d'erreur élevé</strong>
+                <p data-i18n="crunch-ch2-text">Un email mal redirigé dans un contexte médical peut avoir des conséquences sérieuses.</p>
+              </div>
+            </div>
+            <div class="challenge-item">
+              <svg class="challenge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <div>
+                <strong data-i18n="crunch-ch3-title">Données médicales sensibles</strong>
+                <p data-i18n="crunch-ch3-text">Toute solution doit respecter la nLPD, aucune donnée ne peut transiter vers un service cloud externe.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Schéma logique ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="crunch-schema-title">Schéma logique</h2>
+          <p data-i18n="crunch-schema-text">Le processus de traitement a été défini en cinq étapes lors de la phase d'idéation, avant de concevoir l'architecture technique.</p>
+
+          <div class="schema-flow">
+
+            <div class="schema-node">
+              <div class="schema-node-header">
+                <span class="schema-node-num">1</span>
+                <span class="schema-node-label" data-i18n="crunch-step-label">Étape</span>
+              </div>
+              <p class="schema-node-title" data-i18n="crunch-schema-s1-title">Réception</p>
+              <p class="schema-node-desc" data-i18n="crunch-schema-s1-desc">Email entrant sur info@lpvd.ch, réception via Microsoft Outlook</p>
+            </div>
+
+            <div class="schema-connector"></div>
+
+            <div class="schema-node">
+              <div class="schema-node-header">
+                <span class="schema-node-num">2</span>
+                <span class="schema-node-label" data-i18n="crunch-step-label">Étape</span>
+              </div>
+              <p class="schema-node-title" data-i18n="crunch-schema-s2-title">Analyse du contenu</p>
+              <div class="schema-branches">
+                <div class="schema-branch">
+                  <span class="schema-branch-tag">Branche A</span>
+                  <span class="schema-branch-title" data-i18n="crunch-branch-a-title">Corps du mail</span>
+                  <p class="schema-branch-desc" data-i18n="crunch-branch-a-desc">Extraction du texte → analyse NLP → LLM</p>
+                </div>
+                <div class="schema-branch">
+                  <span class="schema-branch-tag">Branche B</span>
+                  <span class="schema-branch-title" data-i18n="crunch-branch-b-title">Pièces jointes PDF</span>
+                  <p class="schema-branch-desc" data-i18n="crunch-branch-b-desc">PDF parser → extraction du texte → LLM</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="schema-connector"></div>
+
+            <div class="schema-node">
+              <div class="schema-node-header">
+                <span class="schema-node-num">3</span>
+                <span class="schema-node-label" data-i18n="crunch-step-label">Étape</span>
+              </div>
+              <p class="schema-node-title" data-i18n="crunch-schema-s3-title">Classification</p>
+              <p class="schema-node-desc" data-i18n="crunch-schema-s3-desc">Attribution d'une catégorie : Prescriptions médicales · Rapports médicaux · Administratif · Finance · Thérapie · Autres</p>
+            </div>
+
+            <div class="schema-connector"></div>
+
+            <div class="schema-node">
+              <div class="schema-node-header">
+                <span class="schema-node-num">4</span>
+                <span class="schema-node-label" data-i18n="crunch-step-label">Étape</span>
+              </div>
+              <p class="schema-node-title" data-i18n="crunch-schema-s4-title">Aiguillage automatique</p>
+              <p class="schema-node-desc" data-i18n="crunch-schema-s4-desc">Routage vers la sous-boîte concernée : Finance · Médicale · Administration · Prescriptions…</p>
+            </div>
+
+            <div class="schema-connector"></div>
+
+            <div class="schema-node">
+              <div class="schema-node-header">
+                <span class="schema-node-num">5</span>
+                <span class="schema-node-label" data-i18n="crunch-step-label">Étape</span>
+              </div>
+              <p class="schema-node-title" data-i18n="crunch-schema-s5-title">Validation humaine</p>
+              <p class="schema-node-desc" data-i18n="crunch-schema-s5-desc">L'admin valide ou corrige. La correction est enregistrée et réinjectée dans le modèle, boucle d'amélioration continue.</p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── Processus technique (architecture K8s) ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="crunch-arch-title">Processus technique : Architecture K8s</h2>
+          <p data-i18n="crunch-arch-text">Après la définition du schéma logique, j'ai conçu l'architecture technique on-premise. Le cluster Kubernetes orchestre tous les microservices : un pod Nginx fait office de gateway, deux pods IA traitent les mails en parallèle (LLM + algorithme Python), PostgreSQL trace chaque action, et MinIO stocke les poids des modèles. GitLab CI/CD + Docker gère le déploiement à la volée.</p>
+
+          <div class="arch-diagram">
+
+            <!-- Top: entrées -->
+            <div class="arch-ext-row">
+              <div class="arch-ext-node">
+                <span class="arch-ext-type" data-i18n="crunch-arch-email-type">Email entrant</span>
+                <span class="arch-ext-name">Microsoft Outlook</span>
+              </div>
+              <div class="arch-ext-node">
+                <span class="arch-ext-type" data-i18n="crunch-arch-admin-type">Gestion configs &amp; modèles</span>
+                <span class="arch-ext-name" data-i18n="crunch-arch-admin-name">Admin réseau hospitalier</span>
+              </div>
+            </div>
+
+            <!-- K8s cluster -->
+            <div class="arch-k8s-cluster">
+              <span class="arch-k8s-badge" data-i18n="crunch-arch-cluster-badge">Kubernetes on-premise, GPU NVIDIA</span>
+
+              <!-- Gateway -->
+              <div class="arch-pod-row">
+                <div class="arch-pod-node arch-pod-node--gateway">
+                  <span class="arch-pod-type">API Gateway</span>
+                  <p class="arch-pod-name">Nginx</p>
+                  <p class="arch-pod-desc" data-i18n="crunch-pod-nginx">Point d'entrée unique, extraction du mail et distribution aux pods IA</p>
+                </div>
+              </div>
+
+              <hr class="arch-inner-sep">
+
+              <!-- AI pods -->
+              <div class="arch-pod-row">
+                <div class="arch-pod-node arch-pod-node--llm">
+                  <span class="arch-pod-type">Pod IA, LLM</span>
+                  <p class="arch-pod-name">LLM Microservice</p>
+                  <p class="arch-pod-desc" data-i18n="crunch-pod-llm">Analyse sémantique du contenu et des pièces jointes</p>
+                </div>
+                <div class="arch-pod-node arch-pod-node--py">
+                  <span class="arch-pod-type">Pod Algorithme</span>
+                  <p class="arch-pod-name">Python Classifier</p>
+                  <p class="arch-pod-desc" data-i18n="crunch-pod-py">Classification par règles métier, complément déterministe au LLM</p>
+                </div>
+              </div>
+
+              <hr class="arch-inner-sep">
+
+              <!-- DB -->
+              <div class="arch-pod-row">
+                <div class="arch-pod-node arch-pod-node--db">
+                  <span class="arch-pod-type">Base de données</span>
+                  <p class="arch-pod-name">PostgreSQL</p>
+                  <p class="arch-pod-desc" data-i18n="crunch-pod-pg">Historique des traitements, statistiques, audit nLPD</p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Bottom: storage, CI, output -->
+            <div class="arch-ext-row">
+              <div class="arch-ext-node">
+                <span class="arch-ext-type" data-i18n="crunch-arch-minio-type">Stockage objet on-premise</span>
+                <span class="arch-ext-name">MinIO</span>
+              </div>
+              <div class="arch-ext-node">
+                <span class="arch-ext-type">CI/CD</span>
+                <span class="arch-ext-name">GitLab + Docker</span>
+              </div>
+              <div class="arch-ext-node">
+                <span class="arch-ext-type" data-i18n="crunch-arch-dash-type">Interface admin</span>
+                <span class="arch-ext-name">Next.js Dashboard</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ── Mon rôle : infra K8s ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="crunch-myrole-title">Mon rôle : Infrastructure Kubernetes</h2>
+          <p data-i18n="crunch-myrole-text">En tant qu'ingénieur réseaux et systèmes de l'équipe, j'ai pris en charge la conception complète de l'infrastructure technique proposée au client. Le choix de Kubernetes on-premise s'est imposé pour trois raisons : la contrainte nLPD (données médicales, aucun cloud externe), la gestion native des ressources GPU NVIDIA pour l'inférence LLM, et la capacité à déployer ou mettre à jour les pods IA à la volée via GitLab CI/CD.</p>
+
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>Kubernetes on-premise</strong>
+              <span data-i18n="crunch-tech-k8s">Orchestration des pods IA, gestion du plugin NVIDIA GPU, montée en charge automatique.</span>
+            </div>
+            <div class="tech-item">
+              <strong>Nginx API Gateway</strong>
+              <span data-i18n="crunch-tech-nginx">Point d'entrée unique du cluster, extraction des données mail et fan-out vers les pods d'analyse.</span>
+            </div>
+            <div class="tech-item">
+              <strong>LLM Microservice (pod)</strong>
+              <span data-i18n="crunch-tech-llm">Modèle de langage isolé dans son pod, analyse sémantique du corps et des pièces jointes.</span>
+            </div>
+            <div class="tech-item">
+              <strong>Python Classifier (pod)</strong>
+              <span data-i18n="crunch-tech-python">Algorithme de classification par règles métier, résultat déterministe pour audit et traçabilité.</span>
+            </div>
+            <div class="tech-item">
+              <strong>PostgreSQL</strong>
+              <span data-i18n="crunch-tech-pg">Traçabilité complète de chaque email traité, base de conformité nLPD.</span>
+            </div>
+            <div class="tech-item">
+              <strong>MinIO</strong>
+              <span data-i18n="crunch-tech-minio">Stockage objet on-premise pour les poids et versions des modèles IA, aucune donnée en cloud.</span>
+            </div>
+            <div class="tech-item">
+              <strong>GitLab CI/CD + Docker</strong>
+              <span data-i18n="crunch-tech-cicd">Pipeline de déploiement à la volée, mise à jour des modèles ou de la configuration sans interruption.</span>
+            </div>
+            <div class="tech-item">
+              <strong>Next.js Dashboard</strong>
+              <span data-i18n="crunch-tech-nextjs">Interface de monitoring temps réel : métriques, alertes, feedback loop « Corriger &amp; apprendre ».</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Dashboard ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="crunch-dashboard-title">Dashboard de monitoring</h2>
+          <p data-i18n="crunch-dashboard-text">Maquette haute fidélité réalisée sur Figma en 2 jours. Le tableau de bord affiche les métriques clés, le volume d'emails par semaine, la répartition par catégorie, et les emails récents avec leur score de précision. Un système d'alertes signale les classifications incertaines nécessitant une validation humaine.</p>
+
+          <div class="metrics-row">
+            <div class="metric-card">
+              <span class="metric-value">87</span>
+              <span class="metric-label" data-i18n="crunch-metric1">emails traités / jour</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-value">94.2%</span>
+              <span class="metric-label" data-i18n="crunch-metric2">précision de classification</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-value">1.8s</span>
+              <span class="metric-label" data-i18n="crunch-metric3">temps moyen de tri</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-value">13</span>
+              <span class="metric-label" data-i18n="crunch-metric4">alertes en attente</span>
+            </div>
+          </div>
+
+          <p data-i18n="crunch-dashboard-feedback-text">La vue détail d'un email affiche le raisonnement de l'algorithme, la catégorie détectée avec son score de confiance, et un formulaire <strong>« Corriger &amp; apprendre »</strong> : la correction de l'admin est enregistrée et utilisée pour affiner le modèle en continu.</p>
+        </section>
+
+        <!-- ── 100% On-Premise ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="crunch-onprem-title">100% On-Premise</h2>
+          <p data-i18n="crunch-onprem-text">Contrainte non négociable : la LPV traite des données médicales couvertes par la nLPD. Aucune donnée (emails, pièces jointes, poids de modèle) ne transite par un cloud externe. Tout s'exécute sur l'infrastructure locale hospitalière. C'est pourquoi MinIO remplace S3 et GitLab self-hosted remplace GitHub Actions.</p>
+        </section>
+
+        <!-- ── Conclusion ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="crunch-conclusion-title">Conclusion</h2>
+          <p data-i18n="crunch-conclusion-text">En une semaine, l'équipe a produit une architecture complète, une maquette fonctionnelle et un pitch livré devant le client. La solution répond aux trois enjeux identifiés lors de l'immersion : infrastructure modulable, moins d'erreurs de routage, charge cognitive réduite pour le personnel administratif.</p>
+
+          <blockquote class="project-quote">
+            <p data-i18n="crunch-quote">"Ce n'est pas de la magie. C'est de l'ingénierie au service de gens qui soignent d'autres gens."</p>
+          </blockquote>
+        </section>
+
+        <!-- ── Équipe ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="crunch-team-title">Équipe</h2>
+          <div class="team-grid">
+            <div class="team-member">
+              <strong>Dani Dos Santos</strong>
+              <span data-i18n="crunch-role-dani">Ingénieur réseaux &amp; systèmes, Architecture K8s &amp; infra</span>
+            </div>
+            <div class="team-member">
+              <strong>Mathéo Lopez</strong>
+              <span data-i18n="crunch-role-matheo">Ingénieur sécurité informatique</span>
+            </div>
+            <div class="team-member">
+              <strong>Valentine Salzmann</strong>
+              <span data-i18n="crunch-role-valentine">Économie d'entreprise</span>
+            </div>
+            <div class="team-member">
+              <strong>Arno Guichard</strong>
+              <span data-i18n="crunch-role-arno">Économie d'entreprise</span>
+            </div>
+            <div class="team-member">
+              <strong>Daniel Vale</strong>
+              <span data-i18n="crunch-role-daniel">Ingénieur des médias</span>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/js/i18n.js"></script>
+</body>
+</html>

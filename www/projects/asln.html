@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASLN Website - Dani Faria dos Santos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="icon" href="/favicon.ico">
+  <script src="/js/main.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <main>
+    <div class="wrapper">
+      <a href="/projects.html" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+
+      <article class="project-detail">
+        <header class="project-hero">
+          <div class="project-tags">
+            <span class="tag tag-green">HTML</span>
+            <span class="tag tag-green">CSS</span>
+            <span class="tag tag-green">JavaScript</span>
+            <span class="tag tag-green">Dynamic</span>
+          </div>
+          <h1>ASLN Website</h1>
+          <p class="project-subtitle" data-i18n="asln-subtitle">Site web dynamique pour l'Association Sport et Loisirs Nestlé</p>
+        </header>
+
+        <section class="project-section">
+          <h2 data-i18n="asln-context-title">Contexte</h2>
+          <p data-i18n="asln-context-text">Projet réalisé durant mon stage chez Nestlé. L'ASLN (Association Sport et Loisirs Nestlé) avait besoin d'un site web simple à maintenir pour présenter les différents clubs sportifs et de loisirs proposés aux employés.</p>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="asln-challenge-title">Défi</h2>
+          <p data-i18n="asln-challenge-text">Le site devait être maintenable par des personnes sans connaissances techniques. Ajouter un nouveau club ne devait pas nécessiter de modifier le code existant.</p>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="asln-solution-title">Solution</h2>
+          <p data-i18n="asln-solution-text">J'ai conçu un système dynamique où l'ajout d'un club se fait simplement en déposant deux fichiers :</p>
+
+          <div class="project-flow">
+            <div class="flow-step">
+              <div class="flow-number">1</div>
+              <h3>nom_club.html</h3>
+              <p data-i18n="asln-step1-text">Page de présentation du club avec le contenu souhaité.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">2</div>
+              <h3>logo_club.png</h3>
+              <p data-i18n="asln-step2-text">Logo du club pour l'affichage sur la page d'accueil.</p>
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-step">
+              <div class="flow-number">3</div>
+              <h3 data-i18n="asln-step3-title">Auto-détection</h3>
+              <p data-i18n="asln-step3-text">Le site détecte automatiquement les nouveaux clubs et les affiche.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="asln-benefits-title">Bénéfices</h2>
+          <ul class="benefits-list">
+            <li data-i18n="asln-benefit1">Aucune compétence technique requise pour ajouter un club</li>
+            <li data-i18n="asln-benefit2">Pas de modification du code source nécessaire</li>
+            <li data-i18n="asln-benefit3">Convention de nommage simple et intuitive</li>
+            <li data-i18n="asln-benefit4">Maintenance minimale</li>
+          </ul>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="asln-stack-title">Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>HTML/CSS</strong>
+              <span data-i18n="asln-tech-html">Structure et design du site</span>
+            </div>
+            <div class="tech-item">
+              <strong>JavaScript</strong>
+              <span data-i18n="asln-tech-js">Détection dynamique des clubs</span>
+            </div>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="/js/i18n.js"></script>
+</body>
+</html>
