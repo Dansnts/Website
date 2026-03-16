@@ -37,8 +37,8 @@
 
         <!-- ── Prometheus scrape flow diagram ── -->
         <section class="project-section" data-anim="up">
-          <h2>Flux de collecte Prometheus</h2>
-          <p>Prometheus scrute chaque cible selon un intervalle configuré. node-exporter expose les métriques système, cAdvisor les métriques containers. Alertmanager achemine les alertes vers les canaux de notification.</p>
+          <h2 data-i18n="monitoring-flow-title">Flux de collecte Prometheus</h2>
+          <p data-i18n="monitoring-flow-text">Prometheus scrute chaque cible selon un intervalle configuré. node-exporter expose les métriques système, cAdvisor les métriques containers. Alertmanager achemine les alertes vers les canaux de notification.</p>
           <div class="mermaid">
 graph LR
     subgraph Targets["Cibles scrapées"]
@@ -76,8 +76,8 @@ graph LR
         </section>
 
         <section class="project-section" data-anim="up">
-          <h2>Configuration Prometheus</h2>
-          <p>Fichier de configuration principal definissant les intervalles de scrape, les cibles statiques et les regles d'alerte chargees depuis des fichiers externes.</p>
+          <h2 data-i18n="monitoring-config-title">Configuration Prometheus</h2>
+          <p data-i18n="monitoring-config-text">Fichier de configuration principal definissant les intervalles de scrape, les cibles statiques et les regles d'alerte chargees depuis des fichiers externes.</p>
           <div class="code-block">
             <div class="code-header">
               <span class="code-filename">prometheus.yml</span>
@@ -134,8 +134,8 @@ scrape_configs:
         </section>
 
         <section class="project-section" data-anim="up">
-          <h2>Regles d'alerte</h2>
-          <p>Exemple de regles Prometheus pour surveiller la disponibilite des noeuds et l'utilisation des ressources.</p>
+          <h2 data-i18n="monitoring-alerts-title">Regles d'alerte</h2>
+          <p data-i18n="monitoring-alerts-text">Exemple de regles Prometheus pour surveiller la disponibilite des noeuds et l'utilisation des ressources.</p>
           <div class="code-block">
             <div class="code-header">
               <span class="code-filename">rules/node-alerts.yml</span>

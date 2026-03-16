@@ -50,8 +50,8 @@
 
         <!-- ── deploy.sh ── -->
         <section class="project-section" data-anim="up">
-          <h2>Déploiement automatisé</h2>
-          <p>Un seul script installe le CSI driver SMB, crée le namespace, et déploie l'ensemble des services dans l'ordre correct, en attendant qu'Elasticsearch soit healthy avant de démarrer Logstash.</p>
+          <h2 data-i18n="homelab-deploy-title">Déploiement automatisé</h2>
+          <p data-i18n="homelab-deploy-text">Un seul script installe le CSI driver SMB, crée le namespace, et déploie l'ensemble des services dans l'ordre correct, en attendant qu'Elasticsearch soit healthy avant de démarrer Logstash.</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -99,8 +99,8 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
 
         <!-- ── CronJob backup ── -->
         <section class="project-section" data-anim="up">
-          <h2>Backup NAS → Google Drive</h2>
-          <p>CronJob Kubernetes qui exécute rclone chaque nuit à 3h UTC. Le montage NAS est en read-only, le token Google Drive est stocké dans un Secret K8s. <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">concurrencyPolicy: Forbid</code> garantit qu'un seul job tourne à la fois.</p>
+          <h2 data-i18n="homelab-backup-title">Backup NAS → Google Drive</h2>
+          <p data-i18n="homelab-backup-text">CronJob Kubernetes qui exécute rclone chaque nuit à 3h UTC. Le montage NAS est en read-only, le token Google Drive est stocké dans un Secret K8s. <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">concurrencyPolicy: Forbid</code> garantit qu'un seul job tourne à la fois.</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -156,8 +156,8 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
 
         <!-- ── Filebeat DaemonSet ── -->
         <section class="project-section" data-anim="up">
-          <h2>Collecte centralisée des logs : Filebeat DaemonSet</h2>
-          <p>Filebeat tourne sur chaque nœud en tant que DaemonSet, collecte tous les logs des containers depuis <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">/var/log/containers/</code>, enrichit avec les métadonnées Kubernetes, et envoie à Logstash. Le ClusterRole donne accès en lecture à l'API K8s pour l'enrichissement.</p>
+          <h2 data-i18n="homelab-filebeat-title">Collecte centralisée des logs : Filebeat DaemonSet</h2>
+          <p data-i18n="homelab-filebeat-text">Filebeat tourne sur chaque nœud en tant que DaemonSet, collecte tous les logs des containers depuis <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">/var/log/containers/</code>, enrichit avec les métadonnées Kubernetes, et envoie à Logstash. Le ClusterRole donne accès en lecture à l'API K8s pour l'enrichissement.</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -223,8 +223,8 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
 
         <!-- ── Ingress Traefik ── -->
         <section class="project-section" data-anim="up">
-          <h2>Ingress Traefik + TLS Let's Encrypt</h2>
-          <p>Toutes les routes HTTP sont déclarées dans un seul Ingress. cert-manager gère automatiquement les certificats TLS via Let's Encrypt pour le domaine public. Les services internes (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">.home</code>) sont accessibles en local uniquement.</p>
+          <h2 data-i18n="homelab-ingress-title">Ingress Traefik + TLS Let's Encrypt</h2>
+          <p data-i18n="homelab-ingress-text">Toutes les routes HTTP sont déclarées dans un seul Ingress. cert-manager gère automatiquement les certificats TLS via Let's Encrypt pour le domaine public. Les services internes (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">.home</code>) sont accessibles en local uniquement.</p>
 
           <div class="code-block">
             <div class="code-header">
