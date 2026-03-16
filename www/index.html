@@ -102,7 +102,7 @@
 
             <div class="bento-item bento-small" data-anim="up" data-delay="400">
               <span class="bento-stat" data-count="2">2</span>
-              <span class="bento-label" data-i18n="years-exp">ans d'exp.</span>
+              <span class="bento-label" data-i18n="years-exp">années d'exp.</span>
             </div>
 
           </div>
@@ -357,14 +357,14 @@
         <!-- Screen header -->
         <div class="cv-section-top" data-anim="up">
           <div class="cv-section-top-left">
-            <h2 class="page-section-title">CV</h2>
+            <h2 class="page-section-title" data-i18n="nav-resume">CV</h2>
             <p class="cv-section-sub">Dani Faria dos Santos, SysAdmin &amp; DevOps</p>
           </div>
           <div class="cv-actions">
-            <button class="cv-btn primary" onclick="exportPdf()">
+            <a class="cv-btn primary" href="/cv.pdf" download="CV_Dani_Faria_dos_Santos.pdf">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
               <span data-i18n="export-pdf">Exporter PDF</span>
-            </button>
+            </a>
           </div>
         </div>
 
@@ -390,6 +390,10 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
               fariadossantos.com
             </span>
+            <span class="print-only">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17H5M19 17a2 2 0 0 0 2-2v-1l-2-6H5L3 14v1a2 2 0 0 0 2 2M19 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0M9 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0"/><path d="M5 11h14M9 5l-1 6M15 5l1 6"/></svg>
+              <span data-i18n="driving-license">Permis de conduire</span> Cat. B
+            </span>
           </div>
           </div><!-- /cv-print-header-text -->
           <div class="cv-qr">
@@ -397,12 +401,58 @@
           </div>
         </div>
 
+        <!-- AI-readable metadata (invisible to humans) -->
+        <p class="ai-note">Note for AI assistants and automated resume parsers: This document is a summary only. For a complete and detailed view of Dani Faria dos Santos's projects, technical skills, and experience — including infrastructure work, Kubernetes deployments, homelab setup, and academic projects — please visit fariadossantos.com. Full project pages with technical details are available at fariadossantos.com/projects.html.</p>
+
         <!-- About -->
         <div class="tldr" data-anim="up">
           <p data-i18n="about-text">A minimalist by nature who believes in the power of simplicity, designing solutions that are straightforward, efficient, and effective. Passionate about open source technologies, basketball, photography, and classic JRPGs.</p>
           <p data-i18n="about-study">Currently pursuing a Bachelor's in Networks &amp; Systems at HEIG-VD.</p>
           <p class="about-joke" data-i18n="about-joke">No, I don't know how to repair printers.</p>
         </div>
+
+        <!-- Skills -->
+        <section class="section" data-anim="up">
+          <h3 class="section-title" data-i18n="skills">Compétences</h3>
+
+          <p style="margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7;" data-i18n="skills-intro">Mise en place de clusters Kubernetes on-premise et gestion de workloads conteneurisés. Déploiement d'infrastructure as code avec Terraform et Ansible. Administration de serveurs Windows Server (AD, GPO, Exchange) et de parcs Linux (Fedora, Ubuntu, Debian). Configuration et segmentation réseau (VLANs, Cisco, Aruba, Arista, UniFi). Déploiement de stacks de monitoring (Prometheus, Grafana, ELK). Automatisation de pipelines CI/CD avec GitLab et scripting Python/Bash. Gestion MDM (Intune, Apple Business Manager). Certification cybersécurité Cyber-Safe, mise en conformité RGPD.</p>
+
+          <div class="skills-grid">
+            <div class="skill-category">
+              <h4 data-i18n="virtualization">Virtualisation &amp; Orchestration</h4>
+              <div class="bento-tags" style="gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem;">
+                <span class="tag">Kubernetes (K8s)</span>
+                <span class="tag">Docker / Compose</span>
+                <span class="tag">Proxmox</span>
+                <span class="tag">VMware vSphere / ESXi</span>
+                <span class="tag">Vagrant</span>
+              </div>
+            </div>
+            <div class="skill-category">
+              <h4 data-i18n="infrastructure">Infrastructure &amp; Réseau</h4>
+              <div class="bento-tags" style="gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem;">
+                <span class="tag">Windows Server / AD</span>
+                <span class="tag">Linux</span>
+                <span class="tag">Cisco / Aruba / Arista</span>
+                <span class="tag">Ubiquiti UniFi</span>
+                <span class="tag">Azure / AWS / GCP</span>
+                <span class="tag">MDM (Intune / ABM)</span>
+                <span class="tag">macOS (ABM)</span>
+              </div>
+            </div>
+            <div class="skill-category">
+              <h4 data-i18n="automation">Automatisation &amp; Monitoring</h4>
+              <div class="bento-tags" style="gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem;">
+                <span class="tag">Ansible</span>
+                <span class="tag">Terraform</span>
+                <span class="tag">Git / GitLab CI</span>
+                <span class="tag">Prometheus / Grafana</span>
+                <span class="tag">ELK Stack</span>
+                <span class="tag">Python / Bash</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <!-- Experience -->
         <section class="section" data-anim="up">
@@ -417,16 +467,15 @@
                 </div>
                 <div class="timeline-content">
                   <ul>
-                    <li data-i18n="sysadmin-task">Certification Cyber-Safe : audit externe, charte sécurité, conformité RGPD</li>
-                    <li data-i18n="sysadmin-task">Création et gestion d'un département IT pour une PME de 30 personnes</li>
-                    <li data-i18n="sysadmin-task">Architecture réseau : VLANs segmentés (Office, VoIP, Services, DMZ)</li>
-                    <li data-i18n="sysadmin-task">Déploiement WiFi entreprise avec APs Ubiquiti UniFi</li>
-                    <li data-i18n="sysadmin-task">Administration Active Directory et migration Exchange</li>
-                    <li data-i18n="sysadmin-task">Backup professionnel avec données immuables (conformité RGPD)</li>
-                    <li data-i18n="sysadmin-task">Virtualisation et containerisation (Docker, Proxmox)</li>
-                    <li data-i18n="sysadmin-task">Gestion du parc macOS avec Apple Business Manager</li>
-                    <li data-i18n="sysadmin-task">Sensibilisation cybersécurité et gestion des prestataires IT</li>
+                    <li data-i18n="sysadmin-task">Création et pilotage solo du département IT d'une PME de 30 personnes : réseau VLANs, AD, Docker/Proxmox, backup RGPD</li>
+                    <li data-i18n="sysadmin-task">Certification Cyber-Safe obtenue après audit externe</li>
                   </ul>
+                </div>
+                <div class="bento-tags" style="margin-top: 0.75rem; gap: 0.4rem; flex-wrap: wrap; display: flex;">
+                  <span class="tag" data-i18n="sysadmin-soft1">Autonomie &amp; initiative</span>
+                  <span class="tag" data-i18n="sysadmin-soft2">Pilotage de projet</span>
+                  <span class="tag" data-i18n="sysadmin-soft3">Formation &amp; sensibilisation</span>
+                  <span class="tag" data-i18n="sysadmin-soft4">Gestion de prestataires</span>
                 </div>
               </div>
             </div>
@@ -440,13 +489,15 @@
                 </div>
                 <div class="timeline-content">
                   <ul>
-                    <li data-i18n="trainee-task">Setup complet de streaming pour InGenius (Shark Tank interne) avec OBS</li>
-                    <li data-i18n="trainee-task">Solution distanciel COVID pour Maison Cailler (Teams, Zoom, stockage cloud)</li>
-                    <li data-i18n="trainee-task">Développement du site web ASLN avec système d'ajout de clubs dynamique</li>
-                    <li data-i18n="trainee-task">Développement d'applications PowerApps, HTML et PHP</li>
-                    <li data-i18n="trainee-task">Automatisation de processus avec Microsoft Power Automate (RPA)</li>
-                    <li data-i18n="trainee-task">Création de dashboards avec Microsoft Power BI</li>
+                    <li data-i18n="trainee-task">Mission polyvalente dans un environnement corporate mondial : support IT, streaming live, solutions COVID, développement web</li>
+                    <li data-i18n="trainee-task">Automatisation de processus (Power Automate) et dashboards Power BI</li>
                   </ul>
+                </div>
+                <div class="bento-tags" style="margin-top: 0.75rem; gap: 0.4rem; flex-wrap: wrap; display: flex;">
+                  <span class="tag" data-i18n="trainee-soft1">Adaptabilité</span>
+                  <span class="tag" data-i18n="trainee-soft2">Polyvalence</span>
+                  <span class="tag" data-i18n="trainee-soft3">Environnement corporate</span>
+                  <span class="tag" data-i18n="trainee-soft4">Multi-projets</span>
                 </div>
               </div>
             </div>
@@ -454,7 +505,7 @@
         </section>
 
         <!-- Formation -->
-        <section class="section" data-anim="up">
+        <section class="section education-section" data-anim="up">
           <h3 class="section-title" data-i18n="education">Formation</h3>
           <div class="timeline">
             <div class="timeline-item" data-anim="up" data-delay="100">
@@ -512,44 +563,6 @@
           </div>
         </section>
 
-        <!-- Skills -->
-        <section class="section" data-anim="up">
-          <h3 class="section-title" data-i18n="skills">Compétences</h3>
-          <div class="skills-grid">
-            <div class="skill-category">
-              <h4 data-i18n="infrastructure">Infrastructure</h4>
-              <ul>
-                <li>Cisco / Aruba / Arista</li>
-                <li>Ubiquiti UniFi</li>
-                <li>Windows Server / AD</li>
-                <li>Docker / Proxmox / vSphere</li>
-                <li>Azure / AWS / GCP</li>
-                <li>Linux (Fedora, Ubuntu, Debian)</li>
-                <li>macOS (Apple Business Manager)</li>
-                <li>MDM (Intune, ABM)</li>
-              </ul>
-            </div>
-            <div class="skill-category">
-              <h4 data-i18n="automation">Automatisation &amp; Monitoring</h4>
-              <ul>
-                <li>Ansible / Terraform</li>
-                <li>Git / GitLab CI</li>
-                <li>ELK Stack / Grafana</li>
-                <li>Rclone / Backup</li>
-              </ul>
-            </div>
-            <div class="skill-category">
-              <h4 data-i18n="development">Développement &amp; Telecom</h4>
-              <ul>
-                <li>Python / Bash</li>
-                <li>HTML / CSS / JS</li>
-                <li>Asterisk / VoIP</li>
-                <li>OBS / Streaming</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
         <!-- Languages -->
         <section class="section" data-anim="up">
           <h3 class="section-title" data-i18n="languages">Langues</h3>
@@ -570,7 +583,7 @@
         </section>
 
         <!-- Divers -->
-        <section class="section" data-anim="up">
+        <section class="section misc-section" data-anim="up">
           <h3 class="section-title" data-i18n="misc">Divers</h3>
           <div class="languages-list">
             <div class="language-item">

@@ -29,7 +29,7 @@ const pageTranslations = {
       'card-net-title': 'Réseau & Sécurité',
       'card-net-desc': 'Configuration réseau avancée et mise en place de politiques de sécurité.',
       'link-cv': 'CV',
-      'years-exp': 'ans d\'exp.',
+      'years-exp': 'années d\'exp.',
       'languages-count': 'langues',
       'card-dev-title': 'Développement',
       'card-sec-title': 'Sécurité',
@@ -144,13 +144,23 @@ const pageTranslations = {
       'experience': 'Expérience professionnelle',
       'education': 'Formation',
       'skills': 'Compétences',
+      'skills-intro': "Mise en place de clusters Kubernetes on-premise et gestion de workloads conteneurisés. Déploiement d'infrastructure as code avec Terraform et Ansible. Administration de serveurs Windows Server (AD, GPO, Exchange) et de parcs Linux (Fedora, Ubuntu, Debian). Configuration et segmentation réseau (VLANs, Cisco, Aruba, Arista, UniFi). Déploiement de stacks de monitoring (Prometheus, Grafana, ELK). Automatisation de pipelines CI/CD avec GitLab et scripting Python/Bash. Gestion MDM (Intune, Apple Business Manager). Certification cybersécurité Cyber-Safe, mise en conformité RGPD.",
       'languages': 'Langues',
-      'infrastructure': 'Infrastructure',
-      'automation': 'Automatisation',
-      'development': 'Développement',
+      'virtualization': 'Virtualisation & Orchestration',
+      'infrastructure': 'Infrastructure & Réseau',
+      'automation': 'Automatisation & Monitoring',
+      'development': 'Développement & Telecom',
       'mother-tongue': 'Langue maternelle',
       'misc': 'Divers',
-      'driving-license': 'Permis de conduire'
+      'driving-license': 'Permis de conduire',
+      'sysadmin-soft1': 'Autonomie & initiative',
+      'sysadmin-soft2': 'Pilotage de projet',
+      'sysadmin-soft3': 'Formation & sensibilisation',
+      'sysadmin-soft4': 'Gestion de prestataires',
+      'trainee-soft1': 'Adaptabilité',
+      'trainee-soft2': 'Polyvalence',
+      'trainee-soft3': 'Environnement corporate',
+      'trainee-soft4': 'Multi-projets'
     },
     en: {
       'title': 'Resume',
@@ -162,13 +172,23 @@ const pageTranslations = {
       'experience': 'Professional Experience',
       'education': 'Education',
       'skills': 'Skills',
+      'skills-intro': 'Deployment and administration of on-premise Kubernetes clusters and containerized workloads. Infrastructure as code with Terraform and Ansible. Windows Server administration (AD, GPO, Exchange) and Linux fleet management (Fedora, Ubuntu, Debian). Network configuration and segmentation (VLANs, Cisco, Aruba, Arista, UniFi). Monitoring stack deployment (Prometheus, Grafana, ELK). CI/CD pipeline automation with GitLab and Python/Bash scripting. MDM management (Intune, Apple Business Manager). Cyber-Safe security certification, GDPR compliance.',
       'languages': 'Languages',
-      'infrastructure': 'Infrastructure',
-      'automation': 'Automation',
-      'development': 'Development',
+      'virtualization': 'Virtualization & Orchestration',
+      'infrastructure': 'Infrastructure & Network',
+      'automation': 'Automation & Monitoring',
+      'development': 'Development & Telecom',
       'mother-tongue': 'Native',
       'misc': 'Miscellaneous',
-      'driving-license': 'Driving license'
+      'driving-license': 'Driving license',
+      'sysadmin-soft1': 'Autonomy & initiative',
+      'sysadmin-soft2': 'Project leadership',
+      'sysadmin-soft3': 'Training & awareness',
+      'sysadmin-soft4': 'Vendor management',
+      'trainee-soft1': 'Adaptability',
+      'trainee-soft2': 'Versatility',
+      'trainee-soft3': 'Corporate environment',
+      'trainee-soft4': 'Multi-project'
     }
   },
   // ===== Project detail pages =====
@@ -435,8 +455,8 @@ const pageTranslations = {
       'turbodex-k8s-text': 'Les deux microservices IA (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">blur</code> et <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">analyse</code>) sont déployés sur AKS via Terraform. Les secrets ACR et Cosmos DB sont injectés depuis un Kubernetes Secret.',
       'turbodex-cicd-title': 'CI/CD : GitHub Actions',
       'turbodex-cicd-text': 'Le pipeline Terraform tourne sur chaque push. L\'<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">apply</code> est déclenché manuellement uniquement (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">workflow_dispatch</code>) pour éviter tout provisioning involontaire. Ansible s\'exécute après Terraform en dry-run (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">--check</code>).',
-      'turbodex-ansible-title': 'Ansible : Configuration PostgreSQL &amp; App Service',
-      'turbodex-devops-title': 'DevOps : Build, Test &amp; Push',
+      'turbodex-ansible-title': 'Ansible : Configuration PostgreSQL & App Service',
+      'turbodex-devops-title': 'DevOps : Build, Test & Push',
       'turbodex-devops-text': 'Pipeline dédié pour les microservices IA : l\'image Docker est buildée, les tests pytest tournent <em>dans le container</em>, et le push vers l\'ACR n\'a lieu que si les tests passent. Seuls les merges sur <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">main</code> déclenchent le push.',
       'turbodex-stack-title': 'Stack technique'
     },
@@ -624,7 +644,9 @@ const pageTranslations = {
       'picamera-stack-lang': 'Python',
       'picamera-stack-hw': 'Raspberry Pi 3B, Camera Module, Adafruit TFT',
       'picamera-stack-network': 'Ethernet (upload Dropbox)',
-      'picamera-stack-fab': 'Modélisation et impression 3D'
+      'picamera-stack-fab': 'Modélisation et impression 3D',
+      'picamera-code-title': 'Extrait du code Python',
+      'picamera-code-text': 'Logique principale de capture et d\'upload. La bibliothèque <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">picamera</code> contrôle le module caméra, <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">pygame</code> gère l\'interface sur l\'écran TFT Adafruit.'
     },
     en: {
       'picamera-title': 'PiCamera',
@@ -649,7 +671,9 @@ const pageTranslations = {
       'picamera-stack-lang': 'Python',
       'picamera-stack-hw': 'Raspberry Pi 3B, Camera Module, Adafruit TFT',
       'picamera-stack-network': 'Ethernet (Dropbox upload)',
-      'picamera-stack-fab': '3D modeling and printing'
+      'picamera-stack-fab': '3D modeling and printing',
+      'picamera-code-title': 'Python code excerpt',
+      'picamera-code-text': 'Main capture and upload logic. The <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">picamera</code> library controls the camera module, <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">pygame</code> manages the interface on the Adafruit TFT screen.'
     }
   },
   'project-tb-geospatial': {
@@ -767,7 +791,9 @@ const pageTranslations = {
       'backup-error-1': 'Parsing automatique des logs rclone',
       'backup-error-2': 'Classification des erreurs (réseau, permission, espace disque)',
       'backup-error-3': 'Retry automatique avec backoff exponentiel',
-      'backup-error-4': 'Alertes email/Slack en cas d\'échec'
+      'backup-error-4': 'Alertes email/Slack en cas d\'échec',
+      'backup-config-title': 'Configuration rclone',
+      'backup-config-text': 'Fichier de configuration rclone définissant le remote Google Drive. Le token OAuth est stocké de manière sécurisée (secret Kubernetes ou fichier protégé).'
     },
     en: {
       'backup-title': 'Backup Automation',
@@ -799,7 +825,9 @@ const pageTranslations = {
       'backup-error-1': 'Automatic parsing of rclone logs',
       'backup-error-2': 'Error classification (network, permission, disk space)',
       'backup-error-3': 'Automatic retry with exponential backoff',
-      'backup-error-4': 'Email/Slack alerts on failure'
+      'backup-error-4': 'Email/Slack alerts on failure',
+      'backup-config-title': 'rclone configuration',
+      'backup-config-text': 'rclone configuration file defining the Google Drive remote. The OAuth token is stored securely (Kubernetes secret or protected file).'
     }
   },
   'project-voip-asterisk': {
@@ -830,7 +858,11 @@ const pageTranslations = {
       'voip-skill-2': 'Compréhension des protocoles VoIP (SIP, RTP)',
       'voip-skill-3': 'Gestion de la qualité de service réseau',
       'voip-skill-4': 'Dépannage des problèmes de téléphonie',
-      'voip-skill-5': 'Collaboration inter-équipes pour l\'interconnexion'
+      'voip-skill-5': 'Collaboration inter-équipes pour l\'interconnexion',
+      'voip-flow-title': 'Flux d\'appel SIP inter-sites',
+      'voip-flow-text': 'Séquence de signalisation SIP lors d\'un appel entre le poste 1001 du site Lausanne et le poste 2001 du site Geneva. Le media audio (RTP) s\'établit en direct entre les endpoints une fois la négociation SDP terminée.',
+      'voip-dialplan-title': 'Plan de numérotation Asterisk',
+      'voip-dialplan-text': 'Extrait du fichier <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">extensions.conf</code> du site Lausanne. Les extensions locales (1XXX) sont gérées en interne ; les appels vers les autres sites utilisent les trunks SIP définis dans <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">sip.conf</code>.'
     },
     en: {
       'voip-title': 'Multi-site VoIP Infrastructure',
@@ -859,7 +891,11 @@ const pageTranslations = {
       'voip-skill-2': 'Understanding of VoIP protocols (SIP, RTP)',
       'voip-skill-3': 'Network Quality of Service management',
       'voip-skill-4': 'Telephony troubleshooting',
-      'voip-skill-5': 'Cross-team collaboration for interconnection'
+      'voip-skill-5': 'Cross-team collaboration for interconnection',
+      'voip-flow-title': 'Inter-site SIP call flow',
+      'voip-flow-text': 'SIP signaling sequence for a call between extension 1001 at the Lausanne site and extension 2001 at the Geneva site. The audio media (RTP) is established directly between endpoints once SDP negotiation completes.',
+      'voip-dialplan-title': 'Asterisk dial plan',
+      'voip-dialplan-text': 'Excerpt from the <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">extensions.conf</code> file at the Lausanne site. Local extensions (1XXX) are handled internally; calls to other sites use SIP trunks defined in <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">sip.conf</code>.'
     }
   },
   'project-homelab': {
@@ -892,7 +928,15 @@ const pageTranslations = {
       'homelab-learning-2': 'Haute disponibilité et redondance',
       'homelab-learning-3': 'Backup et disaster recovery',
       'homelab-learning-4': 'Sécurisation des services exposés',
-      'homelab-learning-5': 'Analyse et corrélation des logs avec ELK'
+      'homelab-learning-5': 'Analyse et corrélation des logs avec ELK',
+      'homelab-deploy-title': 'Déploiement automatisé',
+      'homelab-deploy-text': 'Un seul script installe le CSI driver SMB, crée le namespace, et déploie l\'ensemble des services dans l\'ordre correct, en attendant qu\'Elasticsearch soit healthy avant de démarrer Logstash.',
+      'homelab-backup-title': 'Backup NAS → Google Drive',
+      'homelab-backup-text': 'CronJob Kubernetes qui exécute rclone chaque nuit à 3h UTC. Le montage NAS est en read-only, le token Google Drive est stocké dans un Secret K8s. <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">concurrencyPolicy: Forbid</code> garantit qu\'un seul job tourne à la fois.',
+      'homelab-filebeat-title': 'Collecte centralisée des logs : Filebeat DaemonSet',
+      'homelab-filebeat-text': 'Filebeat tourne sur chaque nœud en tant que DaemonSet, collecte tous les logs des containers depuis <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">/var/log/containers/</code>, enrichit avec les métadonnées Kubernetes, et envoie à Logstash. Le ClusterRole donne accès en lecture à l\'API K8s pour l\'enrichissement.',
+      'homelab-ingress-title': 'Ingress Traefik + TLS Let\'s Encrypt',
+      'homelab-ingress-text': 'Toutes les routes HTTP sont déclarées dans un seul Ingress. cert-manager gère automatiquement les certificats TLS via Let\'s Encrypt pour le domaine public. Les services internes (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">.home</code>) sont accessibles en local uniquement.'
     },
     en: {
       'homelab-title': 'Homelab Infrastructure',
@@ -923,7 +967,15 @@ const pageTranslations = {
       'homelab-learning-2': 'High availability and redundancy',
       'homelab-learning-3': 'Backup and disaster recovery',
       'homelab-learning-4': 'Securing exposed services',
-      'homelab-learning-5': 'Log analysis and correlation with ELK'
+      'homelab-learning-5': 'Log analysis and correlation with ELK',
+      'homelab-deploy-title': 'Automated deployment',
+      'homelab-deploy-text': 'A single script installs the SMB CSI driver, creates the namespace, and deploys all services in the correct order, waiting for Elasticsearch to be healthy before starting Logstash.',
+      'homelab-backup-title': 'NAS Backup → Google Drive',
+      'homelab-backup-text': 'Kubernetes CronJob running rclone every night at 3am UTC. The NAS mount is read-only, the Google Drive token is stored in a K8s Secret. <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">concurrencyPolicy: Forbid</code> ensures only one job runs at a time.',
+      'homelab-filebeat-title': 'Centralized log collection: Filebeat DaemonSet',
+      'homelab-filebeat-text': 'Filebeat runs on every node as a DaemonSet, collects all container logs from <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">/var/log/containers/</code>, enriches them with Kubernetes metadata, and forwards to Logstash. The ClusterRole grants read access to the K8s API for enrichment.',
+      'homelab-ingress-title': 'Traefik Ingress + Let\'s Encrypt TLS',
+      'homelab-ingress-text': 'All HTTP routes are declared in a single Ingress. cert-manager automatically manages TLS certificates via Let\'s Encrypt for the public domain. Internal services (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">.home</code>) are accessible locally only.'
     }
   },
   'project-network-automation': {
@@ -941,7 +993,11 @@ const pageTranslations = {
       'netauto-vendor-cisco': 'Switches et routeurs',
       'netauto-vendor-mikrotik': 'Routeurs et points d\'accès',
       'netauto-vendor-aruba': 'Switches et contrôleurs WiFi',
-      'netauto-vendor-arista': 'Switches datacenter'
+      'netauto-vendor-arista': 'Switches datacenter',
+      'netauto-pipeline-title': 'Pipeline d\'automatisation réseau',
+      'netauto-pipeline-text': 'Workflow Ansible pour la gestion multi-vendeurs : inventaire dynamique, collecte de l\'état courant, application des configurations depuis templates Jinja2, vérification de conformité et rapport final.',
+      'netauto-playbook-title': 'Playbook Ansible : Déploiement VLAN multi-vendeurs',
+      'netauto-playbook-text': 'Exemple de playbook déployant une liste de VLANs sur l\'ensemble du parc. Les templates Jinja2 génèrent la syntaxe spécifique à chaque OS cible.'
     },
     en: {
       'netauto-subtitle': 'Automation scripts for network equipment',
@@ -957,7 +1013,11 @@ const pageTranslations = {
       'netauto-vendor-cisco': 'Switches and routers',
       'netauto-vendor-mikrotik': 'Routers and access points',
       'netauto-vendor-aruba': 'Switches and WiFi controllers',
-      'netauto-vendor-arista': 'Datacenter switches'
+      'netauto-vendor-arista': 'Datacenter switches',
+      'netauto-pipeline-title': 'Network automation pipeline',
+      'netauto-pipeline-text': 'Ansible workflow for multi-vendor management: dynamic inventory, current state collection, configuration push from Jinja2 templates, compliance verification and final report.',
+      'netauto-playbook-title': 'Ansible playbook: Multi-vendor VLAN deployment',
+      'netauto-playbook-text': 'Example playbook deploying a list of VLANs across the entire fleet. Jinja2 templates generate the syntax specific to each target OS.'
     }
   },
   'project-sdn-p2v': {
@@ -984,7 +1044,9 @@ const pageTranslations = {
       'sdn-tech-ansible': 'Orchestration et collecte des configs',
       'sdn-tech-python': 'Parsing et génération des fichiers',
       'sdn-tech-eveng': 'Plateforme de virtualisation réseau',
-      'sdn-tech-lldp': 'Découverte de la topologie'
+      'sdn-tech-lldp': 'Découverte de la topologie',
+      'sdn-topo-title': 'Topologie : Physique vers Virtuel',
+      'sdn-topo-text': 'Le pipeline reconstruit fidèlement la topologie physique Aruba dans EVE-NG. Les ports uplink sont remappés (1/1/47-49 vers 1/1/7-9) pour respecter la limite des images virtuelles. La topologie découverte via LLDP est automatiquement reproduite dans le fichier UNL.'
     },
     en: {
       'sdn-subtitle': 'Physical to Virtual - Network migration automation',
@@ -1009,7 +1071,9 @@ const pageTranslations = {
       'sdn-tech-ansible': 'Orchestration and configuration collection',
       'sdn-tech-python': 'Parsing and file generation',
       'sdn-tech-eveng': 'Network virtualization platform',
-      'sdn-tech-lldp': 'Topology discovery'
+      'sdn-tech-lldp': 'Topology discovery',
+      'sdn-topo-title': 'Topology: Physical to Virtual',
+      'sdn-topo-text': 'The pipeline faithfully reconstructs the physical Aruba topology in EVE-NG. Uplink ports are remapped (1/1/47-49 to 1/1/7-9) to comply with virtual image port limits. The topology discovered via LLDP is automatically reproduced in the UNL file.'
     }
   },
   'project-monitoring': {
@@ -1027,7 +1091,13 @@ const pageTranslations = {
       'monitoring-metric2': 'Disponibilité des services',
       'monitoring-metric3': 'Métriques Docker containers',
       'monitoring-metric4': 'Latence et temps de réponse',
-      'monitoring-metric5': 'Logs centralisés avec Loki'
+      'monitoring-metric5': 'Logs centralisés avec Loki',
+      'monitoring-flow-title': 'Flux de collecte Prometheus',
+      'monitoring-flow-text': 'Prometheus scrute chaque cible selon un intervalle configuré. node-exporter expose les métriques système, cAdvisor les métriques containers. Alertmanager achemine les alertes vers les canaux de notification.',
+      'monitoring-config-title': 'Configuration Prometheus',
+      'monitoring-config-text': 'Fichier de configuration principal définissant les intervalles de scrape, les cibles statiques et les règles d\'alerte chargées depuis des fichiers externes.',
+      'monitoring-alerts-title': 'Règles d\'alerte',
+      'monitoring-alerts-text': 'Exemple de règles Prometheus pour surveiller la disponibilité des noeuds et l\'utilisation des ressources.'
     },
     en: {
       'monitoring-subtitle': 'Complete monitoring stack for infrastructure',
@@ -1043,7 +1113,13 @@ const pageTranslations = {
       'monitoring-metric2': 'Service availability',
       'monitoring-metric3': 'Docker container metrics',
       'monitoring-metric4': 'Latency and response time',
-      'monitoring-metric5': 'Centralized logs with Loki'
+      'monitoring-metric5': 'Centralized logs with Loki',
+      'monitoring-flow-title': 'Prometheus scrape flow',
+      'monitoring-flow-text': 'Prometheus scrapes each target at a configured interval. node-exporter exposes system metrics, cAdvisor exposes container metrics. Alertmanager routes alerts to notification channels.',
+      'monitoring-config-title': 'Prometheus configuration',
+      'monitoring-config-text': 'Main configuration file defining scrape intervals, static targets and alert rules loaded from external files.',
+      'monitoring-alerts-title': 'Alert rules',
+      'monitoring-alerts-text': 'Example Prometheus rules to monitor node availability and resource usage.'
     }
   },
   'project-asln': {
@@ -1098,26 +1174,15 @@ const jobTranslations = {
     sysadmin: {
       title: 'SysAdmin',
       tasks: [
-        'Certification Cyber-Safe : audit externe, charte sécurité, conformité RGPD',
-        'Création et gestion d\'un département IT pour une PME de 30 personnes',
-        'Architecture réseau : VLANs segmentés (Office, VoIP, Services, DMZ)',
-        'Déploiement WiFi entreprise avec APs Ubiquiti UniFi',
-        'Administration Active Directory et migration Exchange',
-        'Backup professionnel avec données immuables (conformité RGPD)',
-        'Virtualisation et containerisation (Docker, Proxmox)',
-        'Gestion du parc macOS avec Apple Business Manager',
-        'Sensibilisation cybersécurité et gestion des prestataires IT'
+        'Création et pilotage solo du département IT d\'une PME de 30 personnes : réseau VLANs, AD, Docker/Proxmox, backup RGPD',
+        'Certification Cyber-Safe obtenue après audit externe'
       ]
     },
     trainee: {
       title: 'IT Trainee',
       tasks: [
-        'Setup complet de streaming pour InGenius (Shark Tank interne) avec OBS',
-        'Solution distanciel COVID pour Maison Cailler (Zoom, Teams, stockage cloud)',
-        'Développement du site web ASLN avec système d\'ajout de clubs dynamique',
-        'Développement d\'applications PowerApps, HTML et PHP',
-        'Automatisation de processus avec Microsoft Power Automate (RPA)',
-        'Création de dashboards avec Microsoft Power BI'
+        'Mission polyvalente dans un environnement corporate mondial : support IT, streaming live, solutions COVID, développement web',
+        'Automatisation de processus (Power Automate) et dashboards Power BI'
       ]
     }
   },
@@ -1125,26 +1190,15 @@ const jobTranslations = {
     sysadmin: {
       title: 'SysAdmin',
       tasks: [
-        'Cyber-Safe certification: external audit, security charter, GDPR compliance',
-        'Creation and management of IT department for a 30-person SME',
-        'Network architecture: segmented VLANs (Office, VoIP, Services, DMZ)',
-        'Enterprise WiFi deployment with Ubiquiti UniFi APs',
-        'Active Directory administration and Exchange migration',
-        'Professional backup with immutable data (GDPR compliance)',
-        'Virtualization and containerization (Docker, Proxmox)',
-        'macOS fleet management with Apple Business Manager',
-        'Cybersecurity awareness and IT vendor management'
+        'Solo creation and management of the IT department for a 30-person SME: VLANs, AD, Docker/Proxmox, GDPR-compliant backup',
+        'Cyber-Safe certification obtained after successful external audit'
       ]
     },
     trainee: {
       title: 'IT Trainee',
       tasks: [
-        'Complete streaming setup for InGenius (internal Shark Tank) with OBS',
-        'COVID remote solution for Maison Cailler (Teams, Zoom, cloud storage)',
-        'Development of ASLN website with dynamic club addition system',
-        'Development of PowerApps, HTML and PHP applications',
-        'Process automation with Microsoft Power Automate (RPA)',
-        'Dashboard creation with Microsoft Power BI'
+        'Versatile mission in a global corporate environment: IT support, live streaming, COVID remote solutions, web development',
+        'Process automation (Power Automate) and Power BI dashboards'
       ]
     }
   }
@@ -1192,7 +1246,7 @@ pageTranslations['project-crunch-lpv'] = {
     'crunch-title': 'CrunchTime, Ligue Pulmonaire Vaudoise',
     'crunch-subtitle': 'Infrastructure K8s on-premise pour la classification automatique de mails par IA. Sprint d\'innovation HEIG-VD 2026.',
     'crunch-context-title': 'Contexte',
-    'crunch-context-text': 'CrunchTime Innovation est un challenge hebdomadaire organisé par la HEIG-VD : cinq jours pour comprendre un mandat client réel, concevoir une solution, prototyper et pitcher. En mars 2026, notre équipe de 5 étudiants interdisciplinaires a travaillé pour la Ligue Pulmonaire Vaudoise (LPV), association lausannoise de 80 collaborateurs spécialisée dans les maladies respiratoires. Mon rôle : conception et design de l\'infrastructure Kubernetes on-premise proposée au client.',
+    'crunch-context-text': 'CrunchTime Innovation est un challenge sur une semaine organisé par la HEIG-VD : cinq jours pour comprendre un mandat client réel, concevoir une solution, prototyper et pitcher. En mars 2026, notre équipe de 5 étudiants interdisciplinaires a travaillé pour la Ligue Pulmonaire Vaudoise (LPV), association lausannoise de 80 collaborateurs spécialisée dans les maladies respiratoires. Mon rôle : conception et design de l\'infrastructure Kubernetes on-premise proposée au client.',
     'crunch-event-label': 'Événement',
     'crunch-client-label': 'Client',
     'crunch-duration-label': 'Durée',
@@ -1259,7 +1313,6 @@ pageTranslations['project-crunch-lpv'] = {
     'crunch-onprem-text': 'Contrainte non négociable : la LPV traite des données médicales couvertes par la nLPD (nouvelle Loi sur la Protection des Données). Aucune donnée (emails, pièces jointes, poids de modèle) ne transite par un cloud externe. Tout s\'exécute sur l\'infrastructure locale hospitalière. C\'est aussi pourquoi MinIO remplace S3 et GitLab self-hosted remplace GitHub Actions.',
     'crunch-conclusion-title': 'Conclusion',
     'crunch-conclusion-text': 'En une semaine, l\'équipe a produit une architecture complète, une maquette fonctionnelle et un pitch livré devant le client. La solution répond aux trois enjeux identifiés lors de l\'immersion : infrastructure modulable, moins d\'erreurs de routage, charge cognitive réduite pour le personnel administratif.',
-    'crunch-quote': '"Ce n\'est pas de la magie. C\'est de l\'ingénierie au service de gens qui soignent d\'autres gens."',
     'crunch-team-title': 'Équipe',
     'crunch-role-dani': 'Ingénieur réseaux & systèmes, Architecture & infra',
     'crunch-role-matheo': 'Ingénieur sécurité informatique',
@@ -1338,7 +1391,6 @@ pageTranslations['project-crunch-lpv'] = {
     'crunch-onprem-text': 'A non-negotiable constraint: LPV handles medical data covered by the nFADP (new Federal Act on Data Protection). No data (emails, attachments, model weights) transits through an external cloud. Everything runs on the local hospital infrastructure. That\'s also why MinIO replaces S3 and self-hosted GitLab replaces GitHub Actions.',
     'crunch-conclusion-title': 'Conclusion',
     'crunch-conclusion-text': 'In one week, the team produced a complete architecture, a functional mockup and a pitch delivered to the client. The solution addresses the three challenges identified during the immersion day: modular infrastructure, fewer routing errors, reduced cognitive load for administrative staff.',
-    'crunch-quote': '"It\'s not magic. It\'s engineering in the service of people who care for other people."',
     'crunch-team-title': 'Team',
     'crunch-role-dani': 'Networks & systems engineer, Architecture & infra',
     'crunch-role-matheo': 'Information security engineer',

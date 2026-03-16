@@ -70,8 +70,8 @@
 
         <!-- ── SIP call flow diagram ── -->
         <section class="project-section" data-anim="up">
-          <h2>Flux d'appel SIP inter-sites</h2>
-          <p>Sequence de signalisation SIP lors d'un appel entre le poste 1001 du site Lausanne et le poste 2001 du site Geneva. Le media audio (RTP) s'etablit en direct entre les endpoints une fois la negociation SDP terminee.</p>
+          <h2 data-i18n="voip-flow-title">Flux d'appel SIP inter-sites</h2>
+          <p data-i18n="voip-flow-text">Sequence de signalisation SIP lors d'un appel entre le poste 1001 du site Lausanne et le poste 2001 du site Geneva. Le media audio (RTP) s'etablit en direct entre les endpoints une fois la negociation SDP terminee.</p>
           <div class="mermaid">
 sequenceDiagram
     participant Phone1 as Telephone 1001\nLausanne
@@ -110,8 +110,8 @@ sequenceDiagram
 
         <!-- ── Asterisk dialplan code block ── -->
         <section class="project-section" data-anim="up">
-          <h2>Plan de numerotation Asterisk</h2>
-          <p>Extrait du fichier <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">extensions.conf</code> du site Lausanne. Les extensions locales (1XXX) sont gerees en interne ; les appels vers les autres sites utilisent les trunks SIP definis dans <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">sip.conf</code>.</p>
+          <h2 data-i18n="voip-dialplan-title">Plan de numerotation Asterisk</h2>
+          <p data-i18n="voip-dialplan-text">Extrait du fichier <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">extensions.conf</code> du site Lausanne. Les extensions locales (1XXX) sont gerees en interne ; les appels vers les autres sites utilisent les trunks SIP definis dans <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">sip.conf</code>.</p>
           <div class="code-block">
             <div class="code-header">
               <span class="code-filename">extensions.conf</span>
