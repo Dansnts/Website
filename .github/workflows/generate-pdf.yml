@@ -1,8 +1,7 @@
 name: Generate CV PDF
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
   pdf:
@@ -28,6 +27,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add www/cv.pdf
+          git add www/cv-fr.pdf www/cv-en.pdf
           git diff --cached --quiet || git commit -m "chore: regenerate cv.pdf"
           git push

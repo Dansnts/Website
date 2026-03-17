@@ -28,10 +28,20 @@ function updateLangButton() {
   if (en) en.classList.toggle('active', currentLang === 'en');
 }
 
+function updatePdfLink() {
+  const btn = document.getElementById('cv-download-btn');
+  if (!btn) return;
+  btn.href = currentLang === 'en' ? '/cv-en.pdf' : '/cv-fr.pdf';
+  btn.download = currentLang === 'en'
+    ? 'CV_Dani_Faria_dos_Santos_EN.pdf'
+    : 'CV_Dani_Faria_dos_Santos_FR.pdf';
+}
+
 function toggleLanguage() {
   currentLang = currentLang === 'fr' ? 'en' : 'fr';
   localStorage.setItem('site-lang', currentLang);
   updateLangButton();
+  updatePdfLink();
   window.dispatchEvent(new CustomEvent('langChange', { detail: currentLang }));
 }
 
@@ -187,6 +197,7 @@ function initAge() {
 document.addEventListener('DOMContentLoaded', async () => {
   await loadComponents();
   updateLangButton();
+  updatePdfLink();
   window.dispatchEvent(new CustomEvent('langChange', { detail: currentLang }));
   initScrollReveal();
   initNavScroll();

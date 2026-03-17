@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=11">
+  <link rel="stylesheet" href="/css/style.css?v=12">
   <link rel="icon" href="/favicon.ico">
   <script src="/js/main.js"></script>
 </head>
@@ -361,7 +361,7 @@
             <p class="cv-section-sub">Dani Faria dos Santos, SysAdmin &amp; DevOps</p>
           </div>
           <div class="cv-actions">
-            <a class="cv-btn primary" href="/cv.pdf" download="CV_Dani_Faria_dos_Santos.pdf">
+            <a class="cv-btn primary" id="cv-download-btn" href="/cv-fr.pdf" download="CV_Dani_Faria_dos_Santos_FR.pdf">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
               <span data-i18n="export-pdf">Exporter PDF</span>
             </a>
@@ -415,15 +415,15 @@
         <section class="section" data-anim="up">
           <h3 class="section-title" data-i18n="skills">Compétences</h3>
 
-          <p style="margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7;" data-i18n="skills-intro">Mise en place de clusters Kubernetes on-premise et gestion de workloads conteneurisés. Déploiement d'infrastructure as code avec Terraform et Ansible. Administration de serveurs Windows Server (AD, GPO, Exchange) et de parcs Linux (Fedora, Ubuntu, Debian). Configuration et segmentation réseau (VLANs, Cisco, Aruba, Arista, UniFi). Déploiement de stacks de monitoring (Prometheus, Grafana, ELK). Automatisation de pipelines CI/CD avec GitLab et scripting Python/Bash. Gestion MDM (Intune, Apple Business Manager). Certification cybersécurité Cyber-Safe, mise en conformité RGPD.</p>
+          <p class="skills-intro-text" data-i18n="skills-intro">Mise en place de clusters Kubernetes on-premise et gestion de workloads conteneurisés. Déploiement d'infrastructure as code avec Terraform et Ansible. Administration de serveurs Windows Server (AD, GPO, Exchange) et de parcs Linux (Fedora, Ubuntu, Debian). Configuration et segmentation réseau (VLANs, Cisco, Aruba, Arista, UniFi). Déploiement de stacks de monitoring (Prometheus, Grafana, ELK). Automatisation de pipelines CI/CD avec GitLab et scripting Python/Bash. Gestion MDM (Intune, Apple Business Manager). Certification cybersécurité Cyber-Safe, mise en conformité RGPD.</p>
 
           <div class="skills-grid">
             <div class="skill-category">
               <h4 data-i18n="virtualization">Virtualisation &amp; Orchestration</h4>
               <div class="bento-tags" style="gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem;">
-                <span class="tag">Kubernetes (K8s)</span>
-                <span class="tag">Docker / Compose</span>
-                <span class="tag">Proxmox</span>
+                <span class="tag tag-core">Kubernetes (K8s)</span>
+                <span class="tag tag-core">Docker / Compose</span>
+                <span class="tag tag-core">Proxmox</span>
                 <span class="tag">VMware vSphere / ESXi</span>
                 <span class="tag">Vagrant</span>
               </div>
@@ -431,8 +431,8 @@
             <div class="skill-category">
               <h4 data-i18n="infrastructure">Infrastructure &amp; Réseau</h4>
               <div class="bento-tags" style="gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem;">
-                <span class="tag">Windows Server / AD</span>
-                <span class="tag">Linux</span>
+                <span class="tag tag-core">Windows Server / AD</span>
+                <span class="tag tag-core">Linux</span>
                 <span class="tag">Cisco / Aruba / Arista</span>
                 <span class="tag">Ubiquiti UniFi</span>
                 <span class="tag">Azure / AWS / GCP</span>
@@ -444,10 +444,10 @@
               <h4 data-i18n="automation">Automatisation &amp; Monitoring</h4>
               <div class="bento-tags" style="gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem;">
                 <span class="tag">Ansible</span>
-                <span class="tag">Terraform</span>
-                <span class="tag">Git / GitLab CI</span>
-                <span class="tag">Prometheus / Grafana</span>
-                <span class="tag">ELK Stack</span>
+                <span class="tag tag-core">Terraform</span>
+                <span class="tag tag-core">Git / GitLab CI</span>
+                <span class="tag tag-core">Prometheus / Grafana</span>
+                <span class="tag tag-core">ELK Stack</span>
                 <span class="tag">Python / Bash</span>
               </div>
             </div>
@@ -467,8 +467,11 @@
                 </div>
                 <div class="timeline-content">
                   <ul>
-                    <li data-i18n="sysadmin-task">Création et pilotage solo du département IT d'une PME de 30 personnes : réseau VLANs, AD, Docker/Proxmox, backup RGPD</li>
-                    <li data-i18n="sysadmin-task">Certification Cyber-Safe obtenue après audit externe</li>
+                    <li data-i18n="sysadmin-task">Création from scratch du département IT (0 → 30 users AD, réseau VLANs, MDM, 3CX sur Debian), virtualisation on-premise Proxmox et cloud Hidora selon les cas d'usage</li>
+                    <li data-i18n="sysadmin-task">Certification Cyber-Safe obtenue après audit externe, première gestion de devices structurée de l'entreprise</li>
+                    <li class="web-only" data-i18n="sysadmin-task">Architecture réseau : VLANs segmentés (Office, VoIP, Services, DMZ), déploiement WiFi entreprise Ubiquiti UniFi</li>
+                    <li class="web-only" data-i18n="sysadmin-task">Administration Active Directory, migration Exchange, backup immuable (conformité RGPD)</li>
+                    <li class="web-only" data-i18n="sysadmin-task">Gestion du parc macOS avec Apple Business Manager, sensibilisation cybersécurité</li>
                   </ul>
                 </div>
                 <div class="bento-tags" style="margin-top: 0.75rem; gap: 0.4rem; flex-wrap: wrap; display: flex;">
@@ -491,6 +494,9 @@
                   <ul>
                     <li data-i18n="trainee-task">Mission polyvalente dans un environnement corporate mondial : support IT, streaming live, solutions COVID, développement web</li>
                     <li data-i18n="trainee-task">Automatisation de processus (Power Automate) et dashboards Power BI</li>
+                    <li class="web-only" data-i18n="trainee-task">Setup complet de streaming pour InGenius (Shark Tank interne) avec OBS</li>
+                    <li class="web-only" data-i18n="trainee-task">Solution distanciel COVID pour Maison Cailler (Teams, Zoom, stockage cloud)</li>
+                    <li class="web-only" data-i18n="trainee-task">Développement du site web ASLN et applications PowerApps, HTML, PHP</li>
                   </ul>
                 </div>
                 <div class="bento-tags" style="margin-top: 0.75rem; gap: 0.4rem; flex-wrap: wrap; display: flex;">
