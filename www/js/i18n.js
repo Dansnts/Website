@@ -144,7 +144,7 @@ const pageTranslations = {
       'experience': 'Expérience professionnelle',
       'education': 'Formation',
       'skills': 'Compétences',
-      'skills-intro': "Mise en place de clusters Kubernetes on-premise et gestion de workloads conteneurisés. Déploiement d'infrastructure as code avec Terraform et Ansible. Administration de serveurs Windows Server (AD, GPO, Exchange) et de parcs Linux (Fedora, Ubuntu, Debian). Configuration et segmentation réseau (VLANs, Cisco, Aruba, Arista, UniFi). Déploiement de stacks de monitoring (Prometheus, Grafana, ELK). Automatisation de pipelines CI/CD avec GitLab et scripting Python/Bash. Gestion MDM (Intune, Apple Business Manager). Certification cybersécurité Cyber-Safe, mise en conformité RGPD.",
+      'skills-intro': "Mise en place de clusters <strong>Kubernetes</strong> on-premise et gestion de workloads conteneurisés avec <strong>Docker</strong>. Virtualisation sur <strong>Proxmox</strong>. Déploiement d'infrastructure as code avec <strong>Terraform</strong> et Ansible. Administration de serveurs <strong>Windows Server</strong> (AD, GPO, Exchange) et de parcs <strong>Linux</strong> (Fedora, Ubuntu, Debian). Configuration et segmentation réseau (VLANs, Cisco, Aruba, Arista, UniFi). Déploiement de stacks de monitoring (<strong>Prometheus, Grafana, ELK</strong>). Automatisation de pipelines <strong>CI/CD avec GitLab</strong> et scripting Python/Bash. Gestion MDM (Intune, Apple Business Manager). Certification cybersécurité Cyber-Safe, mise en conformité RGPD.",
       'languages': 'Langues',
       'virtualization': 'Virtualisation & Orchestration',
       'infrastructure': 'Infrastructure & Réseau',
@@ -172,7 +172,7 @@ const pageTranslations = {
       'experience': 'Professional Experience',
       'education': 'Education',
       'skills': 'Skills',
-      'skills-intro': 'Deployment and administration of on-premise Kubernetes clusters and containerized workloads. Infrastructure as code with Terraform and Ansible. Windows Server administration (AD, GPO, Exchange) and Linux fleet management (Fedora, Ubuntu, Debian). Network configuration and segmentation (VLANs, Cisco, Aruba, Arista, UniFi). Monitoring stack deployment (Prometheus, Grafana, ELK). CI/CD pipeline automation with GitLab and Python/Bash scripting. MDM management (Intune, Apple Business Manager). Cyber-Safe security certification, GDPR compliance.',
+      'skills-intro': 'Deployment and administration of on-premise <strong>Kubernetes</strong> clusters and containerized workloads with <strong>Docker</strong>. Virtualization on <strong>Proxmox</strong>. Infrastructure as code with <strong>Terraform</strong> and Ansible. <strong>Windows Server</strong> administration (AD, GPO, Exchange) and <strong>Linux</strong> fleet management (Fedora, Ubuntu, Debian). Network configuration and segmentation (VLANs, Cisco, Aruba, Arista, UniFi). Monitoring stack deployment (<strong>Prometheus, Grafana, ELK</strong>). <strong>CI/CD pipeline automation with GitLab</strong> and Python/Bash scripting. MDM management (Intune, Apple Business Manager). Cyber-Safe security certification, GDPR compliance.',
       'languages': 'Languages',
       'virtualization': 'Virtualization & Orchestration',
       'infrastructure': 'Infrastructure & Network',
@@ -1174,15 +1174,21 @@ const jobTranslations = {
     sysadmin: {
       title: 'SysAdmin',
       tasks: [
-        'Création et pilotage solo du département IT d\'une PME de 30 personnes : réseau VLANs, AD, Docker/Proxmox, backup RGPD',
-        'Certification Cyber-Safe obtenue après audit externe'
+        'Création from scratch du département IT (0 → 30 users AD, réseau VLANs, MDM, 3CX sur Debian), virtualisation on-premise Proxmox et cloud Hidora selon les cas d\'usage',
+        'Certification Cyber-Safe obtenue après audit externe, première gestion de devices structurée de l\'entreprise',
+        'Architecture réseau : VLANs segmentés (Office, VoIP, Services, DMZ), déploiement WiFi entreprise Ubiquiti UniFi',
+        'Administration Active Directory, migration Exchange, backup immuable (conformité RGPD)',
+        'Gestion du parc macOS avec Apple Business Manager, sensibilisation cybersécurité'
       ]
     },
     trainee: {
       title: 'IT Trainee',
       tasks: [
         'Mission polyvalente dans un environnement corporate mondial : support IT, streaming live, solutions COVID, développement web',
-        'Automatisation de processus (Power Automate) et dashboards Power BI'
+        'Automatisation de processus (Power Automate) et dashboards Power BI',
+        'Setup complet de streaming pour InGenius (Shark Tank interne) avec OBS',
+        'Solution distanciel COVID pour Maison Cailler (Teams, Zoom, stockage cloud)',
+        'Développement du site web ASLN et applications PowerApps, HTML, PHP'
       ]
     }
   },
@@ -1190,15 +1196,21 @@ const jobTranslations = {
     sysadmin: {
       title: 'SysAdmin',
       tasks: [
-        'Solo creation and management of the IT department for a 30-person SME: VLANs, AD, Docker/Proxmox, GDPR-compliant backup',
-        'Cyber-Safe certification obtained after successful external audit'
+        'Built IT department from scratch (0 → 30 AD users, VLANs, MDM, 3CX on Debian), on-premise Proxmox virtualization alongside Hidora cloud for specific use cases',
+        'Cyber-Safe certification after external audit, first structured device management in company history',
+        'Network architecture: segmented VLANs (Office, VoIP, Services, DMZ), enterprise WiFi deployment with Ubiquiti UniFi',
+        'Active Directory administration, Exchange migration, immutable backup (GDPR compliance)',
+        'macOS fleet management with Apple Business Manager, cybersecurity awareness'
       ]
     },
     trainee: {
       title: 'IT Trainee',
       tasks: [
         'Versatile mission in a global corporate environment: IT support, live streaming, COVID remote solutions, web development',
-        'Process automation (Power Automate) and Power BI dashboards'
+        'Process automation (Power Automate) and Power BI dashboards',
+        'Complete streaming setup for InGenius (internal Shark Tank) with OBS',
+        'COVID remote solution for Maison Cailler (Teams, Zoom, cloud storage)',
+        'ASLN website development and PowerApps, HTML, PHP applications'
       ]
     }
   }
