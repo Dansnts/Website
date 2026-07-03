@@ -7,145 +7,85 @@
   <meta name="description" content="De zéro à un pipeline qui teste, build et déploie automatiquement à chaque push." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --blue: #2563eb;
-      --text: #111;
-      --muted: #666;
-      --border: #e4e4e4;
-      --bg: #fff;
-      --surface: #f8f9fb;
-      --code-bg: #f1f5f9;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --text: #f0f0f0;
-        --muted: #999;
-        --border: #2a2a2a;
-        --bg: #0f0f0f;
-        --surface: #1a1a1a;
-        --code-bg: #1e2330;
-      }
-    }
-
-    body {
-      font-family: 'DM Sans', system-ui, sans-serif;
-      font-size: 16px;
-      line-height: 1.7;
-      color: var(--text);
-      background: var(--bg);
+    .blog-wrap {
       max-width: 720px;
       margin: 0 auto;
-      padding: 0 1.5rem 4rem;
+      padding: 2rem 2rem 5rem;
     }
 
-    a { color: var(--blue); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.5rem 0;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 3rem;
-    }
-    .nav-name { font-weight: 700; color: var(--text); font-size: 0.95rem; }
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-    }
-    .nav-links a { color: var(--muted); }
-    .nav-links a:hover { color: var(--blue); text-decoration: none; }
-
-    /* Article prose */
-    .prose h1 { font-size: 1.9rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; }
-    .prose h2 { font-size: 1.25rem; font-weight: 600; margin: 2rem 0 0.6rem; }
-    .prose h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 0.4rem; }
-    .prose p { margin-bottom: 1.1rem; }
-    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; }
-    .prose li { margin-bottom: 0.3rem; }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
     .prose code {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--mono);
       font-size: 0.82em;
-      background: var(--code-bg);
-      padding: 0.15em 0.35em;
-      border-radius: 3px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
     }
     .prose pre {
-      background: var(--code-bg);
-      border-radius: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
       padding: 1rem 1.2rem;
       overflow-x: auto;
-      margin-bottom: 1.1rem;
+      margin-bottom: 1.4rem;
     }
-    .prose pre code { background: none; padding: 0; font-size: 0.85rem; }
+    .prose pre code { background: none; border: none; padding: 0; font-size: 0.82rem; }
     .prose blockquote {
-      border-left: 3px solid var(--blue);
+      border-left: 2px solid var(--accent);
       padding: 0.1rem 1rem;
       color: var(--muted);
       margin: 1.5rem 0;
     }
-    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
-    .prose img { max-width: 100%; border-radius: 6px; margin: 1rem 0; }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
 
-    /* Post meta */
     .post-meta {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
       margin-bottom: 2.5rem;
       display: flex;
       gap: 1rem;
+      letter-spacing: 0.05em;
     }
 
-    /* Blog index */
-    .post-list { list-style: none; }
-    .post-list li {
-      padding: 1.2rem 0;
-      border-bottom: 1px solid var(--border);
-    }
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
     .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-list .post-date {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-bottom: 0.2rem;
-    }
-    .post-list a {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .post-list a:hover { color: var(--blue); }
-    .post-list .post-desc { font-size: 0.9rem; color: var(--muted); margin-top: 0.2rem; }
-
-    .page-title {
-      font-size: 1.6rem;
-      font-weight: 700;
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
       margin-bottom: 0.3rem;
     }
-    .page-subtitle {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
   </style>
 </head>
 <body>
-  <nav>
-    <a class="nav-name" href="/">fariadossantos.com</a>
-    <div class="nav-links">
-      <a href="/">accueil</a>
-      <a href="/blog/">blog</a>
-    </div>
-  </nav>
-  <article class="prose">
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
   <h1>Mettre en place une CI/CD avec GitHub Actions</h1>
   <div class="post-meta">
     <span>3 juillet 2026</span>
@@ -275,5 +215,10 @@ jobs:
 
 </article>
 
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
 </body>
 </html>
