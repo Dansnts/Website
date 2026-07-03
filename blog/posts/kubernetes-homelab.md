@@ -10,7 +10,7 @@ Depuis 2 ans, je fais tourner un cluster K3s chez moi avec ~20 services en produ
 
 ## Pourquoi K3s plutôt que kubeadm ?
 
-K3s embarque tout ce qu'il faut dans un binaire unique de 70 MB — API server, scheduler, controller manager, etcd remplacé par SQLite (ou externe). Pour un homelab, c'est parfait : moins de surface de configuration, même API.
+K3s embarque tout ce qu'il faut dans un binaire unique de 70 MB : API server, scheduler, controller manager, etcd remplacé par SQLite (ou externe). Pour un homelab, c'est parfait : moins de surface de configuration, même API.
 
 ## Ce qui tourne dessus
 
@@ -21,7 +21,7 @@ K3s embarque tout ce qu'il faut dans un binaire unique de 70 MB — API server, 
 
 ## La leçon la plus importante
 
-Versionne tout depuis le début. Après 6 mois sans IaC stricte, j'avais un cluster que je ne pouvais plus recréer. Terraform pour les VMs + Ansible pour la base OS + Kustomize pour les manifests K8s — c'est le trio qui rend le cluster reproductible.
+Versionne tout depuis le début. Après 6 mois sans IaC stricte, j'avais un cluster que je ne pouvais plus recréer. Terraform pour les VMs + Ansible pour la base OS + Kustomize pour les manifests K8s, c'est le trio qui rend le cluster reproductible.
 
 ```bash
 # Recréer le cluster depuis zéro
