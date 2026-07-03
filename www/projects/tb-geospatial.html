@@ -16,7 +16,7 @@
 
   <main>
     <div class="wrapper">
-      <a href="/projects.html" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
+      <a href="/" class="back-link">&larr; <span data-i18n="back-projects">Retour aux projets</span></a>
 
       <article class="project-detail">
         <header class="project-hero">
@@ -24,35 +24,34 @@
             <span class="tag tag-blue">Kubernetes</span>
             <span class="tag tag-purple">Ray</span>
             <span class="tag tag-purple">SAM3</span>
-            <span class="tag tag-blue">S3</span>
-            <span class="tag tag-teal">PostGIS</span>
+            <span class="tag tag-blue">MinIO / S3</span>
+            <span class="tag tag-green">Parquet</span>
+            <span class="tag tag-teal">KubeRay</span>
             <span class="tag tag-green">Python</span>
           </div>
-          <h1 data-i18n="tb-title">Pipeline Distribué d'Annotation d'Images Panoramiques par IA</h1>
-          <p class="project-subtitle" data-i18n="tb-subtitle">Travail de Bachelor - HEIG-VD 2026</p>
+          <h1 data-i18n="tb-title">Pipeline Distribuée d'Annotation Automatique d'Images Géospatiales</h1>
+          <p class="project-subtitle" data-i18n="tb-subtitle">Travail de Bachelor · HEIG-VD 2025-26 · Superviseur : Prof. Bertil Chapuis</p>
           <span class="tag" style="background: var(--accent); color: white; margin-top: 1rem;" data-i18n="tb-status">En cours</span>
         </header>
 
         <section class="project-section">
           <h2 data-i18n="tb-context-title">Contexte</h2>
-          <p data-i18n="tb-context-text">L'annotation automatique d'objets dans de vastes collections d'images panoramiques haute définition est une tâche complexe nécessitant une puissance de calcul importante. Ce projet de Bachelor propose de concevoir et implémenter un pipeline de traitement distribué, exploitant le modèle d'IA SAM3 (Segment Anything Model 3), pour générer des annotations vectorielles de haute qualité sur 300 000 images. Le déploiement s'effectue sur le cluster Kubernetes de l'école en utilisant le framework Ray pour orchestrer les calculs.</p>
+          <p data-i18n="tb-context-text">L'Institut IICT de la HEIG-VD conduit le projet <strong>NearAI</strong>, dont l'objectif est de construire une base de données géospatiale d'éléments routiers à partir d'acquisitions mobiles. Les images sont capturées par des véhicules équipés d'un Trimble MX50 ou d'une GoPro Max et produisent des panoramas équirectangulaires allant jusqu'à 8'192 × 4'096 pixels, accompagnés de coordonnées GPS enregistrées dans l'EXIF. Le corpus cible dépasse <strong>300'000 images</strong>. Annoter manuellement ce volume représenterait plus de 2'500 heures de travail — l'annotation automatisée est la seule voie viable.</p>
         </section>
 
         <section class="project-section">
-          <h2 data-i18n="tb-objective-title">Objectif</h2>
-          <p data-i18n="tb-objective-text">Développer une plateforme robuste et optimisée capable d'ingérer des images HD (8000x4000 px), d'exécuter à grande échelle un modèle de segmentation avancé (SAM3), et de stocker les annotations géométriques résultantes dans une base de données géospatiale, tout en étudiant les compromis performance/qualité via des techniques de downsampling.</p>
+          <h2 data-i18n="tb-problem-title">Problème</h2>
+          <p data-i18n="tb-problem-text">Deux classes d'objets sont ciblées : les <strong>panneaux de signalisation</strong> (<code>sign</code>) et les <strong>marquages au sol</strong> (<code>road_marking</code>). Chaque image à 8'192 × 4'096 pixels dépasse la fenêtre d'entrée de tout modèle de segmentation courant — il faut découper en tuiles avant l'inférence. Traiter 300'000 images en un délai raisonnable impose de distribuer le calcul sur plusieurs GPUs en parallèle.</p>
         </section>
 
         <section class="project-section">
-          <h2 data-i18n="tb-work-title">Travail attendu</h2>
+          <h2 data-i18n="tb-pipeline-title">Pipeline en 5 étapes</h2>
           <ul class="benefits-list">
-            <li data-i18n="tb-work-1">Déployer et configurer un environnement de calcul distribué avec Ray sur Kubernetes</li>
-            <li data-i18n="tb-work-2">Intégrer le modèle SAM3 au sein de tâches Ray et concevoir un pipeline d'annotation par lots</li>
-            <li data-i18n="tb-work-3">Mettre en place un stockage objet S3 pour les images sources, intermédiaires et les masques bruts</li>
-            <li data-i18n="tb-work-4">Implémenter une stratégie de downsampling et analyser son impact sur la qualité et les performances</li>
-            <li data-i18n="tb-work-5">Développer un module de post-traitement pour convertir les masques SAM3 en géométries vectorielles (polygones)</li>
-            <li data-i18n="tb-work-6">Concevoir et peupler un schéma PostgreSQL/PostGIS pour le stockage et l'interrogation spatiale des annotations</li>
-            <li data-i18n="tb-work-7">Évaluer le pipeline en termes de scalabilité, de précision et d'efficacité des ressources</li>
+            <li data-i18n="tb-pipeline-1"><strong>Lecture</strong> — le driver liste les objets du préfixe S3 d'entrée et distribue les clés d'image aux workers Ray.</li>
+            <li data-i18n="tb-pipeline-2"><strong>Téléchargement</strong> — chaque worker télécharge l'image depuis MinIO et extrait les coordonnées GPS de l'EXIF.</li>
+            <li data-i18n="tb-pipeline-3"><strong>Inférence</strong> — l'image est découpée en tuiles 512 × 512 px (après downsampling optionnel à 50%), chaque tuile est passée à SAM3 en mode <em>everything</em>.</li>
+            <li data-i18n="tb-pipeline-4"><strong>Agrégation</strong> — les masques produits sont convertis en polygones, normalisés en pourcentage des dimensions de l'image, filtrés par score de confiance.</li>
+            <li data-i18n="tb-pipeline-5"><strong>Écriture</strong> — les polygones sont sérialisés dans un fichier Parquet (compression Snappy) et envoyés sur MinIO.</li>
           </ul>
         </section>
 
@@ -60,52 +59,62 @@
           <h2 data-i18n="tb-arch-title">Architecture technique</h2>
           <div class="tech-grid">
             <div class="tech-item">
-              <strong>Orchestration</strong>
-              <span data-i18n="tb-arch-orchestration">Kubernetes (cluster HEIG-VD)</span>
+              <strong data-i18n="tb-arch-label-cluster">Cluster GPU</strong>
+              <span data-i18n="tb-arch-cluster">iict-rad · K8s 1.33.9 · 9 GPUs (L40S × 3, A40 × 2 actifs)</span>
             </div>
             <div class="tech-item">
               <strong data-i18n="tb-arch-label-compute">Calcul distribué</strong>
-              <span data-i18n="tb-arch-processing">Ray Framework</span>
+              <span data-i18n="tb-arch-compute">Ray 2.54.0 + KubeRay (RayCluster, Actors GPU)</span>
             </div>
             <div class="tech-item">
               <strong data-i18n="tb-arch-label-model">Modèle IA</strong>
-              <span data-i18n="tb-arch-model">SAM3 (Segment Anything Model 3)</span>
+              <span data-i18n="tb-arch-model">SAM3 ViT-H (Meta, 2024) · 3.3 GB · mode everything</span>
             </div>
             <div class="tech-item">
-              <strong data-i18n="tb-arch-label-storage">Stockage images</strong>
-              <span data-i18n="tb-arch-storage">Object Storage compatible S3</span>
+              <strong data-i18n="tb-arch-label-storage">Stockage objet</strong>
+              <span data-i18n="tb-arch-storage">MinIO sur Synology SA3200D, protocole S3</span>
             </div>
             <div class="tech-item">
-              <strong data-i18n="tb-arch-label-db">Base de données</strong>
-              <span data-i18n="tb-arch-db">PostgreSQL / PostGIS</span>
+              <strong data-i18n="tb-arch-label-output">Format de sortie</strong>
+              <span data-i18n="tb-arch-output">Parquet (Snappy) · 9 colonnes : label, score, polygone, GPS, dimensions</span>
             </div>
             <div class="tech-item">
-              <strong data-i18n="tb-arch-label-data">Données</strong>
-              <span data-i18n="tb-arch-data">Images HD (8000×4000) → Polygones vectoriels</span>
+              <strong data-i18n="tb-arch-label-validation">Validation humaine</strong>
+              <span data-i18n="tb-arch-validation">Label Studio · import pré-annotations JSON via API REST</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="tb-arch-label-obs">Observabilité</strong>
+              <span data-i18n="tb-arch-obs">Prometheus · Grafana · Loki · Alloy · DCGM (métriques GPU)</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="tb-arch-label-runtime">Runtime</strong>
+              <span data-i18n="tb-arch-runtime">Python 3.12 · PyTorch 2.7.0 · CUDA 12.6 · boto3 · PyArrow</span>
             </div>
           </div>
         </section>
 
         <section class="project-section">
-          <h2 data-i18n="tb-deliverables-title">Livrables</h2>
+          <h2 data-i18n="tb-done-title">Réalisations</h2>
           <ul class="benefits-list">
-            <li data-i18n="tb-deliverables-1">Pipeline de traitement distribué complet et fonctionnel (ingestion S3 → écriture PostGIS)</li>
-            <li data-i18n="tb-deliverables-2">Base de données PostGIS avec jeu d'annotations de démonstration géoréférencées</li>
-            <li data-i18n="tb-deliverables-3">Étude comparative documentée sur les stratégies de downsampling (qualité vs. performance)</li>
-            <li data-i18n="tb-deliverables-4">Scripts de déploiement, de monitoring et de validation des résultats</li>
-            <li data-i18n="tb-deliverables-5">Rapport final : architecture, choix techniques, analyse des performances et recommandations</li>
+            <li data-i18n="tb-done-1">Image Docker publiée sur GHCR (<code>ghcr.io/nearai-interreg/ray-sam3:latest</code>) basée sur <code>nvidia/cuda:12.6.3</code></li>
+            <li data-i18n="tb-done-2">Pipeline Python (<code>sam3_minio_pipeline.py</code>) en mode <strong>batch</strong> (Parquet) et <strong>solo</strong> (JSON Label Studio)</li>
+            <li data-i18n="tb-done-3">RayCluster déployé via KubeRay avec nodeAffinity sur nœuds L40S et A40, credentials MinIO et HuggingFace injectés via Secrets</li>
+            <li data-i18n="tb-done-4">Sortie Parquet avec GPS EXIF, polygones normalisés et score de confiance SAM3 — queryable directement via DuckDB ou PyArrow</li>
+            <li data-i18n="tb-done-5">Conversion Parquet → JSON Label Studio et intégration pré-annotations via API REST</li>
+            <li data-i18n="tb-done-6">Stack d'observabilité complète : DCGM Exporter, Prometheus, Grafana Alloy, Loki, dashboards Grafana GPU + logs</li>
+            <li data-i18n="tb-done-7">Tests validés sur données réelles : 40 images (dataset Samples) et 2'000 images (dataset HSN)</li>
           </ul>
         </section>
 
         <section class="project-section">
           <h2 data-i18n="tb-skills-title">Compétences développées</h2>
           <div class="bento-tags" style="gap: 0.5rem;">
-            <span class="tag" data-i18n="tb-skill-1">Traitement distribué (Ray)</span>
-            <span class="tag" data-i18n="tb-skill-2">Inférence IA à grande échelle</span>
-            <span class="tag" data-i18n="tb-skill-3">Optimisation de pipelines de données</span>
-            <span class="tag">Kubernetes</span>
-            <span class="tag" data-i18n="tb-skill-5">PostGIS</span>
-            <span class="tag" data-i18n="tb-skill-6">Stockage cloud (S3)</span>
+            <span class="tag" data-i18n="tb-skill-1">Calcul distribué GPU (Ray / KubeRay)</span>
+            <span class="tag" data-i18n="tb-skill-2">Inférence IA à grande échelle (SAM3)</span>
+            <span class="tag" data-i18n="tb-skill-3">Kubernetes Operators</span>
+            <span class="tag" data-i18n="tb-skill-4">Object Storage S3 / MinIO</span>
+            <span class="tag" data-i18n="tb-skill-5">Parquet / PyArrow</span>
+            <span class="tag" data-i18n="tb-skill-6">Observabilité (Prometheus · Grafana · Loki)</span>
           </div>
         </section>
       </article>
