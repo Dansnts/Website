@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mettre en place une CI/CD avec GitHub Actions — Dani Faria dos Santos</title>
+  <meta name="description" content="De zéro à un pipeline qui teste, build et déploie automatiquement à chaque push." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #2563eb;
+      --text: #111;
+      --muted: #666;
+      --border: #e4e4e4;
+      --bg: #fff;
+      --surface: #f8f9fb;
+      --code-bg: #f1f5f9;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text: #f0f0f0;
+        --muted: #999;
+        --border: #2a2a2a;
+        --bg: #0f0f0f;
+        --surface: #1a1a1a;
+        --code-bg: #1e2330;
+      }
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+    .nav-name { font-weight: 700; color: var(--text); font-size: 0.95rem; }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+    }
+    .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: var(--blue); text-decoration: none; }
+
+    /* Article prose */
+    .prose h1 { font-size: 1.9rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; }
+    .prose h2 { font-size: 1.25rem; font-weight: 600; margin: 2rem 0 0.6rem; }
+    .prose h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 0.4rem; }
+    .prose p { margin-bottom: 1.1rem; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; }
+    .prose li { margin-bottom: 0.3rem; }
+    .prose code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82em;
+      background: var(--code-bg);
+      padding: 0.15em 0.35em;
+      border-radius: 3px;
+    }
+    .prose pre {
+      background: var(--code-bg);
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      overflow-x: auto;
+      margin-bottom: 1.1rem;
+    }
+    .prose pre code { background: none; padding: 0; font-size: 0.85rem; }
+    .prose blockquote {
+      border-left: 3px solid var(--blue);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .prose img { max-width: 100%; border-radius: 6px; margin: 1rem 0; }
+
+    /* Post meta */
+    .post-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    /* Blog index */
+    .post-list { list-style: none; }
+    .post-list li {
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-list .post-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+    }
+    .post-list a {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .post-list a:hover { color: var(--blue); }
+    .post-list .post-desc { font-size: 0.9rem; color: var(--muted); margin-top: 0.2rem; }
+
+    .page-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-name" href="/">fariadossantos.com</a>
+    <div class="nav-links">
+      <a href="/">accueil</a>
+      <a href="/blog/">blog</a>
+    </div>
+  </nav>
+  <article class="prose">
+  <h1>Mettre en place une CI/CD avec GitHub Actions</h1>
+  <div class="post-meta">
+    <span>3 juillet 2026</span>
+    <span>post, devops, ci-cd, github-actions</span>
+  </div>
+  <p>Une CI/CD (Intégration Continue / Déploiement Continu) c'est un pipeline automatique qui se déclenche à chaque fois que tu pousses du code. L'objectif : ne plus jamais déployer à la main.</p>
+<p>Dans ce post, on construit une pipeline GitHub Actions pour une application Node.js qui :</p>
+<ol>
+<li>Lance les tests automatiquement</li>
+<li>Build une image Docker</li>
+<li>La pousse sur un registre</li>
+<li>Déploie sur le serveur</li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Un repo GitHub</li>
+<li>Une application avec des tests</li>
+<li>Un <code>Dockerfile</code></li>
+<li>Un serveur (VPS, cloud, peu importe)</li>
+</ul>
+<hr>
+<h2>C'est quoi un workflow GitHub Actions ?</h2>
+<p>Un workflow est un fichier YAML dans <code>.github/workflows/</code>. GitHub le détecte automatiquement et l'exécute selon les triggers que tu définis.</p>
+<pre><code>ton-projet/
+└── .github/
+    └── workflows/
+        └── ci.yml   ← ici
+</code></pre>
+<p>Chaque workflow contient des <strong>jobs</strong>, chaque job contient des <strong>steps</strong>.</p>
+<hr>
+<h2>Étape 1 — Lancer les tests à chaque push</h2>
+<pre><code class="language-yaml"># .github/workflows/ci.yml
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npm test
+</code></pre>
+<p><code>on: push: branches: [main]</code> → le pipeline se déclenche uniquement sur des pushs vers <code>main</code>.</p>
+<p><code>actions/checkout@v4</code> → clone ton repo dans le runner.</p>
+<p><code>npm ci</code> → installe les dépendances depuis le lock file (plus strict que <code>npm install</code>).</p>
+<p>À ce stade, chaque push vers main lance tes tests. Si un test échoue, le job passe en rouge et tu reçois une notification.</p>
+<hr>
+<h2>Étape 2 — Builder une image Docker</h2>
+<p>On ajoute un job <code>build</code> qui dépend de <code>test</code> grâce à <code>needs</code>.</p>
+<pre><code class="language-yaml">  build:
+    runs-on: ubuntu-latest
+    needs: test   # ne tourne que si test est vert
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: $
+          password: $
+
+      - name: Build &amp; push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ghcr.io/$:latest
+</code></pre>
+<p><code>ghcr.io</code> c'est le registre Docker intégré à GitHub — pas besoin de compte Docker Hub. <code>GITHUB_TOKEN</code> est automatiquement disponible dans chaque workflow, rien à configurer.</p>
+<p>Le <code>Dockerfile</code> à la racine du projet est utilisé par défaut.</p>
+<hr>
+<h2>Étape 3 — Déployer sur le serveur</h2>
+<pre><code class="language-yaml">  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: $
+          username: $
+          key: $
+          script: |
+            docker pull ghcr.io/$:latest
+            docker stop mon-app || true
+            docker rm mon-app || true
+            docker run -d --name mon-app -p 3000:3000 \
+              ghcr.io/$:latest
+</code></pre>
+<p>Le serveur pull la nouvelle image et relance le container. Le <code>|| true</code> sur <code>stop</code> et <code>rm</code> évite que le job échoue si le container n'existe pas encore au premier déploiement.</p>
+<hr>
+<h2>Le pipeline complet</h2>
+<pre><code>push → main
+        │
+        ▼
+    [test]           ← npm test
+        │ ✅
+        ▼
+    [build]          ← docker build + push ghcr.io
+        │ ✅
+        ▼
+    [deploy]         ← SSH → docker pull + run
+</code></pre>
+<p>Si une étape échoue, les suivantes ne tournent pas. Tu reçois une notification GitHub par email.</p>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>Environments</strong> : GitHub permet de définir des environnements (<code>staging</code>, <code>production</code>) avec des approbations manuelles avant le déploiement en prod.</li>
+<li><strong>Matrix builds</strong> : tester sur plusieurs versions de Node/Python en parallèle avec <code>strategy: matrix</code>.</li>
+<li><strong>Cache</strong> : <code>actions/cache</code> pour mettre en cache <code>node_modules</code> et accélérer les builds.</li>
+<li><strong>Gestion des secrets</strong> : faire un autre article là-dessus — c'est un sujet à part entière.</li>
+</ul>
+
+</article>
+
+</body>
+</html>
