@@ -14,9 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy www/ via SFTP
+      - name: Deploy www/ via FTPS
         run: |
           sudo apt-get install -y lftp
           lftp -u "${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }}" \
-               sftp://${{ secrets.FTP_HOST }} \
-               -e "set sftp:auto-confirm yes; mirror -R --delete --verbose www/ ${{ secrets.FTP_REMOTE_PATH }}; quit"
+               ftp://${{ secrets.FTP_HOST }} \
+               -e "set ftp:ssl-force yes; set ssl:verify-certificate no; mirror -R --delete --verbose www/ ${{ secrets.FTP_REMOTE_PATH }}; quit"
