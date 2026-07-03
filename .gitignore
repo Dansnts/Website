@@ -1,2 +1,6 @@
 node_modules/
 cv-builder/output/
+.DS_Store
+*.DS_Store
+tb_rapport.pdf
+picture.png
