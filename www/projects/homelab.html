@@ -21,277 +21,468 @@
       <article class="project-detail">
         <header class="project-hero">
           <div class="project-tags">
-            <span class="tag tag-blue">Kubernetes</span>
+            <span class="tag tag-blue">Kubernetes / K3s</span>
+            <span class="tag tag-blue">Proxmox</span>
             <span class="tag tag-teal">ELK Stack</span>
-            <span class="tag tag-green">Prometheus</span>
-            <span class="tag tag-orange">rclone</span>
+            <span class="tag tag-green">Prometheus / Grafana</span>
+            <span class="tag tag-purple">ArgoCD</span>
+            <span class="tag tag-orange">Terraform / Ansible</span>
+            <span class="tag">TrueNAS / ZFS</span>
+            <span class="tag">WireGuard</span>
+            <span class="tag">MikroTik</span>
+            <span class="tag">cert-manager</span>
           </div>
           <h1 data-i18n="homelab-title">Homelab Infrastructure</h1>
-          <p class="project-subtitle" data-i18n="homelab-subtitle">Infrastructure Kubernetes personnelle : media, monitoring, logs, backups</p>
+          <p class="project-subtitle" data-i18n="homelab-subtitle">Infrastructure Kubernetes sur Proxmox — GitOps, IaC, monitoring, media, VPN, backups</p>
         </header>
 
+        <!-- Architecture -->
         <section class="project-section" data-anim="up">
-          <h2 data-i18n="homelab-overview-title">Vue d'ensemble</h2>
-          <p data-i18n="homelab-overview-text">Cluster Kubernetes single-node (Ubuntu 192.168.1.16) avec stockage NAS FreeNAS via SMB CSI driver. Tous les services sont déclarés en YAML, versionnés et déployables en une commande. Les backups sont automatisés vers Google Drive via rclone CronJob.</p>
-        </section>
-
-        <section class="project-section" data-anim="up">
-          <h2 data-i18n="homelab-services-title">Services hébergés</h2>
-          <ul class="benefits-list">
-            <li>Jellyfin : Media server (500 Gi NAS en read-only)</li>
-            <li>ELK Stack : Elasticsearch + Logstash + Kibana + Filebeat DaemonSet</li>
-            <li>Prometheus + node-exporter : Métriques cluster et système</li>
-            <li>Grafana : Dashboards et visualisation</li>
-            <li>TeamSpeak : Serveur vocal (NodePort)</li>
-            <li>Backup rclone : CronJob quotidien NAS → Google Drive</li>
-            <li>ROOT : Application personnelle exposée avec TLS Let's Encrypt</li>
-          </ul>
-        </section>
-
-        <!-- ── deploy.sh ── -->
-        <section class="project-section" data-anim="up">
-          <h2 data-i18n="homelab-deploy-title">Déploiement automatisé</h2>
-          <p data-i18n="homelab-deploy-text">Un seul script installe le CSI driver SMB, crée le namespace, et déploie l'ensemble des services dans l'ordre correct, en attendant qu'Elasticsearch soit healthy avant de démarrer Logstash.</p>
+          <h2>Architecture réseau</h2>
 
           <div class="code-block">
             <div class="code-header">
-              <span class="code-filename">deploy.sh</span>
+              <span class="code-filename">topology</span>
+              <span class="code-lang">ASCII</span>
+            </div>
+            <pre><code>Internet
+   │
+Box maison (192.168.1.1)
+   │
+MikroTik RB750Gr3 — WAN: 192.168.1.2 / LAN: 10.0.0.1/24
+   │
+   ├── Proxmox         10.0.0.10   (hyperviseur)
+   ├── TrueNAS Scale   10.0.0.11   (stockage ZFS + SMB)
+   ├── K3s node        10.0.0.20   (Ubuntu 24.04)
+   └── MetalLB pool    10.0.0.100–110</code></pre>
+          </div>
+
+          <table class="project-table" style="margin-top:1.5rem">
+            <thead><tr><th>Composant</th><th>IP</th><th>Rôle</th></tr></thead>
+            <tbody>
+              <tr><td>MikroTik RB750Gr3</td><td><code>10.0.0.1</code></td><td>Routeur réseau isolé homelab</td></tr>
+              <tr><td>Proxmox</td><td><code>10.0.0.10</code></td><td>Hyperviseur (VM host)</td></tr>
+              <tr><td>TrueNAS Scale</td><td><code>10.0.0.11</code></td><td>Stockage NAS (ZFS + SMB)</td></tr>
+              <tr><td>K3s (Ubuntu 24.04)</td><td><code>10.0.0.20</code></td><td>Cluster Kubernetes</td></tr>
+              <tr><td>Traefik (MetalLB)</td><td><code>10.0.0.100</code></td><td>Ingress controller (HTTP/HTTPS)</td></tr>
+              <tr><td>Pi-hole (MetalLB)</td><td><code>10.0.0.101</code></td><td>DNS + ad-blocking</td></tr>
+              <tr><td>WireGuard (MetalLB)</td><td><code>10.0.0.102</code></td><td>VPN</td></tr>
+              <tr><td>TeamSpeak (MetalLB)</td><td><code>10.0.0.103</code></td><td>Serveur vocal</td></tr>
+              <tr><td>ArgoCD (MetalLB)</td><td><code>10.0.0.100</code></td><td>GitOps controller</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Services -->
+        <section class="project-section" data-anim="up">
+          <h2>Services hébergés</h2>
+
+          <table class="project-table">
+            <thead><tr><th>Service</th><th>URL</th><th>Port interne</th></tr></thead>
+            <tbody>
+              <tr><td>Root</td><td><code>root.&lt;domain&gt;</code></td><td>80</td></tr>
+              <tr><td>Jellyfin</td><td><code>jellyfin.&lt;domain&gt;</code></td><td>8096</td></tr>
+              <tr><td>Immich + ML</td><td><code>immich.&lt;domain&gt;</code></td><td>2283</td></tr>
+              <tr><td>Kibana</td><td><code>kibana.&lt;domain&gt;</code></td><td>5601</td></tr>
+              <tr><td>Grafana</td><td><code>grafana.&lt;domain&gt;</code></td><td>3000</td></tr>
+              <tr><td>Prometheus</td><td><code>prometheus.&lt;domain&gt;</code></td><td>9090</td></tr>
+              <tr><td>Pi-hole</td><td><code>pihole.&lt;domain&gt;</code></td><td>80</td></tr>
+              <tr><td>WireGuard UI</td><td><code>wg.&lt;domain&gt;</code></td><td>51821</td></tr>
+              <tr><td>Proxmox</td><td><code>proxmox.&lt;domain&gt;</code></td><td>8006</td></tr>
+              <tr><td>NAS</td><td><code>nas.&lt;domain&gt;</code></td><td>80</td></tr>
+              <tr><td>TeamSpeak</td><td><code>teamspeak.&lt;domain&gt;</code></td><td>30987</td></tr>
+              <tr><td>ArgoCD</td><td><code>argocd.&lt;domain&gt;</code></td><td>—</td></tr>
+              <tr><td>Syslog</td><td><code>10.0.0.20:30514</code> UDP / <code>:30515</code> TCP</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Stack technique -->
+        <section class="project-section" data-anim="up">
+          <h2>Stack technique</h2>
+          <div class="tech-grid">
+            <div class="tech-item">
+              <strong>K3s</strong>
+              <span>Kubernetes léger avec Traefik intégré, Ubuntu 24.04</span>
+            </div>
+            <div class="tech-item">
+              <strong>Proxmox</strong>
+              <span>Hyperviseur — VMs provisionnées via Terraform (bpg/proxmox ~0.73)</span>
+            </div>
+            <div class="tech-item">
+              <strong>TrueNAS Scale</strong>
+              <span>ZFS + SMB, 3 pools (NAS SSD 1TB, Media HDD 6TB, Logs HDD 1TB)</span>
+            </div>
+            <div class="tech-item">
+              <strong>Ansible</strong>
+              <span>Configuration idempotente — Proxmox, K3s node, node_exporter</span>
+            </div>
+            <div class="tech-item">
+              <strong>cert-manager + Infomaniak</strong>
+              <span>Wildcard <code style="font-size:0.8em">*.&lt;domain&gt;</code> via Let's Encrypt DNS-01</span>
+            </div>
+            <div class="tech-item">
+              <strong>MetalLB</strong>
+              <span>LoadBalancer bare-metal, pool <code style="font-size:0.8em">10.0.0.100–110</code></span>
+            </div>
+            <div class="tech-item">
+              <strong>SMB CSI driver</strong>
+              <span>PVC Kubernetes montés sur les partages TrueNAS</span>
+            </div>
+            <div class="tech-item">
+              <strong>ELK 8.x</strong>
+              <span>Elasticsearch StatefulSet + Logstash + Kibana + Filebeat DaemonSet</span>
+            </div>
+            <div class="tech-item">
+              <strong>rclone CronJob</strong>
+              <span>Backup quotidien 2h — NAS → Google Drive</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Structure -->
+        <section class="project-section" data-anim="up">
+          <h2>Structure du dépôt</h2>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">tree</span>
+              <span class="code-lang">Shell</span>
+            </div>
+            <pre><code>.
+├── mikrotik/               # Config MikroTik RB750Gr3 (réseau 10.0.0.x)
+├── terraform/proxmox/      # Provisioning VMs (K3s + TrueNAS)
+│   ├── main.tf             # Définition des VMs
+│   ├── providers.tf        # Provider bpg/proxmox
+│   └── cloud-init/         # user-data K3s (install automatique)
+├── ansible/                # Configuration des hôtes (idempotent)
+│   ├── inventory.yml
+│   ├── proxmox.yml         # node_exporter, DNS, outils
+│   ├── k3s.yml             # netplan fixe, disable cloud-init network
+│   └── roles/              # common / node_exporter / k3s_node
+└── k8s/                    # Manifests Kubernetes
+    ├── deploy.sh            # Déploiement complet en une commande
+    ├── metallb.yaml
+    ├── ingress.yaml
+    ├── storageclass-smb.yaml
+    ├── domain-name/         # cert-manager (Certificate + ClusterIssuer)
+    ├── elk/                 # Elasticsearch + Logstash + Kibana + Filebeat
+    ├── immich/              # Photos (server + ML + postgres + redis)
+    ├── jellyfin/
+    ├── pihole/
+    ├── wireguard/           # wg-easy
+    ├── grafana/
+    ├── prometheus/
+    └── backup/              # CronJob rclone → Google Drive</code></pre>
+          </div>
+        </section>
+
+        <!-- Déploiement -->
+        <section class="project-section" data-anim="up">
+          <h2>Déploiement</h2>
+          <p>Un script installe tout dans l'ordre correct : CSI driver SMB, cert-manager + webhook Infomaniak, namespace, certificat wildcard (attend Ready), MetalLB, puis tous les services.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">k8s/deploy.sh</span>
               <span class="code-lang">Bash</span>
               <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
             <pre><code><span class="tok-comment">#!/bin/bash</span>
-<span class="tok-comment"># Déploiement complet du homelab Kubernetes</span>
 <span class="tok-keyword">set</span> -euo pipefail
 
-<span class="tok-fn">echo</span> <span class="tok-string">"=== Installation du CSI driver SMB ==="</span>
+<span class="tok-comment"># 1. CSI driver SMB</span>
 curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16.0/deploy/install-driver.sh \
   | <span class="tok-fn">bash</span> -s v1.16.0 --
 
-<span class="tok-fn">echo</span> <span class="tok-string">"=== Création du namespace ==="</span>
+<span class="tok-comment"># 2. cert-manager + webhook Infomaniak</span>
+<span class="tok-fn">kubectl</span> apply -f domain-name/
+
+<span class="tok-comment"># 3. Namespace + secrets</span>
 <span class="tok-fn">kubectl</span> apply -f namespace.yaml
+<span class="tok-fn">kubectl</span> apply -f smb-secret.yaml
 
-<span class="tok-fn">echo</span> <span class="tok-string">"=== Création du secret SMB ==="</span>
-<span class="tok-fn">read</span> -p <span class="tok-string">"Secret SMB configuré ? (y/n) "</span> -n 1 -r; <span class="tok-fn">echo</span>
-<span class="tok-keyword">if</span> [[ <span class="tok-variable">$REPLY</span> =~ ^[Yy]$ ]]; then
-  <span class="tok-fn">kubectl</span> apply -f smb-secret.yaml
-<span class="tok-keyword">fi</span>
+<span class="tok-comment"># 4. Certificat wildcard (attend Ready)</span>
+<span class="tok-fn">kubectl</span> wait certificate fariadossantos-wildcard \
+  -n homelab --for=condition=Ready --timeout=300s
 
-<span class="tok-fn">echo</span> <span class="tok-string">"=== Déploiement Jellyfin ==="</span>
-<span class="tok-fn">kubectl</span> apply -f jellyfin/
+<span class="tok-comment"># 5. MetalLB</span>
+<span class="tok-fn">kubectl</span> apply -f metallb.yaml
 
-<span class="tok-fn">echo</span> <span class="tok-string">"=== Déploiement Backup CronJob ==="</span>
-<span class="tok-fn">kubectl</span> apply -f backup/configmap.yaml
-<span class="tok-fn">kubectl</span> apply -f backup/pvc.yaml
-<span class="tok-fn">kubectl</span> apply -f backup/cronjob.yaml
+<span class="tok-comment"># 6. Services</span>
+<span class="tok-keyword">for</span> svc in elk immich jellyfin backup teamspeak root pihole wireguard grafana prometheus; <span class="tok-keyword">do</span>
+  <span class="tok-fn">kubectl</span> apply -f <span class="tok-variable">$svc</span>/
+<span class="tok-keyword">done</span>
 
-<span class="tok-fn">echo</span> <span class="tok-string">"=== Déploiement ELK Stack ==="</span>
-<span class="tok-fn">kubectl</span> apply -f elk/elasticsearch.yaml
-<span class="tok-fn">echo</span> <span class="tok-string">"Attente Elasticsearch ready..."</span>
-<span class="tok-fn">kubectl</span> wait --for=condition=ready pod -l app=elasticsearch \
-  -n homelab --timeout=300s
-<span class="tok-fn">kubectl</span> apply -f elk/logstash.yaml
-<span class="tok-fn">kubectl</span> apply -f elk/kibana.yaml
-<span class="tok-fn">kubectl</span> apply -f elk/filebeat.yaml
+<span class="tok-comment"># 7. Ingress</span>
+<span class="tok-fn">kubectl</span> apply -f ingress.yaml
 
 <span class="tok-fn">kubectl</span> get pods -n homelab</code></pre>
           </div>
         </section>
 
-        <!-- ── CronJob backup ── -->
+        <!-- Réseau -->
         <section class="project-section" data-anim="up">
-          <h2 data-i18n="homelab-backup-title">Backup NAS → Google Drive</h2>
-          <p data-i18n="homelab-backup-text">CronJob Kubernetes qui exécute rclone chaque nuit à 3h UTC. Le montage NAS est en read-only, le token Google Drive est stocké dans un Secret K8s. <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">concurrencyPolicy: Forbid</code> garantit qu'un seul job tourne à la fois.</p>
+          <h2>Réseau</h2>
+
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">DNS (Pi-hole v6)</h3>
+          <p>Pi-hole tourne sur <code>10.0.0.101</code>. Depuis le réseau maison (192.168.1.x), MikroTik forwarde le port 53 vers Pi-hole. Le node K3s utilise <code>1.1.1.1</code> directement (pas Pi-hole — chicken-and-egg au boot).</p>
+
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">Certificats TLS</h3>
+          <p>Wildcard <code>*.&lt;domain&gt;</code> via cert-manager (Let's Encrypt DNS-01, webhook Infomaniak). Renouvellement automatique tous les ~60 jours. TrueNAS et Proxmox utilisent le wildcard importé manuellement (~90 jours).</p>
 
           <div class="code-block">
             <div class="code-header">
-              <span class="code-filename">backup/cronjob.yaml</span>
+              <span class="code-filename">export cert → TrueNAS / Proxmox</span>
+              <span class="code-lang">Bash</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment"># Exporter depuis K8s</span>
+<span class="tok-fn">kubectl</span> get secret fariadossantos-wildcard-tls -n homelab \
+  -o jsonpath=<span class="tok-string">'{.data.tls\.crt}'</span> | base64 -d > tls.crt
+
+<span class="tok-fn">kubectl</span> get secret fariadossantos-wildcard-tls -n homelab \
+  -o jsonpath=<span class="tok-string">'{.data.tls\.key}'</span> | base64 -d > tls.key
+
+<span class="tok-comment"># TrueNAS : Credentials → Certificates → Import Certificate</span>
+<span class="tok-comment"># Proxmox : Node → System → Certificates → Upload Custom Certificate</span></code></pre>
+          </div>
+
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">WireGuard VPN</h3>
+          <ul class="benefits-list">
+            <li>Endpoint public : <code>vpn.&lt;domain&gt;:51820</code> (UDP)</li>
+            <li>UI : <code>wg.&lt;domain&gt;</code></li>
+            <li>Réseau clients VPN : <code>10.8.0.0/24</code>, DNS : <code>10.0.0.101</code> (Pi-hole)</li>
+            <li>Port forward : box → MikroTik <code>192.168.1.2</code> → WireGuard <code>10.0.0.102:51820</code></li>
+          </ul>
+        </section>
+
+        <!-- Stockage -->
+        <section class="project-section" data-anim="up">
+          <h2>Stockage (TrueNAS Scale)</h2>
+
+          <table class="project-table">
+            <thead><tr><th>Pool</th><th>Disque</th><th>Partage SMB</th><th>Utilisateur K8s</th></tr></thead>
+            <tbody>
+              <tr><td>nas</td><td>SSD 1 TB</td><td>NAS</td><td><code>k8s-nas</code></td></tr>
+              <tr><td>media</td><td>HDD 6 TB</td><td>Media</td><td><code>k8s-media</code></td></tr>
+              <tr><td>logs</td><td>HDD 1 TB</td><td>Logs</td><td><code>k8s-logs</code></td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Backup -->
+        <section class="project-section" data-anim="up">
+          <h2>Backup NAS → Infomaniak Swiss Backup (Restic)</h2>
+          <p>Restic est un outil de backup incrémental avec déduplication et chiffrement <strong>zero-knowledge côté client</strong> (AES-256). Le stockage S3 est hébergé en Suisse chez Infomaniak — les blobs uploadés sont entièrement opaques, la clé ne quitte jamais le cluster.</p>
+
+          <div class="tech-grid" style="margin:1.25rem 0">
+            <div class="tech-item">
+              <strong>Chiffrement</strong>
+              <span>AES-256 côté client avant envoi — Infomaniak ne voit que des blobs opaques</span>
+            </div>
+            <div class="tech-item">
+              <strong>Rétention</strong>
+              <span>7 jours / 4 semaines / 6 mois / 2 ans — <code>restic forget --prune</code> automatique</span>
+            </div>
+            <div class="tech-item">
+              <strong>Source</strong>
+              <span>PVC <code>backup-source</code> monté en lecture seule depuis TrueNAS via SMB</span>
+            </div>
+            <div class="tech-item">
+              <strong>Planification</strong>
+              <span>CronJob chaque nuit à 02h00 (Europe/Zurich), <code>concurrencyPolicy: Forbid</code></span>
+            </div>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">k8s/backup/restic-cronjob.yaml</span>
               <span class="code-lang">YAML</span>
               <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
             <pre><code><span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">batch/v1</span>
 <span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">CronJob</span>
 <span class="tok-keyword">metadata</span><span class="tok-operator">:</span>
-  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">nas-backup-gdrive</span>
+  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">restic-backup</span>
   <span class="tok-keyword">namespace</span><span class="tok-operator">:</span> <span class="tok-string">homelab</span>
 <span class="tok-keyword">spec</span><span class="tok-operator">:</span>
-  <span class="tok-keyword">schedule</span><span class="tok-operator">:</span> <span class="tok-string">"0 3 * * *"</span>         <span class="tok-comment"># 3h UTC quotidien</span>
-  <span class="tok-keyword">concurrencyPolicy</span><span class="tok-operator">:</span> <span class="tok-string">Forbid</span>    <span class="tok-comment"># pas de job simultané</span>
-  <span class="tok-keyword">successfulJobsHistoryLimit</span><span class="tok-operator">:</span> <span class="tok-number">3</span>
-  <span class="tok-keyword">failedJobsHistoryLimit</span><span class="tok-operator">:</span> <span class="tok-number">3</span>
+  <span class="tok-keyword">schedule</span><span class="tok-operator">:</span> <span class="tok-string">"0 2 * * *"</span>
+  <span class="tok-keyword">concurrencyPolicy</span><span class="tok-operator">:</span> <span class="tok-string">Forbid</span>
   <span class="tok-keyword">jobTemplate</span><span class="tok-operator">:</span>
     <span class="tok-keyword">spec</span><span class="tok-operator">:</span>
-      <span class="tok-keyword">backoffLimit</span><span class="tok-operator">:</span> <span class="tok-number">2</span>
+      <span class="tok-keyword">backoffLimit</span><span class="tok-operator">:</span> <span class="tok-number">1</span>
       <span class="tok-keyword">template</span><span class="tok-operator">:</span>
         <span class="tok-keyword">spec</span><span class="tok-operator">:</span>
           <span class="tok-keyword">restartPolicy</span><span class="tok-operator">:</span> <span class="tok-string">OnFailure</span>
           <span class="tok-keyword">containers</span><span class="tok-operator">:</span>
-            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">rclone</span>
-              <span class="tok-keyword">image</span><span class="tok-operator">:</span> <span class="tok-string">rclone/rclone:latest</span>
-              <span class="tok-keyword">command</span><span class="tok-operator">:</span> [<span class="tok-string">"/bin/sh"</span>, <span class="tok-string">"/scripts/backup.sh"</span>]
+            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">restic</span>
+              <span class="tok-keyword">image</span><span class="tok-operator">:</span> <span class="tok-string">restic/restic:latest</span>
+              <span class="tok-keyword">command</span><span class="tok-operator">:</span> [<span class="tok-string">"/bin/sh"</span>, <span class="tok-string">"-c"</span>]
+              <span class="tok-keyword">args</span><span class="tok-operator">:</span>
+                - |
+                  <span class="tok-comment"># Init repo S3 si inexistant</span>
+                  restic snapshots &gt; /dev/null 2&gt;&amp;1 || restic init
+
+                  restic backup /mnt/data/Backup \
+                    --tag auto --ignore-inode \
+                    --exclude <span class="tok-string">'/mnt/data/Backup/Games/Pok*'</span>
+                  <span class="tok-comment"># --ignore-inode : évite les faux positifs sur SMB (inodes non stables)</span>
+
+                  restic forget \
+                    --keep-daily 7 --keep-weekly 4 \
+                    --keep-monthly 6 --keep-yearly 2 \
+                    --prune --tag auto
+
+                  restic check
+              <span class="tok-keyword">envFrom</span><span class="tok-operator">:</span>
+                - <span class="tok-keyword">secretRef</span><span class="tok-operator">:</span>
+                    <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">restic-credentials</span>  <span class="tok-comment"># gitignored</span>
               <span class="tok-keyword">volumeMounts</span><span class="tok-operator">:</span>
-                - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">script</span>
-                  <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/scripts</span>
-                - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">rclone-config</span>
-                  <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/config/rclone</span>
+                - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">data</span>
+                  <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/mnt/data</span>
                   <span class="tok-keyword">readOnly</span><span class="tok-operator">:</span> <span class="tok-string">true</span>
-                - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">nas-data</span>
-                  <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/mnt/nas</span>
-                  <span class="tok-keyword">readOnly</span><span class="tok-operator">:</span> <span class="tok-string">true</span>
-              <span class="tok-keyword">resources</span><span class="tok-operator">:</span>
-                <span class="tok-keyword">requests</span><span class="tok-operator">:</span> { <span class="tok-keyword">cpu</span><span class="tok-operator">:</span> <span class="tok-string">250m</span>, <span class="tok-keyword">memory</span><span class="tok-operator">:</span> <span class="tok-string">256Mi</span> }
-                <span class="tok-keyword">limits</span><span class="tok-operator">:</span>   { <span class="tok-keyword">cpu</span><span class="tok-operator">:</span> <span class="tok-string">"1"</span>,   <span class="tok-keyword">memory</span><span class="tok-operator">:</span> <span class="tok-string">512Mi</span> }
           <span class="tok-keyword">volumes</span><span class="tok-operator">:</span>
-            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">script</span>
-              <span class="tok-keyword">configMap</span><span class="tok-operator">:</span>
-                <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">backup-script</span>
-                <span class="tok-keyword">defaultMode</span><span class="tok-operator">:</span> <span class="tok-number">0755</span>
-            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">rclone-config</span>
-              <span class="tok-keyword">secret</span><span class="tok-operator">:</span>
-                <span class="tok-keyword">secretName</span><span class="tok-operator">:</span> <span class="tok-string">rclone-config</span>   <span class="tok-comment"># token OAuth Google Drive</span>
-            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">nas-data</span>
+            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">data</span>
               <span class="tok-keyword">persistentVolumeClaim</span><span class="tok-operator">:</span>
-                <span class="tok-keyword">claimName</span><span class="tok-operator">:</span> <span class="tok-string">backup-source</span>    <span class="tok-comment"># 1Ti SMB FreeNAS</span></code></pre>
+                <span class="tok-keyword">claimName</span><span class="tok-operator">:</span> <span class="tok-string">backup-source</span></code></pre>
+          </div>
+
+          <div class="code-block" style="margin-top:1rem">
+            <div class="code-header">
+              <span class="code-filename">backup manuel</span>
+              <span class="code-lang">Bash</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment"># Lancer un backup manuel</span>
+<span class="tok-fn">kubectl</span> create job --from=cronjob/restic-backup restic-manual -n homelab
+<span class="tok-fn">kubectl</span> logs -n homelab job/restic-manual -f
+
+<span class="tok-comment"># Lister les snapshots depuis le cluster</span>
+<span class="tok-fn">kubectl</span> run restic-shell --rm -it --image=restic/restic:latest \
+  --env-from=secret/restic-credentials -- snapshots</code></pre>
           </div>
         </section>
 
-        <!-- ── Filebeat DaemonSet ── -->
+        <!-- GitOps / ArgoCD -->
         <section class="project-section" data-anim="up">
-          <h2 data-i18n="homelab-filebeat-title">Collecte centralisée des logs : Filebeat DaemonSet</h2>
-          <p data-i18n="homelab-filebeat-text">Filebeat tourne sur chaque nœud en tant que DaemonSet, collecte tous les logs des containers depuis <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">/var/log/containers/</code>, enrichit avec les métadonnées Kubernetes, et envoie à Logstash. Le ClusterRole donne accès en lecture à l'API K8s pour l'enrichissement.</p>
+          <h2>GitOps avec ArgoCD</h2>
+          <p>Tout changement infra passe par Git — ArgoCD synchronise automatiquement l'état du cluster sur l'état déclaré dans le repo. Pas de <code>kubectl apply</code> manuel en production.</p>
+
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">1. Résolution du conflit de sync sur StorageClass</h3>
+          <p>ArgoCD utilisait la stratégie <code>Apply</code> par défaut. Les StorageClass ont des champs immuables — ArgoCD retournait une erreur de réconciliation en tentant de patcher des paramètres qu'il ne peut pas modifier.</p>
+          <p style="margin-top:0.75rem"><strong>Fix :</strong> annotation <code>Replace=true</code> — ArgoCD supprime et recrée la ressource au lieu de patcher, contournant la contrainte d'immutabilité de l'API Kubernetes.</p>
 
           <div class="code-block">
             <div class="code-header">
-              <span class="code-filename">elk/filebeat.yaml</span>
+              <span class="code-filename">k8s/storageclass-smb.yaml</span>
               <span class="code-lang">YAML</span>
               <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
-            <pre><code><span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">v1</span>
-<span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">ConfigMap</span>
+            <pre><code><span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">storage.k8s.io/v1</span>
+<span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">StorageClass</span>
 <span class="tok-keyword">metadata</span><span class="tok-operator">:</span>
-  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">filebeat-config</span>
-  <span class="tok-keyword">namespace</span><span class="tok-operator">:</span> <span class="tok-string">homelab</span>
-<span class="tok-keyword">data</span><span class="tok-operator">:</span>
-  <span class="tok-keyword">filebeat.yml</span><span class="tok-operator">:</span> |
-    <span class="tok-keyword">filebeat.inputs</span><span class="tok-operator">:</span>
-      - <span class="tok-keyword">type</span><span class="tok-operator">:</span> <span class="tok-string">container</span>
-        <span class="tok-keyword">paths</span><span class="tok-operator">:</span>
-          - <span class="tok-string">/var/log/containers/*.log</span>
-        <span class="tok-keyword">processors</span><span class="tok-operator">:</span>
-          - <span class="tok-keyword">add_kubernetes_metadata</span><span class="tok-operator">:</span>
-              <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">${NODE_NAME}</span>
-              <span class="tok-keyword">matchers</span><span class="tok-operator">:</span>
-                - <span class="tok-keyword">logs_path</span><span class="tok-operator">:</span>
-                    <span class="tok-keyword">logs_path</span><span class="tok-operator">:</span> <span class="tok-string">"/var/log/containers/"</span>
-    <span class="tok-keyword">output.logstash</span><span class="tok-operator">:</span>
-      <span class="tok-keyword">hosts</span><span class="tok-operator">:</span> [<span class="tok-string">"logstash:5044"</span>]
----
-<span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">apps/v1</span>
-<span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">DaemonSet</span>              <span class="tok-comment"># un pod par nœud automatiquement</span>
-<span class="tok-keyword">metadata</span><span class="tok-operator">:</span>
-  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">filebeat</span>
-  <span class="tok-keyword">namespace</span><span class="tok-operator">:</span> <span class="tok-string">homelab</span>
-<span class="tok-keyword">spec</span><span class="tok-operator">:</span>
-  <span class="tok-keyword">template</span><span class="tok-operator">:</span>
-    <span class="tok-keyword">spec</span><span class="tok-operator">:</span>
-      <span class="tok-keyword">serviceAccountName</span><span class="tok-operator">:</span> <span class="tok-string">filebeat</span>
-      <span class="tok-keyword">containers</span><span class="tok-operator">:</span>
-        - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">filebeat</span>
-          <span class="tok-keyword">image</span><span class="tok-operator">:</span> <span class="tok-string">docker.elastic.co/beats/filebeat:8.13.0</span>
-          <span class="tok-keyword">env</span><span class="tok-operator">:</span>
-            - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">NODE_NAME</span>
-              <span class="tok-keyword">valueFrom</span><span class="tok-operator">:</span>
-                <span class="tok-keyword">fieldRef</span><span class="tok-operator">:</span> { <span class="tok-keyword">fieldPath</span><span class="tok-operator">:</span> <span class="tok-string">spec.nodeName</span> }
-          <span class="tok-keyword">volumeMounts</span><span class="tok-operator">:</span>
-            - { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">varlog</span>,       <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/var/log</span>,                        <span class="tok-keyword">readOnly</span><span class="tok-operator">:</span> <span class="tok-string">true</span> }
-            - { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">containerlog</span>, <span class="tok-keyword">mountPath</span><span class="tok-operator">:</span> <span class="tok-string">/var/lib/docker/containers</span>, <span class="tok-keyword">readOnly</span><span class="tok-operator">:</span> <span class="tok-string">true</span> }
-      <span class="tok-keyword">volumes</span><span class="tok-operator">:</span>
-        - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">varlog</span>
-          <span class="tok-keyword">hostPath</span><span class="tok-operator">:</span> { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/var/log</span> }           <span class="tok-comment"># logs du nœud hôte</span>
-        - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">containerlog</span>
-          <span class="tok-keyword">hostPath</span><span class="tok-operator">:</span> { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/var/lib/docker/containers</span> }
----
-<span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">rbac.authorization.k8s.io/v1</span>
-<span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">ClusterRole</span>
-<span class="tok-keyword">metadata</span><span class="tok-operator">:</span>
-  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">filebeat</span>
-<span class="tok-keyword">rules</span><span class="tok-operator">:</span>
-  - <span class="tok-keyword">apiGroups</span><span class="tok-operator">:</span> [<span class="tok-string">""</span>]
-    <span class="tok-keyword">resources</span><span class="tok-operator">:</span> [<span class="tok-string">"pods"</span>, <span class="tok-string">"namespaces"</span>, <span class="tok-string">"nodes"</span>]
-    <span class="tok-keyword">verbs</span><span class="tok-operator">:</span> [<span class="tok-string">"get"</span>, <span class="tok-string">"list"</span>, <span class="tok-string">"watch"</span>]</code></pre>
+  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">smb-nas</span>
+  <span class="tok-keyword">annotations</span><span class="tok-operator">:</span>
+    <span class="tok-property">argocd.argoproj.io/sync-options</span><span class="tok-operator">:</span> <span class="tok-string">Replace=true</span>  <span class="tok-comment"># delete + recreate (champs immuables)</span>
+<span class="tok-keyword">provisioner</span><span class="tok-operator">:</span> <span class="tok-string">smb.csi.k8s.io</span>
+<span class="tok-keyword">parameters</span><span class="tok-operator">:</span>
+  <span class="tok-keyword">source</span><span class="tok-operator">:</span> <span class="tok-string">"//10.0.0.11/NAS"</span>
+  <span class="tok-keyword">csi.storage.k8s.io/node-stage-secret-name</span><span class="tok-operator">:</span> <span class="tok-string">smb-secret</span>
+  <span class="tok-keyword">csi.storage.k8s.io/node-stage-secret-namespace</span><span class="tok-operator">:</span> <span class="tok-string">homelab</span>
+<span class="tok-keyword">reclaimPolicy</span><span class="tok-operator">:</span> <span class="tok-string">Retain</span>
+<span class="tok-keyword">volumeBindingMode</span><span class="tok-operator">:</span> <span class="tok-string">Immediate</span></code></pre>
           </div>
-        </section>
 
-        <!-- ── Ingress Traefik ── -->
-        <section class="project-section" data-anim="up">
-          <h2 data-i18n="homelab-ingress-title">Ingress Traefik + TLS Let's Encrypt</h2>
-          <p data-i18n="homelab-ingress-text">Toutes les routes HTTP sont déclarées dans un seul Ingress. cert-manager gère automatiquement les certificats TLS via Let's Encrypt pour le domaine public. Les services internes (<code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">.home</code>) sont accessibles en local uniquement.</p>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">2. Exposition de l'UI ArgoCD via Ingress Traefik + TLS</h3>
+          <p>ArgoCD server exposé en HTTPS sur <code>argocd.&lt;domain&gt;</code> via Traefik (entrypoint <code>websecure</code>, port 443). TLS assuré par le wildcard <code>*.&lt;domain&gt;</code> géré par cert-manager. DNS résolu localement par Pi-hole (enregistrement A → <code>10.0.0.100</code>).</p>
 
           <div class="code-block">
             <div class="code-header">
-              <span class="code-filename">ingress.yaml</span>
+              <span class="code-filename">k8s/argocd/ingress.yaml</span>
               <span class="code-lang">YAML</span>
               <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
             <pre><code><span class="tok-keyword">apiVersion</span><span class="tok-operator">:</span> <span class="tok-string">networking.k8s.io/v1</span>
 <span class="tok-keyword">kind</span><span class="tok-operator">:</span> <span class="tok-string">Ingress</span>
 <span class="tok-keyword">metadata</span><span class="tok-operator">:</span>
-  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">homelab-ingress</span>
-  <span class="tok-keyword">namespace</span><span class="tok-operator">:</span> <span class="tok-string">homelab</span>
+  <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">argocd-ingress</span>
+  <span class="tok-keyword">namespace</span><span class="tok-operator">:</span> <span class="tok-string">argocd</span>
   <span class="tok-keyword">annotations</span><span class="tok-operator">:</span>
-    <span class="tok-property">kubernetes.io/ingress.class</span><span class="tok-operator">:</span> <span class="tok-string">"traefik"</span>
     <span class="tok-property">traefik.ingress.kubernetes.io/router.entrypoints</span><span class="tok-operator">:</span> <span class="tok-string">websecure</span>
-    <span class="tok-property">cert-manager.io/cluster-issuer</span><span class="tok-operator">:</span> <span class="tok-string">letsencrypt-prod</span>
+    <span class="tok-property">traefik.ingress.kubernetes.io/router.tls</span><span class="tok-operator">:</span> <span class="tok-string">"true"</span>
+    <span class="tok-property">traefik.ingress.kubernetes.io/router.middlewares</span><span class="tok-operator">:</span> <span class="tok-string">homelab-argocd-headers@kubernetescrd</span>
 <span class="tok-keyword">spec</span><span class="tok-operator">:</span>
   <span class="tok-keyword">tls</span><span class="tok-operator">:</span>
-    - <span class="tok-keyword">hosts</span><span class="tok-operator">:</span> [<span class="tok-string">root.fariadossantos.com</span>]
-      <span class="tok-keyword">secretName</span><span class="tok-operator">:</span> <span class="tok-string">root-tls</span>            <span class="tok-comment"># cert auto-renew via cert-manager</span>
+    - <span class="tok-keyword">hosts</span><span class="tok-operator">:</span> [<span class="tok-string">argocd.&lt;domain&gt;</span>]
+      <span class="tok-keyword">secretName</span><span class="tok-operator">:</span> <span class="tok-string">fariadossantos-wildcard-tls</span>
   <span class="tok-keyword">rules</span><span class="tok-operator">:</span>
-    - <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">kibana.home</span>
+    - <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">argocd.&lt;domain&gt;</span>
       <span class="tok-keyword">http</span><span class="tok-operator">:</span>
         <span class="tok-keyword">paths</span><span class="tok-operator">:</span>
-          - { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/</span>, <span class="tok-keyword">pathType</span><span class="tok-operator">:</span> <span class="tok-string">Prefix</span>, <span class="tok-keyword">backend</span><span class="tok-operator">:</span> { <span class="tok-keyword">service</span><span class="tok-operator">:</span> { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">kibana</span>, <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">5601</span> } } } }
-    - <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">jellyfin.home</span>
-      <span class="tok-keyword">http</span><span class="tok-operator">:</span>
-        <span class="tok-keyword">paths</span><span class="tok-operator">:</span>
-          - { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/</span>, <span class="tok-keyword">pathType</span><span class="tok-operator">:</span> <span class="tok-string">Prefix</span>, <span class="tok-keyword">backend</span><span class="tok-operator">:</span> { <span class="tok-keyword">service</span><span class="tok-operator">:</span> { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">jellyfin</span>, <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">8096</span> } } } }
-    - <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">grafana.home</span>
-      <span class="tok-keyword">http</span><span class="tok-operator">:</span>
-        <span class="tok-keyword">paths</span><span class="tok-operator">:</span>
-          - { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/</span>, <span class="tok-keyword">pathType</span><span class="tok-operator">:</span> <span class="tok-string">Prefix</span>, <span class="tok-keyword">backend</span><span class="tok-operator">:</span> { <span class="tok-keyword">service</span><span class="tok-operator">:</span> { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">grafana</span>, <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">3000</span> } } } }
-    - <span class="tok-keyword">host</span><span class="tok-operator">:</span> <span class="tok-string">root.fariadossantos.com</span>      <span class="tok-comment"># domaine public avec TLS</span>
-      <span class="tok-keyword">http</span><span class="tok-operator">:</span>
-        <span class="tok-keyword">paths</span><span class="tok-operator">:</span>
-          - { <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/</span>, <span class="tok-keyword">pathType</span><span class="tok-operator">:</span> <span class="tok-string">Prefix</span>, <span class="tok-keyword">backend</span><span class="tok-operator">:</span> { <span class="tok-keyword">service</span><span class="tok-operator">:</span> { <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">root-svc</span>, <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">80</span> } } } }</code></pre>
+          - <span class="tok-keyword">path</span><span class="tok-operator">:</span> <span class="tok-string">/</span>
+            <span class="tok-keyword">pathType</span><span class="tok-operator">:</span> <span class="tok-string">Prefix</span>
+            <span class="tok-keyword">backend</span><span class="tok-operator">:</span>
+              <span class="tok-keyword">service</span><span class="tok-operator">:</span>
+                <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">argocd-server</span>
+                <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">80</span> }</code></pre>
           </div>
+
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">3. Nettoyage — suppression de l'Ingress obsolète</h3>
+          <p>Suppression de <code>k8s/dashboard-ingress.yaml</code> : ancienne configuration Ingress nginx pour <code>kubernetes-dashboard</code>, incompatible avec Traefik et plus utilisée.</p>
         </section>
 
+        <!-- Notes -->
         <section class="project-section" data-anim="up">
-          <h2 data-i18n="homelab-arch-title">Stack technique</h2>
-          <div class="tech-grid">
-            <div class="tech-item">
-              <strong>Kubernetes</strong>
-              <span>Orchestration : single node Ubuntu 22.04</span>
+          <h2>Notes opérationnelles</h2>
+
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">Gestion des services</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">kubectl</span>
+              <span class="code-lang">Bash</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
-            <div class="tech-item">
-              <strong>SMB CSI driver</strong>
-              <span>Montage NAS FreeNAS (192.168.1.240) en PVC</span>
+            <pre><code><span class="tok-comment"># Arrêter / relancer un service (PVC conservés)</span>
+<span class="tok-fn">kubectl</span> scale deployment &lt;nom&gt; -n homelab --replicas=0
+<span class="tok-fn">kubectl</span> scale deployment &lt;nom&gt; -n homelab --replicas=1
+
+<span class="tok-comment"># Redémarrer proprement</span>
+<span class="tok-fn">kubectl</span> rollout restart deployment/&lt;nom&gt; -n homelab
+
+<span class="tok-comment"># Elasticsearch (StatefulSet)</span>
+<span class="tok-fn">kubectl</span> scale statefulset elasticsearch -n homelab --replicas=0</code></pre>
+          </div>
+
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">Kibana / Elasticsearch (xpack.security)</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">kibana_system password</span>
+              <span class="code-lang">Bash</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
-            <div class="tech-item">
-              <strong>ELK 8.13</strong>
-              <span>Elasticsearch StatefulSet + Logstash + Kibana</span>
+            <pre><code><span class="tok-fn">kubectl</span> exec -n homelab elasticsearch-0 -- curl -s -u elastic:&lt;PASS&gt; \
+  -X POST <span class="tok-string">"localhost:9200/_security/user/kibana_system/_password"</span> \
+  -H <span class="tok-string">"Content-Type: application/json"</span> \
+  -d <span class="tok-string">'{"password":"&lt;NEW_PASS&gt;"}'</span></code></pre>
+          </div>
+
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">IaC</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">terraform + ansible</span>
+              <span class="code-lang">Bash</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
-            <div class="tech-item">
-              <strong>Prometheus + Grafana</strong>
-              <span>Métriques node-exporter + dashboards</span>
-            </div>
-            <div class="tech-item">
-              <strong>rclone + CronJob</strong>
-              <span>Backup quotidien NAS → Google Drive</span>
-            </div>
-            <div class="tech-item">
-              <strong>Traefik + cert-manager</strong>
-              <span>Ingress + TLS auto Let's Encrypt</span>
-            </div>
+            <pre><code><span class="tok-comment"># Terraform — provisionner les VMs</span>
+cd terraform/proxmox/
+<span class="tok-fn">terraform</span> init
+<span class="tok-fn">terraform</span> apply -var-file=../../.secrets.tfvars
+
+<span class="tok-comment"># Ansible — configurer Proxmox</span>
+<span class="tok-fn">ansible-playbook</span> -i ansible/inventory.yml ansible/proxmox.yml
+
+<span class="tok-comment"># Ansible — configurer K3s node</span>
+<span class="tok-fn">ansible-playbook</span> -i ansible/inventory.yml ansible/k3s.yml</code></pre>
           </div>
         </section>
 
