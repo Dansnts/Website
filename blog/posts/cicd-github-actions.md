@@ -39,7 +39,7 @@ Chaque workflow contient des **jobs**, chaque job contient des **steps**.
 
 ---
 
-## Étape 1 — Lancer les tests à chaque push
+## Étape 1 : Lancer les tests à chaque push
 
 ```yaml
 # .github/workflows/ci.yml
@@ -76,7 +76,7 @@ jobs:
 
 ---
 
-## Étape 2 — Builder une image Docker
+## Étape 2 : Builder une image Docker
 
 On ajoute un job `build` qui dépend de `test` grâce à `needs`.
 
@@ -102,13 +102,13 @@ On ajoute un job `build` qui dépend de `test` grâce à `needs`.
           tags: ghcr.io/${{ github.repository }}:latest
 ```
 
-`ghcr.io` c'est le registre Docker intégré à GitHub — pas besoin de compte Docker Hub. `GITHUB_TOKEN` est automatiquement disponible dans chaque workflow, rien à configurer.
+`ghcr.io` c'est le registre Docker intégré à GitHub, pas besoin de compte Docker Hub. `GITHUB_TOKEN` est automatiquement disponible dans chaque workflow, rien à configurer.
 
 Le `Dockerfile` à la racine du projet est utilisé par défaut.
 
 ---
 
-## Étape 3 — Déployer sur le serveur
+## Étape 3 : Déployer sur le serveur
 
 ```yaml
   deploy:
@@ -141,10 +141,10 @@ push → main
         │
         ▼
     [test]           ← npm test
-        │ ✅
+        │
         ▼
     [build]          ← docker build + push ghcr.io
-        │ ✅
+        │
         ▼
     [deploy]         ← SSH → docker pull + run
 ```
@@ -158,4 +158,4 @@ Si une étape échoue, les suivantes ne tournent pas. Tu reçois une notificatio
 - **Environments** : GitHub permet de définir des environnements (`staging`, `production`) avec des approbations manuelles avant le déploiement en prod.
 - **Matrix builds** : tester sur plusieurs versions de Node/Python en parallèle avec `strategy: matrix`.
 - **Cache** : `actions/cache` pour mettre en cache `node_modules` et accélérer les builds.
-- **Gestion des secrets** : faire un autre article là-dessus — c'est un sujet à part entière.
+- **Gestion des secrets** : faire un autre article là-dessus, c'est un sujet à part entière.

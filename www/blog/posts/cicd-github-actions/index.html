@@ -116,7 +116,7 @@
 </code></pre>
 <p>Chaque workflow contient des <strong>jobs</strong>, chaque job contient des <strong>steps</strong>.</p>
 <hr>
-<h2>Étape 1 — Lancer les tests à chaque push</h2>
+<h2>Étape 1 : Lancer les tests à chaque push</h2>
 <pre><code class="language-yaml"># .github/workflows/ci.yml
 name: CI/CD
 
@@ -145,7 +145,7 @@ jobs:
 <p><code>npm ci</code> → installe les dépendances depuis le lock file (plus strict que <code>npm install</code>).</p>
 <p>À ce stade, chaque push vers main lance tes tests. Si un test échoue, le job passe en rouge et tu reçois une notification.</p>
 <hr>
-<h2>Étape 2 — Builder une image Docker</h2>
+<h2>Étape 2 : Builder une image Docker</h2>
 <p>On ajoute un job <code>build</code> qui dépend de <code>test</code> grâce à <code>needs</code>.</p>
 <pre><code class="language-yaml">  build:
     runs-on: ubuntu-latest
@@ -167,10 +167,10 @@ jobs:
           push: true
           tags: ghcr.io/$:latest
 </code></pre>
-<p><code>ghcr.io</code> c'est le registre Docker intégré à GitHub — pas besoin de compte Docker Hub. <code>GITHUB_TOKEN</code> est automatiquement disponible dans chaque workflow, rien à configurer.</p>
+<p><code>ghcr.io</code> c'est le registre Docker intégré à GitHub, pas besoin de compte Docker Hub. <code>GITHUB_TOKEN</code> est automatiquement disponible dans chaque workflow, rien à configurer.</p>
 <p>Le <code>Dockerfile</code> à la racine du projet est utilisé par défaut.</p>
 <hr>
-<h2>Étape 3 — Déployer sur le serveur</h2>
+<h2>Étape 3 : Déployer sur le serveur</h2>
 <pre><code class="language-yaml">  deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -196,10 +196,10 @@ jobs:
         │
         ▼
     [test]           ← npm test
-        │ ✅
+        │
         ▼
     [build]          ← docker build + push ghcr.io
-        │ ✅
+        │
         ▼
     [deploy]         ← SSH → docker pull + run
 </code></pre>
@@ -210,7 +210,7 @@ jobs:
 <li><strong>Environments</strong> : GitHub permet de définir des environnements (<code>staging</code>, <code>production</code>) avec des approbations manuelles avant le déploiement en prod.</li>
 <li><strong>Matrix builds</strong> : tester sur plusieurs versions de Node/Python en parallèle avec <code>strategy: matrix</code>.</li>
 <li><strong>Cache</strong> : <code>actions/cache</code> pour mettre en cache <code>node_modules</code> et accélérer les builds.</li>
-<li><strong>Gestion des secrets</strong> : faire un autre article là-dessus — c'est un sujet à part entière.</li>
+<li><strong>Gestion des secrets</strong> : faire un autre article là-dessus, c'est un sujet à part entière.</li>
 </ul>
 
 </article>

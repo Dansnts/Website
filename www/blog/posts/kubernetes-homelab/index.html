@@ -93,7 +93,7 @@
   </div>
   <p>Depuis 2 ans, je fais tourner un cluster K3s chez moi avec ~20 services en production. Voici ce que j'aurais aimé savoir avant de commencer.</p>
 <h2>Pourquoi K3s plutôt que kubeadm ?</h2>
-<p>K3s embarque tout ce qu'il faut dans un binaire unique de 70 MB — API server, scheduler, controller manager, etcd remplacé par SQLite (ou externe). Pour un homelab, c'est parfait : moins de surface de configuration, même API.</p>
+<p>K3s embarque tout ce qu'il faut dans un binaire unique de 70 MB : API server, scheduler, controller manager, etcd remplacé par SQLite (ou externe). Pour un homelab, c'est parfait : moins de surface de configuration, même API.</p>
 <h2>Ce qui tourne dessus</h2>
 <ul>
 <li><strong>Monitoring</strong> : Prometheus + Grafana + Loki via la stack kube-prometheus</li>
@@ -102,7 +102,7 @@
 <li><strong>Secrets</strong> : External Secrets Operator + Vault</li>
 </ul>
 <h2>La leçon la plus importante</h2>
-<p>Versionne tout depuis le début. Après 6 mois sans IaC stricte, j'avais un cluster que je ne pouvais plus recréer. Terraform pour les VMs + Ansible pour la base OS + Kustomize pour les manifests K8s — c'est le trio qui rend le cluster reproductible.</p>
+<p>Versionne tout depuis le début. Après 6 mois sans IaC stricte, j'avais un cluster que je ne pouvais plus recréer. Terraform pour les VMs + Ansible pour la base OS + Kustomize pour les manifests K8s, c'est le trio qui rend le cluster reproductible.</p>
 <pre><code class="language-bash"># Recréer le cluster depuis zéro
 terraform apply          # VMs
 ansible-playbook site.yml  # OS baseline
