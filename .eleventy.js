@@ -8,6 +8,7 @@ module.exports = function (eleventyConfig) {
   });
 
   return {
+    pathPrefix: "/blog/",
     dir: {
       input: "blog",
       includes: "_includes",
