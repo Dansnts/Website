@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CV Assura — Dani Faria dos Santos</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+            @page {
+                size: A4;
+                margin: 0.45cm 0.85cm 0.4cm;
+            }
+
+            body {
+                font-family: 'DM Sans', system-ui, sans-serif;
+                font-size: 9pt;
+                line-height: 1.42;
+                color: #111;
+                background: white;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            a { color: inherit; text-decoration: none; }
+
+            .no-print {
+                text-align: right;
+                margin-bottom: 0.6rem;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.65rem;
+            }
+            .no-print button {
+                padding: 0.3rem 0.8rem;
+                background: #2563eb;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            @media print { .no-print { display: none !important; } }
+
+            /* ── Header ── */
+            .cv-header {
+                display: flex;
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 0.6cm;
+                padding-bottom: 0.2cm;
+                margin-bottom: 0.18cm;
+                border-bottom: 1.5pt solid #2563eb;
+            }
+            .cv-header-text { flex: 1; min-width: 0; }
+
+            .cv-name {
+                font-size: 19pt;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                line-height: 1;
+                color: #111;
+                margin-bottom: 0.06cm;
+            }
+            .cv-name span { font-weight: 300; color: #444; }
+
+            .cv-title {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 7pt;
+                font-weight: 500;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: #2563eb;
+                display: block;
+                margin-bottom: 0.14cm;
+            }
+
+            .cv-meta {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #444;
+                display: flex;
+                flex-direction: column;
+                gap: 0.05cm;
+            }
+            .cv-meta-row {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.05cm 0.35cm;
+            }
+            .cv-meta-row span {
+                display: flex;
+                align-items: center;
+                gap: 0.08cm;
+                white-space: nowrap;
+            }
+            .cv-meta svg {
+                flex-shrink: 0;
+                width: 8px;
+                height: 8px;
+                stroke: #2563eb;
+                fill: none;
+            }
+
+            .cv-qr {
+                flex-shrink: 0;
+                display: flex;
+                align-items: flex-start;
+            }
+            .cv-qr img { width: 62px; height: 62px; }
+
+            /* ── Section generic ── */
+            .cv-section {
+                margin-bottom: 0.12cm;
+                break-inside: avoid;
+            }
+            .cv-section + .cv-section {
+                border-top: 0.5pt solid #e4e4e4;
+                padding-top: 0.1cm;
+            }
+
+            .section-label {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                font-weight: 600;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: #2563eb;
+                margin-bottom: 0.1cm;
+            }
+
+            /* ── Profile ── */
+            .cv-profile {
+                border-left: 2pt solid #2563eb;
+                padding: 0.06cm 0.35cm;
+                margin-bottom: 0.12cm;
+            }
+            .cv-profile p {
+                font-size: 8.5pt;
+                color: #333;
+                line-height: 1.5;
+            }
+
+            /* ── Skills grid ── */
+            .skills-cols {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0 0.35cm;
+            }
+            .skill-col-title {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: #2563eb;
+                border-bottom: 0.5pt solid #e0e0e0;
+                padding-bottom: 0.04cm;
+                margin-bottom: 0.07cm;
+            }
+            .skill-col ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .skill-col li {
+                font-size: 7.5pt;
+                color: #333;
+                line-height: 1.42;
+                padding: 0.015cm 0;
+                display: flex;
+                gap: 0.15cm;
+            }
+            .skill-col li::before {
+                content: '–';
+                color: #bbb;
+                flex-shrink: 0;
+            }
+            .skill-label {
+                font-weight: 600;
+                color: #222;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            /* ── Timeline ── */
+            .timeline-item {
+                display: grid;
+                grid-template-columns: 74px 1fr;
+                gap: 0 0.35cm;
+                padding: 0.1cm 0;
+                border-top: 0.5pt solid #ebebeb;
+                break-inside: avoid;
+            }
+            .timeline-item:first-child { border-top: none; }
+
+            .tl-date {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #888;
+                padding-top: 0.03cm;
+                line-height: 1.3;
+            }
+            .tl-body { min-width: 0; }
+            .tl-title {
+                font-size: 9.5pt;
+                font-weight: 600;
+                color: #111;
+                margin-bottom: 0.02cm;
+            }
+            .tl-company {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #2563eb;
+                margin-bottom: 0.1cm;
+            }
+            .tl-body ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .tl-body li {
+                font-size: 8pt;
+                color: #444;
+                padding: 0.02cm 0 0.02cm 0.22cm;
+                line-height: 1.44;
+                position: relative;
+            }
+            .tl-body li::before {
+                content: '–';
+                position: absolute;
+                left: 0;
+                color: #bbb;
+            }
+            .tl-body li strong {
+                font-weight: 600;
+                color: #222;
+            }
+
+            /* ── Formation ── */
+            .formation-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+            }
+            .formation-item {
+                display: grid;
+                grid-template-columns: 74px 1fr;
+                gap: 0 0.35cm;
+                padding: 0.06cm 0;
+                border-top: 0.5pt solid #ebebeb;
+                break-inside: avoid;
+            }
+            .formation-item:first-child { border-top: none; }
+            .fi-date {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #888;
+                padding-top: 0.03cm;
+            }
+            .fi-title { font-size: 9pt; font-weight: 600; color: #111; }
+            .fi-school {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #2563eb;
+                margin-bottom: 0.04cm;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="no-print">
+            <button onclick="window.print()">Imprimer / Exporter PDF</button>
+        </div>
+
+        <!-- ══ HEADER ══ -->
+        <div class="cv-header">
+            <div class="cv-header-text">
+                <div class="cv-name">Dani <span>Faria dos Santos</span></div>
+                <span class="cv-title">Ingénieur Systèmes Windows &amp; DevOps</span>
+                <div class="cv-meta">
+                    <div class="cv-meta-row">
+                        <span>26 ans &nbsp;|&nbsp; Permis de conduire Cat. B</span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.32 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.64a16 16 0 0 0 6 6l1-1a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            +41 79 356 29 30
+                        </span>
+                    </div>
+                    <div class="cv-meta-row">
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            danitiago@fariadossantos.com
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            fariadossantos.com
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                            linkedin.com/in/dani-faria
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                            github.com/Dansnts
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="cv-qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://fariadossantos.com" alt="QR" width="62" height="62" />
+            </div>
+        </div>
+
+        <!-- ══ PROFIL ══ -->
+        <div class="cv-profile">
+            <p>Ingénieur système spécialisé dans les environnements Microsoft (Windows Server, Active Directory, Azure Entra ID, Microsoft 365), l'automatisation PowerShell/IaC et la conformité ISO 27001. Expérience en déploiement d'infrastructure de bout en bout, gestion des identités (IAM/PAM) et MCO de systèmes critiques dans des environnements hétérogènes.</p>
+        </div>
+
+        <!-- ══ COMPÉTENCES ══ -->
+        <div class="cv-section">
+            <div class="section-label">Compétences Techniques</div>
+            <div class="skills-cols">
+                <div class="skill-col">
+                    <div class="skill-col-title">Systèmes &amp; Virtualisation</div>
+                    <ul>
+                        <li><span class="skill-label">Windows Server :</span> AD, GPO, DNS/DHCP, Exchange</li>
+                        <li><span class="skill-label">Virtualisation :</span> VMware vSphere (ESXi, vCenter), Proxmox</li>
+                        <li><span class="skill-label">MDM &amp; Endpoints :</span> Intune (Windows/macOS), ABM, SCCM</li>
+                        <li><span class="skill-label">Linux :</span> Debian/Ubuntu, hardening, conteneurs</li>
+                    </ul>
+                </div>
+                <div class="skill-col">
+                    <div class="skill-col-title">Cloud &amp; Identités</div>
+                    <ul>
+                        <li><span class="skill-label">Microsoft 365 :</span> Azure, Entra ID, Exchange Online</li>
+                        <li><span class="skill-label">IAM &amp; PAM :</span> RBAC, SSO/OIDC, Keycloak, Vault</li>
+                        <li><span class="skill-label">Automatisation :</span> PowerShell, Python, Bash</li>
+                        <li><span class="skill-label">IaC :</span> Terraform, Ansible, CI/CD, Git</li>
+                    </ul>
+                </div>
+                <div class="skill-col">
+                    <div class="skill-col-title">Réseau, Sécurité &amp; Observabilité</div>
+                    <ul>
+                        <li><span class="skill-label">Réseau :</span> Cisco, Arista, VLANs, DMZ, firewall</li>
+                        <li><span class="skill-label">Conformité :</span> ISO 27001 (Cyber-Safe), LPD/RGPD</li>
+                        <li><span class="skill-label">Observabilité :</span> Prometheus, Grafana (Alloy), Loki, ELK</li>
+                        <li><span class="skill-label">Conteneurs :</span> Docker, Kubernetes (K3s)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ EXPÉRIENCE ══ -->
+        <div class="cv-section">
+            <div class="section-label">Expérience Professionnelle</div>
+
+            <div class="timeline-item">
+                <div class="tl-date">2026 –<br>présent</div>
+                <div class="tl-body">
+                    <div class="tl-title">Ingénieur DevOps &amp; Plateforme (MLOps)</div>
+                    <div class="tl-company">HEIG-VD, Institut IICT — Yverdon-les-Bains</div>
+                    <ul>
+                        <li><strong>Observabilité &amp; Monitoring :</strong> Pipeline Grafana Alloy / Prometheus / Loki déployé de bout en bout pour la capture des métriques hardware et la centralisation des logs du cluster.</li>
+                        <li><strong>Automatisation &amp; IaC :</strong> Provisionnement d'infrastructure (Terraform, Ansible) ; pipelines CI/CD (GitHub Actions) automatisant tests, build Docker et déploiement continu.</li>
+                        <li><strong>Sécurité &amp; Hardening :</strong> Isolation des ressources (RBAC, namespaces), durcissement Linux et sécurisation réseau des conteneurs en production.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="tl-date">2023 – 2024</div>
+                <div class="tl-body">
+                    <div class="tl-title">Administrateur Système — Unique responsable IT</div>
+                    <div class="tl-company">eeproperty SA — Lutry, Vaud</div>
+                    <ul>
+                        <li><strong>Windows &amp; Microsoft 365 :</strong> Déploiement AD complet (GPO, DNS/DHCP, 30 utilisateurs) et migration Microsoft Exchange ; gestion IAM centralisée et politiques d'accès.</li>
+                        <li><strong>Gouvernance &amp; Sécurité :</strong> Audit de conformité A à Z ; obtention du label Cyber-Safe (ISO 27001) en 6 mois ; architecture réseau (Proxmox, 5 VLANs, DMZ, pare-feu).</li>
+                        <li><strong>Endpoints &amp; Support N2/N3 :</strong> MDM Intune/ABM pour 40 appareils (Windows, macOS), politiques GPO, cycle de vie des identités et résolution d'incidents critiques.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="tl-date">2020 – 2021</div>
+                <div class="tl-body">
+                    <div class="tl-title">IT Trainee — Support &amp; Automatisation</div>
+                    <div class="tl-company">Nestlé SA — La Tour-de-Peilz</div>
+                    <ul>
+                        <li><strong>Scripting &amp; Automatisation :</strong> Automatisation de 30 processus métier (Power Automate, PowerShell) ; dashboards Power BI pour le suivi des indicateurs opérationnels.</li>
+                        <li><strong>Support N2/L3 International :</strong> Support technique dans un environnement corporate multinational, maintien de la disponibilité des systèmes et déploiement de solutions de collaboration.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ FORMATION ══ -->
+        <div class="cv-section">
+            <div class="section-label">Formation</div>
+            <div class="formation-list">
+                <div class="formation-item">
+                    <div class="fi-date">2022 – 2026</div>
+                    <div class="fi-body">
+                        <div class="fi-title">Bachelor HES-SO en Réseaux et Systèmes</div>
+                        <div class="fi-school">HEIG-VD, Yverdon-les-Bains</div>
+                    </div>
+                </div>
+                <div class="formation-item">
+                    <div class="fi-date">2021 – 2022</div>
+                    <div class="fi-body">
+                        <div class="fi-title">Maturité Professionnelle</div>
+                        <div class="fi-school">CEPV, Vevey</div>
+                    </div>
+                </div>
+                <div class="formation-item">
+                    <div class="fi-date">2016 – 2020</div>
+                    <div class="fi-body">
+                        <div class="fi-title">CFC Informaticien (Exploitation &amp; Infrastructure)</div>
+                        <div class="fi-school">ETML, Lausanne</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ PROJETS ══ -->
+        <div class="cv-section">
+            <div class="section-label">Projet Personnel / Lab</div>
+            <div class="timeline-item">
+                <div class="tl-date">2023 –<br>présent</div>
+                <div class="tl-body">
+                    <div class="tl-title">Homelab — Infrastructure Kubernetes en production</div>
+                    <ul>
+                        <li><strong>Infrastructure &amp; Automatisation :</strong> Cluster K3s (20+ services depuis 2 ans), provisionnement IaC via Terraform/Ansible, déploiement continu ArgoCD, monitoring Prometheus / Grafana / Loki.</li>
+                        <li><strong>Sécurité &amp; Réseau :</strong> TLS automatisé (cert-manager), segmentation réseau, VPN WireGuard, IAM/RBAC appliqués sur l'ensemble du parc.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ LANGUES ══ -->
+        <div class="cv-section">
+            <div class="section-label">Langues</div>
+            <div style="display:flex; gap:0.6cm; font-size:8pt; color:#333; padding-top:0.04cm;">
+                <span><strong>Français</strong> — Langue maternelle</span>
+                <span><strong>Anglais</strong> — C1</span>
+                <span><strong>Portugais</strong> — C2</span>
+                <span style="margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:6.5pt; color:#888;">Permis de conduire Cat. B</span>
+            </div>
+        </div>
+
+    </body>
+</html>

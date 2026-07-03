@@ -1,0 +1,36 @@
+name: Build Blog
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'blog/**'
+      - '.eleventy.js'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Build blog
+        run: npm run blog
+
+      - name: Commit generated blog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add www/blog/
+          git diff --cached --quiet || git commit -m "chore: rebuild blog"
+          git push

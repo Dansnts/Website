@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "pdf": "node scripts/generate-pdf.js"
+    "pdf": "node scripts/generate-pdf.js",
+    "blog": "eleventy",
+    "blog:watch": "eleventy --watch"
   },
   "dependencies": {
-    "puppeteer": "^22.0.0",
+    "puppeteer": "^25.1.0",
     "serve-handler": "^6.1.5"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
   }
 }

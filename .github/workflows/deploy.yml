@@ -1,0 +1,22 @@
+name: Deploy to Infomaniak
+
+on:
+  workflow_run:
+    workflows: ["Build Blog"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy www/ via SFTP
+        run: |
+          sudo apt-get install -y lftp
+          lftp -u "${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }}" \
+               sftp://${{ secrets.FTP_HOST }} \
+               -e "set sftp:auto-confirm yes; mirror -R --delete --verbose www/ ${{ secrets.FTP_REMOTE_PATH }}; quit"

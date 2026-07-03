@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CV Swibeco EN — Dani Faria dos Santos</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+            @page {
+                size: A4;
+                margin: 0.45cm 0.85cm 0.4cm;
+            }
+
+            body {
+                font-family: 'DM Sans', system-ui, sans-serif;
+                font-size: 9pt;
+                line-height: 1.42;
+                color: #111;
+                background: white;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            a { color: inherit; text-decoration: none; }
+
+            .no-print {
+                text-align: right;
+                margin-bottom: 0.6rem;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.65rem;
+            }
+            .no-print button {
+                padding: 0.3rem 0.8rem;
+                background: #2563eb;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            @media print { .no-print { display: none !important; } }
+
+            /* ── Header ── */
+            .cv-header {
+                display: flex;
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 0.6cm;
+                padding-bottom: 0.2cm;
+                margin-bottom: 0.18cm;
+                border-bottom: 1.5pt solid #2563eb;
+            }
+            .cv-header-text { flex: 1; min-width: 0; }
+
+            .cv-name {
+                font-size: 19pt;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                line-height: 1;
+                color: #111;
+                margin-bottom: 0.06cm;
+            }
+            .cv-name span { font-weight: 300; color: #444; }
+
+            .cv-title {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 7pt;
+                font-weight: 500;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: #2563eb;
+                display: block;
+                margin-bottom: 0.14cm;
+            }
+
+            .cv-meta {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #444;
+                display: flex;
+                flex-direction: column;
+                gap: 0.05cm;
+            }
+            .cv-meta-row {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.05cm 0.35cm;
+            }
+            .cv-meta-row span {
+                display: flex;
+                align-items: center;
+                gap: 0.08cm;
+                white-space: nowrap;
+            }
+            .cv-meta svg {
+                flex-shrink: 0;
+                width: 8px;
+                height: 8px;
+                stroke: #2563eb;
+                fill: none;
+            }
+
+            .cv-qr {
+                flex-shrink: 0;
+                display: flex;
+                align-items: flex-start;
+            }
+            .cv-qr img { width: 62px; height: 62px; }
+
+            /* ── Section generic ── */
+            .cv-section {
+                margin-bottom: 0.12cm;
+                break-inside: avoid;
+            }
+            .cv-section + .cv-section {
+                border-top: 0.5pt solid #e4e4e4;
+                padding-top: 0.1cm;
+            }
+
+            .section-label {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                font-weight: 600;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: #2563eb;
+                margin-bottom: 0.1cm;
+            }
+
+            /* ── Profile ── */
+            .cv-profile {
+                border-left: 2pt solid #2563eb;
+                padding: 0.06cm 0.35cm;
+                margin-bottom: 0.12cm;
+            }
+            .cv-profile p {
+                font-size: 8.5pt;
+                color: #333;
+                line-height: 1.5;
+            }
+
+            /* ── Skills grid ── */
+            .skills-cols {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0 0.35cm;
+            }
+            .skill-col-title {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: #2563eb;
+                border-bottom: 0.5pt solid #e0e0e0;
+                padding-bottom: 0.04cm;
+                margin-bottom: 0.07cm;
+            }
+            .skill-col ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .skill-col li {
+                font-size: 7pt;
+                color: #333;
+                line-height: 1.42;
+                padding: 0.015cm 0;
+                display: flex;
+                gap: 0.15cm;
+            }
+            .skill-col li::before {
+                content: '–';
+                color: #bbb;
+                flex-shrink: 0;
+            }
+            .skill-label {
+                font-weight: 600;
+                color: #222;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            /* ── Timeline ── */
+            .timeline-item {
+                display: grid;
+                grid-template-columns: 74px 1fr;
+                gap: 0 0.35cm;
+                padding: 0.1cm 0;
+                border-top: 0.5pt solid #ebebeb;
+                break-inside: avoid;
+            }
+            .timeline-item:first-child { border-top: none; }
+
+            .tl-date {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #888;
+                padding-top: 0.03cm;
+                line-height: 1.3;
+            }
+            .tl-body { min-width: 0; }
+            .tl-title {
+                font-size: 9.5pt;
+                font-weight: 600;
+                color: #111;
+                margin-bottom: 0.02cm;
+            }
+            .tl-company {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #2563eb;
+                margin-bottom: 0.1cm;
+            }
+            .tl-body ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .tl-body li {
+                font-size: 8pt;
+                color: #444;
+                padding: 0.02cm 0 0.02cm 0.22cm;
+                line-height: 1.44;
+                position: relative;
+            }
+            .tl-body li::before {
+                content: '–';
+                position: absolute;
+                left: 0;
+                color: #bbb;
+            }
+            .tl-body li strong {
+                font-weight: 600;
+                color: #222;
+            }
+
+            /* ── Formation ── */
+            .formation-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+            }
+            .formation-item {
+                display: grid;
+                grid-template-columns: 74px 1fr;
+                gap: 0 0.35cm;
+                padding: 0.06cm 0;
+                border-top: 0.5pt solid #ebebeb;
+                break-inside: avoid;
+            }
+            .formation-item:first-child { border-top: none; }
+            .fi-date {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #888;
+                padding-top: 0.03cm;
+            }
+            .fi-title { font-size: 9pt; font-weight: 600; color: #111; }
+            .fi-school {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #2563eb;
+                margin-bottom: 0.04cm;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="no-print">
+            <button onclick="window.print()">Print / Export PDF</button>
+        </div>
+
+        <!-- ══ HEADER ══ -->
+        <div class="cv-header">
+            <div class="cv-header-text">
+                <div class="cv-name">Dani <span>Faria dos Santos</span></div>
+                <span class="cv-title">Junior AI &amp; Automation Project Manager | MLOps</span>
+                <div class="cv-meta">
+                    <div class="cv-meta-row">
+                        <span>Age 26 &nbsp;|&nbsp; Driving licence B</span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.32 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.64a16 16 0 0 0 6 6l1-1a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            +41 79 356 29 30
+                        </span>
+                    </div>
+                    <div class="cv-meta-row">
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            danitiago@fariadossantos.com
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            fariadossantos.com
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                            linkedin.com/in/dani-faria
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                            github.com/Dansnts
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="cv-qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://fariadossantos.com" alt="QR" width="62" height="62" />
+            </div>
+        </div>
+
+        <!-- ══ PROFILE ══ -->
+        <div class="cv-profile">
+            <p>Networks &amp; Systems Engineer with a focus on MLOps and AI-driven automation. Designs and deploys AI agents in production, connects tools via MCP/API, automates business processes (no-code and code) and drives cross-functional projects end-to-end, bridging operational needs and technical delivery.</p>
+        </div>
+
+        <!-- ══ SKILLS ══ -->
+        <div class="cv-section">
+            <div class="section-label">Technical Skills</div>
+            <div class="skills-cols">
+                <div class="skill-col">
+                    <div class="skill-col-title">AI &amp; Agents</div>
+                    <ul>
+                        <li><span class="skill-label">LLMs &amp; Prompting:</span> Claude, prompt engineering, MCP, Anthropic/OpenAI API</li>
+                        <li><span class="skill-label">Agents &amp; Tools:</span> AI agent design, n8n, Power Automate, MCP/API, no-code</li>
+                        <li><span class="skill-label">Vision AI &amp; MLOps:</span> Meta SAM3, KubeRay, distributed inference, ML lifecycle</li>
+                        <li><span class="skill-label">Data &amp; Storage:</span> S3/MinIO, Parquet, JSON, AWS (Lambda, EC2, IAM)</li>
+                    </ul>
+                </div>
+                <div class="skill-col">
+                    <div class="skill-col-title">Dev &amp; Integration</div>
+                    <ul>
+                        <li><span class="skill-label">Python:</span> FastAPI, Boto3, scripting, REST API</li>
+                        <li><span class="skill-label">CI/CD &amp; GitOps:</span> GitHub Actions, GitLab CI, ArgoCD, Git</li>
+                        <li><span class="skill-label">Orchestration:</span> K3s, KubeRay, Docker, Helm</li>
+                        <li><span class="skill-label">Languages:</span> Python, Bash, PowerShell</li>
+                    </ul>
+                </div>
+                <div class="skill-col">
+                    <div class="skill-col-title">Infra &amp; Observability</div>
+                    <ul>
+                        <li><span class="skill-label">IaC:</span> Terraform/OpenTofu, Ansible, ArgoCD</li>
+                        <li><span class="skill-label">Monitoring:</span> Prometheus, Grafana, Loki, Alloy, DCGM, ELK</li>
+                        <li><span class="skill-label">IAM:</span> Active Directory, Keycloak (OIDC/SSO), Vault</li>
+                        <li><span class="skill-label">Compliance:</span> Cyber-Safe ISO 27001, RBAC, audit evidence, GDPR</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ EXPERIENCE ══ -->
+        <div class="cv-section">
+            <div class="section-label">Professional Experience &amp; AI Projects</div>
+
+            <div class="timeline-item">
+                <div class="tl-date">2025 – 2026</div>
+                <div class="tl-body">
+                    <div class="tl-title">MLOps Engineer — Distributed Pipeline (Bachelor's Thesis)</div>
+                    <div class="tl-company">HEIG-VD, Institut IICT — Yverdon-les-Bains</div>
+                    <ul>
+                        <li><strong>AI Deployment (MLOps):</strong> Designed and deployed a distributed automated annotation pipeline for 300,000 geospatial images powered by Meta SAM3, achieving a 300% throughput gain.</li>
+                        <li><strong>API &amp; GPU Orchestration:</strong> REST API (FastAPI/Python) to orchestrate batch &amp; on-demand inferences, asynchronous GPU distribution via KubeRay/Kubernetes, automated data flow to S3 (Parquet/JSON).</li>
+                        <li><strong>Observability &amp; CI/CD:</strong> Full GPU monitoring stack (Prometheus, Grafana, Loki, Alloy, DCGM) and build automation via GitHub Actions.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="tl-date">2023 – 2024</div>
+                <div class="tl-body">
+                    <div class="tl-title">SysAdmin &amp; IT Project Manager</div>
+                    <div class="tl-company">eeproperty SA — Lausanne</div>
+                    <ul>
+                        <li><strong>Project Management:</strong> Built the IT department from scratch with full autonomy, under severe budget constraint (CHF 100/month), growing it to CHF 30,000/year by demonstrating business value to leadership.</li>
+                        <li><strong>Compliance &amp; Audit:</strong> Obtained Cyber-Safe certification (ISO 27001) in 6 months: scoping, requirements workshops, audit evidence production, vendor coordination, remediation.</li>
+                        <li><strong>Cross-functional Delivery:</strong> IAM architecture (RBAC, Active Directory, 30 users, Intune/ABM) and network infrastructure (DMZ, VLANs, Proxmox), in continuous coordination with business teams.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="tl-date">2020 – 2021</div>
+                <div class="tl-body">
+                    <div class="tl-title">Systems &amp; Automation Analyst</div>
+                    <div class="tl-company">Nestlé SA — International HQ</div>
+                    <ul>
+                        <li><strong>Automation &amp; Data:</strong> Identified bottlenecks and automated 30 cross-functional business processes (Power Automate); developed Power BI dashboards for performance tracking; support in a global corporate environment (live events, 100+ attendees).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ EDUCATION ══ -->
+        <div class="cv-section">
+            <div class="section-label">Education</div>
+            <div class="formation-list">
+                <div class="formation-item">
+                    <div class="fi-date">2022 – 2026</div>
+                    <div class="fi-body">
+                        <div class="fi-title">Bachelor HES-SO in Networks &amp; Systems</div>
+                        <div class="fi-school">HEIG-VD, Yverdon-les-Bains</div>
+                    </div>
+                </div>
+                <div class="formation-item">
+                    <div class="fi-date">2021 – 2022</div>
+                    <div class="fi-body">
+                        <div class="fi-title">Professional Baccalaureate (Technical)</div>
+                        <div class="fi-school">CEPV, Vevey</div>
+                    </div>
+                </div>
+                <div class="formation-item">
+                    <div class="fi-date">2016 – 2020</div>
+                    <div class="fi-body">
+                        <div class="fi-title">Federal VET Diploma in IT (Operations &amp; Infrastructure)</div>
+                        <div class="fi-school">ETML, Lausanne</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ PROJECTS ══ -->
+        <div class="cv-section">
+            <div class="section-label">Personal Project / Lab</div>
+            <div class="timeline-item">
+                <div class="tl-date">2023 – present</div>
+                <div class="tl-body">
+                    <div class="tl-title">Homelab Infrastructure — Self-hosted Cloud &amp; AI</div>
+                    <ul>
+                        <li><strong>GitOps &amp; IaC:</strong> Running 20+ services in production on a K3s cluster (ArgoCD, Terraform, Ansible), automated wildcard TLS (cert-manager), centralised monitoring (Prometheus, Grafana, Loki).</li>
+                        <li><strong>AI &amp; Automation:</strong> Self-hosting LLMs and AI agents, automation pipelines, Keycloak (OIDC/SSO), HashiCorp Vault — a continuous lab for putting AI into production.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ LANGUAGES ══ -->
+        <div class="cv-section">
+            <div class="section-label">Languages</div>
+            <div style="display:flex; gap:0.6cm; font-size:8pt; color:#333; padding-top:0.04cm;">
+                <span><strong>French</strong> — Native</span>
+                <span><strong>English</strong> — C1</span>
+                <span><strong>Portuguese</strong> — C2</span>
+                <span style="margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:6.5pt; color:#888;">Driving licence B</span>
+            </div>
+        </div>
+
+    </body>
+</html>

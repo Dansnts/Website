@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CV Pictet — Dani Faria dos Santos</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+            @page {
+                size: A4;
+                margin: 0.45cm 0.85cm 0.4cm;
+            }
+
+            body {
+                font-family: 'DM Sans', system-ui, sans-serif;
+                font-size: 9pt;
+                line-height: 1.42;
+                color: #111;
+                background: white;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            a { color: inherit; text-decoration: none; }
+
+            .no-print {
+                text-align: right;
+                margin-bottom: 0.6rem;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.65rem;
+            }
+            .no-print button {
+                padding: 0.3rem 0.8rem;
+                background: #2563eb;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            @media print { .no-print { display: none !important; } }
+
+            /* ── Header ── */
+            .cv-header {
+                display: flex;
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 0.6cm;
+                padding-bottom: 0.2cm;
+                margin-bottom: 0.18cm;
+                border-bottom: 1.5pt solid #2563eb;
+            }
+            .cv-header-text { flex: 1; min-width: 0; }
+
+            .cv-name {
+                font-size: 19pt;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                line-height: 1;
+                color: #111;
+                margin-bottom: 0.06cm;
+            }
+            .cv-name span { font-weight: 300; color: #444; }
+
+            .cv-title {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 7pt;
+                font-weight: 500;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: #2563eb;
+                display: block;
+                margin-bottom: 0.14cm;
+            }
+
+            .cv-meta {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #444;
+                display: flex;
+                flex-direction: column;
+                gap: 0.05cm;
+            }
+            .cv-meta-row {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.05cm 0.35cm;
+            }
+            .cv-meta-row span {
+                display: flex;
+                align-items: center;
+                gap: 0.08cm;
+                white-space: nowrap;
+            }
+            .cv-meta svg {
+                flex-shrink: 0;
+                width: 8px;
+                height: 8px;
+                stroke: #2563eb;
+                fill: none;
+            }
+
+            .cv-qr {
+                flex-shrink: 0;
+                display: flex;
+                align-items: flex-start;
+            }
+            .cv-qr img { width: 62px; height: 62px; }
+
+            /* ── Section generic ── */
+            .cv-section {
+                margin-bottom: 0.12cm;
+                break-inside: avoid;
+            }
+            .cv-section + .cv-section {
+                border-top: 0.5pt solid #e4e4e4;
+                padding-top: 0.1cm;
+            }
+
+            .section-label {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                font-weight: 600;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: #2563eb;
+                margin-bottom: 0.1cm;
+            }
+
+            /* ── Profile ── */
+            .cv-profile {
+                border-left: 2pt solid #2563eb;
+                padding: 0.06cm 0.35cm;
+                margin-bottom: 0.12cm;
+            }
+            .cv-profile p {
+                font-size: 8.5pt;
+                color: #333;
+                line-height: 1.5;
+            }
+
+            /* ── Skills grid ── */
+            .skills-cols {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0 0.35cm;
+            }
+            .skill-col-title {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: #2563eb;
+                border-bottom: 0.5pt solid #e0e0e0;
+                padding-bottom: 0.04cm;
+                margin-bottom: 0.07cm;
+            }
+            .skill-col ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .skill-col li {
+                font-size: 7.5pt;
+                color: #333;
+                line-height: 1.42;
+                padding: 0.015cm 0;
+                display: flex;
+                gap: 0.15cm;
+            }
+            .skill-col li::before {
+                content: '–';
+                color: #bbb;
+                flex-shrink: 0;
+            }
+            .skill-label {
+                font-weight: 600;
+                color: #222;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            /* ── Timeline ── */
+            .timeline-item {
+                display: grid;
+                grid-template-columns: 74px 1fr;
+                gap: 0 0.35cm;
+                padding: 0.1cm 0;
+                border-top: 0.5pt solid #ebebeb;
+                break-inside: avoid;
+            }
+            .timeline-item:first-child { border-top: none; }
+
+            .tl-date {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #888;
+                padding-top: 0.03cm;
+                line-height: 1.3;
+            }
+            .tl-body { min-width: 0; }
+            .tl-title {
+                font-size: 9.5pt;
+                font-weight: 600;
+                color: #111;
+                margin-bottom: 0.02cm;
+            }
+            .tl-company {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #2563eb;
+                margin-bottom: 0.1cm;
+            }
+            .tl-body ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .tl-body li {
+                font-size: 8pt;
+                color: #444;
+                padding: 0.02cm 0 0.02cm 0.22cm;
+                line-height: 1.44;
+                position: relative;
+            }
+            .tl-body li::before {
+                content: '–';
+                position: absolute;
+                left: 0;
+                color: #bbb;
+            }
+            .tl-body li strong {
+                font-weight: 600;
+                color: #222;
+            }
+
+            /* ── Formation ── */
+            .formation-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+            }
+            .formation-item {
+                display: grid;
+                grid-template-columns: 74px 1fr;
+                gap: 0 0.35cm;
+                padding: 0.06cm 0;
+                border-top: 0.5pt solid #ebebeb;
+                break-inside: avoid;
+            }
+            .formation-item:first-child { border-top: none; }
+            .fi-date {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #888;
+                padding-top: 0.03cm;
+            }
+            .fi-title { font-size: 9pt; font-weight: 600; color: #111; }
+            .fi-school {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6.5pt;
+                color: #2563eb;
+                margin-bottom: 0.04cm;
+            }
+            .fi-body ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .fi-body li {
+                font-size: 7.5pt;
+                color: #555;
+                padding: 0.015cm 0 0.015cm 0.2cm;
+                line-height: 1.4;
+                position: relative;
+            }
+            .fi-body li::before {
+                content: '–';
+                position: absolute;
+                left: 0;
+                color: #ccc;
+            }
+
+            /* ── Photo ── */
+            .cv-photo {
+                flex-shrink: 0;
+                width: 1.8cm;
+                height: 2.2cm;
+                border-radius: 3pt;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 0.15cm;
+                background: #fafafa;
+                color: #bbb;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 6pt;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+            }
+            .cv-photo svg {
+                width: 22px;
+                height: 22px;
+                stroke: #ccc;
+                fill: none;
+            }
+            @media print {
+                .cv-photo {
+                    border-color: #d0d0d0;
+                    background: #f5f5f5;
+                }
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="no-print">
+            <button onclick="window.print()">Imprimer / Exporter PDF</button>
+        </div>
+
+        <!-- ══ HEADER ══ -->
+        <div class="cv-header">
+            <div class="cv-photo">
+                <img src="/picture.png" alt="Photo" style="width:100%;height:100%;object-fit:cover;border-radius:2pt;" />
+            </div>
+            <div class="cv-header-text">
+                <div class="cv-name">Dani <span>Faria dos Santos</span></div>
+                <span class="cv-title">Ingénieur DevOps / DevSecOps (Junior)</span>
+                <div class="cv-meta">
+                    <div class="cv-meta-row">
+                        <span>26 ans &nbsp;|&nbsp; Permis B</span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.32 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.64a16 16 0 0 0 6 6l1-1a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            +41 79 356 29 30
+                        </span>
+                    </div>
+                    <div class="cv-meta-row">
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            danitiago@fariadossantos.com
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            fariadossantos.com
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                            linkedin.com/in/dani-faria
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                            github.com/Dansnts
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="cv-qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://fariadossantos.com" alt="QR" width="62" height="62" />
+            </div>
+        </div>
+
+        <!-- ══ PROFIL ══ -->
+        <div class="cv-profile">
+            <p>Ingénieur système et réseau HES, spécialisé dans la sécurité des conteneurs, le durcissement d'infrastructures et la gestion automatisée des identités (IAM) : authentification, autorisation et contrôle d'accès en environnements Cloud et hybrides. Prochainement diplômé de la HEIG-VD, adepte du software craftsmanship, des technologies open-source et de l'approche GitOps.</p>
+        </div>
+
+        <!-- ══ COMPÉTENCES ══ -->
+        <div class="cv-section">
+            <div class="section-label">Compétences Techniques</div>
+            <div class="skills-cols">
+                <div class="skill-col">
+                    <div class="skill-col-title">IAM &amp; Sécurité</div>
+                    <ul>
+                        <li><span class="skill-label">Authn/Authz :</span> Keycloak (OIDC/OAuth2/SAML/SSO), Active Directory, Azure AD, contrôle d'accès RBAC/ABAC</li>
+                        <li><span class="skill-label">Secrets &amp; PAM :</span> HashiCorp Vault, External Secrets Operator</li>
+                        <li><span class="skill-label">Hardening OS :</span> AppArmor, seccomp, namespaces, Linux capabilities, CIS Benchmarks</li>
+                        <li><span class="skill-label">Audit &amp; Conformité :</span> Cyber-Safe (ISO 27001), politiques de sécurité, production de preuves, LPD/RGPD</li>
+                    </ul>
+                </div>
+                <div class="skill-col">
+                    <div class="skill-col-title">Orchestration &amp; Cloud</div>
+                    <ul>
+                        <li><span class="skill-label">K8s :</span> Kubernetes (K3s), Docker, Helm, ArgoCD (GitOps)</li>
+                        <li><span class="skill-label">Cloud :</span> AWS (EKS, EC2, S3, IAM, Lambda), Azure</li>
+                        <li><span class="skill-label">IaC :</span> Terraform / OpenTofu, Ansible</li>
+                        <li><span class="skill-label">Réseau :</span> DMZ, VLANs, WireGuard VPN, Cisco/MikroTik</li>
+                    </ul>
+                </div>
+                <div class="skill-col">
+                    <div class="skill-col-title">Automatisation &amp; Code</div>
+                    <ul>
+                        <li><span class="skill-label">Langages :</span> Python, Bash, PowerShell</li>
+                        <li><span class="skill-label">CI/CD :</span> GitLab CI, Git, ArgoCD</li>
+                        <li><span class="skill-label">Observabilité :</span> ELK Stack, Prometheus, Grafana, Loki</li>
+                        <li><span class="skill-label">API :</span> REST/JSON, conception et intégration (Python, Bash)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ EXPÉRIENCE ══ -->
+        <div class="cv-section">
+            <div class="section-label">Expérience Professionnelle</div>
+            <div class="timeline-item">
+                <div class="tl-date">2023 – 2024</div>
+                <div class="tl-body">
+                    <div class="tl-title">SysAdmin — Unique responsable IT</div>
+                    <div class="tl-company">eeproperty SA — Lausanne</div>
+                    <ul>
+                        <li><strong>Création du département IT</strong> de A à Z en autonomie totale, sous contrainte budgétaire sévère (100 CHF/mois), infrastructure toujours en production, budget porté à 30 000 CHF/an.</li>
+                        <li><strong>Architecture IAM :</strong> Déploiement d'une architecture IAM (authentification, autorisation, contrôle d'accès RBAC) : Active Directory (30 utilisateurs, GPO, cycle de vie), politiques de sécurité, endpoints via Intune/ABM.</li>
+                        <li><strong>Architecture &amp; Hardening :</strong> Conception, virtualisation (Proxmox) et durcissement d'infrastructures critiques : isolation réseau multi-couches (DMZ, 5 VLANs), supervision transversale des environnements, 3CX VoIP sous Debian.</li>
+                        <li><strong>GRC &amp; Audit :</strong> Certification Cyber-Safe (ISO 27001) en 6 mois : définition des politiques de sécurité, production de preuves d'audit, gap analysis, remédiation — première pour l'entreprise.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="tl-date">2020 – 2021</div>
+                <div class="tl-body">
+                    <div class="tl-title">Analyste Systèmes &amp; Automatisation</div>
+                    <div class="tl-company">Nestlé SA — Siège International</div>
+                    <ul>
+                        <li>Mission de 12 mois en environnement corporate international : déploiement et support des solutions de travail à distance à grande échelle, diffusion d'événements en direct (100+ participants).</li>
+                        <li>Automatisation de ~30 processus métier (Power Automate) et développement de tableaux de bord Power BI à fort impact opérationnel.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ FORMATION ══ -->
+        <div class="cv-section">
+            <div class="section-label">Formation</div>
+            <div class="formation-list">
+                <div class="formation-item">
+                    <div class="fi-date">2022 – 2026</div>
+                    <div class="fi-body">
+                        <div class="fi-title">Bachelor HES-SO en Réseaux et Systèmes</div>
+                        <div class="fi-school">HEIG-VD, Yverdon-les-Bains</div>
+                        <ul>
+                            <li><strong>Sécurité containers :</strong> Isolation avancée d'orchestrateurs Kubernetes/K3s via les couches OS de bas niveau (AppArmor, seccomp, namespaces, Linux capabilities). Automatisation de la gestion des secrets avec HashiCorp Vault et Keycloak.</li>
+                            <li><strong>Travail de Bachelor :</strong> Pipeline GPU distribuée (KubeRay/SAM3) pour annotation automatique de 300 000 images, gain de traitement de 300%, observabilité complète (Grafana, Prometheus, DCGM).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="formation-item">
+                    <div class="fi-date">2021 – 2022</div>
+                    <div class="fi-body">
+                        <div class="fi-title">Maturité Professionnelle Technique</div>
+                        <div class="fi-school">CEPV, Vevey</div>
+                    </div>
+                </div>
+                <div class="formation-item">
+                    <div class="fi-date">2016 – 2020</div>
+                    <div class="fi-body">
+                        <div class="fi-title">CFC d'Informaticien (Exploitation &amp; Infrastructure)</div>
+                        <div class="fi-school">ETML, Lausanne</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ PROJETS ══ -->
+        <div class="cv-section">
+            <div class="section-label">Projet Personnel / Lab</div>
+            <div class="timeline-item">
+                <div class="tl-date">2023 – présent</div>
+                <div class="tl-body">
+                    <div class="tl-title">Homelab Infrastructure — Kubernetes en production</div>
+                    <ul>
+                        <li><strong>GitOps &amp; IaC :</strong> Gestion d'une infrastructure cloud hybride en approche GitOps (ArgoCD) avec automatisation complète via Infrastructure-as-Code (Terraform, OpenTofu, Ansible), certificats TLS wildcard automatisés (cert-manager).</li>
+                        <li><strong>Débogage transversal :</strong> Déploiement et exploitation d'un cluster Kubernetes (K3s, 2 nœuds, ~20 services). Diagnostic des couches réseau, OS et applicative via une stack d'observabilité centralisée (ELK, Prometheus, Grafana, Loki).</li>
+                        <li><strong>Plateformes IAM :</strong> Keycloak (OIDC/OAuth2/SSO), HashiCorp Vault, External Secrets Operator — intégration, automatisation et supervision en conditions de production réelle.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ LANGUES ══ -->
+        <div class="cv-section">
+            <div class="section-label">Langues</div>
+            <div style="display:flex; gap:0.6cm; font-size:8pt; color:#333; padding-top:0.04cm;">
+                <span><strong>Français</strong> — Langue maternelle</span>
+                <span><strong>Anglais</strong> — C1</span>
+                <span><strong>Portugais</strong> — C2</span>
+                <span style="margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:6.5pt; color:#888;">Permis B</span>
+            </div>
+        </div>
+
+    </body>
+</html>
