@@ -4,12 +4,14 @@ const commonTranslations = {
     'nav-home': 'Accueil',
     'nav-projects': 'Projets',
 	'nav-resume': 'CV',
+    'nav-blog': 'Blog',
     'back-projects': 'Retour aux projets'
   },
   en: {
     'nav-home': 'Home',
     'nav-projects': 'Projects',
 	'nav-resume': 'Resume',
+    'nav-blog': 'Blog',
     'back-projects': 'Back to projects'
   }
 };
