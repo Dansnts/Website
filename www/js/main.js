@@ -137,52 +137,6 @@ function initNavScroll() {
   update();
 }
 
-// ─── Counter animation ───────────────────────
-function initCounters() {
-  const counters = document.querySelectorAll('.bento-stat[data-count]');
-  if (!counters.length) return;
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const el = entry.target;
-      const target = parseInt(el.dataset.count);
-      const duration = 1200;
-      const start = performance.now();
-      const tick = (now) => {
-        const p = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        el.textContent = Math.round(eased * target);
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-      observer.unobserve(el);
-    });
-  }, { threshold: 0.5 });
-  counters.forEach(el => observer.observe(el));
-}
-
-// ─── Bento cursor glow ───────────────────────
-function initBentoGlow() {
-  document.querySelectorAll('.bento-item').forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty('--mouse-x', `${((e.clientX - r.left) / r.width * 100).toFixed(1)}%`);
-      card.style.setProperty('--mouse-y', `${((e.clientY - r.top) / r.height * 100).toFixed(1)}%`);
-    });
-  });
-}
-
-// ─── Scroll progress bar ─────────────────────
-function initScrollProgress() {
-  const bar = document.createElement('div');
-  bar.id = 'scroll-progress';
-  document.body.appendChild(bar);
-  window.addEventListener('scroll', () => {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
-  }, { passive: true });
-}
-
 // ─── Age (born 2000-04-30) ────────────────────
 function initAge() {
   const el = document.getElementById('cv-age');
@@ -201,8 +155,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.dispatchEvent(new CustomEvent('langChange', { detail: currentLang }));
   initScrollReveal();
   initNavScroll();
-  initCounters();
-  initBentoGlow();
-  initScrollProgress();
   initAge();
 });

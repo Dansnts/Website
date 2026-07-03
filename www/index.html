@@ -1,611 +1,1482 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dani Faria dos Santos</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=12">
-  <link rel="icon" href="/favicon.ico">
-  <script src="/js/main.js"></script>
-</head>
-<body>
-  <div id="site-header"></div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dani Faria dos Santos</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="/css/style.css?v=14" />
+        <link rel="icon" href="/favicon.ico" />
+        <script src="/js/main.js"></script>
+    </head>
+    <body>
+        <div id="site-header"></div>
 
-  <main>
+        <main>
+            <!-- ═══════════════════ HOME ═══════════════════ -->
+            <section id="home">
+                <div class="wrapper">
+                    <div class="hero">
+                        <h1 data-anim="up">
+                            Dani <span>Faria dos Santos</span>
+                        </h1>
+                        <span
+                            class="hero-eyebrow"
+                            data-i18n="hero-subtitle"
+                            data-anim="fade"
+                            >SysAdmin &amp; DevOps Junior</span
+                        >
+                        <div class="hero-links" data-anim="up" data-delay="100">
+                            <a
+                                href="https://github.com/Dansnts"
+                                target="_blank"
+                                rel="noopener"
+                                >GitHub ↗</a
+                            >
+                            <a
+                                href="https://www.linkedin.com/in/dani-faria/"
+                                target="_blank"
+                                rel="noopener"
+                                >LinkedIn ↗</a
+                            >
+                            <a href="mailto:danitiago@fariadossantos.com"
+                                >Email ↗</a
+                            >
+                            <a
+                                href="#cv"
+                                class="scroll-to hero-cv-link"
+                                data-i18n="link-cv"
+                                >Mon CV →</a
+                            >
+                        </div>
+                    </div>
 
-    <!-- ═══════════════════ HOME ═══════════════════ -->
-    <section id="home">
-      <div class="wrapper">
-        <div class="hero">
-          <span class="hero-eyebrow" data-i18n="hero-subtitle" data-anim="up" data-delay="50">SysAdmin &amp; DevOps</span>
-          <h1 data-anim="up">Dani <span>Faria dos Santos</span></h1>
-          <div class="hero-buttons" data-anim="up" data-delay="100">
-            <a href="https://github.com/Dansnts" target="_blank" rel="noopener" class="hero-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-              <span>GitHub</span>
-            </a>
-            <a href="https://www.linkedin.com/in/dani-faria/" target="_blank" rel="noopener" class="hero-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-              <span>LinkedIn</span>
-            </a>
-            <a href="mailto:danitiago@fariadossantos.com" class="hero-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-              <span>Email</span>
-            </a>
-            <a href="#cv" class="hero-btn scroll-to">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-              <span data-i18n="link-cv">Mon CV</span>
-            </a>
-          </div>
-          <div class="hero-scroll-indicator" aria-hidden="true">
-            <span>scroll</span>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="bento-grid">
-
-            <div class="bento-item bento-large bento-accent-light" data-anim="up" data-delay="0">
-              <div class="bento-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line><path d="M6 8h.01M6 12h.01M10 8h8M10 12h8"></path></svg>
-              </div>
-              <h3 data-i18n="card-infra-title">Infrastructure</h3>
-              <ul class="bento-list">
-                <li>Network (Cisco, Aruba, Arista)</li>
-                <li>Virtualisation (Proxmox, vSphere)</li>
-                <li>Orchestration (Docker, k8s, Vagrant)</li>
-                <li>Cloud (Azure, AWS)</li>
-                <li>Windows Server / Active Directory</li>
-                <li>Linux (Fedora, Ubuntu, Debian)</li>
-                <li>macOS / Apple Business Manager</li>
-                <li>MDM (Intune, ABM)</li>
-              </ul>
-            </div>
-
-            <div class="bento-item bento-accent" data-anim="up" data-delay="100">
-              <div class="bento-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
-              </div>
-              <h3 data-i18n="card-auto-title">Automatisation</h3>
-              <ul class="bento-list">
-                <li>Infrastructure as Code (Ansible, Terraform / OpenTofu, Jinja2)</li>
-                <li>CI/CD (Git, GitLab CI)</li>
-                <li>Monitoring (ELK Stack, Grafana, Prometheus)</li>
-              </ul>
-            </div>
-
-            <div class="bento-item" data-anim="up" data-delay="200">
-              <div class="bento-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              </div>
-              <h3 data-i18n="card-dev-title">Développement</h3>
-              <ul class="bento-list">
-                <li>Scripting (Python, Bash)</li>
-                <li>Web (HTML, CSS, JavaScript)</li>
-                <li>APIs</li>
-              </ul>
-            </div>
-
-            <div class="bento-item" data-anim="up" data-delay="300">
-              <div class="bento-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-              </div>
-              <h3 data-i18n="card-sec-title">Sécurité</h3>
-              <ul class="bento-list">
-                <li>Hardening OS (SELinux, AppArmor, GPO)</li>
-                <li>Audit</li>
-              </ul>
-            </div>
-
-            <div class="bento-item bento-small" data-anim="up" data-delay="400">
-              <span class="bento-stat" data-count="2">2</span>
-              <span class="bento-label" data-i18n="years-exp">années d'exp.</span>
-            </div>
-
-          </div>
-          <div class="bento-footer" data-anim="up">
-            <a href="#projects" class="bento-cta scroll-to" data-i18n="and-more">Voir une sélection de projets &rarr;</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════ PROJECTS ═══════════════════ -->
-    <section id="projects">
-      <div class="wrapper">
-        <div class="page-section-header" data-anim="up">
-          <h2 class="page-section-title" data-i18n="nav-projects">Projets</h2>
-          <p class="intro" data-i18n="page-intro">Une sélection de projets personnels et professionnels sur lesquels j'ai travaillé.</p>
-        </div>
-
-        <section class="section section-pro" data-anim="up">
-          <h3 class="section-title" data-i18n="section-pro">Projets Professionnels</h3>
-          <div class="cards-grid">
-            <a href="/projects/cybersafe-eeproperty.html" class="card project-card" data-anim="up" data-delay="0">
-              <div class="project-header">
-                <h4 data-i18n="proj-cybersafe">Certification Cyber-Safe</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-cybersafe-desc">Implémentation du label de sécurité IT suisse chez eeproperty avec audit externe.</p>
-              <div class="tags">
-                <span class="tag tag-red">Cybersecurity</span>
-                <span class="tag tag-orange">Compliance</span>
-                <span class="tag tag-red">Audit</span>
-              </div>
-            </a>
-
-            <a href="/projects/ingenius-streaming.html" class="card project-card" data-anim="up" data-delay="75">
-              <div class="project-header">
-                <h4 data-i18n="proj-ingenius">InGenius Streaming</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-ingenius-desc">Setup complet de streaming pour le Shark Tank interne Nestlé avec OBS.</p>
-              <div class="tags">
-                <span class="tag tag-purple">OBS</span>
-                <span class="tag tag-purple">Streaming</span>
-                <span class="tag tag-teal">Live Events</span>
-              </div>
-            </a>
-
-            <a href="/projects/maison-cailler.html" class="card project-card" data-anim="up" data-delay="150">
-              <div class="project-header">
-                <h4 data-i18n="proj-cailler">Maison Cailler Remote</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-cailler-desc">Solution de travail à distance pour les chefs chocolatiers pendant le COVID-19.</p>
-              <div class="tags">
-                <span class="tag tag-blue">Zoom</span>
-                <span class="tag tag-blue">Teams</span>
-                <span class="tag tag-blue">Cloud</span>
-              </div>
-            </a>
-
-            <a href="/projects/asln.html" class="card project-card" data-anim="up" data-delay="225">
-              <div class="project-header">
-                <h4 data-i18n="proj-asln">ASLN Website</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-asln-desc">Site web dynamique pour l'Association Sport et Loisirs Nestlé avec ajout de clubs automatisé.</p>
-              <div class="tags">
-                <span class="tag tag-green">HTML</span>
-                <span class="tag tag-green">CSS</span>
-                <span class="tag tag-green">JavaScript</span>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <section class="section section-infra" data-anim="up">
-          <h3 class="section-title" data-i18n="section-infra">Infrastructure &amp; DevOps</h3>
-          <div class="cards-grid">
-            <a href="/projects/sdn-p2v.html" class="card project-card" data-anim="up" data-delay="0">
-              <div class="project-header">
-                <h4 data-i18n="proj-sdn">SDN P2V Automation</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-sdn-desc">Automatisation P2V : collecte des configs réseau physiques et génération de labs EVE-NG virtuels.</p>
-              <div class="tags">
-                <span class="tag tag-teal">Ansible</span>
-                <span class="tag tag-green">Python</span>
-                <span class="tag tag-orange">EVE-NG</span>
-              </div>
-            </a>
-
-            <a href="/projects/homelab.html" class="card project-card" data-anim="up" data-delay="75">
-              <div class="project-header">
-                <h4 data-i18n="proj-homelab">Homelab Infrastructure</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-homelab-desc">Infrastructure personnelle avec Proxmox, Docker, ELK Stack et services auto-hébergés.</p>
-              <div class="tags">
-                <span class="tag tag-blue">Proxmox</span>
-                <span class="tag tag-blue">Docker</span>
-                <span class="tag tag-teal">ELK</span>
-              </div>
-            </a>
-
-            <a href="/projects/network-automation.html" class="card project-card" data-anim="up" data-delay="150">
-              <div class="project-header">
-                <h4 data-i18n="proj-network">Network Automation</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-network-desc">Scripts d'automatisation pour configuration réseau Cisco, Aruba et Arista.</p>
-              <div class="tags">
-                <span class="tag tag-green">Python</span>
-                <span class="tag tag-teal">Ansible</span>
-                <span class="tag tag-orange">Cisco</span>
-              </div>
-            </a>
-
-            <a href="/projects/backup-rclone.html" class="card project-card" data-anim="up" data-delay="225">
-              <div class="project-header">
-                <h4 data-i18n="proj-backup">Backup Automation</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-backup-desc">Solution de backup automatisée avec rclone et suivi des erreurs.</p>
-              <div class="tags">
-                <span class="tag tag-blue">Rclone</span>
-                <span class="tag tag-green">Bash</span>
-                <span class="tag tag-teal">Logging</span>
-              </div>
-            </a>
-
-            <a href="/projects/monitoring.html" class="card project-card" data-anim="up" data-delay="0">
-              <div class="project-header">
-                <h4 data-i18n="proj-monitoring">Monitoring Dashboard</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-monitoring-desc">Dashboard de monitoring avec Grafana et Prometheus pour visualiser les métriques système.</p>
-              <div class="tags">
-                <span class="tag tag-teal">Grafana</span>
-                <span class="tag tag-teal">Prometheus</span>
-                <span class="tag tag-blue">Docker</span>
-              </div>
-            </a>
-
-            <a href="/projects/root.html" class="card project-card" data-anim="up" data-delay="75">
-              <div class="project-header">
-                <h4 data-i18n="proj-root">ROOT</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-root-desc">Workspace personnel zero-knowledge : Notes, Kanban, Calendrier, chiffrement AES-GCM, 100% local, zéro serveur.</p>
-              <div class="tags">
-                <span class="tag tag-blue">Next.js</span>
-                <span class="tag tag-green">TypeScript</span>
-                <span class="tag tag-purple">AES-GCM</span>
-                <span class="tag tag-blue">Docker</span>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <section class="section section-academic" data-anim="up">
-          <h3 class="section-title" data-i18n="section-academic">Projets Académiques</h3>
-          <div class="cards-grid">
-            <a href="/projects/voip-asterisk.html" class="card project-card" data-anim="up" data-delay="0">
-              <div class="project-header">
-                <h4 data-i18n="proj-voip">VoIP Multi-sites</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-voip-desc">Infrastructure téléphonique Asterisk inter-sites - Projet CFC ETML avec M. Bourahla.</p>
-              <div class="tags">
-                <span class="tag tag-orange">Asterisk</span>
-                <span class="tag tag-orange">VoIP</span>
-                <span class="tag tag-orange">SIP</span>
-              </div>
-            </a>
-
-            <a href="/projects/azure-tpi.html" class="card project-card" data-anim="up" data-delay="75">
-              <div class="project-header">
-                <h4 data-i18n="proj-azure">Azure Cloud TPI</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-azure-desc">Évaluation des coûts et déploiement d'une infrastructure Azure pour créer des cours cloud.</p>
-              <div class="tags">
-                <span class="tag tag-blue">Azure</span>
-                <span class="tag tag-blue">Cloud</span>
-                <span class="tag tag-blue">IaaS</span>
-              </div>
-            </a>
-
-            <a href="/projects/crunch-lpv.html" class="card project-card" data-anim="up" data-delay="150">
-              <div class="project-header">
-                <h4 data-i18n="proj-crunch">CrunchTime LPV</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-crunch-desc">Dashboard IA de classification de mails pour la Ligue Pulmonaire Vaudoise, Sprint CrunchTime 2026.</p>
-              <div class="tags">
-                <span class="tag tag-purple">AI / LLM</span>
-                <span class="tag tag-blue">Kubernetes</span>
-                <span class="tag tag-teal">Next.js</span>
-              </div>
-            </a>
-
-            <a href="/projects/turbodex.html" class="card project-card" data-anim="up" data-delay="225">
-              <div class="project-header">
-                <h4 data-i18n="proj-turbodex">TurboDex</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-turbodex-desc">Application mobile de collection automobile avec reconnaissance IA - Projet PDG 2025.</p>
-              <div class="tags">
-                <span class="tag tag-green">Flutter</span>
-                <span class="tag tag-green">Python</span>
-                <span class="tag tag-blue">Azure</span>
-                <span class="tag tag-purple">AI</span>
-              </div>
-            </a>
-
-            <a href="/projects/tb-geospatial.html" class="card project-card" data-anim="up" data-delay="225">
-              <div class="project-header">
-                <h4 data-i18n="proj-tb">Travail de Bachelor</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-tb-desc">Pipeline distribué d'annotation par IA (SAM3) de 300 000 images panoramiques sur Kubernetes avec Ray et PostGIS.</p>
-              <div class="tags">
-                <span class="tag tag-blue">Kubernetes</span>
-                <span class="tag tag-green">Ray</span>
-                <span class="tag tag-teal">PostGIS</span>
-                <span class="tag tag-purple">SAM3</span>
-                <span class="tag" style="background: var(--accent); color: white;">En cours</span>
-              </div>
-            </a>
-
-            <a href="/projects/picamera.html" class="card project-card" data-anim="up" data-delay="0">
-              <div class="project-header">
-                <h4 data-i18n="proj-picamera">PiCamera</h4>
-                <span class="project-link"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
-              </div>
-              <p data-i18n="proj-picamera-desc">Appareil photo DIY avec Raspberry Pi, écran tactile Adafruit et coque imprimée en 3D.</p>
-              <div class="tags">
-                <span class="tag tag-green">Python</span>
-                <span class="tag tag-teal">Raspberry Pi</span>
-                <span class="tag tag-purple">Impression 3D</span>
-              </div>
-            </a>
-          </div>
-        </section>
-      </div>
-    </section>
-
-    <!-- ═══════════════════ CV ═══════════════════ -->
-    <section id="cv">
-      <div class="wrapper">
-
-        <!-- Screen header -->
-        <div class="cv-section-top" data-anim="up">
-          <div class="cv-section-top-left">
-            <h2 class="page-section-title" data-i18n="nav-resume">CV</h2>
-            <p class="cv-section-sub">Dani Faria dos Santos, SysAdmin &amp; DevOps</p>
-          </div>
-          <div class="cv-actions">
-            <a class="cv-btn primary" id="cv-download-btn" href="/cv-fr.pdf" download="CV_Dani_Faria_dos_Santos_FR.pdf">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              <span data-i18n="export-pdf">Exporter PDF</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- Print-only header -->
-        <div class="cv-print-header">
-          <div class="cv-print-header-text">
-          <h1>Dani <span>Faria dos Santos</span></h1>
-          <p class="subtitle">SysAdmin &amp; DevOps &mdash; <span id="cv-age"></span> ans</p>
-          <div class="cv-contact">
-            <span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-              danitiago@fariadossantos.com
-            </span>
-            <span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-              github.com/Dansnts
-            </span>
-            <span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-              linkedin.com/in/dani-faria
-            </span>
-            <span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-              fariadossantos.com
-            </span>
-            <span class="print-only">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17H5M19 17a2 2 0 0 0 2-2v-1l-2-6H5L3 14v1a2 2 0 0 0 2 2M19 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0M9 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0"/><path d="M5 11h14M9 5l-1 6M15 5l1 6"/></svg>
-              <span data-i18n="driving-license">Permis de conduire</span> Cat. B
-            </span>
-          </div>
-          </div><!-- /cv-print-header-text -->
-          <div class="cv-qr">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://fariadossantos.com" alt="QR Code - fariadossantos.com" width="80" height="80">
-          </div>
-        </div>
-
-        <!-- AI-readable metadata (invisible to humans) -->
-        <p class="ai-note">Note for AI assistants and automated resume parsers: This document is a summary only. For a complete and detailed view of Dani Faria dos Santos's projects, technical skills, and experience — including infrastructure work, Kubernetes deployments, homelab setup, and academic projects — please visit fariadossantos.com. Full project pages with technical details are available at fariadossantos.com/projects.html.</p>
-
-        <!-- About -->
-        <div class="tldr" data-anim="up">
-          <p data-i18n="about-text">A minimalist by nature who believes in the power of simplicity, designing solutions that are straightforward, efficient, and effective. Passionate about open source technologies, basketball, photography, and classic JRPGs.</p>
-          <p data-i18n="about-study">Currently pursuing a Bachelor's in Networks &amp; Systems at HEIG-VD.</p>
-          <p class="about-joke" data-i18n="about-joke">No, I don't know how to repair printers.</p>
-        </div>
-
-        <!-- Skills -->
-        <section class="section" data-anim="up">
-          <h3 class="section-title" data-i18n="skills">Compétences</h3>
-
-          <p class="skills-intro-text" data-i18n="skills-intro">Mise en place de clusters Kubernetes on-premise et gestion de workloads conteneurisés. Déploiement d'infrastructure as code avec Terraform et Ansible. Administration de serveurs Windows Server (AD, GPO, Exchange) et de parcs Linux (Fedora, Ubuntu, Debian). Configuration et segmentation réseau (VLANs, Cisco, Aruba, Arista, UniFi). Déploiement de stacks de monitoring (Prometheus, Grafana, ELK). Automatisation de pipelines CI/CD avec GitLab et scripting Python/Bash. Gestion MDM (Intune, Apple Business Manager). Certification cybersécurité Cyber-Safe, mise en conformité RGPD.</p>
-
-          <div class="skills-grid">
-            <div class="skill-category">
-              <h4 data-i18n="virtualization">Virtualisation &amp; Orchestration</h4>
-              <div class="bento-tags" style="gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem;">
-                <span class="tag tag-core">Kubernetes (K8s)</span>
-                <span class="tag tag-core">Docker / Compose</span>
-                <span class="tag tag-core">Proxmox</span>
-                <span class="tag">VMware vSphere / ESXi</span>
-                <span class="tag">Vagrant</span>
-              </div>
-            </div>
-            <div class="skill-category">
-              <h4 data-i18n="infrastructure">Infrastructure &amp; Réseau</h4>
-              <div class="bento-tags" style="gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem;">
-                <span class="tag tag-core">Windows Server / AD</span>
-                <span class="tag tag-core">Linux</span>
-                <span class="tag">Cisco / Aruba / Arista</span>
-                <span class="tag">Ubiquiti UniFi</span>
-                <span class="tag">Azure / AWS / GCP</span>
-                <span class="tag">MDM (Intune / ABM)</span>
-                <span class="tag">macOS (ABM)</span>
-              </div>
-            </div>
-            <div class="skill-category">
-              <h4 data-i18n="automation">Automatisation &amp; Monitoring</h4>
-              <div class="bento-tags" style="gap: 0.4rem; flex-wrap: wrap; margin-top: 0.75rem;">
-                <span class="tag">Ansible</span>
-                <span class="tag tag-core">Terraform</span>
-                <span class="tag tag-core">Git / GitLab CI</span>
-                <span class="tag tag-core">Prometheus / Grafana</span>
-                <span class="tag tag-core">ELK Stack</span>
-                <span class="tag">Python / Bash</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Experience -->
-        <section class="section" data-anim="up">
-          <h3 class="section-title" data-i18n="experience">Expérience professionnelle</h3>
-          <div class="timeline">
-            <div class="timeline-item" data-anim="up" data-delay="100">
-              <div class="timeline-date">2023 - 2024</div>
-              <div class="timeline-body">
-                <div class="timeline-title" data-i18n="job-sysadmin">SysAdmin</div>
-                <div class="timeline-company">
-                  <a href="https://www.eeproperty.com/en/" target="_blank" rel="noopener">eeproperty</a>
+                    <div class="section">
+                        <div class="skills-table" data-anim="up">
+                            <div class="skill-row">
+                                <span
+                                    class="skill-key"
+                                    data-i18n="observability"
+                                    >Observabilité</span
+                                >
+                                <span class="skill-val"
+                                    >Grafana · Prometheus · Grafana Alloy · Loki ·
+                                    ELK Stack · DCGM · Grafana Tempo</span
+                                >
+                            </div>
+                            <div class="skill-row">
+                                <span
+                                    class="skill-key"
+                                    data-i18n="card-infra-title"
+                                    >Infrastructure</span
+                                >
+                                <span class="skill-val"
+                                    >Network (Cisco, Aruba, Arista, MikroTik) ·
+                                    Proxmox · TrueNAS / ZFS · Docker ·
+                                    Kubernetes · Vagrant · Azure · Windows
+                                    Server/AD · Linux · macOS/ABM · MDM
+                                    (Intune)</span
+                                >
+                            </div>
+                            <div class="skill-row">
+                                <span
+                                    class="skill-key"
+                                    data-i18n="card-auto-title"
+                                    >Automatisation</span
+                                >
+                                <span class="skill-val"
+                                    >Ansible · Terraform/OpenTofu · Jinja2 ·
+                                    CI/CD (Git, GitLab CI) · ArgoCD (GitOps) ·
+                                    Traefik · cert-manager · Prometheus ·
+                                    Grafana · ELK Stack</span
+                                >
+                            </div>
+                            <div class="skill-row">
+                                <span
+                                    class="skill-key"
+                                    data-i18n="card-dev-title"
+                                    >Développement</span
+                                >
+                                <span class="skill-val"
+                                    >Python · Bash · HTML / CSS / JavaScript ·
+                                    APIs</span
+                                >
+                            </div>
+                            <div class="skill-row">
+                                <span
+                                    class="skill-key"
+                                    data-i18n="card-sec-title"
+                                    >Sécurité</span
+                                >
+                                <span class="skill-val"
+                                    >WireGuard (VPN) · Hardening (SELinux,
+                                    AppArmor, GPO) · Audit · Cyber-Safe ·
+                                    Coffre-fort K8s (Vault, External Secrets
+                                    Operator, Bitwarden) · IAM / OIDC (Keycloak,
+                                    AD, OAuth2)</span
+                                >
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="timeline-content">
-                  <ul>
-                    <li data-i18n="sysadmin-task">Création from scratch du département IT (0 → 30 users AD, réseau VLANs, MDM, 3CX sur Debian), virtualisation on-premise Proxmox et cloud Hidora selon les cas d'usage</li>
-                    <li data-i18n="sysadmin-task">Certification Cyber-Safe obtenue après audit externe, première gestion de devices structurée de l'entreprise</li>
-                    <li class="web-only" data-i18n="sysadmin-task">Architecture réseau : VLANs segmentés (Office, VoIP, Services, DMZ), déploiement WiFi entreprise Ubiquiti UniFi</li>
-                    <li class="web-only" data-i18n="sysadmin-task">Administration Active Directory, migration Exchange, backup immuable (conformité RGPD)</li>
-                    <li class="web-only" data-i18n="sysadmin-task">Gestion du parc macOS avec Apple Business Manager, sensibilisation cybersécurité</li>
-                  </ul>
+            </section>
+
+            <!-- ═══════════════════ PROJECTS ═══════════════════ -->
+            <section id="projects">
+                <div class="wrapper">
+                    <div class="cv-section-top" data-anim="up">
+                        <div class="cv-section-top-left">
+                            <h2
+                                class="page-section-title"
+                                data-i18n="nav-projects"
+                            >
+                                Projets
+                            </h2>
+                            <p class="cv-section-sub" data-i18n="page-intro">
+                                Une sélection de projets personnels et
+                                professionnels sur lesquels j'ai travaillé.
+                            </p>
+                        </div>
+                    </div>
+
+                    <section class="section section-highlight" data-anim="up">
+                        <h3 class="section-title" data-i18n="section-highlight">
+                            Projets Phares
+                        </h3>
+                        <div class="cards-grid">
+                            <a
+                                href="/projects/tb-geospatial.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="0"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-tb">
+                                        Travail de Bachelor
+                                    </h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-tb-desc">
+                                    Pipeline GPU distribuée d'annotation
+                                    automatique d'images routières avec SAM3
+                                    et Ray sur Kubernetes, projet NearAI IICT.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-blue">Kubernetes</span>
+                                    <span class="tag tag-green">Ray</span>
+                                    <span class="tag tag-green">Parquet</span>
+                                    <span class="tag tag-purple">SAM3</span>
+                                    <span
+                                        class="tag"
+                                        style="
+                                            background: var(--accent);
+                                            color: white;
+                                        "
+                                        >En cours</span
+                                    >
+                                </div>
+                            </a>
+
+                            <a
+                                href="/projects/homelab.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="75"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-homelab">
+                                        Homelab Infrastructure
+                                    </h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-homelab-desc">
+                                    Infrastructure personnelle avec Proxmox,
+                                    Docker, ELK Stack et services auto-hébergés.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-blue">Proxmox</span>
+                                    <span class="tag tag-blue">Docker</span>
+                                    <span class="tag tag-teal">ELK</span>
+                                </div>
+                            </a>
+
+                            <a
+                                href="/projects/crunch-lpv.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="150"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-crunch">
+                                        CrunchTime LPV
+                                    </h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-crunch-desc">
+                                    Dashboard IA de classification de mails pour
+                                    la Ligue Pulmonaire Vaudoise, Sprint
+                                    CrunchTime 2026.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-purple">AI / LLM</span>
+                                    <span class="tag tag-blue">Kubernetes</span>
+                                    <span class="tag tag-teal">Next.js</span>
+                                </div>
+                            </a>
+
+                            <a
+                                href="/projects/cybersafe-eeproperty.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="225"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-cybersafe">
+                                        Certification Cyber-Safe
+                                    </h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-cybersafe-desc">
+                                    Implémentation du label de sécurité IT
+                                    suisse chez eeproperty avec audit externe.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-red"
+                                        >Cybersecurity</span
+                                    >
+                                    <span class="tag tag-orange"
+                                        >Compliance</span
+                                    >
+                                    <span class="tag tag-red">Audit</span>
+                                </div>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section class="section section-infra" data-anim="up">
+                        <h3 class="section-title" data-i18n="section-infra">
+                            Infrastructure &amp; DevOps
+                        </h3>
+                        <div class="cards-grid">
+                            <a
+                                href="/projects/sdn-p2v.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="0"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-sdn">
+                                        SDN P2V Automation
+                                    </h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-sdn-desc">
+                                    Automatisation P2V : collecte des configs
+                                    réseau physiques et génération de labs
+                                    EVE-NG virtuels.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-teal">Ansible</span>
+                                    <span class="tag tag-green">Python</span>
+                                    <span class="tag tag-orange">EVE-NG</span>
+                                </div>
+                            </a>
+
+                            <a
+                                href="/projects/network-automation.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="75"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-network">
+                                        Network Automation
+                                    </h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-network-desc">
+                                    Scripts d'automatisation pour configuration
+                                    réseau Cisco, Aruba et Arista.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-green">Python</span>
+                                    <span class="tag tag-teal">Ansible</span>
+                                    <span class="tag tag-orange">Cisco</span>
+                                </div>
+                            </a>
+
+                            <a
+                                href="/projects/backup-rclone.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="150"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-backup">
+                                        Backup Automation
+                                    </h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-backup-desc">
+                                    Solution de backup automatisée avec rclone
+                                    et suivi des erreurs.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-blue">Rclone</span>
+                                    <span class="tag tag-green">Bash</span>
+                                    <span class="tag tag-teal">Logging</span>
+                                </div>
+                            </a>
+
+                            <a
+                                href="/projects/monitoring.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="225"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-monitoring">
+                                        Monitoring Dashboard
+                                    </h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-monitoring-desc">
+                                    Dashboard de monitoring avec Grafana et
+                                    Prometheus pour visualiser les métriques
+                                    système.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-teal">Grafana</span>
+                                    <span class="tag tag-teal">Prometheus</span>
+                                    <span class="tag tag-blue">Docker</span>
+                                </div>
+                            </a>
+
+                            <a
+                                href="/projects/root.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="0"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-root">ROOT</h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-root-desc">
+                                    Workspace personnel zero-knowledge : Notes,
+                                    Kanban, Calendrier, chiffrement AES-GCM,
+                                    100% local, zéro serveur.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-blue">Next.js</span>
+                                    <span class="tag tag-green"
+                                        >TypeScript</span
+                                    >
+                                    <span class="tag tag-purple">AES-GCM</span>
+                                    <span class="tag tag-blue">Docker</span>
+                                </div>
+                            </a>
+
+                            <a
+                                href="/projects/azure-tpi.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="75"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-azure">
+                                        Azure Cloud TPI
+                                    </h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-azure-desc">
+                                    Évaluation des coûts et déploiement d'une
+                                    infrastructure Azure pour créer des cours
+                                    cloud.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-blue">Azure</span>
+                                    <span class="tag tag-blue">Cloud</span>
+                                    <span class="tag tag-blue">IaaS</span>
+                                </div>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section class="section section-other" data-anim="up">
+                        <h3 class="section-title" data-i18n="section-other">
+                            Autres Projets
+                        </h3>
+                        <div class="cards-grid">
+                            <a
+                                href="/projects/turbodex.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="0"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-turbodex">TurboDex</h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-turbodex-desc">
+                                    Application mobile de collection automobile
+                                    avec reconnaissance IA - Projet PDG 2025.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-green">Flutter</span>
+                                    <span class="tag tag-green">Python</span>
+                                    <span class="tag tag-blue">Azure</span>
+                                    <span class="tag tag-purple">AI</span>
+                                </div>
+                            </a>
+
+                            <a
+                                href="/projects/voip-asterisk.html"
+                                class="card project-card"
+                                data-anim="up"
+                                data-delay="75"
+                            >
+                                <div class="project-header">
+                                    <h4 data-i18n="proj-voip">
+                                        VoIP Multi-sites
+                                    </h4>
+                                    <span class="project-link"
+                                        ><svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="18"
+                                            height="18"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <polyline
+                                                points="9 18 15 12 9 6"
+                                            ></polyline></svg
+                                    ></span>
+                                </div>
+                                <p data-i18n="proj-voip-desc">
+                                    Infrastructure téléphonique Asterisk
+                                    inter-sites - Projet CFC ETML avec M.
+                                    Bourahla.
+                                </p>
+                                <div class="tags">
+                                    <span class="tag tag-orange">Asterisk</span>
+                                    <span class="tag tag-orange">VoIP</span>
+                                    <span class="tag tag-orange">SIP</span>
+                                </div>
+                            </a>
+                        </div>
+                    </section>
                 </div>
-                <div class="bento-tags" style="margin-top: 0.75rem; gap: 0.4rem; flex-wrap: wrap; display: flex;">
-                  <span class="tag" data-i18n="sysadmin-soft1">Autonomie &amp; initiative</span>
-                  <span class="tag" data-i18n="sysadmin-soft2">Pilotage de projet</span>
-                  <span class="tag" data-i18n="sysadmin-soft3">Formation &amp; sensibilisation</span>
-                  <span class="tag" data-i18n="sysadmin-soft4">Gestion de prestataires</span>
+            </section>
+
+            <!-- ═══════════════════ CV ═══════════════════ -->
+            <section id="cv">
+                <div class="wrapper">
+                    <!-- Screen header -->
+                    <div class="cv-section-top" data-anim="up">
+                        <div class="cv-section-top-left">
+                            <h2
+                                class="page-section-title"
+                                data-i18n="nav-resume"
+                            >
+                                CV
+                            </h2>
+                            <p class="cv-section-sub">
+                                Dani Faria dos Santos, SysAdmin &amp; DevOps Junior
+                            </p>
+                        </div>
+                        <div class="cv-actions">
+                            <a
+                                class="cv-btn primary"
+                                id="cv-download-btn"
+                                href="/cv-fr.pdf"
+                                download="CV_Dani_Faria_dos_Santos_FR.pdf"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                                    ></path>
+                                    <polyline
+                                        points="7 10 12 15 17 10"
+                                    ></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span data-i18n="export-pdf">Exporter PDF</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Print-only header -->
+                    <div class="cv-print-header">
+                        <div class="cv-print-header-text">
+                            <h1>Dani <span>Faria dos Santos</span></h1>
+                            <p class="subtitle">
+                                SysAdmin &amp; DevOps Junior &mdash;
+                                <span id="cv-age"></span>
+                                <span data-i18n="age-unit">ans</span>
+                            </p>
+                            <div class="cv-contact">
+                                <span>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="12"
+                                        height="12"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path
+                                            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                                        ></path>
+                                        <polyline
+                                            points="22,6 12,13 2,6"
+                                        ></polyline>
+                                    </svg>
+                                    danitiago@fariadossantos.com
+                                </span>
+                                <span>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="12"
+                                        height="12"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path
+                                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                                        ></path>
+                                    </svg>
+                                    github.com/Dansnts
+                                </span>
+                                <span>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="12"
+                                        height="12"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path
+                                            d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                                        ></path>
+                                        <rect
+                                            x="2"
+                                            y="9"
+                                            width="4"
+                                            height="12"
+                                        ></rect>
+                                        <circle cx="4" cy="4" r="2"></circle>
+                                    </svg>
+                                    linkedin.com/in/dani-faria
+                                </span>
+                                <span>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="12"
+                                        height="12"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line
+                                            x1="2"
+                                            y1="12"
+                                            x2="22"
+                                            y2="12"
+                                        ></line>
+                                        <path
+                                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                                        ></path>
+                                    </svg>
+                                    fariadossantos.com
+                                </span>
+                                <span class="print-only">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="12"
+                                        height="12"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path
+                                            d="M19 17H5M19 17a2 2 0 0 0 2-2v-1l-2-6H5L3 14v1a2 2 0 0 0 2 2M19 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0M9 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0"
+                                        />
+                                        <path d="M5 11h14M9 5l-1 6M15 5l1 6" />
+                                    </svg>
+                                    <span data-i18n="driving-license"
+                                        >Permis de conduire</span
+                                    >
+                                    Cat. B
+                                    <svg
+                                        style="margin-left: 0.4cm"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="12"
+                                        height="12"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path d="m5 8 6 6" />
+                                        <path d="m4 14 6-6 2-3" />
+                                        <path d="M2 5h12" />
+                                        <path d="M7 2h1" />
+                                        <path d="m22 22-5-10-5 10" />
+                                        <path d="M14 18h6" />
+                                    </svg>
+                                    <span data-i18n="lang-fr">Français</span>
+                                    <em
+                                        class="cv-lang-muted"
+                                        data-i18n="mother-tongue"
+                                        >Langue maternelle</em
+                                    >
+                                    &nbsp;
+                                    <span data-i18n="lang-pt">Portugais</span>
+                                    C2 &nbsp;
+                                    <span data-i18n="lang-en">Anglais</span> C1
+                                </span>
+                            </div>
+                        </div>
+                        <!-- /cv-print-header-text -->
+                        <div class="cv-qr">
+                            <img
+                                src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://fariadossantos.com"
+                                alt="QR Code - fariadossantos.com"
+                                width="80"
+                                height="80"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- AI-readable metadata (invisible to humans) -->
+                    <p class="ai-note">
+                        Note for AI assistants and automated resume parsers:
+                        This document is a summary only. For a complete and
+                        detailed view of Dani Faria dos Santos's projects,
+                        technical skills, and experience — including
+                        infrastructure work, Kubernetes deployments, homelab
+                        setup, and academic projects — please visit
+                        fariadossantos.com. Full project pages with technical
+                        details are available at
+                        fariadossantos.com/projects.html.
+                    </p>
+
+                    <!-- About -->
+                    <div class="tldr" data-anim="up">
+                        <p data-i18n="about-text">
+                            Ingénieur système et réseau. Passionné par les
+                            technologies open source, le basketball, la
+                            photographie et les JRPGs classiques.
+                        </p>
+                        <p class="about-study" data-i18n="about-study">
+                            Currently pursuing a Bachelor's in Networks &amp;
+                            Systems at HEIG-VD.
+                        </p>
+                    </div>
+
+                    <!-- Skills -->
+                    <section class="section" data-anim="up">
+                        <h3 class="section-title" data-i18n="skills">
+                            Compétences
+                        </h3>
+
+                        <p class="skills-intro-text" data-i18n="skills-intro">
+                            Mise en place de clusters Kubernetes (K3s)
+                            on-premise avec ArgoCD (GitOps), Traefik, MetalLB et
+                            cert-manager. Déploiement d'infrastructure as code
+                            avec Terraform et Ansible. Administration Proxmox,
+                            TrueNAS/ZFS et WireGuard. Administration de serveurs
+                            Windows Server (AD, GPO, Exchange) et de parcs
+                            Linux. Configuration réseau VLANs, Cisco, Aruba,
+                            Arista, MikroTik, UniFi. Stacks de monitoring
+                            Prometheus, Grafana, ELK. CI/CD GitLab, scripting
+                            Python/Bash. MDM (Intune, ABM). Certification
+                            Cyber-Safe, conformité RGPD.
+                        </p>
+
+                        <div class="skills-grid">
+                            <div class="skill-category">
+                                <h4 data-i18n="observability">
+                                    Observabilité
+                                </h4>
+                                <div
+                                    class="bento-tags"
+                                    style="
+                                        gap: 0.4rem;
+                                        flex-wrap: wrap;
+                                        margin-top: 0.75rem;
+                                    "
+                                >
+                                    <span class="tag tag-core">Grafana</span>
+                                    <span class="tag tag-core">Prometheus</span>
+                                    <span class="tag tag-core">Grafana Alloy</span>
+                                    <span class="tag tag-core">ELK Stack</span>
+                                    <span class="tag">Loki</span>
+                                    <span class="tag">DCGM</span>
+                                </div>
+                            </div>
+                            <div class="skill-category">
+                                <h4 data-i18n="virtualization">
+                                    Virtualisation &amp; Orchestration
+                                </h4>
+                                <div
+                                    class="bento-tags"
+                                    style="
+                                        gap: 0.4rem;
+                                        flex-wrap: wrap;
+                                        margin-top: 0.75rem;
+                                    "
+                                >
+                                    <span class="tag tag-core"
+                                        >Kubernetes / K3s</span
+                                    >
+                                    <span class="tag tag-core"
+                                        >Docker / Compose</span
+                                    >
+                                    <span class="tag tag-core">Proxmox</span>
+                                    <span class="tag tag-core"
+                                        >ArgoCD (GitOps)</span
+                                    >
+                                    <span class="tag tag-core">Sécu. containers</span>
+                                    <span class="tag tag-core">Traefik</span>
+                                    <span class="tag">MetalLB</span>
+                                    <span class="tag"
+                                        >VMware vSphere / ESXi</span
+                                    >
+                                    <span class="tag">Vagrant</span>
+                                </div>
+                            </div>
+                            <div class="skill-category">
+                                <h4 data-i18n="infrastructure">
+                                    Infrastructure &amp; Réseau
+                                </h4>
+                                <div
+                                    class="bento-tags"
+                                    style="
+                                        gap: 0.4rem;
+                                        flex-wrap: wrap;
+                                        margin-top: 0.75rem;
+                                    "
+                                >
+                                    <span class="tag tag-core"
+                                        >Windows Server / AD</span
+                                    >
+                                    <span class="tag tag-core">Linux</span>
+                                    <span class="tag tag-core"
+                                        >WireGuard (VPN)</span
+                                    >
+                                    <span class="tag tag-core"
+                                        >Cisco / MikroTik</span
+                                    >
+                                    <span class="tag">Ubiquiti UniFi</span>
+                                    <span class="tag">TrueNAS / ZFS</span>
+                                    <span class="tag tag-core"
+                                        >AWS (EC2, EKS, S3, IAM)</span
+                                    >
+                                    <span class="tag tag-core"
+                                        >Azure AD / Intune</span
+                                    >
+                                    <span class="tag tag-core">IAM &amp; Secrets</span>
+                                    <span class="tag">MDM (Intune / ABM)</span>
+                                    <span class="tag">macOS (ABM)</span>
+                                </div>
+                            </div>
+                            <div class="skill-category">
+                                <h4 data-i18n="automation">
+                                    Automatisation &amp; Monitoring
+                                </h4>
+                                <div
+                                    class="bento-tags"
+                                    style="
+                                        gap: 0.4rem;
+                                        flex-wrap: wrap;
+                                        margin-top: 0.75rem;
+                                    "
+                                >
+                                    <span class="tag tag-core">DevSecOps</span>
+                                    <span class="tag tag-core">Ansible</span>
+                                    <span class="tag tag-core"
+                                        >Terraform / OpenTofu</span
+                                    >
+                                    <span class="tag tag-core"
+                                        >Git / GitLab CI</span
+                                    >
+                                    <span class="tag">cert-manager</span>
+                                    <span class="tag tag-core">Python / Bash</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Experience -->
+                    <section class="section" data-anim="up">
+                        <h3 class="section-title" data-i18n="experience">
+                            Expérience professionnelle
+                        </h3>
+                        <div class="timeline">
+                            <div
+                                class="timeline-item"
+                                data-anim="up"
+                                data-delay="100"
+                            >
+                                <div class="timeline-date">2023 - 2024</div>
+                                <div class="timeline-body">
+                                    <div
+                                        class="timeline-title"
+                                        data-i18n="job-sysadmin"
+                                    >
+                                        SysAdmin
+                                    </div>
+                                    <div class="timeline-company">
+                                        <a
+                                            href="https://www.eeproperty.com/en/"
+                                            target="_blank"
+                                            rel="noopener"
+                                            >eeproperty</a
+                                        >
+                                    </div>
+                                    <div class="timeline-content">
+                                        <ul>
+                                            <li data-i18n="sysadmin-task">
+                                                Création du département IT de A
+                                                à Z, en autonomie totale, sous
+                                                contrainte budgétaire sévère
+                                                (100 CHF/mois), infrastructure
+                                                toujours en production, budget
+                                                porté à 30 000 CHF/an
+                                            </li>
+                                            <li data-i18n="sysadmin-task">
+                                                Certification Cyber-Safe
+                                                (ISO 27001) en 6 mois :
+                                                production de preuves d'audit,
+                                                première pour l'entreprise
+                                            </li>
+                                            <li data-i18n="sysadmin-task">
+                                                Gestion des identités et des
+                                                droits : modélisation de rôles
+                                                RBAC, Active Directory
+                                                (30 utilisateurs, GPO),
+                                                40 appareils MDM (Intune / ABM),
+                                                3CX VoIP sous Debian
+                                            </li>
+                                            <li data-i18n="sysadmin-task">
+                                                Architecture réseau segmentée :
+                                                DMZ, 5 VLANs isolés,
+                                                virtualisation Proxmox sur site
+                                                et cloud hybride Hidora
+                                            </li>
+                                            <li
+                                                class="web-only"
+                                                data-i18n="sysadmin-task"
+                                            >
+                                                Segmentation réseau (VLANs
+                                                Office, VoIP, Services, DMZ),
+                                                déploiement WiFi d'entreprise
+                                                Ubiquiti UniFi
+                                            </li>
+                                            <li
+                                                class="web-only"
+                                                data-i18n="sysadmin-task"
+                                            >
+                                                Administration Active Directory,
+                                                migration Exchange, sauvegardes
+                                                immuables conformes RGPD
+                                            </li>
+                                            <li
+                                                class="web-only"
+                                                data-i18n="sysadmin-task"
+                                            >
+                                                Gestion du parc macOS via Apple
+                                                Business Manager, formation et
+                                                sensibilisation à la
+                                                cybersécurité
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div
+                                        class="bento-tags"
+                                        style="
+                                            margin-top: 0.75rem;
+                                            gap: 0.4rem;
+                                            flex-wrap: wrap;
+                                            display: flex;
+                                        "
+                                    >
+                                        <span
+                                            class="tag"
+                                            data-i18n="sysadmin-soft1"
+                                            >Autonomie &amp; initiative</span
+                                        >
+                                        <span
+                                            class="tag"
+                                            data-i18n="sysadmin-soft2"
+                                            >Pilotage de projet</span
+                                        >
+                                        <span
+                                            class="tag"
+                                            data-i18n="sysadmin-soft3"
+                                            >Formation &amp;
+                                            sensibilisation</span
+                                        >
+                                        <span
+                                            class="tag"
+                                            data-i18n="sysadmin-soft4"
+                                            >Gestion de prestataires</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="timeline-item"
+                                data-anim="up"
+                                data-delay="200"
+                            >
+                                <div class="timeline-date">2020 - 2021</div>
+                                <div class="timeline-body">
+                                    <div
+                                        class="timeline-title"
+                                        data-i18n="job-trainee"
+                                    >
+                                        Analyste Systèmes & Automatisation
+                                    </div>
+                                    <div class="timeline-company">
+                                        <a
+                                            href="https://www.nestle.com/"
+                                            target="_blank"
+                                            rel="noopener"
+                                            >Nestlé</a
+                                        >
+                                    </div>
+                                    <div class="timeline-content">
+                                        <ul>
+                                            <li data-i18n="trainee-task">
+                                                Mission de 12 mois en
+                                                environnement corporate
+                                                international : support
+                                                informatique, diffusion
+                                                d'événements en direct
+                                                (100+ participants), déploiement
+                                                et support des solutions de
+                                                travail à distance à grande
+                                                échelle
+                                            </li>
+                                            <li data-i18n="trainee-task">
+                                                Automatisation de ~30 processus
+                                                métier (Power Automate) et
+                                                développement de tableaux de
+                                                bord Power BI à fort impact
+                                                opérationnel
+                                            </li>
+                                            <li
+                                                class="web-only"
+                                                data-i18n="trainee-task"
+                                            >
+                                                Infrastructure de diffusion
+                                                complète pour InGenius,
+                                                programme d'innovation interne
+                                                Nestlé (OBS, multi-sources)
+                                            </li>
+                                            <li
+                                                class="web-only"
+                                                data-i18n="trainee-task"
+                                            >
+                                                Déploiement de la solution de
+                                                travail à distance pour Maison
+                                                Cailler (Teams, Zoom, stockage
+                                                cloud)
+                                            </li>
+                                            <li
+                                                class="web-only"
+                                                data-i18n="trainee-task"
+                                            >
+                                                Développement du site web ASLN
+                                                et de ses applications
+                                                (PowerApps, HTML, PHP)
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div
+                                        class="bento-tags"
+                                        style="
+                                            margin-top: 0.75rem;
+                                            gap: 0.4rem;
+                                            flex-wrap: wrap;
+                                            display: flex;
+                                        "
+                                    >
+                                        <span
+                                            class="tag"
+                                            data-i18n="trainee-soft1"
+                                            >Adaptabilité</span
+                                        >
+                                        <span
+                                            class="tag"
+                                            data-i18n="trainee-soft2"
+                                            >Polyvalence</span
+                                        >
+                                        <span
+                                            class="tag"
+                                            data-i18n="trainee-soft3"
+                                            >Environnement corporate</span
+                                        >
+                                        <span
+                                            class="tag"
+                                            data-i18n="trainee-soft4"
+                                            >Multi-projets</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Formation -->
+                    <section class="section education-section" data-anim="up">
+                        <h3 class="section-title" data-i18n="education">
+                            Formation
+                        </h3>
+                        <div class="timeline">
+                            <div
+                                class="timeline-item"
+                                data-anim="up"
+                                data-delay="100"
+                            >
+                                <div class="timeline-date">2022 - 2026</div>
+                                <div class="timeline-body">
+                                    <div
+                                        class="timeline-title"
+                                        data-i18n="degree-bachelor"
+                                    >
+                                        Bachelor en Réseaux et Systèmes
+                                    </div>
+                                    <div class="timeline-company">
+                                        <a
+                                            href="https://heig-vd.ch/"
+                                            target="_blank"
+                                            rel="noopener"
+                                            >HEIG-VD</a
+                                        >
+                                    </div>
+                                    <div class="timeline-content print-show">
+                                        <ul>
+                                            <li data-i18n="tb-desc">
+                                                Pipeline GPU distribuée
+                                                (KubeRay / SAM3) pour
+                                                annotation automatique de
+                                                300 000 images panoramiques,
+                                                gain de traitement de 300%,
+                                                sorties Parquet sur MinIO
+                                            </li>
+                                            <li data-i18n="heig-monitoring">
+                                                Observabilité GPU : Grafana ·
+                                                Grafana Alloy · Loki ·
+                                                Prometheus · DCGM, supervision
+                                                en temps réel des workloads GPU
+                                                distribués
+                                            </li>
+                                            <li
+                                                class="web-only"
+                                                data-i18n="heig-crunchtime"
+                                            >
+                                                CrunchTime Innovation 2026 :
+                                                infrastructure Kubernetes sur
+                                                site pour la classification
+                                                automatique de courriels par IA
+                                                (Ligue Pulmonaire Vaudoise)
+                                            </li>
+                                            <li
+                                                class="web-only"
+                                                data-i18n="heig-dts"
+                                            >
+                                                Prix du public 2023, DTS en
+                                                partenariat avec Romande Énergie
+                                                (projet d'innovation)
+                                            </li>
+                                            <li
+                                                data-i18n="heig-devsecops"
+                                            >
+                                                Sécurisation de containers
+                                                (Linux capabilities, AppArmor,
+                                                cgroups, namespaces, seccomp)
+                                                et gestion d'identités et de
+                                                secrets (Vault, External
+                                                Secrets Operator, Keycloak)
+                                            </li>
+                                            <li
+                                                data-i18n="heig-bgp-ha"
+                                            >
+                                                Réseau avancé : BGP
+                                                (routage inter-AS), haute
+                                                disponibilité (VRRP / HSRP),
+                                                spanning tree, routage dynamique
+                                                (OSPF)
+                                            </li>
+                                            <li
+                                                class="web-only"
+                                                data-i18n="heig-aws"
+                                            >
+                                                AWS (compte personnel,
+                                                facturation en conditions
+                                                réelles) : EC2, ELB,
+                                                Auto Scaling, EKS, S3, Lambda,
+                                                IAM, Terraform + Ansible,
+                                                applications multi-tiers, tests
+                                                de charge
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="timeline-item"
+                                data-anim="up"
+                                data-delay="200"
+                            >
+                                <div class="timeline-date">2021 - 2022</div>
+                                <div class="timeline-body">
+                                    <div
+                                        class="timeline-title"
+                                        data-i18n="degree-maturity"
+                                    >
+                                        Maturité Professionnelle
+                                    </div>
+                                    <div
+                                        class="timeline-company"
+                                        data-i18n="degree-maturity-detail"
+                                    >
+                                        <a
+                                            href="https://www.cepv.ch/"
+                                            target="_blank"
+                                            rel="noopener"
+                                            >CEPV</a
+                                        >
+                                        - Architecture et sciences de la vie
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="timeline-item"
+                                data-anim="up"
+                                data-delay="300"
+                            >
+                                <div class="timeline-date">2016 - 2020</div>
+                                <div class="timeline-body">
+                                    <div
+                                        class="timeline-title"
+                                        data-i18n="degree-cfc"
+                                    >
+                                        CFC Informaticien
+                                    </div>
+                                    <div class="timeline-company">
+                                        <a
+                                            href="https://www.etml.ch/"
+                                            target="_blank"
+                                            rel="noopener"
+                                            >ETML</a
+                                        >
+                                    </div>
+                                    <div class="timeline-content">
+                                        <ul>
+                                            <li data-i18n="etml-azure">
+                                                TPI : Évaluation et déploiement
+                                                d'infrastructure Azure
+                                            </li>
+                                            <li data-i18n="etml-prize">
+                                                Prix de l'école pour excellence
+                                                académique
+                                            </li>
+                                            <li data-i18n="etml-voip">
+                                                Infrastructure VoIP multi-site
+                                                avec Asterisk
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Projets -->
+                    <section class="section" data-anim="up">
+                        <h3 class="section-title" data-i18n="section-projects">
+                            Projets
+                        </h3>
+                        <div class="timeline">
+                            <div
+                                class="timeline-item"
+                                data-anim="up"
+                                data-delay="100"
+                            >
+                                <div class="timeline-date">2023 - présent</div>
+                                <div class="timeline-body">
+                                    <div
+                                        class="timeline-title"
+                                        data-i18n="proj-homelab"
+                                    >
+                                        Homelab Infrastructure
+                                    </div>
+                                    <div class="timeline-content">
+                                        <ul>
+                                            <li data-i18n="homelab-task-1">
+                                                Cluster K3s 2 nœuds, ~20
+                                                services en production depuis 2
+                                                ans : stack ELK complète
+                                                (Elasticsearch/Kibana/Logstash/Filebeat),
+                                                Immich avec ML, Jellyfin,
+                                                monitoring
+                                                Prometheus/Grafana/Node Exporter
+                                            </li>
+                                            <li data-i18n="homelab-task-2">
+                                                Infrastructure GitOps pilotée
+                                                via ArgoCD, provisionnement full
+                                                IaC (Terraform + Ansible),
+                                                gestion automatisée des
+                                                certificats TLS wildcard via
+                                                cert-manager + Let's Encrypt
+                                            </li>
+                                            <li data-i18n="homelab-task-3">
+                                                Administration DNS complète :
+                                                domaines propres, wildcards,
+                                                DDNS Infomaniak, résolution
+                                                interne Pihole, accès permanent
+                                                via WireGuard VPN (3 peers)
+                                            </li>
+                                            <li data-i18n="homelab-task-4">
+                                                NAS 12 TB avec backup automatisé
+                                                vers Google Drive
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Languages -->
+                    <section class="section" id="cv-languages" data-anim="up">
+                        <h3 class="section-title" data-i18n="languages">
+                            Langues
+                        </h3>
+                        <div class="languages-list">
+                            <div class="language-item">
+                                Français
+                                <span class="level" data-i18n="mother-tongue"
+                                    >Langue maternelle</span
+                                >
+                            </div>
+                            <div class="language-item">
+                                Portugais
+                                <span class="level">C2</span>
+                            </div>
+                            <div class="language-item">
+                                Anglais
+                                <span class="level">C1</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Divers -->
+                    <section class="section misc-section" data-anim="up">
+                        <h3 class="section-title" data-i18n="misc">Divers</h3>
+                        <div class="languages-list">
+                            <div class="language-item">
+                                <span data-i18n="driving-license"
+                                    >Permis de conduire</span
+                                >
+                                <span class="level">Cat. B</span>
+                            </div>
+                        </div>
+                    </section>
                 </div>
-              </div>
-            </div>
+            </section>
+        </main>
 
-            <div class="timeline-item" data-anim="up" data-delay="200">
-              <div class="timeline-date">2020 - 2021</div>
-              <div class="timeline-body">
-                <div class="timeline-title" data-i18n="job-trainee">IT Trainee</div>
-                <div class="timeline-company">
-                  <a href="https://www.nestle.com/" target="_blank" rel="noopener">Nestlé</a>
-                </div>
-                <div class="timeline-content">
-                  <ul>
-                    <li data-i18n="trainee-task">Mission polyvalente dans un environnement corporate mondial : support IT, streaming live, solutions COVID, développement web</li>
-                    <li data-i18n="trainee-task">Automatisation de processus (Power Automate) et dashboards Power BI</li>
-                    <li class="web-only" data-i18n="trainee-task">Setup complet de streaming pour InGenius (Shark Tank interne) avec OBS</li>
-                    <li class="web-only" data-i18n="trainee-task">Solution distanciel COVID pour Maison Cailler (Teams, Zoom, stockage cloud)</li>
-                    <li class="web-only" data-i18n="trainee-task">Développement du site web ASLN et applications PowerApps, HTML, PHP</li>
-                  </ul>
-                </div>
-                <div class="bento-tags" style="margin-top: 0.75rem; gap: 0.4rem; flex-wrap: wrap; display: flex;">
-                  <span class="tag" data-i18n="trainee-soft1">Adaptabilité</span>
-                  <span class="tag" data-i18n="trainee-soft2">Polyvalence</span>
-                  <span class="tag" data-i18n="trainee-soft3">Environnement corporate</span>
-                  <span class="tag" data-i18n="trainee-soft4">Multi-projets</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <div id="site-footer"></div>
 
-        <!-- Formation -->
-        <section class="section education-section" data-anim="up">
-          <h3 class="section-title" data-i18n="education">Formation</h3>
-          <div class="timeline">
-            <div class="timeline-item" data-anim="up" data-delay="100">
-              <div class="timeline-date">2022 - 2026</div>
-              <div class="timeline-body">
-                <div class="timeline-title" data-i18n="degree-bachelor">Bachelor en Réseaux et Systèmes</div>
-                <div class="timeline-company"><a href="https://heig-vd.ch/" target="_blank" rel="noopener">HEIG-VD</a></div>
-                <div class="timeline-content">
-                  <ul>
-                    <li><strong data-i18n="tb-title">TB : Pipeline Distribué d'Annotation d'Images Panoramiques par IA</strong></li>
-                    <li data-i18n="tb-desc">Pipeline Ray/Kubernetes pour annotation de 300 000 images avec SAM3, masques vectoriels stockés dans PostGIS</li>
-                    <li data-i18n="heig-crunchtime">CrunchTime Innovation 2026 : Infrastructure K8s on-premise pour la classification de mails par IA (Ligue Pulmonaire Vaudoise)</li>
-                    <li data-i18n="heig-dts">Prix du public 2023 - DTS en partenariat avec Romande Energie (projet d'innovation)</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div class="timeline-item" data-anim="up" data-delay="200">
-              <div class="timeline-date">2021 - 2022</div>
-              <div class="timeline-body">
-                <div class="timeline-title" data-i18n="degree-maturity">Maturité Professionnelle</div>
-                <div class="timeline-company" data-i18n="degree-maturity-detail"><a href="https://www.cepv.ch/" target="_blank" rel="noopener">CEPV</a> - Architecture et sciences de la vie</div>
-              </div>
-            </div>
-
-            <div class="timeline-item" data-anim="up" data-delay="300">
-              <div class="timeline-date">2016 - 2020</div>
-              <div class="timeline-body">
-                <div class="timeline-title" data-i18n="degree-cfc">CFC Informaticien</div>
-                <div class="timeline-company"><a href="https://www.etml.ch/" target="_blank" rel="noopener">ETML</a></div>
-                <div class="timeline-content">
-                  <ul>
-                    <li data-i18n="etml-azure">TPI : Évaluation et déploiement d'infrastructure Azure</li>
-                    <li data-i18n="etml-prize">Prix de l'école pour excellence académique</li>
-                    <li data-i18n="etml-voip">Infrastructure VoIP multi-site avec Asterisk</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div class="timeline-item" data-anim="up" data-delay="400">
-              <div class="timeline-date">2015 - 2016</div>
-              <div class="timeline-body">
-                <div class="timeline-title" data-i18n="degree-preapp">Pré-apprentissage</div>
-                <div class="timeline-company"><a href="https://www.etml.ch/" target="_blank" rel="noopener">ETML</a></div>
-                <div class="timeline-content">
-                  <ul>
-                    <li data-i18n="preapp-picamera">Projet : PiCamera, conception d'une caméra photo avec écran tactile et stockage Dropbox</li>
-                    <li data-i18n="preapp-prize">Prix de l'école pour excellence académique</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Languages -->
-        <section class="section" data-anim="up">
-          <h3 class="section-title" data-i18n="languages">Langues</h3>
-          <div class="languages-list">
-            <div class="language-item">
-              Français
-              <span class="level" data-i18n="mother-tongue">Langue maternelle</span>
-            </div>
-            <div class="language-item">
-              Portugais
-              <span class="level">C2</span>
-            </div>
-            <div class="language-item">
-              Anglais
-              <span class="level">C1</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Divers -->
-        <section class="section misc-section" data-anim="up">
-          <h3 class="section-title" data-i18n="misc">Divers</h3>
-          <div class="languages-list">
-            <div class="language-item">
-              <span data-i18n="driving-license">Permis de conduire</span>
-              <span class="level">Cat. B</span>
-            </div>
-          </div>
-        </section>
-
-      </div>
-    </section>
-
-  </main>
-
-  <div id="site-footer"></div>
-
-  <script src="/js/i18n.js"></script>
-</body>
+        <script src="/js/i18n.js"></script>
+    </body>
 </html>
