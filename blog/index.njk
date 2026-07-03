@@ -1,0 +1,18 @@
+---
+layout: base.njk
+title: Blog
+---
+<div class="page-title">Blog</div>
+<p class="page-subtitle">Notes techniques, retours d'expérience et explorations.</p>
+
+<ul class="post-list">
+  {%- for post in collections.post | reverse %}
+  <li>
+    <div class="post-date">{{ post.date | dateStr }}</div>
+    <a href="{{ post.url }}">{{ post.data.title }}</a>
+    {% if post.data.description %}
+    <p class="post-desc">{{ post.data.description }}</p>
+    {% endif %}
+  </li>
+  {%- endfor %}
+</ul>
