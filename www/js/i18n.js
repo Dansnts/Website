@@ -36,7 +36,9 @@ const pageTranslations = {
       'card-dev-title': 'Développement',
       'card-sec-title': 'Sécurité',
       'and-more': 'Voir une sélection de projets \u2192',
-      'link-projects': 'Voir mes projets'
+      'link-projects': 'Voir mes projets',
+      'blog-intro': 'Notes techniques, retours d\'expérience et explorations.',
+      'blog-cta': 'Lire le blog →'
     },
     en: {
       'hero-subtitle': 'SysAdmin & DevOps Junior',
@@ -50,7 +52,9 @@ const pageTranslations = {
       'link-projects': 'View my projects',
       'link-cv': 'Resume',
       'years-exp': 'yrs exp.',
-      'languages-count': 'languages'
+      'languages-count': 'languages',
+      'blog-intro': 'Technical notes, experience reports and explorations.',
+      'blog-cta': 'Read the blog →'
     }
   },
   // Projects listing page

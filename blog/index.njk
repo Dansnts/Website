@@ -2,8 +2,12 @@
 layout: base.njk
 title: Blog
 ---
-<div class="page-title">Blog</div>
-<p class="page-subtitle">Notes techniques, retours d'expérience et explorations.</p>
+<div class="cv-section-top" style="padding-top:2rem">
+  <div class="cv-section-top-left">
+    <h2 class="page-section-title">Blog</h2>
+    <p class="cv-section-sub">Notes techniques, retours d'expérience et explorations.</p>
+  </div>
+</div>
 
 <ul class="post-list">
   {%- for post in collections.post | reverse %}
