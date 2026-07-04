@@ -2,13 +2,13 @@
 layout: post.njk
 title: "Mettre en place une CI/CD avec GitHub Actions"
 description: "De zéro à un pipeline qui teste, build et déploie automatiquement à chaque push."
-date: 2026-07-03
+date: 2025-05-03
 tags: [devops, ci-cd, github-actions]
 ---
 
-Une CI/CD (Intégration Continue / Déploiement Continu) c'est un pipeline automatique qui se déclenche à chaque fois que tu pousses du code. L'objectif : ne plus jamais déployer à la main.
+Une CI/CD (Intégration Continue / Déploiement Continu) est une pipeline automatique qui se déclenche à chaque fois que du code est poussé. L'objectif : ne plus jamais déployer à la main et avoir un flux automatique de suivi du processus complet.
 
-Dans ce post, on construit une pipeline GitHub Actions pour une application Node.js qui :
+Dans ce post, nous allons voir comment construire pipeline *GitHub Actions* pour une application Node.js qui :
 
 1. Lance les tests automatiquement
 2. Build une image Docker
@@ -18,7 +18,7 @@ Dans ce post, on construit une pipeline GitHub Actions pour une application Node
 ## Prérequis
 
 - Un repo GitHub
-- Une application avec des tests
+- Une application avec ses tests déja écrits
 - Un `Dockerfile`
 - Un serveur (VPS, cloud, peu importe)
 
@@ -26,7 +26,7 @@ Dans ce post, on construit une pipeline GitHub Actions pour une application Node
 
 ## C'est quoi un workflow GitHub Actions ?
 
-Un workflow est un fichier YAML dans `.github/workflows/`. GitHub le détecte automatiquement et l'exécute selon les triggers que tu définis.
+Un workflow est un fichier YAML dans `.github/workflows/`. GitHub le détecte automatiquement et l'exécute selon les triggers définis.
 
 ```
 ton-projet/
@@ -35,14 +35,16 @@ ton-projet/
         └── ci.yml   ← ici
 ```
 
-Chaque workflow contient des **jobs**, chaque job contient des **steps**.
+Chaque workflow contient des **jobs** et chaque job contient des **steps**.
+
+Pour faire simple, c'est un container qui va executer des tâches en cascade, et les outputs que on recupère en stdout son les valeurs qui vont définir le status de succès ou non de notre pipeline.
 
 ---
 
 ## Étape 1 : Lancer les tests à chaque push
 
+Le fichier ci.yml :
 ```yaml
-# .github/workflows/ci.yml
 name: CI/CD
 
 on:
@@ -66,24 +68,24 @@ jobs:
       - run: npm test
 ```
 
-`on: push: branches: [main]` → le pipeline se déclenche uniquement sur des pushs vers `main`.
+`on: push: branches: [main]` : le pipeline se déclenche uniquement sur des pushs vers la branche `main`.
 
-`actions/checkout@v4` → clone ton repo dans le runner.
+`actions/checkout@v4` : clone la branche dans le runner.
 
-`npm ci` → installe les dépendances depuis le lock file (plus strict que `npm install`).
+`npm ci` : installe les dépendances depuis le lock file (plus strict que `npm install`).
 
-À ce stade, chaque push vers main lance tes tests. Si un test échoue, le job passe en rouge et tu reçois une notification.
+> À ce stade, chaque push vers main lance les tests. Si un test échoue, le job passe en rouge et une notification est levée.
 
 ---
 
 ## Étape 2 : Builder une image Docker
 
-On ajoute un job `build` qui dépend de `test` grâce à `needs`.
+On ajoute un job `build` qui dépend de `test` grâce à l'argument `needs`.
 
 ```yaml
   build:
     runs-on: ubuntu-latest
-    needs: test   # ne tourne que si test est vert
+    needs: test   # ne tourne que si test est ok
 
     steps:
       - uses: actions/checkout@v4
@@ -102,9 +104,9 @@ On ajoute un job `build` qui dépend de `test` grâce à `needs`.
           tags: ghcr.io/${{ github.repository }}:latest
 ```
 
-`ghcr.io` c'est le registre Docker intégré à GitHub, pas besoin de compte Docker Hub. `GITHUB_TOKEN` est automatiquement disponible dans chaque workflow, rien à configurer.
+`ghcr.io` est le registre Docker intégré à GitHub, pas besoin de compte Docker Hub. `GITHUB_TOKEN` est automatiquement disponible dans chaque workflow, rien à configurer.
 
-Le `Dockerfile` à la racine du projet est utilisé par défaut.
+> Le `Dockerfile` à la racine du projet est utilisé par défaut.
 
 ---
 
@@ -130,7 +132,8 @@ Le `Dockerfile` à la racine du projet est utilisé par défaut.
               ghcr.io/${{ github.repository }}:latest
 ```
 
-Le serveur pull la nouvelle image et relance le container. Le `|| true` sur `stop` et `rm` évite que le job échoue si le container n'existe pas encore au premier déploiement.
+Le serveur pull la nouvelle image et relance le container. 
+Le `|| true` sur `stop` et `rm` évite que le job échoue si le container n'existe pas encore au premier déploiement.
 
 ---
 
@@ -139,17 +142,17 @@ Le serveur pull la nouvelle image et relance le container. Le `|| true` sur `sto
 ```
 push → main
         │
-        ▼
-    [test]           ← npm test
+        V
+     [test]           npm test
         │
-        ▼
-    [build]          ← docker build + push ghcr.io
+        V
+     [build]          docker build + push ghcr.io
         │
-        ▼
-    [deploy]         ← SSH → docker pull + run
+        V
+     [deploy]         SSH -> docker pull + run
 ```
 
-Si une étape échoue, les suivantes ne tournent pas. Tu reçois une notification GitHub par email.
+Si une étape échoue, les suivantes ne tournent pas.
 
 ---
 
@@ -159,3 +162,5 @@ Si une étape échoue, les suivantes ne tournent pas. Tu reçois une notificatio
 - **Matrix builds** : tester sur plusieurs versions de Node/Python en parallèle avec `strategy: matrix`.
 - **Cache** : `actions/cache` pour mettre en cache `node_modules` et accélérer les builds.
 - **Gestion des secrets** : faire un autre article là-dessus, c'est un sujet à part entière.
+
+Tout cela sera traité dans un autre post.
