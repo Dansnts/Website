@@ -88,11 +88,11 @@
       <article class="prose">
   <h1>Mettre en place une CI/CD avec GitHub Actions</h1>
   <div class="post-meta">
-    <span>3 juillet 2026</span>
+    <span>3 mai 2025</span>
     <span>post, devops, ci-cd, github-actions</span>
   </div>
-  <p>Une CI/CD (Intégration Continue / Déploiement Continu) c'est un pipeline automatique qui se déclenche à chaque fois que tu pousses du code. L'objectif : ne plus jamais déployer à la main.</p>
-<p>Dans ce post, on construit une pipeline GitHub Actions pour une application Node.js qui :</p>
+  <p>Une CI/CD (Intégration Continue / Déploiement Continu) est une pipeline automatique qui se déclenche à chaque fois que du code est poussé. L'objectif : ne plus jamais déployer à la main et avoir un flux automatique de suivi du processus complet.</p>
+<p>Dans ce post, nous allons voir comment construire pipeline <em>GitHub Actions</em> pour une application Node.js qui :</p>
 <ol>
 <li>Lance les tests automatiquement</li>
 <li>Build une image Docker</li>
@@ -102,23 +102,24 @@
 <h2>Prérequis</h2>
 <ul>
 <li>Un repo GitHub</li>
-<li>Une application avec des tests</li>
+<li>Une application avec ses tests déja écrits</li>
 <li>Un <code>Dockerfile</code></li>
 <li>Un serveur (VPS, cloud, peu importe)</li>
 </ul>
 <hr>
 <h2>C'est quoi un workflow GitHub Actions ?</h2>
-<p>Un workflow est un fichier YAML dans <code>.github/workflows/</code>. GitHub le détecte automatiquement et l'exécute selon les triggers que tu définis.</p>
+<p>Un workflow est un fichier YAML dans <code>.github/workflows/</code>. GitHub le détecte automatiquement et l'exécute selon les triggers définis.</p>
 <pre><code>ton-projet/
 └── .github/
     └── workflows/
         └── ci.yml   ← ici
 </code></pre>
-<p>Chaque workflow contient des <strong>jobs</strong>, chaque job contient des <strong>steps</strong>.</p>
+<p>Chaque workflow contient des <strong>jobs</strong> et chaque job contient des <strong>steps</strong>.</p>
+<p>Pour faire simple, c'est un container qui va executer des tâches en cascade, et les outputs que on recupère en stdout son les valeurs qui vont définir le status de succès ou non de notre pipeline.</p>
 <hr>
 <h2>Étape 1 : Lancer les tests à chaque push</h2>
-<pre><code class="language-yaml"># .github/workflows/ci.yml
-name: CI/CD
+<p>Le fichier ci.yml :</p>
+<pre><code class="language-yaml">name: CI/CD
 
 on:
   push:
@@ -140,16 +141,18 @@ jobs:
 
       - run: npm test
 </code></pre>
-<p><code>on: push: branches: [main]</code> → le pipeline se déclenche uniquement sur des pushs vers <code>main</code>.</p>
-<p><code>actions/checkout@v4</code> → clone ton repo dans le runner.</p>
-<p><code>npm ci</code> → installe les dépendances depuis le lock file (plus strict que <code>npm install</code>).</p>
-<p>À ce stade, chaque push vers main lance tes tests. Si un test échoue, le job passe en rouge et tu reçois une notification.</p>
+<p><code>on: push: branches: [main]</code> : le pipeline se déclenche uniquement sur des pushs vers la branche <code>main</code>.</p>
+<p><code>actions/checkout@v4</code> : clone la branche dans le runner.</p>
+<p><code>npm ci</code> : installe les dépendances depuis le lock file (plus strict que <code>npm install</code>).</p>
+<blockquote>
+<p>À ce stade, chaque push vers main lance les tests. Si un test échoue, le job passe en rouge et une notification est levée.</p>
+</blockquote>
 <hr>
 <h2>Étape 2 : Builder une image Docker</h2>
-<p>On ajoute un job <code>build</code> qui dépend de <code>test</code> grâce à <code>needs</code>.</p>
+<p>On ajoute un job <code>build</code> qui dépend de <code>test</code> grâce à l'argument <code>needs</code>.</p>
 <pre><code class="language-yaml">  build:
     runs-on: ubuntu-latest
-    needs: test   # ne tourne que si test est vert
+    needs: test   # ne tourne que si test est ok
 
     steps:
       - uses: actions/checkout@v4
@@ -167,8 +170,10 @@ jobs:
           push: true
           tags: ghcr.io/$:latest
 </code></pre>
-<p><code>ghcr.io</code> c'est le registre Docker intégré à GitHub, pas besoin de compte Docker Hub. <code>GITHUB_TOKEN</code> est automatiquement disponible dans chaque workflow, rien à configurer.</p>
+<p><code>ghcr.io</code> est le registre Docker intégré à GitHub, pas besoin de compte Docker Hub. <code>GITHUB_TOKEN</code> est automatiquement disponible dans chaque workflow, rien à configurer.</p>
+<blockquote>
 <p>Le <code>Dockerfile</code> à la racine du projet est utilisé par défaut.</p>
+</blockquote>
 <hr>
 <h2>Étape 3 : Déployer sur le serveur</h2>
 <pre><code class="language-yaml">  deploy:
@@ -189,21 +194,22 @@ jobs:
             docker run -d --name mon-app -p 3000:3000 \
               ghcr.io/$:latest
 </code></pre>
-<p>Le serveur pull la nouvelle image et relance le container. Le <code>|| true</code> sur <code>stop</code> et <code>rm</code> évite que le job échoue si le container n'existe pas encore au premier déploiement.</p>
+<p>Le serveur pull la nouvelle image et relance le container.
+Le <code>|| true</code> sur <code>stop</code> et <code>rm</code> évite que le job échoue si le container n'existe pas encore au premier déploiement.</p>
 <hr>
 <h2>Le pipeline complet</h2>
 <pre><code>push → main
         │
-        ▼
-    [test]           ← npm test
+        V
+     [test]           npm test
         │
-        ▼
-    [build]          ← docker build + push ghcr.io
+        V
+     [build]          docker build + push ghcr.io
         │
-        ▼
-    [deploy]         ← SSH → docker pull + run
+        V
+     [deploy]         SSH -&gt; docker pull + run
 </code></pre>
-<p>Si une étape échoue, les suivantes ne tournent pas. Tu reçois une notification GitHub par email.</p>
+<p>Si une étape échoue, les suivantes ne tournent pas.</p>
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
@@ -212,6 +218,7 @@ jobs:
 <li><strong>Cache</strong> : <code>actions/cache</code> pour mettre en cache <code>node_modules</code> et accélérer les builds.</li>
 <li><strong>Gestion des secrets</strong> : faire un autre article là-dessus, c'est un sujet à part entière.</li>
 </ul>
+<p>Tout cela sera traité dans un autre post.</p>
 
 </article>
 
