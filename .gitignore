@@ -4,3 +4,4 @@ cv-builder/output/
 *.DS_Store
 tb_rapport.pdf
 picture.png
+cv-builder/*
