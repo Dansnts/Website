@@ -300,7 +300,7 @@ sudo modprobe ip6table_nat
 <p>wg-easy v15 est une réécriture majeure, et la migration depuis v14 est un champ de mines. Deux changements font mal.</p>
 <h3>Des variables d'environnement supprimées</h3>
 <p>En v14, on configurait tout par variables d'env. En v15, plusieurs sont <strong>rejetées</strong> — elles sont maintenant gérées depuis l'UI :</p>
-<pre><code># ❌ Variables v14 à SUPPRIMER du manifest en v15 :
+<pre><code>#  Variables v14 à SUPPRIMER du manifest en v15 :
 PASSWORD_HASH
 WG_DEFAULT_DNS
 WG_ALLOWED_IPS

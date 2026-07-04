@@ -1,7 +1,7 @@
 ---
 layout: post.njk
 title: "Les galères du backup sur montage SMB"
-description: "Inodes qui bougent, fichiers Pokémon avec des ♀♂ dans le nom, node_modules à l'infini — le journal de bord d'un backup qui marche vraiment."
+description: "Inodes qui bougent, fichiers Pokémon avec des  dans le nom, node_modules à l'infini — le journal de bord d'un backup qui marche vraiment."
 date: 2025-04-21
 tags: [homelab, backup, smb, restic, rclone]
 ---
@@ -40,7 +40,7 @@ restic backup /mnt/data/Backup /mnt/dump \
 
 ## Galère n°2 : les fichiers Pokémon (oui, vraiment)
 
-Celle-là est ma préférée. Des fichiers de jeu Pokémon dont le nom contient des caractères Unicode — les symboles de genre **♀ et ♂**. Sur un montage SMB, l'encodage de ces caractères est mal géré : le mount les traduit mal, et l'accès à ces fichiers provoque des **erreurs d'I/O** qui font échouer le backup entier.
+Celle-là est ma préférée. Des fichiers de jeu Pokémon dont le nom contient des caractères Unicode — les symboles de genre ** et **. Sur un montage SMB, l'encodage de ces caractères est mal géré : le mount les traduit mal, et l'accès à ces fichiers provoque des **erreurs d'I/O** qui font échouer le backup entier.
 
 Un seul fichier au nom exotique, et tout le run se plante. Après avoir perdu du temps à comprendre pourquoi le backup échouait « sans raison », le coupable était là.
 
@@ -98,7 +98,7 @@ Ce qu'on exclut et pourquoi :
 | Galère | Symptôme | Solution |
 |---|---|---|
 | Inodes instables | Backup lent, re-scan complet à chaque run | `--ignore-inode` (Restic) |
-| Noms Unicode (♀♂) | Erreur I/O, backup qui plante | `--exclude` le fichier + `iocharset=utf8` |
+| Noms Unicode () | Erreur I/O, backup qui plante | `--exclude` le fichier + `iocharset=utf8` |
 | node_modules / .git | Durée et quota qui explosent | `--exclude` les dossiers régénérables |
 | Fichiers Windows | Parasites `Zone.Identifier` | `--exclude "**:Zone.Identifier"` |
 

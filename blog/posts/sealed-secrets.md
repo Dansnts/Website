@@ -142,10 +142,10 @@ keyrenewperiod: "720h"   # 30 jours
 
 | Élément | Où il vit | Committable ? |
 |---|---|---|
-| Secret en clair | Fichier temporaire local | ❌ jamais |
-| SealedSecret (chiffré) | Git | ✅ oui |
-| Clé publique | Partout | ✅ oui |
-| Master key (privée) | Cluster + backup hors ligne | ❌ jamais dans Git |
+| Secret en clair | Fichier temporaire local |  jamais |
+| SealedSecret (chiffré) | Git |  oui |
+| Clé publique | Partout |  oui |
+| Master key (privée) | Cluster + backup hors ligne |  jamais dans Git |
 
 ---
 

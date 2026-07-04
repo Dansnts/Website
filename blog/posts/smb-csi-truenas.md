@@ -130,10 +130,10 @@ Retour d'expérience qui coûte cher. Beaucoup de tutos (et le README du projet 
 **Toujours pinner une version stable :**
 
 ```bash
-# ✅ BON — version figée
+#  BON — version figée
 curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16.0/deploy/install-driver.sh | bash -s v1.16.0 --
 
-# ❌ MAUVAIS — suit la branche de dev
+#  MAUVAIS — suit la branche de dev
 curl -skSL https://raw.githubusercontent.com/.../canary/... | bash -s canary --
 ```
 

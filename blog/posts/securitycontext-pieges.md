@@ -66,7 +66,7 @@ L'entrypoint ne peut plus chown (pas la capability), et l'UID ne correspond pas.
 **Solution** : ne pas mettre de securityContext qui force l'UID. Laisser l'image gérer :
 
 ```yaml
-# ✅ Pour postgres:alpine — laisser tranquille
+#  Pour postgres:alpine — laisser tranquille
 securityContext:
   allowPrivilegeEscalation: false
   # PAS de runAsUser, PAS de drop ALL

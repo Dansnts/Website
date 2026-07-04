@@ -134,7 +134,7 @@ wg-easy v15 est une réécriture majeure, et la migration depuis v14 est un cham
 En v14, on configurait tout par variables d'env. En v15, plusieurs sont **rejetées** — elles sont maintenant gérées depuis l'UI :
 
 ```
-# ❌ Variables v14 à SUPPRIMER du manifest en v15 :
+#  Variables v14 à SUPPRIMER du manifest en v15 :
 PASSWORD_HASH
 WG_DEFAULT_DNS
 WG_ALLOWED_IPS
