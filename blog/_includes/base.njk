@@ -35,14 +35,24 @@
       color: var(--text);
     }
     .prose pre {
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: #0c0e18;
+      border: 1px solid #1e2030;
       border-radius: 8px;
-      padding: 1rem 1.2rem;
+      padding: 1.25rem 1.5rem;
       overflow-x: auto;
       margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
     }
-    .prose pre code { background: none; border: none; padding: 0; font-size: 0.82rem; }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
     .prose blockquote {
       border-left: 2px solid var(--accent);
       padding: 0.1rem 1rem;
