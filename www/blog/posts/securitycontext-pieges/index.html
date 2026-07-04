@@ -261,7 +261,7 @@
 </code></pre>
 <p>L'entrypoint ne peut plus chown (pas la capability), et l'UID ne correspond pas. Crash.</p>
 <p><strong>Solution</strong> : ne pas mettre de securityContext qui force l'UID. Laisser l'image gérer :</p>
-<pre><code class="language-yaml"># ✅ Pour postgres:alpine — laisser tranquille
+<pre><code class="language-yaml">#  Pour postgres:alpine — laisser tranquille
 securityContext:
   allowPrivilegeEscalation: false
   # PAS de runAsUser, PAS de drop ALL

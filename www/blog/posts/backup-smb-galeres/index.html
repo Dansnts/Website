@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Les galères du backup sur montage SMB — Dani Faria dos Santos</title>
-  <meta name="description" content="Inodes qui bougent, fichiers Pokémon avec des ♀♂ dans le nom, node_modules à l&#39;infini — le journal de bord d&#39;un backup qui marche vraiment." />
+  <meta name="description" content="Inodes qui bougent, fichiers Pokémon avec des  dans le nom, node_modules à l&#39;infini — le journal de bord d&#39;un backup qui marche vraiment." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -225,7 +225,7 @@
 </blockquote>
 <hr>
 <h2>Galère n°2 : les fichiers Pokémon (oui, vraiment)</h2>
-<p>Celle-là est ma préférée. Des fichiers de jeu Pokémon dont le nom contient des caractères Unicode — les symboles de genre <strong>♀ et ♂</strong>. Sur un montage SMB, l'encodage de ces caractères est mal géré : le mount les traduit mal, et l'accès à ces fichiers provoque des <strong>erreurs d'I/O</strong> qui font échouer le backup entier.</p>
+<p>Celle-là est ma préférée. Des fichiers de jeu Pokémon dont le nom contient des caractères Unicode — les symboles de genre ** et **. Sur un montage SMB, l'encodage de ces caractères est mal géré : le mount les traduit mal, et l'accès à ces fichiers provoque des <strong>erreurs d'I/O</strong> qui font échouer le backup entier.</p>
 <p>Un seul fichier au nom exotique, et tout le run se plante. Après avoir perdu du temps à comprendre pourquoi le backup échouait « sans raison », le coupable était là.</p>
 <p><strong>La solution</strong> — exclure ces fichiers :</p>
 <pre><code class="language-bash">--exclude '/mnt/data/Backup/Games/Pok*'
@@ -275,7 +275,7 @@
 <td><code>--ignore-inode</code> (Restic)</td>
 </tr>
 <tr>
-<td>Noms Unicode (♀♂)</td>
+<td>Noms Unicode ()</td>
 <td>Erreur I/O, backup qui plante</td>
 <td><code>--exclude</code> le fichier + <code>iocharset=utf8</code></td>
 </tr>

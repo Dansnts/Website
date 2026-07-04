@@ -292,10 +292,10 @@ spec:
 <p>Retour d'expérience qui coûte cher. Beaucoup de tutos (et le README du projet lui-même par défaut) installent le driver via l'URL <code>.../deploy/master/...</code> ou une balise <code>canary</code>. <strong>À éviter absolument.</strong></p>
 <p><code>canary</code>, c'est la branche de développement du driver : instable, susceptible de casser d'un jour à l'autre sur un <code>apply</code>. Un matin, tes montages SMB tombent sans que tu aies rien changé — juste parce que la <code>canary</code> a évolué.</p>
 <p><strong>Toujours pinner une version stable :</strong></p>
-<pre><code class="language-bash"># ✅ BON — version figée
+<pre><code class="language-bash">#  BON — version figée
 curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16.0/deploy/install-driver.sh | bash -s v1.16.0 --
 
-# ❌ MAUVAIS — suit la branche de dev
+#  MAUVAIS — suit la branche de dev
 curl -skSL https://raw.githubusercontent.com/.../canary/... | bash -s canary --
 </code></pre>
 <blockquote>
