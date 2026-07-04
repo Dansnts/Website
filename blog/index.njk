@@ -2,21 +2,23 @@
 layout: base.njk
 title: Blog
 ---
-<div class="cv-section-top" style="padding-top:2rem">
-  <div class="cv-section-top-left">
-    <h2 class="page-section-title">Blog</h2>
-    <p class="cv-section-sub">Notes techniques, retours d'expérience et explorations.</p>
+<div class="blog-index-wrap">
+  <div class="cv-section-top" style="padding-top:2rem">
+    <div class="cv-section-top-left">
+      <h2 class="page-section-title">Blog</h2>
+      <p class="cv-section-sub">Notes techniques, retours d'expérience et explorations.</p>
+    </div>
   </div>
-</div>
 
-<ul class="post-list">
-  {%- for post in collections.post | reverse %}
-  <li>
-    <div class="post-date">{{ post.date | dateStr }}</div>
-    <a href="/blog{{ post.url }}">{{ post.data.title }}</a>
-    {% if post.data.description %}
-    <p class="post-desc">{{ post.data.description }}</p>
-    {% endif %}
-  </li>
-  {%- endfor %}
-</ul>
+  <ul class="post-list">
+    {%- for post in collections.post | reverse %}
+    <li>
+      <div class="post-date">{{ post.date | dateStr }}</div>
+      <a href="/blog{{ post.url }}">{{ post.data.title }}</a>
+      {% if post.data.description %}
+      <p class="post-desc">{{ post.data.description }}</p>
+      {% endif %}
+    </li>
+    {%- endfor %}
+  </ul>
+</div>

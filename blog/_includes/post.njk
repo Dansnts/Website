@@ -1,11 +1,22 @@
 ---
 layout: base.njk
 ---
-<article class="prose">
-  <h1>{{ title }}</h1>
-  <div class="post-meta">
-    <span>{{ date | dateStr }}</span>
-    {% if tags %}<span>{{ tags | join(", ") }}</span>{% endif %}
-  </div>
-  {{ content | safe }}
-</article>
+<div class="wrapper">
+  <a href="/blog/" class="back-link">&larr; Blog</a>
+
+  <article class="project-detail">
+    <header class="project-hero">
+      {% if tags %}
+      <div class="project-tags">
+        {% for tag in tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+      </div>
+      {% endif %}
+      <h1>{{ title }}</h1>
+      <p class="project-subtitle">{{ date | dateStr }}</p>
+    </header>
+
+    <div class="blog-body">
+      {{ content | safe }}
+    </div>
+  </article>
+</div>
