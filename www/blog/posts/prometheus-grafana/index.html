@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitoring maison : Prometheus, Grafana et node_exporter — Dani Faria dos Santos</title>
+  <meta name="description" content="Du scrape au dashboard. Deux node_exporter (hôtes en Ansible, pods en DaemonSet), un Prometheus qui agrège tout, et Grafana branché en SSO Keycloak." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>Monitoring maison : Prometheus, Grafana et node_exporter</h1>
+  <div class="post-meta">
+    <span>4 décembre 2024</span>
+    <span>post, homelab, monitoring, prometheus, grafana, node-exporter, kubernetes</span>
+  </div>
+  <p>Sans monitoring, un homelab marche « jusqu'à ce qu'il ne marche plus » — et on l'apprend au pire moment. On veut savoir si un disque se remplit, si la RAM sature, si un node chauffe, avant que ça casse. La stack de référence pour ça, c'est <strong>Prometheus + Grafana</strong>, alimentée par des <strong>exporters</strong>.</p>
+<p>Le principe tient en une phrase : des exporters exposent des métriques en HTTP, Prometheus va les <strong>scraper</strong> à intervalle régulier et les stocke, Grafana lit Prometheus et dessine les courbes. Simple, robuste, et le standard de fait du monde cloud-native.</p>
+<p>Dans ce post, on va voir :</p>
+<ol>
+<li>Le modèle « pull » de Prometheus (scrape vs push)</li>
+<li><code>node_exporter</code> sur les hôtes, installé par Ansible</li>
+<li><code>node-exporter</code> dans le cluster, en DaemonSet</li>
+<li>Prometheus qui agrège les deux</li>
+<li>Grafana, ses datasources provisionnées et son login Keycloak</li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Un cluster Kubernetes (ici K3s single-node)</li>
+<li>Un hôte à surveiller hors cluster (ici le Proxmox, <code>10.0.0.10</code>)</li>
+<li>Ansible pour la partie hôtes</li>
+<li>Keycloak pour le SSO Grafana (voir l'article dédié)</li>
+</ul>
+<hr>
+<h2>Le modèle « pull »</h2>
+<p>Contrairement à beaucoup d'outils qui <strong>poussent</strong> leurs métriques vers un collecteur, Prometheus <strong>tire</strong> : il connaît une liste de cibles (<code>targets</code>) et va, toutes les X secondes, interroger leur endpoint <code>/metrics</code>. C'est le <strong>scrape</strong>.</p>
+<p>L'avantage : chaque cible est une petite appli sans état qui se contente d'exposer ses chiffres. Si Prometheus tombe, les exporters ne s'accumulent pas ; s'ils tombent, Prometheus le voit tout de suite (la cible passe <code>down</code>). C'est ce modèle qu'on retrouve partout.</p>
+<p>Un <code>node_exporter</code>, c'est justement ça : un binaire qui expose les métriques de la machine (CPU, RAM, disque, réseau, températures) sur le port <code>9100</code>.</p>
+<hr>
+<h2>Sur les hôtes : node_exporter en Ansible</h2>
+<p>Toutes mes machines ne sont pas dans Kubernetes. Le Proxmox, par exemple, est un hôte nu. Pour lui — et les autres serveurs bare-metal — j'installe <code>node_exporter</code> avec un rôle Ansible dédié.</p>
+<p>Les valeurs par défaut du rôle :</p>
+<pre><code class="language-yaml">node_exporter_version: &quot;1.8.2&quot;
+node_exporter_port: 9100
+node_exporter_collectors:
+  - hwmon
+  - diskstats
+  - filesystem
+  - nvme
+</code></pre>
+<p>Le rôle télécharge le binaire, le pose dans <code>/usr/local/bin</code>, et déploie un service systemd :</p>
+<pre><code class="language-ini">[Service]
+ExecStart=/usr/local/bin/node_exporter 
+Restart=always
+</code></pre>
+<ul>
+<li><code>node_exporter_collectors</code> : la liste des collecteurs activés, injectée dans la commande via une boucle Jinja. J'active <code>hwmon</code> (capteurs de température), <code>nvme</code> (santé des SSD), <code>diskstats</code> et <code>filesystem</code> — exactement ce qui m'intéresse sur un hyperviseur.</li>
+<li><code>Restart=always</code> : si le process meurt, systemd le relance. Un exporter doit être « toujours là ».</li>
+</ul>
+<p>Le tout est <strong>idempotent</strong> : un <code>handler</code> <code>restart node_exporter</code> n'est déclenché que si le binaire ou l'unité change réellement. On peut relancer le playbook sans effet de bord.</p>
+<hr>
+<h2>Dans le cluster : node-exporter en DaemonSet</h2>
+<p>Pour surveiller le node K3s lui-même (l'OS sous les pods), un exporter dans Kubernetes ne suffit pas s'il ne voit que le conteneur. Il faut lui donner accès à l'hôte. D'où un <strong>DaemonSet</strong> (un pod par node) avec les bons montages :</p>
+<pre><code class="language-yaml">spec:
+  hostNetwork: true
+  hostPID: true
+  containers:
+    - name: node-exporter
+      image: prom/node-exporter:v1.9.1
+      args:
+        - &quot;--path.procfs=/host/proc&quot;
+        - &quot;--path.sysfs=/host/sys&quot;
+        - &quot;--path.rootfs=/host/root&quot;
+      volumeMounts:
+        - name: proc
+          mountPath: /host/proc
+          readOnly: true
+        - name: root
+          mountPath: /host/root
+          readOnly: true
+</code></pre>
+<ul>
+<li><code>hostNetwork</code> / <code>hostPID</code> : le pod partage la stack réseau et l'arbre des processus de l'hôte — sinon il ne mesurerait que lui-même.</li>
+<li><code>--path.procfs=/host/proc</code> (et <code>sysfs</code>, <code>rootfs</code>) : on monte <code>/proc</code>, <code>/sys</code> et <code>/</code> de l'hôte <strong>en lecture seule</strong> dans le pod, et on dit à node_exporter de lire <strong>là</strong> plutôt que dans son propre namespace. C'est ce qui lui fait voir les vraies métriques de la machine.</li>
+</ul>
+<p>Tout est <code>readOnly</code> et non-privilégié (<code>runAsNonRoot</code>, <code>drop: [&quot;ALL&quot;]</code>, <code>readOnlyRootFilesystem</code>) : un exporter n'a besoin que de <strong>lire</strong>.</p>
+<blockquote>
+<p>Deux exporters, deux mondes : Ansible/systemd pour les hôtes nus, DaemonSet pour ce qui est cloud-native. C'est normal et complémentaire — chaque environnement a son mécanisme de déploiement naturel, mais tous exposent le <strong>même</strong> <code>/metrics</code> sur le <strong>même</strong> port 9100. Prometheus, lui, ne fait pas la différence.</p>
+</blockquote>
+<hr>
+<h2>Prometheus agrège tout</h2>
+<p>Prometheus tourne comme un Deployment, avec sa config dans un ConfigMap. Le cœur, ce sont les <code>scrape_configs</code> :</p>
+<pre><code class="language-yaml">global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter.homelab.svc.cluster.local:9100']
+      - targets: ['10.0.0.10:9100']
+</code></pre>
+<ul>
+<li><code>scrape_interval: 15s</code> : Prometheus interroge chaque cible toutes les 15 secondes.</li>
+<li>La première cible est le <strong>Service interne</strong> du DaemonSet (résolu par le DNS du cluster) — le node K3s.</li>
+<li>La seconde est <strong>une IP en dur, <code>10.0.0.10:9100</code></strong> : le Proxmox, joint directement sur le LAN. Le même job mélange sans problème une cible cluster et une cible bare-metal.</li>
+</ul>
+<p>Le conteneur est lancé avec <code>--web.enable-lifecycle</code> (permet de recharger la config à chaud via l'API) et <code>--storage.tsdb.path=/prometheus</code>, la base time-series posée sur un PVC de 5 Gi. Le Service est exposé en <code>NodePort</code> (30090), et Traefik le publie sur <code>prometheus.fariadossantos.com</code>.</p>
+<p>Le flux complet :</p>
+<pre><code>[Proxmox 10.0.0.10]  node_exporter (systemd) ─┐
+                                               ├─9100─&gt; Prometheus ──&gt; TSDB (PVC)
+[node K3s]  node-exporter (DaemonSet) ─────────┘            │
+                                                            │ datasource
+                                                            V
+                                                         Grafana ──&gt; dashboards
+</code></pre>
+<hr>
+<h2>Grafana : datasources provisionnées et login Keycloak</h2>
+<p>Grafana lit Prometheus et dessine. Plutôt que de cliquer dans l'UI pour ajouter les sources de données (et tout reperdre au prochain redéploiement), je les <strong>provisionne</strong> via un ConfigMap monté dans <code>/etc/grafana/provisioning/datasources</code> :</p>
+<pre><code class="language-yaml">datasources:
+  - name: Prometheus
+    type: prometheus
+    url: http://prometheus.homelab.svc.cluster.local:9090
+    isDefault: true
+  - name: Loki
+    type: loki
+    url: http://loki.homelab.svc.cluster.local:3100
+</code></pre>
+<p>Deux sources déclarées en code : Prometheus (par défaut, pour les métriques) et Loki (pour les logs — sujet d'un autre article). Au démarrage, Grafana les crée tout seul. <strong>La config est reproductible</strong>, versionnée dans Git, jamais cliquée à la main.</p>
+<p>Côté auth, pas de compte local : Grafana délègue son login à Keycloak en OIDC (<code>GF_AUTH_GENERIC_OAUTH_*</code>), avec un mapping de rôles qui décide qui est <code>Admin</code> et qui est <code>Viewer</code>. Le détail de ce montage — et le fameux piège des deux URLs (publique pour le navigateur, interne pour le backend) — est dans l'article sur Keycloak.</p>
+<p>Le pod tourne en <code>runAsUser: 472</code> (l'UID attendu par l'image Grafana), avec sa config et ses dashboards persistés sur un PVC de 5 Gi.</p>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>Loki pour les logs</strong> : Prometheus fait les métriques, Loki fait les logs — la datasource Loki est déjà branchée dans Grafana. Voir l'article « Centraliser ses logs ».</li>
+<li><strong>Alerting</strong> : Prometheus a un langage de règles (PromQL) et un Alertmanager pour notifier (mail, Discord…) quand un disque dépasse 90 %.</li>
+<li><strong>Des dashboards prêts à l'emploi</strong> : le dashboard « Node Exporter Full » (grafana.com/dashboards, ID 1860) donne une vue complète en quelques clics.</li>
+<li><strong>Surveiller Kubernetes lui-même</strong> : kube-state-metrics et cAdvisor exposent l'état des pods/deployments, au-delà des seules métriques d'hôte.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

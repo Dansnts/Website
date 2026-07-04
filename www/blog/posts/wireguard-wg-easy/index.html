@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WireGuard self-hosted avec wg-easy — Dani Faria dos Santos</title>
+  <meta name="description" content="Un VPN pour rentrer chez soi de n&#39;importe où — port forward en cascade, modules kernel, et la migration douloureuse v14 → v15." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>WireGuard self-hosted avec wg-easy</h1>
+  <div class="post-meta">
+    <span>10 septembre 2024</span>
+    <span>post, homelab, réseau, vpn, wireguard, kubernetes</span>
+  </div>
+  <p>Accéder à son homelab depuis l'extérieur sans exposer chaque service sur internet, c'est le rôle d'un VPN. <strong>WireGuard</strong> est le choix moderne : rapide, simple, dans le kernel Linux. Et <strong>wg-easy</strong> lui ajoute une interface web pour gérer les clients sans éditer de fichiers à la main.</p>
+<p>Mais faire tourner WireGuard <em>dans Kubernetes</em>, derrière une box FAI et un routeur, réserve quelques pièges. Dans ce post :</p>
+<ol>
+<li>Le déploiement wg-easy dans K8s</li>
+<li>Le port forward en cascade (box → MikroTik → pod)</li>
+<li>Les modules kernel indispensables sur le node</li>
+<li>La migration v14 → v15 qui casse tout</li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Un cluster K3s avec MetalLB (pour l'IP dédiée)</li>
+<li>Un accès à la config de sa box et de son routeur</li>
+<li>Un nom de domaine public pointant sur son IP (idéalement en DDNS)</li>
+</ul>
+<hr>
+<h2>Le déploiement wg-easy</h2>
+<p>wg-easy tourne comme un Deployment, avec un securityContext particulier — WireGuard a besoin de privilèges réseau :</p>
+<pre><code class="language-yaml">spec:
+  containers:
+    - name: wg-easy
+      image: ghcr.io/wg-easy/wg-easy:15
+      env:
+        - name: TZ
+          value: &quot;Europe/Zurich&quot;
+        - name: WG_HOST
+          value: &quot;server.fariadossantos.com&quot;
+        - name: INSECURE
+          value: &quot;true&quot;
+      ports:
+        - containerPort: 51820
+          protocol: UDP
+          name: wireguard
+        - containerPort: 51821
+          name: web-ui
+      securityContext:
+        capabilities:
+          add: [&quot;NET_ADMIN&quot;, &quot;NET_RAW&quot;, &quot;SYS_MODULE&quot;]
+</code></pre>
+<p>Les points sensibles :</p>
+<p><code>WG_HOST</code> : le nom public que les clients utiliseront comme endpoint. Il doit résoudre vers l'IP publique de la box (via DDNS si l'IP est dynamique).</p>
+<p><code>INSECURE: &quot;true&quot;</code> : <strong>obligatoire en v15 derrière Traefik</strong>. L'UI est servie en HTTP côté pod (c'est Traefik qui fait le TLS devant). Sans cette variable, wg-easy v15 refuse tout bonnement de démarrer.</p>
+<p><code>capabilities: add: [NET_ADMIN, NET_RAW, SYS_MODULE]</code> : WireGuard manipule les interfaces réseau et le NAT iptables. Ces trois capabilities sont indispensables. Et <strong>surtout pas</strong> de <code>allowPrivilegeEscalation: false</code> — ça bloquerait iptables (voir l'article sur les securityContext qui cassent tout).</p>
+<p>Le service utilise une IP MetalLB fixe pour permettre le port forward :</p>
+<pre><code class="language-yaml">metadata:
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 10.0.0.102
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 51820
+      protocol: UDP     # le tunnel VPN
+    - port: 51821        # l'UI web
+</code></pre>
+<hr>
+<h2>Le port forward en cascade</h2>
+<p>Voilà la partie qui déroute quand on a deux niveaux de routage. Le trafic VPN doit traverser <strong>deux</strong> équipements avant d'atteindre le pod :</p>
+<pre><code>Client VPN (internet)
+      │  UDP 51820
+      V
+Box maison (192.168.1.1)         ← port forward #1 : 51820 → 192.168.1.2
+      │
+      V
+MikroTik (192.168.1.2 / WAN)     ← port forward #2 (DNAT) : 51820 → 10.0.0.102
+      │
+      V
+WireGuard pod (10.0.0.102)       ← IP MetalLB
+</code></pre>
+<p><strong>Deux redirections</strong> à configurer, une par équipement :</p>
+<ol>
+<li><strong>Sur la box</strong> : forward <code>51820/UDP</code> vers <code>192.168.1.2</code> (le MikroTik).</li>
+<li><strong>Sur le MikroTik</strong> : un DNAT vers l'IP MetalLB de WireGuard :</li>
+</ol>
+<pre><code class="language-rsc">/ip firewall nat add chain=dstnat protocol=udp dst-port=51820 \
+    in-interface=ether1 action=dst-nat \
+    to-addresses=10.0.0.102 to-ports=51820 comment=&quot;DNAT WireGuard&quot;
+</code></pre>
+<blockquote>
+<p>Le piège classique du double NAT : on configure le forward sur la box, ça ne marche pas, on cherche pendant une heure... parce qu'on a oublié le deuxième forward sur le routeur. <strong>Chaque équipement traversé a besoin de sa propre règle.</strong> Tracer le chemin complet du paquet évite bien des cheveux blancs.</p>
+</blockquote>
+<p>Comme l'IP publique de la box change (FAI résidentiel), un CronJob de DDNS met à jour <code>server.fariadossantos.com</code> toutes les 30 minutes pour qu'il pointe toujours sur la bonne IP.</p>
+<hr>
+<h2>Les modules kernel sur le node</h2>
+<p>WireGuard fait du NAT pour router le trafic des clients VPN vers le LAN. Ça exige des modules kernel <code>iptable_nat</code> chargés <strong>sur le node K3s</strong> (pas dans le pod — le pod partage le kernel de l'hôte).</p>
+<pre><code class="language-bash"># Charger immédiatement
+sudo modprobe iptable_nat
+sudo modprobe ip6table_nat
+
+# Persistance au reboot : /etc/modules-load.d/wireguard.conf
+# doit contenir iptable_nat et ip6table_nat
+</code></pre>
+<blockquote>
+<p>Sans ces modules, le tunnel s'établit (les clients se connectent) mais <strong>aucun trafic ne passe</strong> vers le reste du réseau. Symptôme trompeur : la poignée de main WireGuard réussit, puis plus rien. C'est presque toujours un module NAT manquant. Et penser à la persistance : un reboot du node sans <code>modules-load.d</code> et le VPN retombe en panne.</p>
+</blockquote>
+<hr>
+<h2>La migration v14 → v15 qui casse tout</h2>
+<p>wg-easy v15 est une réécriture majeure, et la migration depuis v14 est un champ de mines. Deux changements font mal.</p>
+<h3>Des variables d'environnement supprimées</h3>
+<p>En v14, on configurait tout par variables d'env. En v15, plusieurs sont <strong>rejetées</strong> — elles sont maintenant gérées depuis l'UI :</p>
+<pre><code># ❌ Variables v14 à SUPPRIMER du manifest en v15 :
+PASSWORD_HASH
+WG_DEFAULT_DNS
+WG_ALLOWED_IPS
+</code></pre>
+<p>Si on les laisse, v15 peut refuser de démarrer. Le manifest v15 est minimal : <code>WG_HOST</code>, <code>INSECURE</code>, <code>TZ</code>, et c'est tout. Le reste se configure via l'assistant web.</p>
+<h3>Le format de config qui change</h3>
+<p>Le fichier <code>wg0.json</code> (qui stocke les clients) a changé de format entre v14 et v15. On ne peut pas juste réutiliser l'ancien. La migration se fait via l'<strong>assistant de setup</strong> (<code>/ui/init</code>) en réimportant la config.</p>
+<blockquote>
+<p>Retour d'expérience : garder un <strong>backup du <code>wg0.json</code></strong> avant toute migration (chez moi, dans Vaultwarden). Si la migration échoue, on peut recréer les clients depuis les données de l'ancien fichier. Sans backup, il faut regénérer et redistribuer toutes les configs clients — pénible.</p>
+</blockquote>
+<p>Le récap des changements v14 → v15 :</p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>v14</th>
+<th>v15</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Auth</td>
+<td><code>PASSWORD_HASH</code> en env</td>
+<td>Configurée via l'UI</td>
+</tr>
+<tr>
+<td>DNS / AllowedIPs</td>
+<td>Variables d'env</td>
+<td>Réglages UI</td>
+</tr>
+<tr>
+<td>Derrière un reverse proxy</td>
+<td>fonctionnait</td>
+<td>exige <code>INSECURE=true</code></td>
+</tr>
+<tr>
+<td>Format <code>wg0.json</code></td>
+<td>ancien</td>
+<td>nouveau (réimport requis)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>DNS split-tunnel</strong> : configurer les clients VPN pour n'router que le trafic homelab par le tunnel, et laisser le reste passer en direct.</li>
+<li><strong>Le DDNS</strong> : l'IP publique résidentielle change — un CronJob qui met à jour l'enregistrement DNS est indispensable (sujet connexe à creuser).</li>
+<li><strong>Le double NAT</strong> : cet article suppose la segmentation MikroTik déjà en place — voir l'article sur l'isolation du homelab derrière le MikroTik.</li>
+<li><strong>Clients mobiles</strong> : wg-easy génère des QR codes pour configurer WireGuard sur téléphone en un scan.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

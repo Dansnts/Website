@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DNS à deux niveaux : CoreDNS et Pi-hole sans dépendance circulaire — Dani Faria dos Santos</title>
+  <meta name="description" content="Garder Pi-hole hors du chemin critique du cluster, et pourquoi le node K3s ne doit surtout pas l&#39;utiliser comme résolveur." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>DNS à deux niveaux : CoreDNS et Pi-hole sans dépendance circulaire</h1>
+  <div class="post-meta">
+    <span>19 décembre 2025</span>
+    <span>post, homelab, réseau, dns, pihole, kubernetes</span>
+  </div>
+  <p>Le DNS, c'est le genre de service dont on ne parle jamais — jusqu'à ce qu'il tombe et que <em>tout</em> casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne <em>dans</em> ce cluster.</p>
+<p>La solution, c'est une architecture DNS à <strong>deux niveaux</strong>, où chaque résolveur a un rôle clair et où Pi-hole n'est jamais dans le chemin critique. Dans ce post :</p>
+<ol>
+<li>Les deux résolveurs et qui résout quoi</li>
+<li>CoreDNS avec des entrées statiques vers Traefik</li>
+<li>Pi-hole pour le réseau et le blocage de pub</li>
+<li>Le piège chicken-and-egg au boot du node</li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Un cluster K3s (CoreDNS est inclus)</li>
+<li>Pi-hole déployé (ici dans le cluster, sur <code>10.0.0.101</code>)</li>
+<li>Un ingress (Traefik, sur <code>10.0.0.100</code>)</li>
+</ul>
+<hr>
+<h2>Deux résolveurs, deux rôles</h2>
+<pre><code>                    ┌─────────────────────────────┐
+Pods du cluster ───&gt;│ CoreDNS (dans K8s)          │
+                    │ résout *.fariadossantos.com │──&gt; Traefik 10.0.0.100
+                    │ directement vers Traefik    │
+                    └─────────────────────────────┘
+
+                    ┌─────────────────────────────┐
+Machines du LAN ───&gt;│ Pi-hole (10.0.0.101)        │──&gt; blocage pub + upstream
+                    │ DNS réseau + adblock        │
+                    └─────────────────────────────┘
+</code></pre>
+<p>L'idée directrice : <strong>CoreDNS ne dépend pas de Pi-hole</strong>. Les pods du cluster résolvent les services via CoreDNS, qui pointe directement sur Traefik. Si Pi-hole tombe, les pods continuent de se parler. Pi-hole ne sert que le réseau (machines physiques) et le confort (blocage de pub).</p>
+<hr>
+<h2>Niveau 1 : CoreDNS pour l'intérieur du cluster</h2>
+<p>K3s embarque CoreDNS. Par défaut, il résout les services internes du cluster. Mais nos pods ont aussi besoin de résoudre les noms publics des services (<code>grafana.fariadossantos.com</code>, etc.) — et on veut qu'ils tapent <strong>directement Traefik</strong>, sans faire un aller-retour par le réseau externe.</p>
+<p>On ajoute un ConfigMap <code>coredns-custom</code> (mécanisme prévu par K3s) avec des entrées <code>hosts</code> statiques :</p>
+<pre><code>fariadossantos.com:53 {
+    hosts {
+        10.0.0.100 grafana.fariadossantos.com
+        10.0.0.100 immich.fariadossantos.com
+        10.0.0.100 vault.fariadossantos.com
+        # ... tous les services derrière Traefik
+        fallthrough
+    }
+    forward . /etc/resolv.conf
+}
+</code></pre>
+<p>Ce que ça fait, dans l'ordre :</p>
+<ul>
+<li>Un pod qui demande <code>grafana.fariadossantos.com</code> reçoit <code>10.0.0.100</code> (Traefik) <strong>directement</strong>, résolu à l'intérieur du cluster.</li>
+<li>Le <code>fallthrough</code> : si le nom n'est pas dans la liste, on continue vers les résolveurs suivants (le <code>forward</code>).</li>
+<li>Aucun passage par Pi-hole. CoreDNS est <strong>autonome</strong>.</li>
+</ul>
+<p>Pour ajouter un service, on édite le ConfigMap — CoreDNS recharge sans redémarrage :</p>
+<pre><code class="language-bash">kubectl edit configmap coredns-custom -n kube-system
+# ajouter la ligne dans le bloc hosts, sauvegarder, c'est pris en compte
+</code></pre>
+<blockquote>
+<p>Le choix de mettre Traefik en dur dans CoreDNS, c'est précisément pour <strong>sortir Pi-hole du chemin critique</strong>. Si la résolution des pods passait par Pi-hole et que Pi-hole crashait, tout le cluster deviendrait aveugle. Là, non.</p>
+</blockquote>
+<hr>
+<h2>Niveau 2 : Pi-hole pour le réseau et l'adblock</h2>
+<p>Pi-hole joue le résolveur du <strong>réseau physique</strong> : les machines du LAN (via le DHCP du MikroTik) l'utilisent comme DNS. Il apporte deux choses : la résolution des noms internes et le <strong>blocage des pubs/trackers</strong> à l'échelle du réseau.</p>
+<p>Il tourne dans le cluster, avec sa liste DNS custom montée en ConfigMap :</p>
+<pre><code class="language-yaml">data:
+  custom.list: |
+    10.0.0.100 grafana.fariadossantos.com
+    10.0.0.100 immich.fariadossantos.com
+    10.0.0.11  nas.fariadossantos.com
+    10.0.0.10  proxmox.fariadossantos.com
+    10.0.0.20  k8s.fariadossantos.com
+    # ...
+</code></pre>
+<p>On note que Pi-hole résout aussi les services <strong>hors cluster</strong> (NAS <code>.11</code>, Proxmox <code>.10</code>) que CoreDNS n'a pas à connaître. Les deux listes se recoupent en partie, mais servent des populations différentes : CoreDNS pour les pods, Pi-hole pour les humains et leurs machines.</p>
+<p>L'upstream de Pi-hole va directement vers un résolveur public :</p>
+<pre><code class="language-yaml">env:
+  - name: PIHOLE_DNS_
+    value: &quot;1.1.1.1;&quot;
+</code></pre>
+<p>Les deux réseaux y accèdent différemment (rappel de la config MikroTik) :</p>
+<ul>
+<li>Depuis le lab (<code>10.0.0.x</code>) : <code>10.0.0.101</code> directement.</li>
+<li>Depuis la maison (<code>192.168.1.x</code>) : <code>192.168.1.2</code> (le MikroTik forwarde le port 53 vers Pi-hole).</li>
+</ul>
+<hr>
+<h2>Le piège : le node K3s ne doit PAS utiliser Pi-hole</h2>
+<p>Voici l'erreur qui semble logique et qui casse tout. Pi-hole est le DNS du réseau, donc on serait tenté de configurer le node K3s pour l'utiliser aussi. <strong>Surtout pas.</strong></p>
+<pre><code>Pi-hole tourne DANS K8s
+      │
+      V
+K8s (au boot) a besoin de DNS pour tirer ses images
+      │
+      V
+si le node utilise Pi-hole comme DNS...
+      │
+      V
+...mais Pi-hole n'est pas encore démarré (il est dans K8s qui démarre)
+      │
+      V
+┌──────────────────────────────────────┐
+│ le node attend le DNS                 │
+│ le DNS attend que le node démarre K8s │
+│ → chicken-and-egg, blocage au boot    │
+└──────────────────────────────────────┘
+</code></pre>
+<p>C'est exactement la même famille de bug que la dépendance circulaire RADIUS : un service d'infra qui dépend de ce qu'il rend possible. Au démarrage à froid, personne ne cède.</p>
+<p>La règle est simple et non négociable : <strong>le node K3s utilise un DNS externe</strong> (<code>1.1.1.1</code>), jamais Pi-hole.</p>
+<p>C'est d'ailleurs un point de vigilance dans la config Ansible du node. Le <code>defaults/main.yml</code> du rôle définit <code>k3s_dns: &quot;10.0.0.101&quot;</code> (Pi-hole) — pratique en fonctionnement normal, mais un piège au boot à froid. En pratique, le resolver du node doit pointer sur <code>1.1.1.1</code> pour casser le cycle.</p>
+<p>Si le node perd sa résolution DNS après un changement :</p>
+<pre><code class="language-bash">echo &quot;nameserver 1.1.1.1&quot; | sudo tee /etc/resolv.conf
+# ou relancer systemd-resolved
+sudo systemctl start systemd-resolved
+</code></pre>
+<blockquote>
+<p>La leçon se répète d'un service d'infra à l'autre : <strong>DNS, DHCP, auth réseau — ces briques doivent démarrer de façon autonome.</strong> Un résolveur qui tourne dans le cluster ne peut pas être le résolveur <em>du</em> cluster.</p>
+</blockquote>
+<hr>
+<h2>Récapitulatif : qui résout quoi</h2>
+<table>
+<thead>
+<tr>
+<th>Qui demande</th>
+<th>Résolveur utilisé</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pods K8s</td>
+<td>CoreDNS (interne)</td>
+<td>Autonome, pointe direct sur Traefik</td>
+</tr>
+<tr>
+<td>Machines du LAN</td>
+<td>Pi-hole (<code>10.0.0.101</code>)</td>
+<td>Adblock + noms internes</td>
+</tr>
+<tr>
+<td>Machines maison</td>
+<td>Pi-hole via MikroTik (<code>192.168.1.2</code>)</td>
+<td>DNAT port 53</td>
+</tr>
+<tr>
+<td><strong>Node K3s lui-même</strong></td>
+<td><strong><code>1.1.1.1</code> (externe)</strong></td>
+<td><strong>Éviter le chicken-and-egg au boot</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>DNS-over-HTTPS en upstream</strong> : configurer Pi-hole pour chiffrer ses requêtes vers l'upstream (cloudflared), au lieu du DNS en clair vers <code>1.1.1.1</code>.</li>
+<li><strong>Redondance Pi-hole</strong> : une seconde instance + <code>keepalived</code> pour que le blocage de pub survive à un crash. Attention à ne pas recréer une dépendance au cluster.</li>
+<li><strong>La dépendance circulaire RADIUS</strong> : le même raisonnement, appliqué à l'authentification réseau — sujet d'un article dédié.</li>
+<li><strong>Métriques Pi-hole</strong> : exporter les stats (requêtes bloquées, top domaines) vers Prometheus/Grafana pour visualiser ce que le réseau raconte.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

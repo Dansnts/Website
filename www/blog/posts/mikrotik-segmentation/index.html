@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Segmenter son homelab derrière un MikroTik — Dani Faria dos Santos</title>
+  <meta name="description" content="Un LAN isolé en 10.0.0.0/24, du NAT, des port forwards et un firewall qui empêche le lab de parler au réseau de la maison." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>Segmenter son homelab derrière un MikroTik</h1>
+  <div class="post-meta">
+    <span>20 février 2026</span>
+    <span>post, homelab, réseau, mikrotik, firewall</span>
+  </div>
+  <p>Brancher son homelab directement sur la box du FAI, c'est simple — jusqu'au jour où une VM compromise se retrouve sur le même réseau que ton téléphone, ta TV et l'ordi du salon. La bonne pratique, c'est d'<strong>isoler</strong> : le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.</p>
+<p>Chez moi, ce rôle est tenu par un <strong>MikroTik RB750Gr3</strong> — un petit routeur pas cher mais redoutablement complet (RouterOS). Dans ce post, on construit la segmentation complète. On va voir :</p>
+<ol>
+<li>Le WAN statique vers la box et le LAN isolé en <code>10.0.0.0/24</code></li>
+<li>Le bridge + DHCP pour les machines du lab</li>
+<li>Le NAT (sortie internet) et les DNAT (services exposés)</li>
+<li>Le firewall qui <strong>empêche le lab de joindre le réseau maison</strong></li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Un MikroTik (ici RB750Gr3, mais n'importe quel RouterOS)</li>
+<li>Une box FAI en amont (ici <code>192.168.1.1</code>)</li>
+<li>Un accès Winbox ou SSH au MikroTik</li>
+</ul>
+<hr>
+<h2>La topologie visée</h2>
+<pre><code>Internet
+   │
+Box maison (192.168.1.1)  ← réseau maison 192.168.1.0/24
+   │
+   │ ether1 (WAN, 192.168.1.2)
+MikroTik RB750Gr3
+   │ bridge ether2-5 (LAN, 10.0.0.1)
+   │
+   └── réseau homelab 10.0.0.0/24 (isolé)
+        ├── K3s node   10.0.0.20
+        ├── Traefik    10.0.0.100
+        ├── Pi-hole    10.0.0.101
+        └── WireGuard  10.0.0.102
+</code></pre>
+<p>Deux réseaux distincts : <code>192.168.1.0/24</code> (la maison) et <code>10.0.0.0/24</code> (le lab). Le MikroTik est la frontière entre les deux. Toute la config qui suit vit dans un seul fichier <code>.rsc</code> qu'on applique d'un coup.</p>
+<hr>
+<h2>Étape 1 : Le WAN statique</h2>
+<p>Le MikroTik reçoit une IP fixe côté box, plutôt que du DHCP. Ça garantit que son adresse ne change jamais — important, car la box va lui faire des port forwards vers cette IP.</p>
+<pre><code class="language-rsc"># WAN — IP statique sur ether1
+/ip dhcp-client remove [find interface=ether1]
+/ip address remove [find interface=ether1]
+/ip address add address=192.168.1.2/24 interface=ether1 comment=&quot;WAN&quot;
+/ip route remove [find dst-address=0.0.0.0/0]
+/ip route add dst-address=0.0.0.0/0 gateway=192.168.1.1 comment=&quot;default route&quot;
+</code></pre>
+<p><code>ether1</code> reçoit <code>192.168.1.2</code>, et la route par défaut pointe vers la box (<code>192.168.1.1</code>). Tout le trafic sortant du lab part par là.</p>
+<hr>
+<h2>Étape 2 : Le LAN — bridge + DHCP</h2>
+<p>Les ports <code>ether2</code> à <code>ether5</code> sont regroupés dans un <strong>bridge</strong> : ils forment un seul réseau logique, comme un switch. Le bridge porte l'IP de la gateway du lab.</p>
+<pre><code class="language-rsc"># LAN — bridge ether2-5
+/interface bridge add name=bridge
+/interface bridge port add interface=ether2 bridge=bridge
+/interface bridge port add interface=ether3 bridge=bridge
+/interface bridge port add interface=ether4 bridge=bridge
+/interface bridge port add interface=ether5 bridge=bridge
+/ip address add address=10.0.0.1/24 interface=bridge comment=&quot;homelab-lan&quot;
+</code></pre>
+<p>Puis un serveur DHCP pour les machines branchées, avec une plage réservée en haut du subnet :</p>
+<pre><code class="language-rsc">/ip pool add name=homelab-dhcp ranges=10.0.0.200-10.0.0.250
+/ip dhcp-server add name=homelab interface=bridge address-pool=homelab-dhcp \
+    disabled=no lease-time=1d
+/ip dhcp-server network add address=10.0.0.0/24 gateway=10.0.0.1 \
+    dns-server=10.0.0.101 comment=&quot;homelab&quot;
+</code></pre>
+<p>Détail volontaire : le DHCP ne distribue que <code>10.0.0.200-250</code>. Le bas du subnet (<code>.10</code> à <code>.110</code>) est réservé aux <strong>IP fixes</strong> — serveurs, MetalLB, services. On ne veut pas que le DHCP pioche dedans par accident.</p>
+<p>Le <code>dns-server=10.0.0.101</code>, c'est Pi-hole : toute machine du lab utilise Pi-hole comme résolveur (DNS + blocage pub).</p>
+<hr>
+<h2>Étape 3 : NAT (sortir) et DNAT (entrer)</h2>
+<h3>Masquerade — le lab accède à internet</h3>
+<pre><code class="language-rsc">/ip firewall nat add chain=srcnat action=masquerade out-interface=ether1 \
+    ipsec-policy=out,none comment=&quot;masquerade homelab -&gt; internet&quot;
+</code></pre>
+<p>Le <code>masquerade</code> réécrit l'adresse source des paquets sortants avec l'IP WAN du MikroTik. C'est ce qui permet à <code>10.0.0.x</code> (des IP privées) de joindre internet via la box.</p>
+<h3>DNAT — exposer des services vers l'extérieur</h3>
+<p>Pour qu'un service interne soit joignable depuis l'extérieur, on redirige un port du WAN vers l'IP interne. Exemple avec WireGuard :</p>
+<pre><code class="language-rsc">/ip firewall nat add chain=dstnat protocol=udp dst-port=51820 in-interface=ether1 \
+    action=dst-nat to-addresses=10.0.0.102 to-ports=51820 comment=&quot;DNAT WireGuard&quot;
+</code></pre>
+<p>Tout paquet UDP arrivant sur le port 51820 du WAN est redirigé vers <code>10.0.0.102</code> (WireGuard). Même principe pour TeamSpeak (ports 9987/10011/30033).</p>
+<p>Un DNAT plus subtil — laisser le <strong>réseau maison</strong> utiliser Pi-hole comme DNS :</p>
+<pre><code class="language-rsc">/ip firewall nat add chain=dstnat protocol=udp dst-port=53 \
+    src-address=192.168.1.0/24 in-interface=ether1 \
+    action=dst-nat to-addresses=10.0.0.101 to-ports=53 \
+    comment=&quot;DNAT DNS home -&gt; Pi-hole&quot;
+</code></pre>
+<p>Le <code>src-address=192.168.1.0/24</code> restreint : seules les machines de la maison peuvent taper Pi-hole via le WAN. Ça permet à la maison de profiter du blocage de pub sans être <em>dans</em> le lab.</p>
+<hr>
+<h2>Étape 4 : Le firewall — le cœur de l'isolation</h2>
+<p>C'est ici que la segmentation prend tout son sens. Un firewall RouterOS se lit du haut vers le bas, première règle qui matche gagne. On sépare deux chaînes : <code>input</code> (trafic <strong>vers</strong> le MikroTik) et <code>forward</code> (trafic qui <strong>traverse</strong> le MikroTik).</p>
+<h3>La chaîne input — protéger le routeur</h3>
+<pre><code class="language-rsc">/ip firewall filter add chain=input action=accept \
+    connection-state=established,related,untracked
+/ip firewall filter add chain=input action=drop connection-state=invalid
+/ip firewall filter add chain=input action=accept protocol=icmp
+/ip firewall filter add chain=input action=accept in-interface=bridge \
+    comment=&quot;accept LAN (cable direct)&quot;
+/ip firewall filter add chain=input action=accept protocol=udp dst-port=51820 \
+    in-interface=ether1 comment=&quot;accept WireGuard&quot;
+/ip firewall filter add chain=input action=drop in-interface=ether1 \
+    comment=&quot;drop tout le reste depuis WAN&quot;
+</code></pre>
+<p>Le schéma classique : on accepte les connexions déjà établies, on jette l'invalide, on autorise le LAN et WireGuard, puis <strong>on jette tout le reste venant du WAN</strong>. Le routeur est fermé depuis internet.</p>
+<h3>La chaîne forward — l'isolation lab / maison</h3>
+<p>La règle qui justifie tout ce montage :</p>
+<pre><code class="language-rsc">/ip firewall filter add chain=forward action=drop \
+    in-interface=bridge dst-address=192.168.1.0/24 \
+    comment=&quot;isolation: homelab ne peut pas joindre reseau maison&quot;
+</code></pre>
+<p><strong>Le lab ne peut pas parler au réseau de la maison.</strong> Une VM compromise dans le lab ne verra jamais ton NAS perso, ta TV, ton téléphone. C'est la règle centrale de la segmentation.</p>
+<p>Le reste de la chaîne autorise ce qui doit passer :</p>
+<pre><code class="language-rsc"># Fasttrack pour les perfs
+/ip firewall filter add chain=forward action=fasttrack-connection \
+    connection-state=established,related
+/ip firewall filter add chain=forward action=accept \
+    connection-state=established,related,untracked
+/ip firewall filter add chain=forward action=drop connection-state=invalid
+# (règle d'isolation ci-dessus)
+/ip firewall filter add chain=forward action=accept \
+    in-interface=bridge out-interface=ether1 comment=&quot;homelab -&gt; internet&quot;
+/ip firewall filter add chain=forward action=accept \
+    in-interface=ether1 connection-nat-state=dstnat \
+    comment=&quot;autoriser trafic DNAT (WireGuard, TeamSpeak, DNS)&quot;
+/ip firewall filter add chain=forward action=drop in-interface=ether1 \
+    comment=&quot;drop tout depuis WAN vers homelab&quot;
+</code></pre>
+<p>L'ordre est <strong>crucial</strong>. La règle d'isolation vient <strong>avant</strong> la règle « homelab → internet ». Si on les inversait, le trafic vers <code>192.168.1.0/24</code> (qui sort aussi par <code>ether1</code>) serait autorisé avant d'être bloqué. En firewall, l'ordre fait la sécurité.</p>
+<blockquote>
+<p>Le <code>connection-nat-state=dstnat</code> est malin : plutôt que de lister chaque service exposé une deuxième fois dans le forward, on autorise d'un coup tout ce qui a été redirigé par un DNAT. Une règle pour WireGuard + TeamSpeak + DNS maison.</p>
+</blockquote>
+<p>Le <code>fasttrack-connection</code> en tête accélère les connexions déjà établies en les sortant du traitement complet du firewall — un gain de perf notable sur ce petit CPU.</p>
+<hr>
+<h2>Récapitulatif du flux</h2>
+<pre><code>Maison (192.168.1.x) ──X──&gt; Lab          (bloqué par le firewall)
+Maison (192.168.1.x) ─────&gt; Pi-hole:53   (autorisé, DNAT ciblé)
+Lab (10.0.0.x)       ──X──&gt; Maison       (bloqué : règle d'isolation)
+Lab (10.0.0.x)       ─────&gt; Internet     (autorisé, masquerade)
+Internet             ─────&gt; WireGuard    (autorisé, DNAT + forward)
+Internet             ──X──&gt; Lab (reste)  (drop tout depuis WAN)
+</code></pre>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>802.1X sur les ports</strong> : le bridge accepte n'importe quelle machine branchée. On peut exiger une authentification par port (802.1X + RADIUS) pour que brancher un câble ne suffise pas à entrer sur le lab. Sujet d'un article dédié.</li>
+<li><strong>VLANs</strong> : pour aller plus loin dans la segmentation (séparer IoT, invités, serveurs), les VLANs découpent le LAN en sous-réseaux logiques sur les mêmes câbles.</li>
+<li><strong>Sauvegarder la config</strong> : <code>/export file=backup</code> génère un <code>.rsc</code> rejouable. À versionner dans Git comme le reste de l'infra.</li>
+<li><strong>Silent boot</strong> : <code>/system routerboard settings set silent-boot=yes</code> — désactive les bips au démarrage, détail mais appréciable.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

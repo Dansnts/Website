@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>De zéro à un cluster K3s single-node — Dani Faria dos Santos</title>
+  <meta name="description" content="Pourquoi K3s plutôt que Kubernetes complet, le Traefik intégré, et la chaîne Packer → Terraform → Ansible qui mène au cluster." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>De zéro à un cluster K3s single-node</h1>
+  <div class="post-meta">
+    <span>1 juin 2025</span>
+    <span>post, homelab, kubernetes, k3s</span>
+  </div>
+  <p>Kubernetes en homelab, on croit souvent qu'il faut trois nœuds, etcd, un load-balancer et un week-end entier. En réalité, pour un lab personnel, un <strong>cluster K3s single-node</strong> suffit largement — et se monte en quelques minutes si l'infra en dessous est bien posée.</p>
+<p>Dans ce post, on assemble tout ce qu'on a vu jusqu'ici (Packer, Terraform, Ansible) pour arriver à un cluster K3s fonctionnel. On va voir :</p>
+<ol>
+<li>Pourquoi K3s plutôt que Kubernetes « complet »</li>
+<li>Le Traefik intégré, offert dès l'install</li>
+<li>La chaîne Packer → Terraform → Ansible qui produit le cluster</li>
+<li>Ce qu'implique le choix « single-node »</li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Une VM Ubuntu/Debian (fournie par le template Packer + Terraform)</li>
+<li>Un réseau propre (fait par Ansible)</li>
+<li>L'envie de ne pas galérer</li>
+</ul>
+<hr>
+<h2>Pourquoi K3s ?</h2>
+<p>Kubernetes « vanilla » (kubeadm) est fait pour la prod à grande échelle : composants séparés, etcd à gérer, une empreinte mémoire conséquente. Pour un homelab, c'est surdimensionné.</p>
+<p><strong>K3s</strong> est une distribution Kubernetes certifiée, empaquetée par Rancher, pensée pour l'edge et les petits environnements :</p>
+<ul>
+<li><strong>Un seul binaire</strong> (~70 Mo) qui contient tout : API server, scheduler, controller-manager, kubelet.</li>
+<li><strong>SQLite au lieu d'etcd</strong> par défaut en single-node — un composant de moins à opérer.</li>
+<li><strong>Léger</strong> : tourne confortablement là où un cluster classique s'essoufflerait.</li>
+<li><strong>100 % compatible</strong> : c'est du vrai Kubernetes. <code>kubectl</code>, les manifests, Helm — tout fonctionne à l'identique.</li>
+</ul>
+<p>L'installation tient en une ligne, et c'est justement celle qu'on a mise dans le cloud-init Terraform :</p>
+<pre><code class="language-yaml">runcmd:
+  - curl -sfL https://get.k3s.io | sh -
+  - systemctl enable k3s
+</code></pre>
+<p>À la fin de cette commande, tu as un cluster Kubernetes qui tourne. C'est tout.</p>
+<hr>
+<h2>Le Traefik intégré : l'ingress offert</h2>
+<p>Voilà un des gros arguments de K3s : il embarque <strong>Traefik</strong> comme ingress controller par défaut. Sur un Kubernetes classique, il faudrait installer soi-même un ingress controller (nginx, Traefik…), le configurer, gérer son service. Avec K3s, il est déjà là au premier boot.</p>
+<p>Concrètement, dès que le cluster démarre :</p>
+<ul>
+<li>Traefik tourne dans le namespace <code>kube-system</code></li>
+<li>Il route le trafic HTTP/HTTPS vers les services selon les ressources <code>Ingress</code></li>
+<li>Couplé à un LoadBalancer (MetalLB dans mon cas), il expose les services sur une IP du réseau</li>
+</ul>
+<p>Résultat : pour exposer un service, on écrit un <code>Ingress</code>, et Traefik s'en occupe. Pas d'installation, pas de câblage manuel.</p>
+<blockquote>
+<p>K3s embarque aussi un LoadBalancer simpliste (ServiceLB / Klipper). En homelab avec plusieurs services à exposer sur des IPs dédiées, je lui préfère MetalLB — mais c'est un autre sujet. L'important : le socle ingress est fourni.</p>
+</blockquote>
+<hr>
+<h2>La chaîne complète : Packer → Terraform → Ansible → K3s</h2>
+<p>Le cluster n'apparaît pas par magie. Il est le résultat d'une <strong>chaîne d'outils</strong>, chacun à sa place. C'est le fil rouge de tous les articles précédents, assemblé.</p>
+<pre><code>[Packer]     construit une golden image Debian 12
+   │         (paquets, qemu-agent, cloud-init, nettoyée)
+   V
+[Terraform]  clone le template → VM K3s
+   │         injecte l'IP + le cloud-init qui installe K3s
+   V
+[cloud-init] curl -sfL https://get.k3s.io | sh -
+   │         → le cluster tourne
+   V
+[Ansible]    fige le réseau (netplan), déploie node_exporter
+   │
+   V
+Cluster K3s prêt — kubectl, ArgoCD, les services
+</code></pre>
+<p>Chaque outil fait <strong>une</strong> chose bien :</p>
+<table>
+<thead>
+<tr>
+<th>Outil</th>
+<th>Rôle</th>
+<th>Ce qu'il produit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Packer</td>
+<td>Image de base</td>
+<td>Un template clonable (VM 9000)</td>
+</tr>
+<tr>
+<td>Terraform</td>
+<td>Provisioning</td>
+<td>La VM + son cloud-init</td>
+</tr>
+<tr>
+<td>cloud-init</td>
+<td>Bootstrap</td>
+<td>K3s installé au premier boot</td>
+</tr>
+<tr>
+<td>Ansible</td>
+<td>Configuration</td>
+<td>Réseau figé, métriques, DNS</td>
+</tr>
+</tbody>
+</table>
+<p>La beauté du truc : tout est dans Git. Détruire la VM et la recréer à l'identique, c'est <code>terraform apply</code> puis deux <code>ansible-playbook</code>. Aucune étape manuelle, aucune connaissance dans ma tête.</p>
+<p>Le cloud-init installe aussi de quoi utiliser <code>kubectl</code> directement :</p>
+<pre><code class="language-yaml">runcmd:
+  - mkdir -p /home/dani/.kube
+  - cp /etc/rancher/k3s/k3s.yaml /home/dani/.kube/config
+  - chown -R dani:dani /home/dani/.kube
+</code></pre>
+<p>Il ne reste qu'à récupérer ce <code>k3s.yaml</code>, remplacer <code>127.0.0.1</code> par l'IP du node, et le merger dans son <code>~/.kube/config</code> local pour piloter le cluster à distance.</p>
+<hr>
+<h2>Le choix « single-node » : ce qu'on gagne, ce qu'on perd</h2>
+<p>Soyons honnêtes sur le compromis.</p>
+<p><strong>Ce qu'on gagne :</strong></p>
+<ul>
+<li>Simplicité maximale — un seul serveur à gérer, à sauvegarder, à comprendre.</li>
+<li>Coût et conso réduits — une seule VM (8 cœurs / 48 Go chez moi).</li>
+<li>Zéro complexité réseau inter-nœuds.</li>
+</ul>
+<p><strong>Ce qu'on perd :</strong></p>
+<ul>
+<li><strong>La haute disponibilité.</strong> Si le node tombe, tout tombe. C'est un SPOF assumé.</li>
+<li>Le scaling horizontal — pas de répartition de charge sur plusieurs machines.</li>
+<li>La tolérance aux pannes matérielles.</li>
+</ul>
+<p>Pour un homelab, c'est le bon compromis : je ne fais pas tourner un service critique pour des millions d'utilisateurs, je fais tourner mes services perso. Une panne = quelques minutes d'indispo pendant que je redémarre, pas une catastrophe.</p>
+<blockquote>
+<p>Le vrai risque du single-node n'est pas la disponibilité, c'est la <strong>perte de données</strong>. Un node qui reboote, ça revient. Un disque qui meurt avec les PVC dessus, c'est autre chose. D'où l'importance d'une stratégie de backup sérieuse (snapshots, Restic hors-machine…) — le sujet d'un prochain article.</p>
+</blockquote>
+<p>Si un jour le besoin de HA se fait sentir, K3s sait faire du multi-node : on bascule le datastore sur etcd embarqué et on ajoute des serveurs avec un token. Mais ça, ce sera quand j'en aurai vraiment besoin — pas avant.</p>
+<hr>
+<h2>Vérifier que ça tourne</h2>
+<pre><code class="language-bash"># Sur le node
+sudo k3s kubectl get nodes
+sudo k3s kubectl get pods -A
+
+# Traefik doit être là, dans kube-system
+sudo k3s kubectl get pods -n kube-system | grep traefik
+</code></pre>
+<p>Un node <code>Ready</code>, Traefik en <code>Running</code> : le socle est prêt à accueillir les services.</p>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>GitOps avec ArgoCD</strong> : plutôt que <code>kubectl apply</code> à la main, faire synchroniser le cluster sur le repo Git. La suite logique du « tout est dans Git ».</li>
+<li><strong>MetalLB</strong> : remplacer le LoadBalancer basique de K3s pour exposer proprement plusieurs services sur des IPs dédiées.</li>
+<li><strong>cert-manager</strong> : générer et renouveler automatiquement les certificats TLS (wildcard Let's Encrypt) pour tous les services.</li>
+<li><strong>Multi-node</strong> : le jour où la HA compte, ajouter des nodes avec etcd embarqué et un token d'agent.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

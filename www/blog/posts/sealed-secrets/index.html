@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Committer ses secrets dans Git sans pleurer : Sealed Secrets — Dani Faria dos Santos</title>
+  <meta name="description" content="Chiffrer ses secrets K8s en RSA-4096 pour les versionner dans Git — et le point critique que tout le monde oublie : sauvegarder la master key." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>Committer ses secrets dans Git sans pleurer : Sealed Secrets</h1>
+  <div class="post-meta">
+    <span>6 octobre 2024</span>
+    <span>post, homelab, kubernetes, sécurité, gitops, sealed-secrets</span>
+  </div>
+  <p>Le GitOps a une exigence gênante : <em>tout</em> doit être dans Git, y compris les secrets. Sauf qu'un <code>Secret</code> Kubernetes, c'est juste du base64 — pas du chiffrement. Le committer, c'est publier ses mots de passe en clair. Alors on les garde à part, et on casse le principe « tout est dans Git ».</p>
+<p><strong>Sealed Secrets</strong> (Bitnami) résout ça proprement : on chiffre le secret avec une clé publique, et seul le contrôleur dans le cluster (qui détient la clé privée) peut le déchiffrer. Le fichier chiffré est <strong>committable sans risque</strong>.</p>
+<p>Dans ce post :</p>
+<ol>
+<li>Le principe du chiffrement asymétrique appliqué aux secrets</li>
+<li>Le workflow <code>kubeseal</code></li>
+<li><strong>Le backup de la master key — le point critique</strong></li>
+<li>La rotation automatique des clés</li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Un cluster K3s</li>
+<li>Helm et <code>kubeseal</code> installés</li>
+<li>Un repo Git (le but est d'y committer les secrets scellés)</li>
+</ul>
+<hr>
+<h2>Le principe</h2>
+<p>Sealed Secrets repose sur du chiffrement asymétrique <strong>RSA-4096</strong> :</p>
+<pre><code>                  clé publique                 clé privée (master key)
+                  (partout, dans Git)          (dans le cluster UNIQUEMENT)
+                        │                              │
+   Secret clair ──chiffre──&gt; SealedSecret ──déchiffre──&gt; Secret K8s
+   (jamais commité)          (commité dans Git)          (créé dans le cluster)
+</code></pre>
+<ul>
+<li>Tu chiffres avec la <strong>clé publique</strong> (que tout le monde peut avoir).</li>
+<li>Seul le <strong>contrôleur</strong>, avec sa clé privée, peut déchiffrer.</li>
+<li>Le <code>SealedSecret</code> chiffré peut vivre dans Git : sans la clé privée, il est inutile.</li>
+</ul>
+<p>Le contrôleur s'installe avec Helm, dans <code>kube-system</code> :</p>
+<pre><code class="language-bash">helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
+helm install sealed-secrets sealed-secrets/sealed-secrets \
+  --namespace kube-system \
+  --version 2.18.5 \
+  --values k8s/sealed-secrets/values.yaml
+</code></pre>
+<hr>
+<h2>Le workflow kubeseal</h2>
+<p>Trois étapes, dont une seule produit un fichier committable :</p>
+<pre><code class="language-bash"># 1. Créer le secret en clair (fichier temporaire, ne JAMAIS committer)
+kubectl create secret generic mon-secret \
+  --namespace homelab \
+  --from-literal=MA_CLE=ma_valeur \
+  --dry-run=client -o yaml &gt; secret.yaml
+
+# 2. Sceller avec la clé publique du contrôleur
+kubeseal --format yaml &lt; secret.yaml &gt; sealedsecret.yaml
+
+# 3. Supprimer le clair, committer le scellé
+rm secret.yaml
+git add sealedsecret.yaml
+</code></pre>
+<p>Le résultat ressemble à ça — de l'illisible, safe à committer :</p>
+<pre><code class="language-yaml">apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: vaultwarden-secret
+  namespace: homelab
+spec:
+  encryptedData:
+    ADMIN_TOKEN: AgAaH8JedXCLhSvYxUsOBUJmuhzOKxhX...   # tronqué
+  template:
+    metadata:
+      name: vaultwarden-secret
+      namespace: homelab
+    type: Opaque
+</code></pre>
+<p>Une fois committé et synchronisé (par ArgoCD ou <code>kubectl apply</code>), le contrôleur détecte le <code>SealedSecret</code>, le déchiffre, et crée le <code>Secret</code> K8s classique que tes pods consomment normalement.</p>
+<blockquote>
+<p>Détail important : un <code>SealedSecret</code> est <strong>lié à son namespace et à son nom</strong>. On ne peut pas le déplacer ou le renommer sans le re-sceller. C'est une protection : ça empêche de réutiliser un secret chiffré ailleurs pour extraire sa valeur.</p>
+</blockquote>
+<hr>
+<h2>LE point critique : sauvegarder la master key</h2>
+<p>Voici ce que tout le monde néglige, et qui transforme un incident mineur en catastrophe.</p>
+<p><strong>La clé privée (master key) vit dans le cluster.</strong> Si tu perds le cluster (disque mort, réinstallation, node détruit), tu perds la clé. Et sans la clé, <strong>tous tes <code>SealedSecret</code> deviennent définitivement indéchiffrables</strong>. Tu as tes secrets chiffrés dans Git, mais plus aucun moyen de les ouvrir.</p>
+<p>La master key doit donc être <strong>exportée et sauvegardée hors du cluster</strong> :</p>
+<pre><code class="language-bash">kubectl get secret -n kube-system \
+  -l sealedsecrets.bitnami.com/sealed-secrets-key \
+  -o yaml &gt; sealed-secrets-master-key.yaml
+</code></pre>
+<p>Où la stocker ? <strong>Surtout pas dans Git</strong> (ce serait rendre tout le chiffrement inutile). Chez moi, elle est dans Vaultwarden.</p>
+<blockquote>
+<p><strong>Attention à la boucle</strong> : chez moi la master key est dans Vaultwarden, mais le secret de Vaultwarden (<code>ADMIN_TOKEN</code>) est lui-même un SealedSecret... déchiffré par cette master key. Dépendance circulaire classique. Il faut une copie de la master key <strong>vraiment hors ligne</strong> (gestionnaire de mots de passe externe, coffre physique) pour pouvoir tout reconstruire depuis zéro.</p>
+</blockquote>
+<p>Restaurer, c'est simplement ré-appliquer la clé <strong>avant</strong> de réinstaller le contrôleur :</p>
+<pre><code class="language-bash">kubectl apply -f sealed-secrets-master-key.yaml
+# puis (ré)installer le contrôleur : il réutilise cette clé
+</code></pre>
+<hr>
+<h2>La rotation automatique des clés</h2>
+<p>Par sécurité, le contrôleur génère une nouvelle clé périodiquement (les anciennes restent pour déchiffrer les vieux secrets). C'est configuré dans les values Helm :</p>
+<pre><code class="language-yaml"># k8s/sealed-secrets/values.yaml
+keyrenewperiod: &quot;720h&quot;   # 30 jours
+</code></pre>
+<p><code>keyrenewperiod: &quot;720h&quot;</code> : une nouvelle clé tous les 30 jours. Les <code>SealedSecret</code> déjà en place continuent de marcher (le contrôleur garde l'historique des clés), mais les nouveaux sont chiffrés avec la clé la plus récente.</p>
+<blockquote>
+<p>Conséquence pratique : <strong>après chaque rotation, ré-exporter la master key</strong> (qui contient maintenant plusieurs clés). Un backup daté d'il y a 6 mois pourrait ne pas contenir les clés récentes. À automatiser ou à mettre dans sa routine.</p>
+</blockquote>
+<hr>
+<h2>Récapitulatif</h2>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Où il vit</th>
+<th>Committable ?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Secret en clair</td>
+<td>Fichier temporaire local</td>
+<td>❌ jamais</td>
+</tr>
+<tr>
+<td>SealedSecret (chiffré)</td>
+<td>Git</td>
+<td>✅ oui</td>
+</tr>
+<tr>
+<td>Clé publique</td>
+<td>Partout</td>
+<td>✅ oui</td>
+</tr>
+<tr>
+<td>Master key (privée)</td>
+<td>Cluster + backup hors ligne</td>
+<td>❌ jamais dans Git</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>Rotation des secrets applicatifs</strong> : Sealed Secrets chiffre, mais ne fait pas tourner les mots de passe eux-mêmes. Pour ça, on regarde du côté d'External Secrets + un vrai vault.</li>
+<li><strong>External Secrets Operator</strong> : l'alternative qui va chercher les secrets dans un backend externe (Vault, cloud) au lieu de les stocker chiffrés dans Git.</li>
+<li><strong>Sauvegarde automatisée de la master key</strong> : un CronJob qui exporte la clé vers un stockage chiffré hors cluster après chaque rotation.</li>
+<li><strong>La dépendance circulaire</strong> : master key dans Vaultwarden, secret Vaultwarden scellé par la master key — un thème récurrent du homelab que j'aborde ailleurs.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>
