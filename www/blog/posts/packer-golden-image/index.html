@@ -83,6 +83,35 @@
     }
     .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
     .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+    .blog-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      overflow-x: auto;
+      display: block;
+    }
+    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
+    .blog-body th {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 0.55rem 1rem;
+      text-align: left;
+    }
+    .blog-body td {
+      padding: 0.6rem 1rem;
+      color: var(--subtle);
+      font-weight: 300;
+      line-height: 1.6;
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-body tr:last-child td { border-bottom: none; }
+    .blog-body tbody tr:hover td { background: var(--surface); }
 
     /* ── Code blocks ── */
     .blog-body pre {
