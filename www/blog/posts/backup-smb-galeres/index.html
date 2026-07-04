@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Les galères du backup sur montage SMB — Dani Faria dos Santos</title>
+  <meta name="description" content="Inodes qui bougent, fichiers Pokémon avec des ♀♂ dans le nom, node_modules à l&#39;infini — le journal de bord d&#39;un backup qui marche vraiment." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>Les galères du backup sur montage SMB</h1>
+  <div class="post-meta">
+    <span>21 avril 2025</span>
+    <span>post, homelab, backup, smb, restic, rclone</span>
+  </div>
+  <p>Sur le papier, sauvegarder un partage réseau c'est trivial : on pointe l'outil de backup sur le montage, et hop. En pratique, un montage <strong>SMB</strong> réserve des surprises que le stockage local n'a pas : des inodes instables, des noms de fichiers exotiques qui font planter le mount, et des dossiers énormes et inutiles qui gonflent tout.</p>
+<p>Cet article est un journal de bord : les vraies galères rencontrées en sauvegardant mon NAS SMB, et comment je les ai réglées. Pas de théorie, du vécu.</p>
+<h2>Prérequis</h2>
+<ul>
+<li>Un partage SMB monté (voir l'article sur le CSI driver SMB)</li>
+<li>Un outil de backup (ici Restic et rclone)</li>
+</ul>
+<hr>
+<h2>Galère n°1 : les inodes qui bougent</h2>
+<p>Restic (comme beaucoup d'outils) utilise l'<strong>inode</strong> d'un fichier pour détecter s'il a changé. Sur un système de fichiers local, l'inode est stable : même fichier = même inode.</p>
+<p>Sur un <strong>montage SMB</strong>, ce n'est pas garanti. Le protocole ne fournit pas d'inodes stables — ils peuvent changer d'un montage à l'autre, ou entre deux accès. Conséquence : Restic croit que <em>tous</em> les fichiers ont changé à chaque run, re-scanne tout, et perd les bénéfices de l'incrémental.</p>
+<p><strong>La solution</strong> — dire à Restic d'ignorer l'inode :</p>
+<pre><code class="language-bash">restic backup /mnt/data/Backup /mnt/dump \
+  --tag auto --verbose \
+  --ignore-inode \
+  --exclude '/mnt/data/Backup/Games/Pok*'
+</code></pre>
+<p><code>--ignore-inode</code> : Restic se base alors sur le chemin + la taille + la date de modification pour détecter les changements, au lieu de l'inode. L'incrémental redevient fiable sur SMB.</p>
+<blockquote>
+<p>C'est le genre de piège qui ne casse rien visiblement : le backup « marche », il est juste lent et transfère trop. On ne le remarque qu'en regardant les stats. Sur SMB, <code>--ignore-inode</code> devrait être un réflexe.</p>
+</blockquote>
+<hr>
+<h2>Galère n°2 : les fichiers Pokémon (oui, vraiment)</h2>
+<p>Celle-là est ma préférée. Des fichiers de jeu Pokémon dont le nom contient des caractères Unicode — les symboles de genre <strong>♀ et ♂</strong>. Sur un montage SMB, l'encodage de ces caractères est mal géré : le mount les traduit mal, et l'accès à ces fichiers provoque des <strong>erreurs d'I/O</strong> qui font échouer le backup entier.</p>
+<p>Un seul fichier au nom exotique, et tout le run se plante. Après avoir perdu du temps à comprendre pourquoi le backup échouait « sans raison », le coupable était là.</p>
+<p><strong>La solution</strong> — exclure ces fichiers :</p>
+<pre><code class="language-bash">--exclude '/mnt/data/Backup/Games/Pok*'
+</code></pre>
+<p><code>--exclude 'Pok*'</code> : on saute les fichiers problématiques. Ils ne sont pas critiques (des données de jeu), donc les exclure est acceptable. L'alternative propre serait de corriger l'encodage du mount SMB (<code>iocharset=utf8</code>), mais parfois exclure est plus pragmatique.</p>
+<blockquote>
+<p>Leçon : <strong>les caractères Unicode dans les noms de fichiers + SMB = source de bugs vicieux.</strong> Symboles de genre, emoji, accents exotiques... Sur un partage réseau, ça peut casser l'accès. Quand un backup échoue « sans raison », suspecter un nom de fichier bizarre.</p>
+</blockquote>
+<hr>
+<h2>Galère n°3 : les dossiers qui gonflent tout (rclone)</h2>
+<p>Mon autre backup (vers Google Drive via rclone) synchronise des dossiers de cours et de projets. Problème : ces dossiers contiennent des trucs qu'on ne veut <strong>jamais</strong> sauvegarder — des <code>node_modules</code> de plusieurs Go, des dépôts <code>.git</code>, des environnements virtuels Python.</p>
+<p>Sauvegarder ça, c'est transférer des milliers de petits fichiers régénérables, faire exploser la durée du backup et le quota du Drive.</p>
+<p><strong>La solution</strong> — des exclusions ciblées dans le <code>rclone sync</code> :</p>
+<pre><code class="language-bash">rclone sync &quot;$src&quot; &quot;${REMOTE}:${DEST_BASE}/${dir_name}&quot; \
+  --transfers 4 --checkers 8 \
+  --local-encoding None \
+  --exclude &quot;.git/**&quot; \
+  --exclude &quot;**/.env/**&quot; \
+  --exclude &quot;**/node_modules/**&quot; \
+  --exclude &quot;**/ModuleOutput/**&quot; \
+  --exclude &quot;**:Zone.Identifier&quot;
+</code></pre>
+<p>Ce qu'on exclut et pourquoi :</p>
+<p><code>.git/**</code> : les objets git binaires — régénérables via <code>git clone</code>, inutiles en backup.</p>
+<p><code>**/node_modules/**</code> : les dépendances JS — un <code>npm install</code> les recrée. Des Go de fichiers pour rien.</p>
+<p><code>**/.env/**</code> : les virtualenvs Python — pareil, régénérables.</p>
+<p><code>**/ModuleOutput/**</code> : chez moi, des données extraites par Autopsy (forensics) — volumineuses et reproductibles.</p>
+<p><code>--local-encoding None</code> : justement lié à la galère n°2 — évite que rclone ré-encode les noms de fichiers et bute sur les caractères exotiques.</p>
+<p><code>**:Zone.Identifier</code> : les fichiers parasites de Windows (marque « fichier téléchargé d'internet »).</p>
+<blockquote>
+<p>Règle de sauvegarde : <strong>on ne sauvegarde que ce qui n'est pas régénérable.</strong> Le code source, oui. Ses dépendances installables en une commande, non. Bien exclure, c'est diviser la taille et la durée du backup par dix.</p>
+</blockquote>
+<hr>
+<h2>Récapitulatif des pièges SMB / backup</h2>
+<table>
+<thead>
+<tr>
+<th>Galère</th>
+<th>Symptôme</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inodes instables</td>
+<td>Backup lent, re-scan complet à chaque run</td>
+<td><code>--ignore-inode</code> (Restic)</td>
+</tr>
+<tr>
+<td>Noms Unicode (♀♂)</td>
+<td>Erreur I/O, backup qui plante</td>
+<td><code>--exclude</code> le fichier + <code>iocharset=utf8</code></td>
+</tr>
+<tr>
+<td>node_modules / .git</td>
+<td>Durée et quota qui explosent</td>
+<td><code>--exclude</code> les dossiers régénérables</td>
+</tr>
+<tr>
+<td>Fichiers Windows</td>
+<td>Parasites <code>Zone.Identifier</code></td>
+<td><code>--exclude &quot;**:Zone.Identifier&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>Corriger l'encodage à la source</strong> : monter le partage SMB avec <code>iocharset=utf8</code> pour régler les problèmes de noms Unicode proprement, plutôt que d'exclure.</li>
+<li><strong>Un <code>.backupignore</code></strong> : centraliser les exclusions dans un fichier versionné plutôt qu'en dur dans les commandes.</li>
+<li><strong>Vérifier ce qui est réellement sauvegardé</strong> : <code>restic ls latest</code> ou un dry-run rclone pour confirmer que les exclusions font bien leur travail.</li>
+<li><strong>Le montage SMB lui-même</strong> : ces galères viennent du CSI driver SMB — voir l'article sur le montage des partages TrueNAS dans Kubernetes.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

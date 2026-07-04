@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sécuriser ses ports Ethernet avec 802.1X, FreeRADIUS et Keycloak — Dani Faria dos Santos</title>
+  <meta name="description" content="Brancher un câble ne devrait pas suffire à entrer sur le réseau. EAP-TTLS, MAB, et une auth qui remonte jusqu&#39;à Keycloak via ROPC." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>Sécuriser ses ports Ethernet avec 802.1X, FreeRADIUS et Keycloak</h1>
+  <div class="post-meta">
+    <span>20 août 2025</span>
+    <span>post, homelab, réseau, 802.1x, radius, keycloak, sécurité</span>
+  </div>
+  <p>Le firewall protège le lab depuis internet. Mais à l'intérieur, brancher un câble sur un port du switch suffit à obtenir une IP et l'accès réseau. Pour un lab sérieux, c'est une faille : n'importe qui avec un accès physique entre.</p>
+<p>La réponse, c'est <strong>802.1X</strong> — l'authentification au niveau du port. Le switch ne laisse rien passer tant que la machine (ou l'utilisateur) ne s'est pas authentifiée. C'est le standard en entreprise, et on peut le faire chez soi.</p>
+<p>C'est l'article le plus dense du blog, parce que le sujet est peu documenté hors contexte pro. On va monter la chaîne complète :</p>
+<ol>
+<li>Le principe de 802.1X et des trois acteurs</li>
+<li><strong>FreeRADIUS</strong> dans Kubernetes comme serveur d'authentification</li>
+<li><strong>EAP-TTLS/PAP</strong> vers <strong>Keycloak</strong> (grant ROPC) pour l'auth utilisateur</li>
+<li><strong>MAB</strong> (auth par MAC) pour les machines qui ne parlent pas 802.1X</li>
+<li>Le profil macOS qui force le bon mode</li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Un switch qui parle 802.1X (ici MikroTik RB750Gr3)</li>
+<li>Un cluster Kubernetes pour héberger FreeRADIUS</li>
+<li>Keycloak déjà en place (realm <code>homelab</code>)</li>
+<li>Un certificat TLS (ici le wildcard <code>*.fariadossantos.com</code>)</li>
+</ul>
+<hr>
+<h2>802.1X : les trois acteurs</h2>
+<pre><code>[Supplicant]        [Authenticator]        [Authentication Server]
+  le client    ───&gt;   le switch MikroTik  ───&gt;   FreeRADIUS ───&gt; Keycloak
+  (ton laptop)        (bloque le port)           (dit oui/non)
+</code></pre>
+<ul>
+<li><strong>Supplicant</strong> : la machine qui veut se connecter. Elle présente une identité.</li>
+<li><strong>Authenticator</strong> : le switch. Il garde le port fermé et relaie la demande au serveur RADIUS. Il n'ouvre le port que sur un « oui ».</li>
+<li><strong>Authentication Server</strong> : FreeRADIUS. Il décide, ici en déléguant à Keycloak.</li>
+</ul>
+<p>Le port reste dans un état « non autorisé » (seul le trafic EAP passe) jusqu'à validation. C'est ça, la sécurité par port.</p>
+<hr>
+<h2>Étape 1 : Déclarer le serveur RADIUS sur le MikroTik</h2>
+<p>Côté switch, deux choses : pointer vers FreeRADIUS, et définir quels ports font quoi.</p>
+<pre><code class="language-rsc"># RADIUS server
+/radius add \
+    address=10.0.0.20 \
+    secret=ab6cfbd227403f4eab887c64179404e2...c8d631eca \
+    service=dot1x \
+    timeout=3s \
+    comment=&quot;FreeRADIUS homelab&quot;
+
+# ether3-5 — clients 802.1X EAP-TTLS
+/interface dot1x server add interface=ether3 auth-types=dot1x comment=&quot;client 802.1X&quot;
+/interface dot1x server add interface=ether4 auth-types=dot1x comment=&quot;client 802.1X&quot;
+/interface dot1x server add interface=ether5 auth-types=dot1x comment=&quot;client 802.1X&quot;
+</code></pre>
+<p>Le <code>secret</code> est le <strong>secret partagé</strong> entre le switch et FreeRADIUS : ils s'authentifient mutuellement avec (32 octets en hex). Les ports <code>ether3-5</code> exigent désormais du 802.1X.</p>
+<p><code>timeout=3s</code> : si FreeRADIUS ne répond pas en 3 secondes, le switch considère l'échec. Ce paramètre a des conséquences qu'on verra dans l'article sur la dépendance circulaire.</p>
+<hr>
+<h2>Étape 2 : FreeRADIUS dans Kubernetes</h2>
+<p>FreeRADIUS tourne comme un Deployment, avec deux particularités réseau importantes :</p>
+<pre><code class="language-yaml">spec:
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  containers:
+    - name: freeradius
+      image: freeradius/freeradius-server:3.2.8
+      ports:
+        - containerPort: 1812
+          protocol: UDP
+          name: radius-auth
+</code></pre>
+<p><code>hostNetwork: true</code> : le pod partage la stack réseau du node. Le MikroTik envoie ses requêtes RADIUS à <code>10.0.0.20</code> (l'IP du node), pas à une IP de service cluster. Sans <code>hostNetwork</code>, le switch ne saurait pas où taper.</p>
+<p>Les secrets (<code>RADIUS_SECRET</code>, <code>KEYCLOAK_CLIENT_SECRET</code>) sont injectés via des variables d'env, et un <code>entrypoint.sh</code> les substitue dans les fichiers de config au démarrage :</p>
+<pre><code class="language-bash">sed &quot;s|@@RADIUS_SECRET@@|${RADIUS_SECRET}|g&quot; \
+    /templates/clients.conf &gt; /etc/freeradius/clients.conf
+</code></pre>
+<p>Les clients autorisés à interroger FreeRADIUS sont déclarés dans <code>clients.conf</code> — le MikroTik, et le subnet des pods au cas où :</p>
+<pre><code>client homelab-lan {
+    ipaddr                        = 10.0.0.0/24
+    secret                        = @@RADIUS_SECRET@@
+    require_message_authenticator = true
+    shortname                     = mikrotik
+}
+</code></pre>
+<p><code>require_message_authenticator = true</code> durcit contre les requêtes forgées — bonne pratique RADIUS.</p>
+<hr>
+<h2>Étape 3 : L'auth EAP-TTLS/PAP → Keycloak</h2>
+<p>Voilà le cœur intellectuel du montage. On veut que les utilisateurs se connectent avec leur <strong>login/mot de passe Keycloak</strong> — pas un mot de passe local dupliqué. Le défi : faire remonter un mot de passe jusqu'à Keycloak, de façon sécurisée.</p>
+<h3>La structure en tunnel</h3>
+<p>EAP-TTLS crée un <strong>tunnel TLS chiffré</strong> entre le client et FreeRADIUS, puis fait passer l'authentification <em>à l'intérieur</em> de ce tunnel :</p>
+<pre><code>Client ══ tunnel TLS (EAP-TTLS) ══&gt; FreeRADIUS
+              └── à l'intérieur : PAP (login + mot de passe en clair, mais chiffré par le tunnel)
+</code></pre>
+<ul>
+<li><strong>Outer (extérieur)</strong> : EAP-TTLS, sécurisé par le certificat wildcard. C'est ce que le réseau voit — du chiffré.</li>
+<li><strong>Inner (intérieur)</strong> : PAP. Le mot de passe circule « en clair », mais <strong>dans</strong> le tunnel TLS, donc protégé.</li>
+</ul>
+<p>Pourquoi PAP en inner ? Parce qu'on a besoin du mot de passe en clair côté FreeRADIUS pour le rejouer vers Keycloak. Les méthodes qui hachent (MSCHAPv2…) rendraient ça impossible.</p>
+<h3>La config EAP</h3>
+<pre><code>eap {
+    default_eap_type = ttls
+    ttls {
+        tls            = tls-common
+        virtual_server = &quot;inner-tunnel&quot;
+    }
+    tls-config tls-common {
+        private_key_file = /etc/freeradius/certs/tls.key
+        certificate_file = /etc/freeradius/certs/tls.crt
+        tls_min_version  = &quot;1.2&quot;
+    }
+}
+</code></pre>
+<p>Le tunnel utilise le <strong>wildcard <code>*.fariadossantos.com</code></strong> — le même cert que les services web. Le client vérifie qu'il parle bien au bon serveur.</p>
+<h3>Le relais vers Keycloak (ROPC)</h3>
+<p>Une fois dans le tunnel, l'<code>inner-tunnel</code> délègue à un module <code>rest</code> qui appelle Keycloak avec le <strong>Resource Owner Password Credentials grant</strong> (<code>grant_type=password</code>) :</p>
+<pre><code>rest {
+    connect_uri = &quot;https://auth.fariadossantos.com&quot;
+    authenticate {
+        uri    = &quot;${..connect_uri}/realms/homelab/protocol/openid-connect/token&quot;
+        method = 'post'
+        data   = &quot;grant_type=password&amp;client_id=freeradius&amp;client_secret=@@KEYCLOAK_CLIENT_SECRET@@&amp;username=%{User-Name}&amp;password=%{User-Password}&quot;
+        expect_codes = 200
+    }
+}
+</code></pre>
+<p>FreeRADIUS prend le <code>User-Name</code> et le <code>User-Password</code> reçus dans le tunnel, et les POST vers l'endpoint token de Keycloak. Si Keycloak renvoie <strong>200</strong> (token valide), l'utilisateur est authentifié et le port s'ouvre. Sinon, rejet.</p>
+<blockquote>
+<p>Le ROPC (<code>grant_type=password</code>) est un flow OAuth déprécié pour les apps web (on préfère le code flow). Mais pour un pont RADIUS↔Keycloak, c'est exactement ce qu'il faut : c'est le seul grant qui accepte directement un login/mdp. Un client dédié <code>freeradius</code> est créé dans le realm, avec ROPC activé.</p>
+</blockquote>
+<p>Le chaînage complet, en une image :</p>
+<pre><code>laptop ──EAP-TTLS──&gt; MikroTik ──RADIUS──&gt; FreeRADIUS ──HTTPS POST──&gt; Keycloak
+  login/mdp            (relais)             (dé-tunnel)    ROPC        (valide)
+                                                                          │
+                    port ouvert  &lt;──── Access-Accept  &lt;──── 200 OK ──────┘
+</code></pre>
+<hr>
+<h2>Étape 4 : MAB pour les machines muettes</h2>
+<p>Toutes les machines ne savent pas faire du 802.1X (imprimantes, certains serveurs, IoT). Pour elles, on utilise le <strong>MAB</strong> (MAC Authentication Bypass) : l'auth se fait par adresse MAC.</p>
+<p>Dans FreeRADIUS, on gère ça avec un fichier de MAC autorisées et une branche dans le <code>authorize</code> :</p>
+<pre><code>authorize {
+    if (&amp;Service-Type == &quot;Call-Check&quot;) {   # c'est du MAB
+        if (authorized_macs == notfound) {
+            reject
+        }
+        update control {
+            Auth-Type := Accept
+        }
+    }
+    else {
+        eap { ok = return }                 # c'est du 802.1X
+    }
+}
+</code></pre>
+<p>Le fichier des MAC autorisées :</p>
+<pre><code># MAC du serveur K8s (ether2 du MikroTik)
+fc9d0563b3bf   Auth-Type := Accept
+</code></pre>
+<blockquote>
+<p>Le MAB est <strong>moins sûr</strong> que 802.1X (une MAC se spoofe). On le réserve aux machines qui ne peuvent pas faire mieux, et idéalement sur des ports/segments dédiés. Ici, le node K8s est en MAB sur <code>ether2</code> — et ce choix a une raison précise liée à une dépendance circulaire (voir l'article dédié).</p>
+</blockquote>
+<hr>
+<h2>Étape 5 : Le piège macOS</h2>
+<p>Dernier obstacle, et pas des moindres : <strong>macOS, par défaut, refuse de faire du EAP-TTLS/PAP</strong>. Il tente un inner EAP (MSCHAPv2…), qui échoue contre notre config PAP. L'authentification plante sans raison évidente.</p>
+<p>La solution : un <strong>profil de configuration</strong> (<code>.mobileconfig</code>) qui force explicitement EAP-TTLS avec inner PAP :</p>
+<pre><code class="language-xml">&lt;key&gt;EAPClientConfiguration&lt;/key&gt;
+&lt;dict&gt;
+    &lt;key&gt;AcceptEAPTypes&lt;/key&gt;
+    &lt;array&gt;
+        &lt;integer&gt;21&lt;/integer&gt;   &lt;!-- 21 = EAP-TTLS --&gt;
+    &lt;/array&gt;
+    &lt;key&gt;TTLSInnerAuthentication&lt;/key&gt;
+    &lt;string&gt;PAP&lt;/string&gt;
+&lt;/dict&gt;
+</code></pre>
+<p><code>AcceptEAPTypes = [21]</code> : n'accepter que EAP-TTLS. <code>TTLSInnerAuthentication = PAP</code> : forcer PAP en inner. On installe ce profil (double-clic + <em>Réglages Système → Profils</em>), et macOS demande alors login/mdp au branchement du câble.</p>
+<blockquote>
+<p>Sans ce profil, l'utilisateur voit juste « échec d'authentification » sans comprendre pourquoi. C'est le genre de détail qui coûte une soirée entière quand on ne le connaît pas.</p>
+</blockquote>
+<hr>
+<h2>Tester la chaîne</h2>
+<p>Depuis le node K8s, avec <code>radtest</code>, sans même brancher un câble :</p>
+<pre><code class="language-bash">radtest dani &lt;mot_de_passe_keycloak&gt; 127.0.0.1 0 &lt;RADIUS_SECRET&gt;
+</code></pre>
+<p>Un <code>Access-Accept</code> en retour = toute la chaîne fonctionne (RADIUS → EAP → Keycloak). Un <code>Access-Reject</code> = un maillon casse, on remonte les logs FreeRADIUS (lancé avec <code>-x</code> pour le mode verbeux).</p>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>La dépendance circulaire</strong> : mettre le node K8s (qui héberge FreeRADIUS) derrière un port 802.1X crée un deadlock potentiel. C'est un piège si sérieux qu'il mérite son propre article.</li>
+<li><strong>VLAN dynamique</strong> : RADIUS peut renvoyer un VLAN dans sa réponse — assigner automatiquement un client à un sous-réseau selon son identité.</li>
+<li><strong>Accounting</strong> : les ports <code>1813</code> (acct) permettent de logguer qui s'est connecté, quand, combien de temps.</li>
+<li><strong>CoA (Change of Authorization)</strong> : révoquer une session active sans attendre la reconnexion.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

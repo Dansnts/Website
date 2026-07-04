@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backup zero-knowledge avec Restic — Dani Faria dos Santos</title>
+  <meta name="description" content="Chiffrement côté client, déduplication, et un repo S3 où même l&#39;hébergeur ne peut rien lire. Le tout piloté par un CronJob Kubernetes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>Backup zero-knowledge avec Restic</h1>
+  <div class="post-meta">
+    <span>10 septembre 2025</span>
+    <span>post, homelab, backup, restic, kubernetes, chiffrement</span>
+  </div>
+  <p>Sauvegarder ses données hors site, c'est indispensable. Mais confier ses fichiers à un hébergeur cloud, c'est aussi lui confier leur contenu — sauf si on chiffre <strong>avant</strong> l'envoi. C'est le principe du <em>zero-knowledge</em> : l'hébergeur stocke des blobs opaques qu'il ne peut pas lire. Même sous contrainte légale, il n'a rien à donner.</p>
+<p><strong>Restic</strong> fait exactement ça : chunking, déduplication, compression et chiffrement AES-256, le tout côté client. Dans ce post, on monte un backup Restic vers du S3, piloté par un CronJob Kubernetes :</p>
+<ol>
+<li>Le fonctionnement zero-knowledge de Restic</li>
+<li>Le CronJob et son cycle backup / forget / check</li>
+<li>La politique de rétention</li>
+<li>Les options spécifiques au montage SMB</li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Un repo de stockage (S3, ici Infomaniak Swiss Backup)</li>
+<li>Des données à sauvegarder (montées dans le pod)</li>
+<li>Un cluster K8s pour le CronJob</li>
+</ul>
+<hr>
+<h2>Le zero-knowledge, concrètement</h2>
+<p>Restic ne se contente pas de « chiffrer un tar ». Il découpe intelligemment les fichiers :</p>
+<pre><code>Fichiers ──&gt; découpage en blobs (content-defined chunking)
+                     │
+                     ├─&gt; déduplication (blobs identiques stockés une fois)
+                     ├─&gt; compression
+                     └─&gt; chiffrement AES-256 (côté client)
+                              │
+                              V
+                     S3 : que des blobs opaques identifiés par hash
+</code></pre>
+<ul>
+<li><strong>Chunking à taille variable</strong> : un fichier est découpé en morceaux selon son contenu. Modifier 1 Ko dans un gros fichier ne réécrit que le chunk concerné.</li>
+<li><strong>Déduplication</strong> : deux fichiers identiques (ou deux versions proches) partagent leurs blobs. Énorme gain d'espace.</li>
+<li><strong>Chiffrement local</strong> : tout est chiffré <strong>avant</strong> l'upload avec un mot de passe qui ne quitte jamais la machine. Le S3 ne contient que du hash illisible.</li>
+</ul>
+<p>Résultat : Infomaniak (l'hébergeur) ne voit rien. C'est du vrai zero-knowledge.</p>
+<hr>
+<h2>Le CronJob : backup, forget, check</h2>
+<p>Le backup tourne chaque nuit à 2h. Le conteneur Restic enchaîne trois opérations dans un ordre précis :</p>
+<pre><code class="language-yaml">apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restic-backup
+  namespace: homelab
+spec:
+  schedule: &quot;0 2 * * *&quot;
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: restic
+              image: restic/restic:0.17.3
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+
+                  # Init du repo seulement s'il n'existe pas
+                  restic snapshots &gt; /dev/null 2&gt;&amp;1 || restic init
+
+                  # 1. Backup incrémental
+                  restic backup /mnt/data/Backup /mnt/dump \
+                    --tag auto --verbose \
+                    --ignore-inode \
+                    --exclude '/mnt/data/Backup/Games/Pok*'
+
+                  # 2. Rétention + prune
+                  restic forget \
+                    --keep-daily 7 --keep-weekly 4 \
+                    --keep-monthly 6 --keep-yearly 2 \
+                    --prune --tag auto
+
+                  # 3. Vérification d'intégrité
+                  restic check
+              envFrom:
+                - secretRef:
+                    name: restic-credentials
+</code></pre>
+<p>Les trois étapes, et pourquoi cet ordre :</p>
+<p><code>restic backup</code> : crée un <strong>snapshot incrémental</strong>. Grâce à la déduplication, seuls les blobs nouveaux sont uploadés — un backup quotidien ne transfère que le delta.</p>
+<p><code>restic forget --prune</code> : applique la politique de rétention <strong>puis</strong> libère réellement l'espace S3 (<code>--prune</code> supprime les blobs qui ne sont plus référencés par aucun snapshot).</p>
+<p><code>restic check</code> : vérifie l'intégrité structurelle du repo (index + packs). Un backup qu'on ne vérifie jamais est un backup qu'on <em>espère</em> avoir.</p>
+<p><code>concurrencyPolicy: Forbid</code> : si un backup dure plus de 24h (peu probable mais possible au premier run), on n'en lance pas un deuxième par-dessus.</p>
+<p><code>restic snapshots || restic init</code> : idempotence — on n'initialise le repo que la première fois, sans erreur les fois suivantes.</p>
+<p><code>envFrom secretRef</code> : toutes les variables sensibles (<code>RESTIC_REPOSITORY</code>, <code>RESTIC_PASSWORD</code>, clés S3) viennent d'un Secret scellé.</p>
+<hr>
+<h2>La politique de rétention</h2>
+<p>C'est le cœur d'une stratégie de backup : garder assez d'historique sans exploser le stockage.</p>
+<pre><code>--keep-daily   7    → 7 sauvegardes quotidiennes  (la dernière semaine)
+--keep-weekly  4    → 4 sauvegardes hebdomadaires (le dernier mois)
+--keep-monthly 6    → 6 sauvegardes mensuelles    (le dernier semestre)
+--keep-yearly  2    → 2 sauvegardes annuelles     (les 2 dernières années)
+</code></pre>
+<p>Cette rétention « en escalier » (<em>grandfather-father-son</em>) donne une granularité fine sur le récent et grossière sur l'ancien. Tu peux restaurer un fichier tel qu'il était hier, la semaine dernière, ou il y a un an — sans stocker 730 snapshots quotidiens.</p>
+<blockquote>
+<p><code>--prune</code> est ce qui rend la rétention réelle. Sans lui, <code>forget</code> retire juste les snapshots de l'index, mais les blobs restent et l'espace n'est jamais récupéré. Avec, l'espace S3 reste borné dans le temps.</p>
+</blockquote>
+<hr>
+<h2>L'avertissement à graver</h2>
+<p>Une seule chose peut rendre tout ce système inutile :</p>
+<blockquote>
+<p><strong>Sans le <code>RESTIC_PASSWORD</code>, les données sont définitivement inaccessibles.</strong> C'est la contrepartie du zero-knowledge : personne — pas même toi — ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé <strong>hors de la machine</strong> (gestionnaire de mots de passe, coffre physique). Le perdre = perdre le backup.</p>
+</blockquote>
+<p>C'est le paradoxe du chiffrement fort : la sécurité qui protège tes données de l'hébergeur les protège aussi de toi si tu perds la clé.</p>
+<hr>
+<h2>Restaurer (parce qu'un backup se teste)</h2>
+<pre><code class="language-bash"># Lister les snapshots
+restic snapshots
+
+# Restaurer le dernier snapshot vers un dossier
+restic restore latest --target /tmp/restore
+
+# Restaurer un seul fichier
+restic restore latest --target /tmp/restore \
+  --include /mnt/data/Backup/Documents/fichier.pdf
+
+# Monter le repo comme un filesystem, naviguer librement
+restic mount /mnt/restic-restore
+</code></pre>
+<blockquote>
+<p>Un backup jamais restauré n'est pas un backup, c'est un pari. Tester une restauration de temps en temps, c'est la seule façon de savoir qu'il marchera le jour où on en a besoin.</p>
+</blockquote>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>Backup d'une base live</strong> : sauvegarder un fichier SQLite pendant que l'app écrit dedans demande une précaution (un dump WAL-safe). Sujet d'un article dédié.</li>
+<li><strong>Les inodes SMB</strong> : le <code>--ignore-inode</code> de la commande cache un vrai piège des montages réseau — j'en parle dans l'article sur les galères de backup SMB.</li>
+<li><strong>Monitoring</strong> : exporter le résultat des runs (durée, taille, succès) vers Prometheus pour être alerté si un backup échoue.</li>
+<li><strong>Règle 3-2-1</strong> : Restic couvre l'off-site chiffré ; le compléter avec une copie locale (snapshots ZFS) pour respecter le 3-2-1.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

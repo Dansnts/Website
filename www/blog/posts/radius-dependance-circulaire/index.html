@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La dépendance circulaire qui peut tuer ton réseau — Dani Faria dos Santos</title>
+  <meta name="description" content="Retour d&#39;expérience : comment mettre son serveur RADIUS derrière son propre 802.1X crée un deadlock dont on ne sort pas tout seul." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>La dépendance circulaire qui peut tuer ton réseau</h1>
+  <div class="post-meta">
+    <span>21 mars 2025</span>
+    <span>post, homelab, réseau, 802.1x, radius, retour-experience</span>
+  </div>
+  <p>Cet article est un retour d'expérience, pas un tutoriel. Il raconte une erreur d'architecture qui semble anodine et qui peut te couper complètement du réseau, sans porte de sortie logicielle. Le genre de piège qu'on ne voit pas venir — jusqu'à ce qu'on soit dedans.</p>
+<p>Le contexte : j'ai monté du 802.1X sur les ports de mon switch, avec FreeRADIUS comme serveur d'authentification (voir l'article précédent). FreeRADIUS tourne dans mon cluster Kubernetes. Et c'est là que le piège se referme.</p>
+<h2>Le décor</h2>
+<p>Trois faits, chacun anodin :</p>
+<ol>
+<li>Le <strong>serveur RADIUS</strong> (FreeRADIUS) tourne <strong>dans Kubernetes</strong>, sur le node K3s.</li>
+<li>Le node K3s est <strong>branché sur un port du switch</strong>.</li>
+<li>Les ports du switch exigent une <strong>authentification RADIUS</strong> pour laisser passer le trafic.</li>
+</ol>
+<p>Tu vois déjà le problème se dessiner ? Le serveur qui autorise les ports dépend d'un port… qui a besoin de ce serveur pour s'ouvrir.</p>
+<hr>
+<h2>L'enchaînement fatal</h2>
+<p>Imaginons que FreeRADIUS redémarre (mise à jour, crash, reboot du node). Voici ce qui se passe :</p>
+<pre><code>FreeRADIUS down
+      │
+      V
+le port du switch n'a plus de serveur RADIUS pour valider l'auth
+      │
+      V
+le port passe en &quot;non autorisé&quot; → coupe le trafic
+      │
+      V
+le node K3s perd l'accès réseau (plus d'internet, plus rien)
+      │
+      V
+K8s ne peut plus tirer d'images → ImagePullBackOff
+      │
+      V
+impossible de redémarrer FreeRADIUS (pas de réseau, pas d'image)
+      │
+      V
+┌─────────────────────────────────────────────┐
+│  RADIUS a besoin du réseau                   │
+│  le réseau a besoin de RADIUS                │
+│  → deadlock, personne ne cède                │
+└─────────────────────────────────────────────┘
+</code></pre>
+<p>C'est une <strong>dépendance circulaire</strong> classique, mais particulièrement vicieuse : elle ne se déclenche qu'au <em>pire</em> moment (quand RADIUS est déjà tombé), et aucune action logicielle ne t'en sort. Le node est isolé. Pas de SSH, pas de <code>kubectl</code>, pas d'internet.</p>
+<p>La seule issue à ce stade : un accès physique/console au switch pour désactiver 802.1X à la main. En pleine nuit, ce n'est pas idéal.</p>
+<hr>
+<h2>Pourquoi c'est un piège si courant</h2>
+<p>Ce genre de deadlock revient dès qu'un service d'infrastructure critique <strong>dépend de la chose qu'il rend possible</strong> :</p>
+<ul>
+<li>Le DNS qui tourne sur une machine dont l'adresse se résout par DNS.</li>
+<li>Le serveur DHCP qui a besoin d'une IP fournie par DHCP.</li>
+<li>Le serveur d'auth réseau qui est derrière l'auth réseau qu'il fournit.</li>
+</ul>
+<p>Le point commun : ça marche parfaitement <strong>tant que tout tourne</strong>. Le problème n'apparaît qu'au redémarrage à froid ou après une panne — exactement quand on a le moins envie de déboguer.</p>
+<hr>
+<h2>La solution : casser le cycle sur un port</h2>
+<p>Il faut qu'<strong>au moins un port</strong> — celui du serveur RADIUS lui-même — ne dépende pas de RADIUS pour fonctionner. Deux approches, que j'ai combinées.</p>
+<h3>1. Sortir le node du 802.1X : le mettre en MAB</h3>
+<p>Plutôt que du 802.1X (qui exige que RADIUS valide un login), le port du node K8s est passé en <strong>MAB</strong> (auth par adresse MAC). C'est moins strict, mais surtout, sur MikroTik, on peut le faire avec un simple <strong>filtre de bridge par MAC</strong>, qui ne dépend pas du tout de RADIUS :</p>
+<pre><code class="language-rsc"># ether2 — serveur K8s : whitelist MAC au niveau du bridge, PAS de dot1x
+/interface bridge filter
+add chain=input   in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=drop
+add chain=forward in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=drop
+</code></pre>
+<p>Ce filtre laisse passer uniquement la MAC du node K8s, et il vit <strong>entièrement dans le switch</strong>. Si FreeRADIUS est mort, ça change rien : le port du node reste ouvert. Le cycle est brisé.</p>
+<blockquote>
+<p>Les autres ports (<code>ether3-5</code>), eux, restent en vrai 802.1X. Seul le port qui héberge l'infra RADIUS est exempté. On ne sacrifie la sécurité que là où c'est strictement nécessaire.</p>
+</blockquote>
+<h3>2. Le filet de sécurité : <code>auth-timeout-action=allow</code></h3>
+<p>Si un jour je veux quand même mettre le node en 802.1X, il existe un garde-fou côté MikroTik : dire au port « si le serveur RADIUS ne répond pas dans le délai, <strong>ouvre</strong> le port au lieu de le fermer ».</p>
+<pre><code class="language-rsc">/interface dot1x server set interface=ether2 auth-timeout-action=allow
+</code></pre>
+<p><code>auth-timeout-action=allow</code> inverse le comportement par défaut. Normalement, pas de réponse RADIUS = port fermé (fail-closed). Là, on passe en <strong>fail-open</strong> sur ce port précis : le timeout ouvre le port. RADIUS peut tomber, le node garde le réseau, et peut redémarrer FreeRADIUS.</p>
+<p>Le compromis est explicite : <strong>fail-open = moins sûr</strong> (si RADIUS tombe, ce port n'est plus protégé). On ne l'active que sur le port de l'infra critique, jamais sur les ports clients.</p>
+<hr>
+<h2>Fail-closed vs fail-open : le vrai arbitrage</h2>
+<p>Toute la leçon tient dans ce choix :</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Comportement si RADIUS tombe</th>
+<th>Pour quoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>fail-closed</strong> (défaut)</td>
+<td>Port fermé, trafic coupé</td>
+<td>Ports clients — la sécurité prime</td>
+</tr>
+<tr>
+<td><strong>fail-open</strong> (<code>allow</code>)</td>
+<td>Port ouvert, trafic passe</td>
+<td>Port de l'infra RADIUS — la disponibilité prime</td>
+</tr>
+</tbody>
+</table>
+<p>La sécurité par défaut (fail-closed) est la bonne — <strong>sauf</strong> pour le maillon dont dépend la sécurité elle-même. Là, il faut accepter un fail-open, sinon on se verrouille dehors.</p>
+<hr>
+<h2>Ce que j'en retiens</h2>
+<ul>
+<li><strong>Cartographier les dépendances de démarrage à froid.</strong> Se poser la question : « si tout est éteint et que je rallume, dans quel ordre ça doit remonter ? ». Si A a besoin de B qui a besoin de A, il y a un problème.</li>
+<li><strong>Un service d'infra ne doit jamais dépendre de ce qu'il fournit.</strong> DNS, DHCP, auth réseau — ces briques doivent pouvoir démarrer de façon autonome.</li>
+<li><strong>Prévoir une porte de sortie hors-bande.</strong> Un accès console au switch, une IP de management non filtrée, un port « toujours ouvert ». Le jour où le cycle se referme, c'est la seule issue.</li>
+<li><strong>Le pire moment est le seul moment.</strong> Ces bugs ne se manifestent qu'en panne. Les tester volontairement (couper RADIUS et vérifier qu'on s'en sort) vaut mieux que les découvrir en vrai.</li>
+</ul>
+<blockquote>
+<p>Mon garde-fou actuel : le node K8s est en MAB (filtre bridge, indépendant de RADIUS), et <code>auth-timeout-action=allow</code> est documenté comme prérequis avant toute réactivation du 802.1X sur ce port. Le cycle ne peut plus se refermer.</p>
+</blockquote>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>Un RADIUS secondaire hors-cluster</strong> : héberger une instance FreeRADIUS de secours sur une machine qui n'est pas derrière 802.1X (le Proxmox lui-même, par exemple), pour la redondance.</li>
+<li><strong>Watchdog de démarrage</strong> : un script au boot du node qui vérifie l'ordre des dépendances et alerte si un cycle est détecté.</li>
+<li><strong>Le même raisonnement pour le DNS</strong> : mon Pi-hole tourne aussi dans K8s — j'en parle dans l'article sur le DNS à deux niveaux, où le node ne doit surtout pas utiliser Pi-hole comme résolveur.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

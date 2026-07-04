@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitOps avec ArgoCD : quand Git devient la source de vérité — Dani Faria dos Santos</title>
+  <meta name="description" content="Arrêter de faire kubectl apply à la main et laisser un contrôleur synchroniser le cluster sur le repo Git." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>GitOps avec ArgoCD : quand Git devient la source de vérité</h1>
+  <div class="post-meta">
+    <span>13 avril 2026</span>
+    <span>post, homelab, kubernetes, gitops, argocd</span>
+  </div>
+  <p>Quand on gère un cluster Kubernetes à la main, on finit toujours par se poser la question : « est-ce que ce qui tourne dans le cluster correspond vraiment à ce que j'ai dans mon repo ? ». Un <code>kubectl apply</code> oublié, un patch fait en urgence un soir de panne, et le cluster diverge silencieusement de Git. Personne ne sait plus quel est l'état réel.</p>
+<p>Le <strong>GitOps</strong> renverse le problème : Git devient la <strong>seule source de vérité</strong>, et un contrôleur dans le cluster se charge de faire correspondre le réel au désiré. On ne pousse plus vers le cluster — le cluster tire depuis Git.</p>
+<p>Dans ce post, on met en place ArgoCD. On va voir :</p>
+<ol>
+<li>Ce que change le GitOps par rapport à <code>kubectl apply</code></li>
+<li>Le principe de synchronisation d'ArgoCD</li>
+<li>Brancher l'authentification sur Keycloak (SSO)</li>
+<li>Le contrôle d'accès (RBAC)</li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Un cluster K3s fonctionnel</li>
+<li>Un repo Git avec tes manifests</li>
+<li>Un ingress (Traefik) et un certificat TLS</li>
+</ul>
+<hr>
+<h2><code>kubectl apply</code> vs GitOps</h2>
+<p>Voici le changement de mentalité, résumé :</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>kubectl apply</code> (push)</th>
+<th>GitOps (pull)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source de vérité</td>
+<td>Ta machine / ta mémoire</td>
+<td>Le repo Git</td>
+</tr>
+<tr>
+<td>Qui applique</td>
+<td>Toi, à la main</td>
+<td>Le contrôleur ArgoCD</td>
+</tr>
+<tr>
+<td>Traçabilité</td>
+<td>« qui a fait quoi ? »</td>
+<td>L'historique Git</td>
+</tr>
+<tr>
+<td>Dérive</td>
+<td>Silencieuse</td>
+<td>Détectée (OutOfSync)</td>
+</tr>
+<tr>
+<td>Rollback</td>
+<td>Ré-appliquer un ancien YAML</td>
+<td><code>git revert</code></td>
+</tr>
+</tbody>
+</table>
+<p>Le mode <code>kubectl apply</code>, c'est <strong>impératif</strong> : tu dis au cluster <em>quoi faire</em>. Le GitOps, c'est <strong>déclaratif</strong> : tu déclares l'état voulu dans Git, et ArgoCD réconcilie en boucle. Si quelqu'un modifie une ressource à la main dans le cluster, ArgoCD le voit (<code>OutOfSync</code>) et peut la remettre en conformité.</p>
+<pre><code>        AVANT (push)                       APRÈS (pull, GitOps)
+
+   toi ──kubectl apply──&gt; cluster     Git &lt;──git push── toi
+        (état dans ta tête)             │
+                                        │ ArgoCD surveille
+                                        V
+                                     cluster (réconcilié en boucle)
+</code></pre>
+<hr>
+<h2>Le principe ArgoCD</h2>
+<p>ArgoCD tourne dans le cluster (namespace <code>argocd</code>) et surveille en continu le repo. Pour chaque application déclarée, il compare deux états :</p>
+<ul>
+<li><strong>Desired state</strong> : ce qui est dans Git (les manifests)</li>
+<li><strong>Live state</strong> : ce qui tourne réellement dans le cluster</li>
+</ul>
+<p>S'ils diffèrent, l'app est marquée <code>OutOfSync</code>. Selon la politique, ArgoCD synchronise automatiquement (ou attend une validation manuelle). Le résultat : le cluster converge toujours vers Git.</p>
+<p>L'accès à l'UI passe par un Ingress Traefik classique, avec le wildcard TLS :</p>
+<pre><code class="language-yaml">apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd
+  namespace: argocd
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: &quot;true&quot;
+spec:
+  tls:
+    - hosts:
+        - argocd.fariadossantos.com
+      secretName: fariadossantos-wildcard-tls
+  rules:
+    - host: argocd.fariadossantos.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 80
+</code></pre>
+<hr>
+<h2>SSO : brancher ArgoCD sur Keycloak</h2>
+<p>Plutôt qu'un compte <code>admin</code> local, on connecte ArgoCD à Keycloak en OIDC. Un seul login pour tous les services, géré au même endroit.</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+data:
+  url: https://argocd.fariadossantos.com
+  oidc.config: |
+    name: Keycloak
+    issuer: https://auth.fariadossantos.com/realms/homelab
+    clientID: argocd
+    clientSecret: $oidc.keycloak.clientSecret
+    refreshTokenThreshold: 2m
+    requestedScopes: [&quot;openid&quot;, &quot;profile&quot;, &quot;email&quot;, &quot;groups&quot;]
+</code></pre>
+<p><code>issuer</code> : l'URL du realm Keycloak. ArgoCD y découvre automatiquement les endpoints OIDC.</p>
+<p><code>clientSecret: $oidc.keycloak.clientSecret</code> : le <code>$</code> fait référence à une clé stockée dans un Secret K8s — le secret n'est pas en clair dans le ConfigMap.</p>
+<p><code>requestedScopes: [... &quot;groups&quot;]</code> : c'est le scope <code>groups</code> qui va permettre de mapper les groupes Keycloak vers des rôles ArgoCD. Essentiel pour le RBAC juste après.</p>
+<hr>
+<h2>RBAC : qui a le droit de quoi</h2>
+<p>Par défaut, on veut que personne ne puisse tout casser. La politique par défaut est <code>readonly</code>, et seul un groupe précis obtient les droits admin :</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+data:
+  policy.default: role:readonly
+  policy.csv: |
+    g, /argocd-admin, role:admin
+</code></pre>
+<p><code>policy.default: role:readonly</code> : tout utilisateur authentifié peut <em>voir</em>, mais pas <em>modifier</em>.</p>
+<p><code>g, /argocd-admin, role:admin</code> : les membres du groupe Keycloak <code>argocd-admin</code> héritent du rôle admin. On gère les droits depuis Keycloak, pas dans ArgoCD.</p>
+<blockquote>
+<p>Le combo OIDC + <code>groups</code> + RBAC, c'est ce qui rend l'ensemble propre : on ajoute quelqu'un au bon groupe dans Keycloak, et il obtient (ou perd) ses droits ArgoCD sans toucher à un seul manifest.</p>
+</blockquote>
+<hr>
+<h2>Le piège du single-node : les patchs du repo-server</h2>
+<p>Petit retour d'expérience. Sur un cluster single-node, certaines valeurs par défaut d'ArgoCD (anti-affinité, réplicas multiples du <code>repo-server</code>) ne collent pas — il n'y a qu'un seul nœud. J'ai dû patcher le Deployment du <code>repo-server</code> pour satisfaire la validation K8s (nom de conteneur, champs requis) et utiliser l'annotation <code>ServerSideApply</code>.</p>
+<blockquote>
+<p>La leçon : ArgoCD est pensé pour du multi-node HA. En single-node, il faut parfois adapter les manifests fournis. Rien de dramatique, mais à prévoir.</p>
+</blockquote>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>App of Apps</strong> : déclarer une application ArgoCD qui elle-même déclare toutes les autres. Un seul point d'entrée pour tout le cluster.</li>
+<li><strong>Sync waves</strong> : ordonner le déploiement (les CRDs avant les ressources qui les utilisent, les secrets avant les pods).</li>
+<li><strong>Sealed Secrets</strong> : le GitOps suppose que <em>tout</em> est dans Git, y compris les secrets — mais chiffrés. C'est le sujet d'un article dédié.</li>
+<li><strong>Notifications</strong> : brancher ArgoCD sur un webhook pour être alerté quand une app passe <code>OutOfSync</code> ou <code>Degraded</code>.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

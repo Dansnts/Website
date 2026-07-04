@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Héberger son gestionnaire de mots de passe : Vaultwarden — Dani Faria dos Santos</title>
+  <meta name="description" content="Un coffre-fort Bitwarden chez soi, en un seul conteneur Rust. DOMAIN, ADMIN_TOKEN en Argon2id, et un backup SQLite cohérent même à chaud." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>Héberger son gestionnaire de mots de passe : Vaultwarden</h1>
+  <div class="post-meta">
+    <span>4 décembre 2025</span>
+    <span>post, homelab, vaultwarden, bitwarden, sécurité, kubernetes</span>
+  </div>
+  <p>Un gestionnaire de mots de passe, c'est la brique la plus sensible du lab : s'il fuit, tout fuit. On le confie donc souvent à un service cloud (Bitwarden, 1Password…). Ça marche très bien — mais dans un homelab, l'intérêt est justement de garder le coffre chez soi, sur son propre stockage, sous son propre chiffrement.</p>
+<p><strong>Vaultwarden</strong> rend ça trivial. C'est une réimplémentation en Rust du serveur Bitwarden, <strong>compatible avec les clients Bitwarden officiels</strong> (extensions navigateur, apps mobiles, CLI). Un seul conteneur, quelques dizaines de Mo de RAM, et on a son propre Bitwarden.</p>
+<p>Dans ce post, on va voir :</p>
+<ol>
+<li>Ce qu'est Vaultwarden et pourquoi il est si léger</li>
+<li>Le déploiement dans Kubernetes</li>
+<li>La config qui compte : <code>DOMAIN</code>, <code>SIGNUPS_ALLOWED</code>, <code>ADMIN_TOKEN</code></li>
+<li>Générer un <code>ADMIN_TOKEN</code> en Argon2id (et pourquoi c'est important)</li>
+<li>Sauvegarder un coffre SQLite <strong>sans le corrompre</strong></li>
+</ol>
+<h2>Prérequis</h2>
+<ul>
+<li>Un cluster Kubernetes (ici K3s single-node)</li>
+<li>Un ingress HTTPS — le HTTPS est <strong>obligatoire</strong>, les clients Bitwarden refusent le HTTP</li>
+<li>Un peu de stockage persistant (ici 1 Gi en <code>local-path</code>)</li>
+<li>Un mécanisme de secrets (ici SealedSecrets)</li>
+</ul>
+<hr>
+<h2>Vaultwarden, ou Bitwarden sans la lourdeur</h2>
+<p>Le serveur Bitwarden officiel, c'est une dizaine de conteneurs (API, Identity, SQL Server, etc.) — pensé pour l'entreprise. Pour un usage perso, c'est disproportionné.</p>
+<p>Vaultwarden fait tenir tout ça dans <strong>un seul binaire Rust</strong>, avec une base <strong>SQLite</strong> par défaut. Le protocole étant le même, les applications ne voient aucune différence : elles pointent vers mon URL au lieu de <code>bitwarden.com</code>. Chez moi, il tourne avec 64 Mi de RAM en requête et un plafond à 256 Mi — un poids plume.</p>
+<hr>
+<h2>Le déploiement</h2>
+<p>Le Deployment est minimaliste. L'essentiel se joue dans les variables d'environnement :</p>
+<pre><code class="language-yaml">containers:
+  - name: vaultwarden
+    image: vaultwarden/server:1.34.1
+    ports:
+      - containerPort: 80
+    env:
+      - name: DOMAIN
+        value: &quot;https://vault.fariadossantos.com&quot;
+      - name: SIGNUPS_ALLOWED
+        value: &quot;false&quot;
+      - name: ADMIN_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-secret
+            key: ADMIN_TOKEN
+    volumeMounts:
+      - name: vaultwarden-data
+        mountPath: /data
+</code></pre>
+<p>Ligne par ligne, ce qui compte :</p>
+<ul>
+<li><code>DOMAIN</code> : l'URL publique du coffre. Vaultwarden l'utilise pour les liens d'invitation, WebAuthn/2FA et les notifications. <strong>Elle doit être en HTTPS et correspondre exactement</strong> à l'URL réelle — sinon le WebAuthn et certains liens cassent silencieusement.</li>
+<li><code>SIGNUPS_ALLOWED: &quot;false&quot;</code> : coupe l'auto-inscription. Sur une instance exposée sur internet, laisser ça à <code>true</code> reviendrait à offrir un coffre à qui passe. On crée les comptes soi-même, à la main, via le panneau admin.</li>
+<li><code>ADMIN_TOKEN</code> : le sésame du panneau <code>/admin</code>. Il n'est <strong>jamais en clair</strong> dans le manifeste ; il sort d'un SealedSecret (on en reparle juste après).</li>
+</ul>
+<p>Le reste est du durcissement standard : <code>runAsNonRoot</code>, l'utilisateur <code>65534</code>, <code>capabilities: drop: [&quot;ALL&quot;]</code>, et des probes sur <code>/alive</code>. Les données (base SQLite, pièces jointes, clés) vivent dans <code>/data</code>, monté sur un PVC :</p>
+<pre><code class="language-yaml">volumes:
+  - name: vaultwarden-data
+    persistentVolumeClaim:
+      claimName: vaultwarden-data
+</code></pre>
+<blockquote>
+<p><code>strategy: Recreate</code> est important ici : SQLite n'aime pas deux processus qui écrivent le même fichier. On veut qu'un pod meure avant que le suivant ne monte le volume.</p>
+</blockquote>
+<p>Côté exposition, le Service est en <code>NodePort</code> (30080), et c'est Traefik qui publie <code>vault.fariadossantos.com</code> en HTTPS par-dessus.</p>
+<hr>
+<h2>L'ADMIN_TOKEN en Argon2id</h2>
+<p>Le panneau <code>/admin</code> permet de créer des utilisateurs, régler la rétention, gérer les invitations. Autant dire qu'il faut le protéger sérieusement.</p>
+<p>Historiquement, <code>ADMIN_TOKEN</code> était un mot de passe en clair : Vaultwarden le comparait tel quel. Problème : il est présent dans l'environnement du conteneur, donc lisible par quiconque peut faire un <code>kubectl exec</code> ou lire le manifeste. Une fuite du token = accès admin total.</p>
+<p>La bonne pratique aujourd'hui, c'est de stocker non pas le token mais son <strong>hash Argon2id</strong> (au format PHC, <code>$argon2id$...</code>). Vaultwarden hache alors ce que tu tapes et compare les empreintes — le secret réel ne transite plus en clair dans la config. Argon2id est une fonction de dérivation « memory-hard », conçue pour résister au brute-force GPU : c'est le bon choix pour ce genre de secret.</p>
+<p>On génère ce hash avec l'outil embarqué dans l'image :</p>
+<pre><code class="language-bash">docker run --rm -it vaultwarden/server /vaultwarden hash
+</code></pre>
+<p>Il demande un mot de passe et recrache une chaîne <code>$argon2id$v=19$m=...</code> — c'est <strong>cette chaîne</strong> qu'on met dans le secret, pas le mot de passe. Chez moi, elle est scellée dans <code>vaultwarden-secret</code> (SealedSecret), donc chiffrée dans le repo Git et déchiffrable uniquement par le contrôleur dans le cluster.</p>
+<blockquote>
+<p>À retenir : ce qu'on tape pour se connecter au <code>/admin</code>, c'est le mot de passe d'origine ; ce qui est stocké, c'est son empreinte Argon2id. Même en lisant le secret déchiffré, on ne récupère pas le mot de passe.</p>
+</blockquote>
+<hr>
+<h2>Sauvegarder un coffre SQLite sans le corrompre</h2>
+<p>C'est le point qu'on néglige, et qui fait mal le jour où ça compte. La base de Vaultwarden est un <strong>fichier SQLite</strong> avec journalisation WAL. Le copier bêtement pendant qu'il y a des écritures en cours, c'est risquer une sauvegarde <strong>incohérente</strong> : on récupère un <code>.sqlite3</code> à moitié écrit, inutilisable.</p>
+<p>Chez moi, la sauvegarde passe par un CronJob Restic (le même qui archive le NAS vers un stockage S3 suisse chiffré). L'astuce est dans un <strong>initContainer</strong> qui prépare un dump propre avant que Restic ne s'exécute :</p>
+<ul>
+<li>Un container <code>sqlite-dump</code> lance un <code>sqlite3 .backup</code> sur la base. Cette commande est <strong>WAL-safe</strong> : elle produit une copie cohérente même si des écritures sont en cours, en s'appuyant sur le mécanisme de sauvegarde en ligne de SQLite.</li>
+<li>Le dump est écrit dans un volume <code>emptyDir</code> partagé (<code>/mnt/dump/db.sqlite3</code>).</li>
+<li>Le container Restic archive <strong>ce dump-là</strong>, jamais le fichier vivant.</li>
+</ul>
+<p>Le tout est chiffré côté client (AES-256) avant de partir : l'hébergeur ne voit que des blobs opaques, la clé de chiffrement ne quitte pas la machine.</p>
+<blockquote>
+<p>La règle générale : <strong>on ne sauvegarde jamais un fichier de base de données à chaud par une simple copie</strong>. On passe par le mécanisme de dump de la base (<code>.backup</code> pour SQLite, <code>pg_dump</code> pour PostgreSQL…), qui garantit la cohérence. Une sauvegarde non testée qui ne se restaure pas ne vaut rien.</p>
+</blockquote>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>La chaîne de backup complète</strong> : le CronJob Restic, la rotation et le chiffrement côté client vers Infomaniak Swiss Backup méritent leur propre article.</li>
+<li><strong>Le 2FA/WebAuthn</strong> : Vaultwarden gère les clés matérielles (YubiKey) et le TOTP — à activer une fois <code>DOMAIN</code> bien réglé.</li>
+<li><strong>SSO via Keycloak</strong> : les versions récentes de Vaultwarden expérimentent la connexion OIDC ; un candidat naturel pour rejoindre le realm <code>homelab</code> (voir l'article sur Keycloak).</li>
+<li><strong>Cercle vertueux des secrets</strong> : ma clé maître SealedSecrets est elle-même stockée dans Vaultwarden — pratique, mais attention à la dépendance de restauration : il faut pouvoir rouvrir le coffre sans le cluster.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>

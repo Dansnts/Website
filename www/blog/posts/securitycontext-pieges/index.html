@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Les securityContext Kubernetes qui cassent tout silencieusement — Dani Faria dos Santos</title>
+  <meta name="description" content="Durcir ses pods, c&#39;est bien — jusqu&#39;à ce qu&#39;un drop ALL fasse planter Postgres sans un message d&#39;erreur clair. Guide des pièges vécus." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose strong { color: var(--text); font-weight: 600; }
+    .prose em { color: var(--subtle); font-style: italic; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .prose pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .prose .code-wrap { margin-bottom: 1.4rem; }
+    .prose .code-wrap pre { margin-bottom: 0; }
+    .prose .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .prose .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .prose .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .prose .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .prose .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>Les securityContext Kubernetes qui cassent tout silencieusement</h1>
+  <div class="post-meta">
+    <span>2 août 2024</span>
+    <span>post, homelab, kubernetes, sécurité, securitycontext</span>
+  </div>
+  <p>On lit partout qu'il faut durcir ses pods : <code>runAsNonRoot</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities: drop: [&quot;ALL&quot;]</code>. Bon conseil… jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique ou — pire — aucun message du tout.</p>
+<p>Cet article est un catalogue de pièges <strong>vécus</strong> sur mon homelab. À chaque fois : un durcissement trop zélé, un service cassé, et la subtilité qui explique pourquoi. Le but : durcir <em>juste ce qu'il faut</em>, sans tout casser.</p>
+<h2>Prérequis</h2>
+<ul>
+<li>Des bases sur les <code>securityContext</code> K8s</li>
+<li>L'envie de comprendre <em>pourquoi</em> un pod crashe, pas juste de copier-coller</li>
+</ul>
+<hr>
+<h2>Le principe : durcir sans casser</h2>
+<p>Trois leviers de durcissement, et ce qu'ils font vraiment :</p>
+<table>
+<thead>
+<tr>
+<th>Réglage</th>
+<th>Effet</th>
+<th>Risque de casse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>runAsUser: X</code></td>
+<td>Force l'UID du process</td>
+<td>Élevé si l'image attend un UID précis</td>
+</tr>
+<tr>
+<td><code>allowPrivilegeEscalation: false</code></td>
+<td>Interdit de gagner des privilèges (setuid/setcap)</td>
+<td>Moyen</td>
+</tr>
+<tr>
+<td><code>capabilities: drop: [&quot;ALL&quot;]</code></td>
+<td>Retire toutes les capabilities Linux</td>
+<td>Élevé si l'image en a besoin au boot</td>
+</tr>
+</tbody>
+</table>
+<p>Le problème vient presque toujours d'images qui font des opérations <strong>root au démarrage</strong> (chown, setcap, setgid) avant de laisser la main. Les durcir comme un service stateless les casse.</p>
+<hr>
+<h2>Le cas d'école : quand ça marche</h2>
+<p>Commençons par un service qui accepte le durcissement complet — Vaultwarden (un binaire Rust statique) :</p>
+<pre><code class="language-yaml">securityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  fsGroup: 65534
+# et au niveau du conteneur :
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: [&quot;ALL&quot;]
+</code></pre>
+<p>Vaultwarden ne fait aucune opération root au boot : il écoute, point. Donc <code>drop ALL</code> + <code>runAsUser</code> arbitraire = aucun problème. <strong>C'est le cas idéal, et malheureusement pas la majorité.</strong></p>
+<hr>
+<h2>Piège n°1 : Postgres et l'UID 70</h2>
+<p>Le classique qui fait perdre une soirée. <code>postgres:16-alpine</code> tourne en <strong>UID 70</strong> (pas 999 comme la version Debian). Son entrypoint fait un <code>chown</code> du data dir en root, <em>puis</em> drop vers l'utilisateur postgres.</p>
+<p>Si on impose <code>runAsUser: 999</code> + <code>drop ALL</code> :</p>
+<pre><code>FATAL: data directory has wrong ownership
+</code></pre>
+<p>L'entrypoint ne peut plus chown (pas la capability), et l'UID ne correspond pas. Crash.</p>
+<p><strong>Solution</strong> : ne pas mettre de securityContext qui force l'UID. Laisser l'image gérer :</p>
+<pre><code class="language-yaml"># ✅ Pour postgres:alpine — laisser tranquille
+securityContext:
+  allowPrivilegeEscalation: false
+  # PAS de runAsUser, PAS de drop ALL
+</code></pre>
+<blockquote>
+<p>La leçon : <strong>vérifier l'UID réel de l'image avant de forcer quoi que ce soit.</strong> <code>docker run --rm postgres:16-alpine id</code> te dit tout de suite en quel utilisateur elle tourne.</p>
+</blockquote>
+<hr>
+<h2>Piège n°2 : Pi-hole et setcap</h2>
+<p>pihole-FTL utilise <code>setcap</code> et <code>setgid</code> au démarrage pour se lier au port 53 en tant que non-root.</p>
+<ul>
+<li><code>allowPrivilegeEscalation: false</code> → bloque <code>setcap</code> → FTL ne démarre pas.</li>
+<li><code>drop ALL</code> → retire <code>CAP_SETGID</code> → « Unable to set group list ».</li>
+</ul>
+<p><strong>Solution</strong> : aucun securityContext restrictif, et une variable pour contourner :</p>
+<pre><code class="language-yaml">env:
+  - name: DNSMASQ_USER
+    value: &quot;root&quot;
+# et surtout : pas de allowPrivilegeEscalation: false, pas de drop ALL
+</code></pre>
+<hr>
+<h2>Piège n°3 : les images qui chown au démarrage (nginx, TeamSpeak)</h2>
+<p>Beaucoup d'images font un <code>chown</code> de leur répertoire de travail au boot :</p>
+<ul>
+<li><strong>nginx</strong> (image root) chown <code>/var/cache/nginx</code> → besoin de <code>CAP_CHOWN</code>.</li>
+<li><strong>TeamSpeak</strong> chown <code>/var/ts3server</code> → même besoin.</li>
+</ul>
+<p>Un <code>drop ALL</code> retire <code>CAP_CHOWN</code>, et le conteneur plante au démarrage.</p>
+<p><strong>Solution</strong> : garder <code>allowPrivilegeEscalation: false</code> mais <strong>pas</strong> de <code>drop ALL</code> :</p>
+<pre><code class="language-yaml">securityContext:
+  allowPrivilegeEscalation: false
+  # pas de drop ALL — l'image a besoin de CAP_CHOWN au boot
+</code></pre>
+<hr>
+<h2>Piège n°4 : WireGuard, l'inverse — il faut AJOUTER des caps</h2>
+<p>Le cas symétrique. WireGuard (wg-easy) fait du NAT iptables : il lui faut <strong>plus</strong> de privilèges, pas moins.</p>
+<pre><code class="language-yaml">securityContext:
+  capabilities:
+    add: [&quot;NET_ADMIN&quot;, &quot;NET_RAW&quot;, &quot;SYS_MODULE&quot;]
+  # et surtout PAS de allowPrivilegeEscalation: false (bloquerait iptables)
+</code></pre>
+<p><code>NET_ADMIN</code> + <code>NET_RAW</code> : pour manipuler les interfaces réseau et iptables. <code>SYS_MODULE</code> : pour charger le module kernel wireguard. Ici, durcir reviendrait à empêcher le service de faire son travail.</p>
+<hr>
+<h2>La règle qui résume tout</h2>
+<p>Après tous ces pièges, voici l'heuristique que j'applique :</p>
+<blockquote>
+<p><strong>Image stateless sans setup root</strong> (Go/Rust statiques, comme Vaultwarden) → durcissement complet : <code>drop ALL</code> + <code>runAsNonRoot</code> + <code>allowPrivilegeEscalation: false</code>.</p>
+<p><strong>Image qui chown/setcap/setgid au démarrage</strong> (postgres, pihole, nginx, teamspeak) → garder <strong>uniquement</strong> <code>allowPrivilegeEscalation: false</code>, pas de <code>drop ALL</code>, pas de <code>runAsUser</code> forcé.</p>
+<p><strong>Image qui manipule le réseau/kernel</strong> (wireguard) → <strong>ajouter</strong> les capabilities nécessaires, ne rien restreindre qui bloque iptables.</p>
+</blockquote>
+<p>Tableau récap des services de mon cluster :</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Piège</th>
+<th>Bon réglage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vaultwarden (Rust)</td>
+<td>aucun</td>
+<td><code>drop ALL</code> OK</td>
+</tr>
+<tr>
+<td>postgres:alpine</td>
+<td>UID 70, chown data dir</td>
+<td>rien de forcé, juste <code>allowPrivilegeEscalation: false</code></td>
+</tr>
+<tr>
+<td>pihole</td>
+<td>setcap/setgid</td>
+<td>aucun SC restrictif + <code>DNSMASQ_USER=root</code></td>
+</tr>
+<tr>
+<td>nginx / teamspeak</td>
+<td>chown au boot</td>
+<td>pas de <code>drop ALL</code></td>
+</tr>
+<tr>
+<td>wireguard</td>
+<td>iptables NAT</td>
+<td><code>add</code> NET_ADMIN/NET_RAW/SYS_MODULE</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Comment débugger un pod qui crashe au boot</h2>
+<p>Quand un durcissement casse quelque chose, la démarche :</p>
+<pre><code class="language-bash"># Les logs du conteneur (souvent le message est là... ou pas)
+kubectl logs &lt;pod&gt; -n homelab --previous
+
+# Décrire le pod pour voir la raison de l'échec
+kubectl describe pod &lt;pod&gt; -n homelab
+
+# Trouver l'UID réel attendu par l'image
+docker run --rm &lt;image&gt; id
+</code></pre>
+<blockquote>
+<p>Le vrai piège de ces bugs, c'est qu'ils sont <strong>silencieux ou cryptiques</strong>. Un <code>CrashLoopBackOff</code> sans message clair, alors que la vraie cause est une capability manquante. Quand un pod refuse de démarrer <em>après</em> que tu as ajouté un securityContext, c'est presque toujours ça — enlève-le et réintroduis les restrictions une par une.</p>
+</blockquote>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>Pod Security Standards</strong> : les niveaux <code>baseline</code> / <code>restricted</code> de K8s, pour appliquer des politiques cohérentes à l'échelle d'un namespace.</li>
+<li><strong>seccomp profiles</strong> : restreindre les appels système autorisés, un cran plus fin que les capabilities.</li>
+<li><strong>Distroless / rootless images</strong> : choisir des images conçues pour tourner non-root dès le départ, qui acceptent le <code>drop ALL</code> sans broncher.</li>
+<li><strong>Un rootful à part</strong> : isoler les rares services qui ont besoin de privilèges (wireguard) et durcir agressivement tout le reste.</li>
+</ul>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.prose pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>
