@@ -17,12 +17,19 @@
       padding: 2rem 2rem 5rem;
     }
 
+    .prose {
+      font-family: var(--sans);
+      font-weight: 300;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
     .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
     .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
     .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
-    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
     .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
-    .prose li { margin-bottom: 0.3rem; line-height: 1.7; }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
     .prose a { color: var(--accent); }
     .prose a:hover { opacity: 0.75; }
     .prose strong { color: var(--text); font-weight: 600; }
