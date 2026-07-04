@@ -11,39 +11,81 @@
   <link rel="stylesheet" href="/css/style.css?v=14" />
   <link rel="icon" href="/favicon.ico" />
   <style>
-    .blog-wrap {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 2rem 2rem 5rem;
-    }
+    /* ── Blog listing ── */
+    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 2rem 2rem 5rem; }
+    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
 
-    .prose {
-      font-family: var(--sans);
-      font-weight: 300;
-      font-optical-sizing: auto;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
-    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
-    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
-    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; font-weight: 300; }
-    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
-    .prose li { margin-bottom: 0.3rem; line-height: 1.7; font-weight: 300; }
-    .prose a { color: var(--accent); }
-    .prose a:hover { opacity: 0.75; }
-    .prose strong { color: var(--text); font-weight: 600; }
-    .prose em { color: var(--subtle); font-style: italic; }
-    .prose code {
+    /* ── Blog post body (Markdown output inside .project-detail) ── */
+    .blog-body { padding-bottom: 5rem; }
+
+    .blog-body h2 {
       font-family: var(--mono);
-      font-size: 0.82em;
+      font-size: 0.62rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-body h3 {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--subtle);
+      margin: 1.75rem 0 0.5rem;
+    }
+    .blog-body p {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 300;
+      color: var(--subtle);
+      line-height: 1.75;
+      margin-bottom: 1rem;
+    }
+    .blog-body ul, .blog-body ol {
+      padding-left: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--subtle);
+    }
+    .blog-body li {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 300;
+      line-height: 1.75;
+      margin-bottom: 0.25rem;
+    }
+    .blog-body a { color: var(--accent); }
+    .blog-body a:hover { opacity: 0.75; }
+    .blog-body strong { color: var(--text); font-weight: 600; }
+    .blog-body em { color: var(--subtle); font-style: italic; }
+    .blog-body code {
+      font-family: var(--mono);
+      font-size: 0.8em;
       background: var(--surface);
       border: 1px solid var(--border);
       padding: 0.15em 0.4em;
       border-radius: 4px;
-      color: var(--text);
+      color: var(--accent);
     }
-    .prose pre {
+    .blog-body blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    /* ── Code blocks ── */
+    .blog-body pre {
       background: #0c0e18;
       border: 1px solid #1e2030;
       border-radius: 0 0 8px 8px;
@@ -55,7 +97,7 @@
       line-height: 1.7;
       color: #dce0f0;
     }
-    .prose pre code {
+    .blog-body pre code {
       font-family: var(--mono);
       font-size: inherit;
       background: transparent;
@@ -63,9 +105,9 @@
       padding: 0;
       color: inherit;
     }
-    .prose .code-wrap { margin-bottom: 1.4rem; }
-    .prose .code-wrap pre { margin-bottom: 0; }
-    .prose .code-header {
+    .code-wrap { margin-bottom: 1.4rem; }
+    .code-wrap pre { margin-bottom: 0; }
+    .code-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -74,7 +116,7 @@
       border-radius: 8px 8px 0 0;
       padding: 0.45rem 1rem;
     }
-    .prose .code-filename {
+    .code-filename {
       font-family: var(--mono);
       font-size: 0.62rem;
       color: var(--muted);
@@ -83,7 +125,7 @@
       align-items: center;
       gap: 0.4rem;
     }
-    .prose .code-filename::before {
+    .code-filename::before {
       content: '';
       display: inline-block;
       width: 6px;
@@ -91,14 +133,14 @@
       border-radius: 50%;
       background: var(--border-hi);
     }
-    .prose .code-lang {
+    .code-lang {
       font-family: var(--mono);
       font-size: 0.56rem;
       color: var(--border-hi);
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
-    .prose .code-copy {
+    .code-copy {
       font-family: var(--mono);
       font-size: 0.58rem;
       color: var(--muted);
@@ -110,56 +152,28 @@
       transition: all var(--t);
       letter-spacing: 0.04em;
     }
-    .prose .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
-    .prose blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-
-    .post-meta {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--subtle);
-      margin-bottom: 2.5rem;
-      display: flex;
-      gap: 1rem;
-      letter-spacing: 0.05em;
-    }
-
-    .blog-header { margin-bottom: 2.5rem; }
-    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
-    .blog-header p { color: var(--muted); font-size: 0.95rem; }
-
-    .post-list { list-style: none; padding: 0; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date {
-      font-family: var(--mono);
-      font-size: 0.68rem;
-      color: var(--subtle);
-      letter-spacing: 0.06em;
-      margin-bottom: 0.3rem;
-    }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+    .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
   </style>
 </head>
 <body>
   <div id="site-header"></div>
   <main>
-    <div class="blog-wrap">
-      <article class="prose">
-  <h1>Sécuriser ses ports Ethernet avec 802.1X, FreeRADIUS et Keycloak</h1>
-  <div class="post-meta">
-    <span>20 août 2025</span>
-    <span>post, homelab, réseau, 802.1x, radius, keycloak, sécurité</span>
-  </div>
-  <p>Le firewall protège le lab depuis internet. Mais à l'intérieur, brancher un câble sur un port du switch suffit à obtenir une IP et l'accès réseau. Pour un lab sérieux, c'est une faille : n'importe qui avec un accès physique entre.</p>
+    <div class="wrapper">
+  <a href="/blog/" class="back-link">&larr; Blog</a>
+
+  <article class="project-detail">
+    <header class="project-hero">
+      
+      <div class="project-tags">
+        <span class="tag">post</span><span class="tag">homelab</span><span class="tag">réseau</span><span class="tag">802.1x</span><span class="tag">radius</span><span class="tag">keycloak</span><span class="tag">sécurité</span>
+      </div>
+      
+      <h1>Sécuriser ses ports Ethernet avec 802.1X, FreeRADIUS et Keycloak</h1>
+      <p class="project-subtitle">20 août 2025</p>
+    </header>
+
+    <div class="blog-body">
+      <p>Le firewall protège le lab depuis internet. Mais à l'intérieur, brancher un câble sur un port du switch suffit à obtenir une IP et l'accès réseau. Pour un lab sérieux, c'est une faille : n'importe qui avec un accès physique entre.</p>
 <p>La réponse, c'est <strong>802.1X</strong> — l'authentification au niveau du port. Le switch ne laisse rien passer tant que la machine (ou l'utilisateur) ne s'est pas authentifiée. C'est le standard en entreprise, et on peut le faire chez soi.</p>
 <p>C'est l'article le plus dense du blog, parce que le sujet est peu documenté hors contexte pro. On va monter la chaîne complète :</p>
 <ol>
@@ -342,15 +356,16 @@ fc9d0563b3bf   Auth-Type := Accept
 <li><strong>CoA (Change of Authorization)</strong> : révoquer une session active sans attendre la reconnexion.</li>
 </ul>
 
-</article>
-
     </div>
+  </article>
+</div>
+
   </main>
   <div id="site-footer"></div>
   <script src="/js/i18n.js"></script>
   <script src="/js/main.js"></script>
   <script>
-    document.querySelectorAll('.prose pre').forEach(pre => {
+    document.querySelectorAll('.blog-body pre').forEach(pre => {
       const code = pre.querySelector('code');
       const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
       const wrap = document.createElement('div');
