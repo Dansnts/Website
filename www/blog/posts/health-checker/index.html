@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Construire un service de health check en Python avec asyncio — Dani Faria dos Santos</title>
+  <meta name="description" content="Un petit service qui poll une liste d&#39;URLs en parallèle, stocke les résultats en mémoire et les expose via une API FastAPI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    .blog-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+
+    .prose h1 { font-size: 2rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; color: var(--text); }
+    .prose h2 { font-size: 1.2rem; font-weight: 600; margin: 2.2rem 0 0.6rem; color: var(--text); }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 0.4rem; color: var(--text); }
+    .prose p { margin-bottom: 1.1rem; color: var(--muted); line-height: 1.75; }
+    .prose ul, .prose ol { padding-left: 1.4rem; margin-bottom: 1.1rem; color: var(--muted); }
+    .prose li { margin-bottom: 0.3rem; line-height: 1.7; }
+    .prose a { color: var(--accent); }
+    .prose a:hover { opacity: 0.75; }
+    .prose code {
+      font-family: var(--mono);
+      font-size: 0.82em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .prose pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+    }
+    .prose pre code { background: none; border: none; padding: 0; font-size: 0.82rem; }
+    .prose blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .prose hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .prose img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+
+    .post-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--subtle);
+      margin-bottom: 2.5rem;
+      display: flex;
+      gap: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .blog-header { margin-bottom: 2.5rem; }
+    .blog-header h1 { font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .blog-header p { color: var(--muted); font-size: 0.95rem; }
+
+    .post-list { list-style: none; padding: 0; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--subtle);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="blog-wrap">
+      <article class="prose">
+  <h1>Construire un service de health check en Python avec asyncio</h1>
+  <div class="post-meta">
+    <span>4 juillet 2026</span>
+    <span>post, python, asyncio, fastapi, docker</span>
+  </div>
+  <p>Un <em>health check</em> est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif : savoir en temps réel qu'un service est tombé, avant que les utilisateurs ne s'en rendent compte.</p>
+<p>Dans ce post, nous allons construire un petit service en Python qui :</p>
+<ol>
+<li>Poll une liste d'URLs configurables à intervalle régulier</li>
+<li>Le fait <strong>en parallèle</strong> pour qu'une URL lente n'en bloque pas d'autres</li>
+<li>Stocke les résultats en mémoire</li>
+<li>Les expose via une API HTTP <code>/status</code></li>
+</ol>
+<p>Le tout packagé dans un container Docker durci, prêt à tourner.</p>
+<h2>Prérequis</h2>
+<ul>
+<li>Python 3.13</li>
+<li>Des bases en <code>async</code>/<code>await</code></li>
+<li>Un <code>Dockerfile</code> (on le verra)</li>
+<li>De quoi éditer un fichier YAML</li>
+</ul>
+<hr>
+<h2>L'architecture en un coup d'œil</h2>
+<p>Avant de coder, il faut séparer les responsabilités. Quatre modules, chacun avec un seul rôle :</p>
+<pre><code>python/
+└── app/
+    ├── config.py   # charge et valide le YAML
+    ├── data.py     # le store en mémoire
+    ├── worker.py   # le worker async qui poll
+    └── api.py      # l'API FastAPI + le lifespan
+</code></pre>
+<p>L'idée directrice : le <strong>worker</strong> écrit dans le <strong>store</strong>, l'<strong>API</strong> lit dans le <strong>store</strong>. Les deux ne se parlent jamais directement, ils passent par la donnée. Ça garde le code découplé et testable.</p>
+<hr>
+<h2>Étape 1 : Charger la configuration</h2>
+<p>On veut pouvoir éditer la liste des URLs sans retoucher au code. Un simple YAML fait l'affaire.</p>
+<pre><code class="language-yaml">urls:
+  - https://httpbin.org/status/200
+  - https://httpbin.org/status/503
+  - https://jsonplaceholder.typicode.com/posts/1
+
+pollInterval: 60   # secondes entre chaque poll
+timeout: 10        # secondes avant de marquer TIMEOUT
+</code></pre>
+<p>Et le loader qui va avec :</p>
+<pre><code class="language-python">class Config:
+    def __init__(self, path: str = &quot;config.yaml&quot;):
+        with open(path) as stream:
+            try:
+                data = yaml.safe_load(stream) or {}
+            except yaml.YAMLError as e:
+                raise ValueError(f&quot;Error while loading yaml file: {e}&quot;)
+
+        self.urls = self._validate_urls(data.get(&quot;urls&quot;) or [])
+        self.polling_interval = data.get(&quot;pollInterval&quot;, 60)
+        self.timeout = data.get(&quot;timeout&quot;, 10)
+</code></pre>
+<p>Deux détails qui comptent :</p>
+<p><code>yaml.safe_load(stream) or {}</code> : si le fichier est vide, <code>safe_load</code> renvoie <code>None</code>. Le <code>or {}</code> évite un crash sur un <code>.get()</code> derrière.</p>
+<p><code>_validate_urls</code> : on ne fait pas confiance au YAML. On filtre tout ce qui n'est pas une URL http(s) valide, et on log un warning plutôt que de planter.</p>
+<pre><code class="language-python">@staticmethod
+def _validate_urls(urls: list) -&gt; list[str]:
+    valid = []
+    for url in urls:
+        if not isinstance(url, str):
+            logger.warning(&quot;Skipping non-string URL entry: %s&quot;, url)
+            continue
+        parsed = urlparse(url)
+        if parsed.scheme not in (&quot;http&quot;, &quot;https&quot;) or not parsed.netloc:
+            logger.warning(&quot;Skipping invalid URL: %s&quot;, url)
+            continue
+        valid.append(url)
+    return valid
+</code></pre>
+<blockquote>
+<p>Valider la config au démarrage, c'est le meilleur endroit pour échouer. Mieux vaut un crash clair au lancement qu'une URL bancale qui pollue les logs à chaque cycle.</p>
+</blockquote>
+<hr>
+<h2>Étape 2 : Le store en mémoire</h2>
+<p>Pas de base de données ici, on reste simple. Un <code>dict</code> d'URLs vers une <code>deque</code> bornée.</p>
+<pre><code class="language-python">from collections import deque
+
+store: dict[str, deque] = {}
+
+
+def add_result(url: str, timestamp: str, response_time: float, status_code: str):
+    if url not in store:
+        store[url] = deque(maxlen=100)
+
+    store[url].append(
+        {
+            &quot;timestamp&quot;: timestamp,
+            &quot;status_code&quot;: status_code,
+            &quot;response_time_ms&quot;: response_time,
+        }
+    )
+
+
+def get_result() -&gt; dict:
+    return {url: list(results) for url, results in store.items()}
+</code></pre>
+<p><code>deque(maxlen=100)</code> : la structure parfaite ici. Quand elle atteint 100 éléments, elle <strong>évince automatiquement le plus ancien</strong>. Pas de logique de nettoyage à écrire, on garde toujours les 100 derniers checks par URL.</p>
+<blockquote>
+<p>Trade-off assumé : tout est perdu au redémarrage, et ça ne scale pas sur plusieurs instances. Pour de la prod, on brancherait une TimeSeries DB (InfluxDB) et un dashboard Grafana. Mais pour un service simple, c'est overkill.</p>
+</blockquote>
+<hr>
+<h2>Étape 3 : Le worker async</h2>
+<p>C'est le cœur du service. On veut poll toutes les URLs <strong>en parallèle</strong>, sinon une URL qui timeout à 10s ralentirait toutes les autres.</p>
+<pre><code class="language-python">async def check_urls(client: httpx.AsyncClient, config: Config, url: str):
+    current_time = datetime.now(timezone.utc).isoformat()
+    start = time.perf_counter()
+
+    try:
+        async with client.stream(&quot;GET&quot;, url, timeout=config.timeout) as r:
+            status_code = str(r.status_code)
+    except httpx.TimeoutException:
+        status_code = &quot;TIMEOUT&quot;
+    except httpx.RequestError:
+        status_code = &quot;CONNECTION_ERROR&quot;
+    except Exception as e:
+        logger.error(&quot;Unexpected error checking %s: %s&quot;, url, e)
+        status_code = &quot;ERROR&quot;
+
+    elapsed_ms = (time.perf_counter() - start) * 1000
+    add_result(url, current_time, elapsed_ms, status_code)
+</code></pre>
+<p>Deux points importants ici :</p>
+<p><code>client.stream(&quot;GET&quot;, ...)</code> : on <strong>ne télécharge pas le body</strong>. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP nous intéresse — pas besoin de rapatrier 2 Mo de HTML.</p>
+<p><code>time.perf_counter()</code> : c'est l'horloge monotone, faite pour mesurer des durées. On ne la mélange pas avec <code>datetime.now()</code> (qui elle sert au timestamp affiché).</p>
+<p>Et la boucle qui orchestre tout ça :</p>
+<pre><code class="language-python">async def poll_urls(config: Config):
+    async with httpx.AsyncClient() as client:
+        while True:
+            cycle_start = asyncio.get_event_loop().time()
+            await asyncio.gather(
+                *[check_urls(client, config, url) for url in config.urls if url],
+                return_exceptions=True,
+            )
+            elapsed = asyncio.get_event_loop().time() - cycle_start
+            await asyncio.sleep(max(0, config.polling_interval - elapsed))
+</code></pre>
+<p><code>asyncio.gather(...)</code> : lance tous les checks d'un coup et attend qu'ils finissent tous. C'est là que la parallélisation opère.</p>
+<p><code>httpx.AsyncClient()</code> partagé : un seul client pour tous les checks. Il réutilise le pool de connexions au lieu d'en ouvrir une nouvelle à chaque appel.</p>
+<p>Le calcul du sleep mérite qu'on s'y arrête :</p>
+<pre><code class="language-python">elapsed = ... - cycle_start
+await asyncio.sleep(max(0, config.polling_interval - elapsed))
+</code></pre>
+<p>Si on faisait bêtement <code>sleep(60)</code>, l'intervalle réel serait de <code>60s + temps de polling</code>, et ça <strong>dériverait</strong> dans le temps. En retranchant le temps déjà passé, on garde un intervalle effectif proche des 60s demandées. Le <code>max(0, ...)</code> protège le cas où un cycle prendrait plus longtemps que l'intervalle.</p>
+<hr>
+<h2>Étape 4 : L'API et le cycle de vie</h2>
+<p>FastAPI expose le store, et surtout démarre le worker en tâche de fond via le <code>lifespan</code>.</p>
+<pre><code class="language-python">@asynccontextmanager
+async def lifespan(app: FastAPI):
+    config_path = os.getenv(&quot;CONFIG_PATH&quot;, &quot;config.yaml&quot;)
+    config = Config(path=config_path)
+
+    task = asyncio.create_task(poll_urls(config))
+    task.add_done_callback(
+        lambda t: logger.error(&quot;Worker stopped unexpectedly: %s&quot;, t.exception())
+        if not t.cancelled() and t.exception()
+        else None
+    )
+    yield
+    task.cancel()
+
+
+app = FastAPI(lifespan=lifespan)
+
+
+@app.get(&quot;/status&quot;)
+async def get_status():
+    return get_result()
+</code></pre>
+<p>Le <code>lifespan</code> est le bon endroit pour lancer un worker : la tâche démarre <strong>avec</strong> l'app, dans la même boucle asyncio, et un seul container suffit. Pas de process séparé à gérer.</p>
+<p>Le <code>add_done_callback</code> sert de garde-fou : si le worker crash sans qu'on l'ait annulé, on log l'erreur au lieu de la voir disparaître silencieusement.</p>
+<p>Un appel <code>GET /status</code> renvoie :</p>
+<pre><code class="language-json">{
+  &quot;https://example.com&quot;: [
+    {
+      &quot;timestamp&quot;: &quot;2026-06-09T10:00:00.000000+00:00&quot;,
+      &quot;status_code&quot;: &quot;200&quot;,
+      &quot;response_time_ms&quot;: 143.2
+    }
+  ]
+}
+</code></pre>
+<hr>
+<h2>Le flux complet</h2>
+<pre><code>config.yaml
+     │
+     V
+  [Config]  ----- valide les URLs
+     │
+     V
+  [worker]  ----- httpx.AsyncClient + asyncio.gather (toutes les URLs en //)
+     │              │
+     │  toutes      V
+     │  les 60s  [store]  ----- deque(maxlen=100) par URL
+     │              │
+     V              V
+ (boucle)      [GET /status]  ----- lit le store et le renvoie en JSON
+</code></pre>
+<p>Le worker écrit, l'API lit. Ils ne se croisent jamais.</p>
+<hr>
+<h2>Le Dockerfile</h2>
+<p>On veut une image petite et sécurisée. Multi-stage pour ne pas embarquer les outils de build, et un user non-root.</p>
+<pre><code class="language-dockerfile"># Stage 1 : install deps
+FROM python:3.13-slim AS builder
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Stage 2 : final image
+FROM python:3.13-slim
+WORKDIR /app
+COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
+COPY --from=builder /usr/local/bin/uvicorn /usr/local/bin/uvicorn
+COPY ./python/app /app/
+
+RUN useradd -m user &amp;&amp; chown -R user /app
+USER user
+EXPOSE 8080
+CMD [&quot;python&quot;, &quot;api.py&quot;]
+</code></pre>
+<p>Et le <code>docker-compose.yml</code> qui le durcit encore :</p>
+<pre><code class="language-yaml">services:
+  health-checker:
+    build: .
+    ports:
+      - &quot;${PORT:-8080}:8080&quot;
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro   # monté en lecture seule
+    restart: unless-stopped
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp
+</code></pre>
+<p>Le <code>config.yaml</code> est monté en volume read-only : on peut éditer la liste des URLs <strong>sans rebuild l'image</strong>. Et <code>read_only</code>, <code>cap_drop: ALL</code>, <code>no-new-privileges</code> réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le <code>/tmp</code> en tmpfs.</p>
+<hr>
+<h2>Aller plus loin</h2>
+<ul>
+<li><strong>Persistance</strong> : brancher une TimeSeries DB (InfluxDB, Prometheus) pour garder l'historique au-delà du redémarrage et le visualiser dans Grafana.</li>
+<li><strong>Auth sur <code>/status</code></strong> : acceptable en interne, mais en prod on protégerait l'endpoint avec une API key ou un token JWT.</li>
+<li><strong>Config à chaud</strong> : aujourd'hui la liste des URLs est lue une seule fois au démarrage. On pourrait la recharger sans restart.</li>
+<li><strong>Alerting</strong> : déclencher une notification (Slack, mail) quand une URL enchaîne plusieurs échecs.</li>
+</ul>
+<p>Chacun de ces points mérite son propre article. On les traitera plus tard.</p>
+
+</article>
+
+    </div>
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>
