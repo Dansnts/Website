@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction à Go — Dani Faria dos Santos</title>
+  <meta name="description" content="Les bases du langage : types, variables, fonctions, structs, interfaces, gestion d&#39;erreurs et goroutines." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    /* ── Blog listing ── */
+    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 2rem 2rem 5rem; }
+    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
+    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .post-list li:first-child { border-top: 1px solid var(--border); }
+    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
+    .post-list a:hover { color: var(--accent); }
+    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
+
+    /* ── Blog post body (Markdown output inside .project-detail) ── */
+    .blog-body { padding-bottom: 5rem; }
+
+    .blog-body h2 {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-body h3 {
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--subtle);
+      margin: 1.75rem 0 0.5rem;
+    }
+    .blog-body p {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 300;
+      color: var(--subtle);
+      line-height: 1.75;
+      margin-bottom: 1rem;
+    }
+    .blog-body ul, .blog-body ol {
+      padding-left: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--subtle);
+    }
+    .blog-body li {
+      font-family: var(--sans);
+      font-size: 0.875rem;
+      font-weight: 300;
+      line-height: 1.75;
+      margin-bottom: 0.25rem;
+    }
+    .blog-body a { color: var(--accent); }
+    .blog-body a:hover { opacity: 0.75; }
+    .blog-body strong { color: var(--text); font-weight: 600; }
+    .blog-body em { color: var(--subtle); font-style: italic; }
+    .blog-body code {
+      font-family: var(--mono);
+      font-size: 0.8em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      color: var(--accent);
+    }
+    .blog-body blockquote {
+      border-left: 2px solid var(--accent);
+      padding: 0.1rem 1rem;
+      color: var(--muted);
+      margin: 1.5rem 0;
+    }
+    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
+    .blog-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      overflow-x: auto;
+      display: block;
+    }
+    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
+    .blog-body th {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 0.55rem 1rem;
+      text-align: left;
+    }
+    .blog-body td {
+      padding: 0.6rem 1rem;
+      color: var(--subtle);
+      font-weight: 300;
+      line-height: 1.6;
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-body tr:last-child td { border-bottom: none; }
+    .blog-body tbody tr:hover td { background: var(--surface); }
+
+    /* ── Code blocks ── */
+    .blog-body pre {
+      background: #0c0e18;
+      border: 1px solid #1e2030;
+      border-radius: 0 0 8px 8px;
+      border-top: none;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.4rem;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #dce0f0;
+    }
+    .blog-body pre code {
+      font-family: var(--mono);
+      font-size: inherit;
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: inherit;
+    }
+    .code-wrap { margin-bottom: 1.4rem; }
+    .code-wrap pre { margin-bottom: 0; }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #141625;
+      border: 1px solid #1e2030;
+      border-radius: 8px 8px 0 0;
+      padding: 0.45rem 1rem;
+    }
+    .code-filename {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .code-filename::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-hi);
+    }
+    .code-lang {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      color: var(--border-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .code-copy {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 3px;
+      padding: 0.18rem 0.5rem;
+      cursor: pointer;
+      transition: all var(--t);
+      letter-spacing: 0.04em;
+    }
+    .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main>
+    <div class="wrapper">
+  <a href="/blog/" class="back-link">&larr; Blog</a>
+
+  <article class="project-detail">
+    <header class="project-hero">
+      
+      <div class="project-tags">
+        <span class="tag">post</span><span class="tag">go</span><span class="tag">golang</span><span class="tag">programmation</span>
+      </div>
+      
+      <h1>Introduction à Go</h1>
+      <p class="project-subtitle">7 juillet 2026</p>
+    </header>
+
+    <div class="blog-body">
+      <h2>Introduction à Go</h2>
+<p>Go est un langage compilé, statiquement typé, conçu par Google pour être simple et rapide. Pas de classes, pas d'héritage, pas d'exceptions.
+Un programme Go minimal :</p>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+    fmt.Println(&quot;Hello, world&quot;)
+}
+</code></pre>
+<h2>Types numériques</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Taille</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int</code></td>
+<td>32 ou 64 bits selon la plateforme</td>
+<td>Entier générique</td>
+</tr>
+<tr>
+<td><code>int8</code> / <code>int16</code> / <code>int32</code> / <code>int64</code></td>
+<td>Fixe</td>
+<td>Quand la taille compte</td>
+</tr>
+<tr>
+<td><code>uint</code> / <code>uint8</code>...</td>
+<td>Non signé</td>
+<td>Toujours positif</td>
+</tr>
+<tr>
+<td><code>float32</code></td>
+<td>32 bits</td>
+<td>Précision simple</td>
+</tr>
+<tr>
+<td><code>float64</code></td>
+<td>64 bits</td>
+<td>Précision double</td>
+</tr>
+</tbody>
+</table>
+<h2>Texte</h2>
+<pre><code class="language-go">var s string = &quot;une chaîne&quot;   // string = séquence d'octets UTF-8
+var r rune   = 'A'            // rune = alias de int32, un caractère Unicode
+
+fmt.Printf(&quot;%.3f %s\n&quot;, 3.14159, s)   // %.3f = float à 3 décimales
+</code></pre>
+<p><code>string</code> et <code>rune</code> sont deux choses différentes dans Go. Un string est une suite d'octets, une rune est un point de code Unicode (un caractère en gros).</p>
+<h2>Variables</h2>
+<pre><code class="language-go">// Déclaration explicite
+var x int = 10
+
+// Inférence de type. Uniquement à l'intérieur d'une fonction
+y := 21
+
+// Constante
+const Pi = 3.14159 // Très original
+</code></pre>
+<p><code>:=</code> crée et affecte en même temps.
+<code>=</code> modifie une variable existante.</p>
+<p>En dehors d'une fonction, il faut obligatoirement utiliser <code>var</code>.</p>
+<h2>Boucles</h2>
+<p>Go n'a qu'un mot-clé de boucle : <code>for</code>.</p>
+<p><code>while</code>? Y'A PAS.</p>
+<pre><code class="language-go">// Boucle classique
+for i := 0; i &lt; 10; i++ {
+    fmt.Println(i)
+}
+
+// &quot;Équivalent&quot; de while
+n := 0
+for n &lt; 10 {
+
+    fmt.Println(n)
+
+
+    n++
+}
+
+// Boucle infinie, break pour sortir
+for {
+    ...
+}
+
+// Itérer sur une slice ou une map
+nombres := []int{1, 2, 3}
+
+for index, valeur := range nombres {
+    fmt.Println(index, valeur)
+}
+</code></pre>
+<h2>Slices et Maps</h2>
+<pre><code class="language-go">// Slice (tableau dynamique)
+s := []string{&quot;go&quot;, &quot;est&quot;, &quot;rigolo&quot;}
+s = append(s, &quot;. Genre, vraiment.&quot;)
+
+// Map (dictionnaire)
+ages := map[string]int{
+    &quot;dani&quot;: 26,
+    &quot;alice&quot;: 30,
+    &quot;la folle du bus&quot;: 40,
+}
+ages[&quot;JohnPersona&quot;] = 6
+
+valeur, existe := ages[&quot;JohnPersona&quot;]   // vérifier si une clé existe
+</code></pre>
+<h2>Fonctions</h2>
+<pre><code class="language-go">// Fonction simple
+func add(a int, b int) int {
+    return a + b
+}
+
+// Retour multiple, idiome Go pour les erreurs
+func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, fmt.Errorf(&quot;division par zéro&quot;)
+    }
+
+    return a / b, nil // nil indique qu'il n'y a pas d'erreurs
+}
+</code></pre>
+<p>Go permet de retourner plusieurs valeurs. C'est la base de la gestion d'erreurs.</p>
+<h2>Structs</h2>
+<p>Go n'a pas de classes. Les données sont regroupées dans des structs (Comme en C).</p>
+<pre><code class="language-go">type User struct {
+    Name  string
+    Email string
+    Age   int
+}
+
+// Méthode attachée à la struct
+func (u User) String() string {
+    return fmt.Sprintf(&quot;%s &lt;%s&gt;&quot;, u.Name, u.Email)
+}
+
+u := User{Name: &quot;Dani&quot;, Email: &quot;dani@example.com&quot;, Age: 26}
+fmt.Println(u.String())
+</code></pre>
+<h2>Interfaces</h2>
+<p>Une interface définit un comportement. N'importe quel type qui implémente les méthodes satisfait l'interface, sans le déclarer explicitement.</p>
+<pre><code class="language-go">type Animal interface {
+    Sound() string
+}
+
+type Dog struct{}
+type Cat struct{}
+
+func (d Dog) Sound() string { return &quot;woof&quot; }
+func (c Cat) Sound() string { return &quot;meow&quot; }
+
+func describe(a Animal) {
+    fmt.Println(a.Sound())
+}
+
+describe(Dog{})   // woof
+describe(Cat{})   // meow
+</code></pre>
+<h2>Gestion d'erreurs</h2>
+<p>Pas d'exceptions en Go. Les erreurs sont des valeurs retournées et vérifiées explicitement.</p>
+<pre><code class="language-go">result, err := divide(10, 0)
+if err != nil {
+    fmt.Println(&quot;erreur :&quot;, err)
+    return
+}
+fmt.Println(result)
+</code></pre>
+<p>Le pattern <code>if err != nil</code> revient partout. C'est verbeux mais explicite ON sais comme ça exactement où ça peut échouer.</p>
+<h2>Goroutines et channels</h2>
+<p>Go a la concurrence dans son ADN. Une <strong>goroutine</strong> (vrai nom) est une fonction qui tourne en parallèle, lancée avec <code>go</code>.</p>
+<pre><code class="language-go">func worker(id int) {
+    fmt.Printf(&quot;worker %d terminé\n&quot;, id)
+}
+
+go worker(1)   // lancé en arrière-plan
+go worker(2)
+
+// Les channels permettent aux goroutines de communiquer
+ch := make(chan int)
+
+go func() {
+    ch &lt;- 42   // envoyer
+}()
+
+valeur := &lt;-ch   // recevoir (bloquant jusqu'à réception)
+fmt.Println(valeur)
+</code></pre>
+<h2>Commentaires</h2>
+<p>Par convention, chaque commentaire commence par le nom exact de la fonction ou variable commentée (sensible à la casse) et se termine par un point.</p>
+<pre><code class="language-go">// Add returns the sum of a and b.
+func Add(a, b int) int {
+    return a + b
+}
+</code></pre>
+<p>C'est la convention utilisée par <code>godoc</code> pour générer la documentation automatiquement.</p>
+<p><em>Un jour je ferais un opérateur pour K8s avec ça...</em></p>
+
+    </div>
+  </article>
+</div>
+
+  </main>
+  <div id="site-footer"></div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.blog-body pre').forEach(pre => {
+      const code = pre.querySelector('code');
+      const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(header);
+      wrap.appendChild(pre);
+      header.querySelector('.code-copy').addEventListener('click', function() {
+        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+        this.textContent = 'Copié !';
+        setTimeout(() => this.textContent = 'Copier', 2000);
+      });
+    });
+  </script>
+</body>
+</html>
