@@ -21,7 +21,7 @@ const pageTranslations = {
   // Index page
   index: {
     fr: {
-      'hero-subtitle': 'SysAdmin & DevOps Junior',
+      'hero-subtitle': 'Ingénieur Infrastructure & Sécurité',
       'hero-intro': "Passionné par l'infrastructure, la sécurité et l'automatisation. Je conçois et déploie des systèmes robustes et scalables.",
       'stack-title': 'Stack principal',
       'card-infra-title': 'Infrastructure',
@@ -41,7 +41,7 @@ const pageTranslations = {
       'blog-cta': 'Lire le blog →'
     },
     en: {
-      'hero-subtitle': 'SysAdmin & DevOps Junior',
+      'hero-subtitle': 'Infrastructure & Security Engineer',
       'hero-intro': 'Passionate about infrastructure, security and automation. I design and deploy robust and scalable systems.',
       'stack-title': 'Main Stack',
       'card-infra-title': 'Infrastructure',
@@ -153,7 +153,7 @@ const pageTranslations = {
       'experience': 'Expérience professionnelle',
       'education': 'Formation',
       'skills': 'Compétences',
-      'skills-intro': "Mise en place de clusters <strong>Kubernetes</strong> (K3s, AKS) on-premise avec <strong>ArgoCD</strong> (GitOps), Traefik, MetalLB et cert-manager. Gestion de workloads conteneurisés avec <strong>Docker</strong>. Virtualisation sur <strong>Proxmox</strong> et stockage NAS avec <strong>TrueNAS/ZFS</strong>. Déploiement d'infrastructure as code avec <strong>Terraform</strong> et Ansible. Administration de serveurs <strong>Windows Server</strong> (AD, GPO, Exchange) et de parcs <strong>Linux</strong> (Fedora, Ubuntu, Debian). Configuration et segmentation réseau (VLANs, Cisco, Aruba, Arista, <strong>MikroTik</strong>, UniFi). VPN <strong>WireGuard</strong>. Déploiement de stacks de monitoring (<strong>Prometheus, Grafana, ELK</strong>). Automatisation de pipelines <strong>CI/CD avec GitLab</strong> et scripting Python/Bash. Gestion MDM (Intune, Apple Business Manager). Certification cybersécurité Cyber-Safe, mise en conformité RGPD.",
+      'skills-intro': "Mise en place de clusters <strong>Kubernetes</strong> (K3s, AKS) on-premise avec <strong>ArgoCD</strong> (GitOps), Traefik, MetalLB et cert-manager. Gestion de workloads conteneurisés avec <strong>Docker</strong>. Virtualisation sur <strong>Proxmox</strong> et stockage NAS avec <strong>TrueNAS/ZFS</strong>. Déploiement d'infrastructure as code avec <strong>Terraform</strong> et Ansible. Administration de serveurs <strong>Windows Server</strong> (AD, GPO, Exchange) et de parcs <strong>Linux</strong> (Fedora, Ubuntu, Debian). Gestion des identités et des accès (<strong>IAM</strong>) : Active Directory, Azure AD, <strong>Keycloak</strong> (OIDC/OAuth2/SSO), <strong>HashiCorp Vault</strong>, RBAC. Configuration et segmentation réseau (VLANs, Cisco, Aruba, Arista, <strong>MikroTik</strong>, UniFi, FreeRADIUS). VPN <strong>WireGuard</strong>. Déploiement de stacks de monitoring (<strong>Prometheus, Grafana, ELK</strong>). Automatisation de pipelines <strong>CI/CD avec GitLab</strong> et scripting Go/Python/Bash/PowerShell. Gestion MDM (Intune, Apple Business Manager). Certification cybersécurité Cyber-Safe, mise en conformité RGPD.",
       'languages': 'Langues',
       'observability': 'Observabilité',
       'security': 'Sécurité',
@@ -191,7 +191,7 @@ const pageTranslations = {
       'experience': 'Professional Experience',
       'education': 'Education',
       'skills': 'Skills',
-      'skills-intro': 'Deployment and administration of on-premise <strong>Kubernetes</strong> clusters (K3s, AKS) with <strong>ArgoCD</strong> (GitOps), Traefik, MetalLB and cert-manager. Containerized workload management with <strong>Docker</strong>. Virtualization on <strong>Proxmox</strong> and NAS storage with <strong>TrueNAS/ZFS</strong>. Infrastructure as code with <strong>Terraform</strong> and Ansible. <strong>Windows Server</strong> administration (AD, GPO, Exchange) and <strong>Linux</strong> fleet management (Fedora, Ubuntu, Debian). Network configuration and segmentation (VLANs, Cisco, Aruba, Arista, <strong>MikroTik</strong>, UniFi). <strong>WireGuard</strong> VPN. Monitoring stack deployment (<strong>Prometheus, Grafana, ELK</strong>). <strong>CI/CD pipeline automation with GitLab</strong> and Python/Bash scripting. MDM management (Intune, Apple Business Manager). Cyber-Safe security certification, GDPR compliance.',
+      'skills-intro': 'Deployment and administration of on-premise <strong>Kubernetes</strong> clusters (K3s, AKS) with <strong>ArgoCD</strong> (GitOps), Traefik, MetalLB and cert-manager. Containerized workload management with <strong>Docker</strong>. Virtualization on <strong>Proxmox</strong> and NAS storage with <strong>TrueNAS/ZFS</strong>. Infrastructure as code with <strong>Terraform</strong> and Ansible. <strong>Windows Server</strong> administration (AD, GPO, Exchange) and <strong>Linux</strong> fleet management (Fedora, Ubuntu, Debian). Identity and access management (<strong>IAM</strong>): Active Directory, Azure AD, <strong>Keycloak</strong> (OIDC/OAuth2/SSO), <strong>HashiCorp Vault</strong>, RBAC. Network configuration and segmentation (VLANs, Cisco, Aruba, Arista, <strong>MikroTik</strong>, UniFi, FreeRADIUS). <strong>WireGuard</strong> VPN. Monitoring stack deployment (<strong>Prometheus, Grafana, ELK</strong>). <strong>CI/CD pipeline automation with GitLab</strong> and Go/Python/Bash/PowerShell scripting. MDM management (Intune, Apple Business Manager). Cyber-Safe security certification, GDPR compliance.',
       'languages': 'Languages',
       'observability': 'Observability',
       'security': 'Security',
@@ -1210,7 +1210,7 @@ const pageTranslations = {
 const jobTranslations = {
   fr: {
     sysadmin: {
-      title: 'SysAdmin',
+      title: 'Responsable IT Unique — Infrastructure & Sécurité',
       tasks: [
         'Création du département IT de A à Z, en autonomie totale, sous contrainte budgétaire sévère (100 CHF/mois), infrastructure toujours en production, budget porté à 30 000 CHF/an',
         'Certification Cyber-Safe (ISO 27001) en 6 mois : production de preuves d\'audit, première pour l\'entreprise',
@@ -1234,7 +1234,7 @@ const jobTranslations = {
   },
   en: {
     sysadmin: {
-      title: 'SysAdmin',
+      title: 'Sole IT Manager — Infrastructure & Security',
       tasks: [
         'Identity and access management: RBAC role modelling, Active Directory (30 users, GPO, lifecycle), 40 MDM devices (Intune/ABM), 3CX VoIP on Debian',
         'Network architecture from scratch: DMZ + 5 VLANs, on-premise Proxmox virtualization + hybrid Hidora cloud',
