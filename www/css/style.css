@@ -1261,7 +1261,7 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
 
   @page { size: A4; margin: 0.45cm 0.9cm 0.4cm; }
 
-  #home, #projects,
+  #home, #projects, #blog,
   #cv > .wrapper > .cv-section-top,
   nav, footer, .theme-toggle,
   .about-joke { display: none !important; }
