@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Au début d'un homelab, chaque service a son propre login. Un mot de passe pour Grafana, un autre pour le wiki, un troisième pour Vaultwarden… et forcément, on finit par réutiliser le même partout, ou par les noter dans un fichier. C'est exactement ce qu'on veut éviter dans un lab qui prétend être sérieux.</p>
+      <p>Au début d'un homelab, chaque service a son propre login. Un mot de passe pour Grafana, un autre pour le wiki, un troisième pour Vaultwarden. Et forcément, on finit par réutiliser le même partout, ou par les noter dans un fichier texte quelque part. C'est exactement ce qu'on veut éviter dans un lab qui prétend être sérieux.</p>
 <p>La solution, c'est un <strong>IAM</strong> (Identity and Access Management) : un annuaire d'identités unique, et tous les services qui viennent s'y authentifier. Chez moi, c'est <strong>Keycloak</strong>. Un seul compte, un seul mot de passe, et du SSO qui se propage aux applications — jusqu'à l'authentification des ports Ethernet.</p>
 <p>Dans ce post, on va voir :</p>
 <ol>
@@ -365,6 +365,7 @@ navigateur ───────────────────────
 <li><strong>Brancher d'autres services</strong> : Vaultwarden, ArgoCD, le wiki… tout ce qui parle OIDC peut rejoindre le SSO avec le même pattern « deux URLs » que Grafana.</li>
 <li><strong>Sauvegarder le realm</strong> : un export régulier de la base PostgreSQL de Keycloak (ou un <code>kc.sh export</code>) pour ne pas reconstruire clients et rôles à la main après un incident.</li>
 </ul>
+<p><em>Un seul mot de passe à retenir, et un seul endroit où le changer un dimanche soir parce qu'on a un doute.</em></p>
 
     </div>
   </article>

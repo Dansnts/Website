@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Les métriques disent <em>que</em> quelque chose va mal ; les <strong>logs</strong> disent <em>pourquoi</em>. Dès qu'on a plus de deux ou trois services, faire <code>kubectl logs</code> pod par pod ne tient plus : on veut tout au même endroit, cherchable, avec une rétention. C'est la centralisation des logs.</p>
+      <p>Les métriques disent <em>que</em> quelque chose va mal ; les <strong>logs</strong> disent <em>pourquoi</em>. Dès qu'on a plus de deux ou trois services, faire <code>kubectl logs</code> pod par pod ne tient plus. On veut tout au même endroit, cherchable, avec une rétention. C'est la centralisation des logs.</p>
 <p>Il existe deux grandes écoles pour ça, et j'ai fait tourner les deux dans mon lab :</p>
 <ul>
 <li><strong>ELK</strong> (Elasticsearch + Logstash + Kibana + Filebeat) : l'approche historique, puissante, qui indexe le texte intégral de chaque log.</li>
@@ -396,6 +396,7 @@ loki.write &quot;loki&quot; {
 <li><strong>Structurer les logs à la source</strong> : passer les applis en logs JSON permet à <code>stage.json</code> d'Alloy d'extraire des champs — sans payer le coût d'un index full-text.</li>
 <li><strong>Rétention par flux</strong> : affiner la rétention Loki par label (garder les logs d'auth plus longtemps que le reste) plutôt qu'un <code>30d</code> global.</li>
 </ul>
+<p><em>Le jour où je devrai vraiment faire du forensique sur des To de logs, je réinstallerai ELK sans regret. En attendant, <code>{app=&quot;vaultwarden&quot;} |= &quot;error&quot;</code> me suffit largement.</em></p>
 
     </div>
   </article>

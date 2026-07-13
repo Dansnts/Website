@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Brancher son homelab directement sur la box du FAI, c'est simple — jusqu'au jour où une VM compromise se retrouve sur le même réseau que ton téléphone, ta TV et l'ordi du salon. La bonne pratique, c'est d'<strong>isoler</strong> : le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.</p>
+      <p>Brancher son homelab directement sur la box du FAI, c'est simple. Jusqu'au jour où une VM compromise se retrouve sur le même réseau que ton téléphone, ta TV et l'ordi du salon. La bonne pratique, c'est d'<strong>isoler</strong> : le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.</p>
 <p>Chez moi, ce rôle est tenu par un <strong>MikroTik RB750Gr3</strong> — un petit routeur pas cher mais redoutablement complet (RouterOS). Dans ce post, on construit la segmentation complète. On va voir :</p>
 <ol>
 <li>Le WAN statique vers la box et le LAN isolé en <code>10.0.0.0/24</code></li>
@@ -345,6 +345,7 @@ Internet             ──X──&gt; Lab (reste)  (drop tout depuis WAN)
 <li><strong>Sauvegarder la config</strong> : <code>/export file=backup</code> génère un <code>.rsc</code> rejouable. À versionner dans Git comme le reste de l'infra.</li>
 <li><strong>Silent boot</strong> : <code>/system routerboard settings set silent-boot=yes</code> — désactive les bips au démarrage, détail mais appréciable.</li>
 </ul>
+<p><em>Un routeur à 60 balles qui fait tourner un firewall stateful plus rigoureux que certaines box &quot;pro&quot;. RouterOS mérite sa réputation.</em></p>
 
     </div>
   </article>

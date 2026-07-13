@@ -275,7 +275,7 @@ spec:
 </blockquote>
 <hr>
 <h2>LE point critique : sauvegarder la master key</h2>
-<p>Voici ce que tout le monde néglige, et qui transforme un incident mineur en catastrophe.</p>
+<p>Voici ce que tout le monde néglige, et qui transforme un incident mineur en catastrophe pure.</p>
 <p><strong>La clé privée (master key) vit dans le cluster.</strong> Si tu perds le cluster (disque mort, réinstallation, node détruit), tu perds la clé. Et sans la clé, <strong>tous tes <code>SealedSecret</code> deviennent définitivement indéchiffrables</strong>. Tu as tes secrets chiffrés dans Git, mais plus aucun moyen de les ouvrir.</p>
 <p>La master key doit donc être <strong>exportée et sauvegardée hors du cluster</strong> :</p>
 <pre><code class="language-bash">kubectl get secret -n kube-system \
@@ -341,6 +341,7 @@ keyrenewperiod: &quot;720h&quot;   # 30 jours
 <li><strong>Sauvegarde automatisée de la master key</strong> : un CronJob qui exporte la clé vers un stockage chiffré hors cluster après chaque rotation.</li>
 <li><strong>La dépendance circulaire</strong> : master key dans Vaultwarden, secret Vaultwarden scellé par la master key — un thème récurrent du homelab que j'aborde ailleurs.</li>
 </ul>
+<p><em>Un secret chiffré sans sa clé, c'est un coffre-fort jeté à la mer avec la combinaison dedans.</em></p>
 
     </div>
   </article>

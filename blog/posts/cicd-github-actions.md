@@ -6,9 +6,9 @@ date: 2025-05-03
 tags: [devops, ci-cd, github-actions]
 ---
 
-Une CI/CD (Intégration Continue / Déploiement Continu) est une pipeline automatique qui se déclenche à chaque fois que du code est poussé. L'objectif : ne plus jamais déployer à la main et avoir un flux automatique de suivi du processus complet.
+Une CI/CD (Intégration Continue / Déploiement Continu) est un pipeline automatique qui se déclenche à chaque push. Le but : plus jamais déployer à la main, et un flux qui trace tout le processus.
 
-Dans ce post, nous allons voir comment construire pipeline *GitHub Actions* pour une application Node.js qui :
+On construit un pipeline *GitHub Actions* pour une application Node.js qui :
 
 1. Lance les tests automatiquement
 2. Build une image Docker
@@ -18,7 +18,7 @@ Dans ce post, nous allons voir comment construire pipeline *GitHub Actions* pour
 ## Prérequis
 
 - Un repo GitHub
-- Une application avec ses tests déja écrits
+- Une application avec ses tests déjà écrits
 - Un `Dockerfile`
 - Un serveur (VPS, cloud, peu importe)
 
@@ -35,9 +35,9 @@ ton-projet/
         └── ci.yml   ← ici
 ```
 
-Chaque workflow contient des **jobs** et chaque job contient des **steps**.
+Chaque workflow contient des **jobs**, chaque job contient des **steps**.
 
-Pour faire simple, c'est un container qui va executer des tâches en cascade, et les outputs que on recupère en stdout son les valeurs qui vont définir le status de succès ou non de notre pipeline.
+En gros : un container qui exécute des tâches en cascade. Ce qui sort en stdout détermine si le job passe ou casse.
 
 ---
 
@@ -68,13 +68,13 @@ jobs:
       - run: npm test
 ```
 
-`on: push: branches: [main]` : le pipeline se déclenche uniquement sur des pushs vers la branche `main`.
+`on: push: branches: [main]` : déclenche uniquement sur les pushs vers `main`.
 
 `actions/checkout@v4` : clone la branche dans le runner.
 
-`npm ci` : installe les dépendances depuis le lock file (plus strict que `npm install`).
+`npm ci` : installe les dépendances depuis le lock file. Plus strict que `npm install`, il échoue si le lock file et le `package.json` ne correspondent pas.
 
-> À ce stade, chaque push vers main lance les tests. Si un test échoue, le job passe en rouge et une notification est levée.
+> Chaque push vers main lance les tests. Un test qui échoue, le job passe rouge, notification envoyée.
 
 ---
 
@@ -104,9 +104,9 @@ On ajoute un job `build` qui dépend de `test` grâce à l'argument `needs`.
           tags: ghcr.io/${{ github.repository }}:latest
 ```
 
-`ghcr.io` est le registre Docker intégré à GitHub, pas besoin de compte Docker Hub. `GITHUB_TOKEN` est automatiquement disponible dans chaque workflow, rien à configurer.
+`ghcr.io` : registre Docker intégré à GitHub. Pas besoin de compte Docker Hub. `GITHUB_TOKEN` est disponible automatiquement dans chaque workflow, rien à configurer.
 
-> Le `Dockerfile` à la racine du projet est utilisé par défaut.
+> Le `Dockerfile` à la racine du projet est utilisé par défaut. Si le tien vit ailleurs, `context` et `file` existent pour ça.
 
 ---
 
@@ -132,8 +132,9 @@ On ajoute un job `build` qui dépend de `test` grâce à l'argument `needs`.
               ghcr.io/${{ github.repository }}:latest
 ```
 
-Le serveur pull la nouvelle image et relance le container. 
-Le `|| true` sur `stop` et `rm` évite que le job échoue si le container n'existe pas encore au premier déploiement.
+Le serveur pull la nouvelle image et relance le container.
+
+`|| true` sur `stop` et `rm` : évite que le job échoue si le container n'existe pas encore, typiquement au tout premier déploiement.
 
 ---
 
@@ -152,15 +153,15 @@ push → main
      [deploy]         SSH -> docker pull + run
 ```
 
-Si une étape échoue, les suivantes ne tournent pas.
+Une étape échoue, les suivantes ne tournent pas. Simple.
 
 ---
 
 ## Aller plus loin
 
-- **Environments** : GitHub permet de définir des environnements (`staging`, `production`) avec des approbations manuelles avant le déploiement en prod.
-- **Matrix builds** : tester sur plusieurs versions de Node/Python en parallèle avec `strategy: matrix`.
+- **Environments** : GitHub permet de définir des environnements (`staging`, `production`) avec approbation manuelle avant la prod.
+- **Matrix builds** : tester plusieurs versions de Node/Python en parallèle avec `strategy: matrix`.
 - **Cache** : `actions/cache` pour mettre en cache `node_modules` et accélérer les builds.
-- **Gestion des secrets** : faire un autre article là-dessus, c'est un sujet à part entière.
+- **Gestion des secrets** : un sujet entier à lui tout seul, ça mérite son propre article.
 
-Tout cela sera traité dans un autre post.
+*Le jour où je remplace le SSH bricolé par un vrai GitOps (ArgoCD), je supprime ce `deploy` job avec un plaisir non dissimulé.*

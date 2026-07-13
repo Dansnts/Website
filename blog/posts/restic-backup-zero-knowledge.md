@@ -6,9 +6,9 @@ date: 2025-09-10
 tags: [homelab, backup, restic, kubernetes, chiffrement]
 ---
 
-Sauvegarder ses données hors site, c'est indispensable. Mais confier ses fichiers à un hébergeur cloud, c'est aussi lui confier leur contenu — sauf si on chiffre **avant** l'envoi. C'est le principe du *zero-knowledge* : l'hébergeur stocke des blobs opaques qu'il ne peut pas lire. Même sous contrainte légale, il n'a rien à donner.
+Sauvegarder ses données hors site, c'est indispensable. Confier ses fichiers à un hébergeur cloud, c'est aussi lui confier leur contenu — sauf si on chiffre **avant** l'envoi. C'est le principe du *zero-knowledge* : l'hébergeur stocke des blobs opaques qu'il ne peut pas lire. Même sous contrainte légale, il n'a rien à donner.
 
-**Restic** fait exactement ça : chunking, déduplication, compression et chiffrement AES-256, le tout côté client. Dans ce post, on monte un backup Restic vers du S3, piloté par un CronJob Kubernetes :
+**Restic** fait exactement ça : chunking, déduplication, compression et chiffrement AES-256, le tout côté client. On monte un backup Restic vers du S3, piloté par un CronJob Kubernetes :
 
 1. Le fonctionnement zero-knowledge de Restic
 2. Le CronJob et son cycle backup / forget / check
@@ -42,7 +42,7 @@ Fichiers ──> découpage en blobs (content-defined chunking)
 - **Déduplication** : deux fichiers identiques (ou deux versions proches) partagent leurs blobs. Énorme gain d'espace.
 - **Chiffrement local** : tout est chiffré **avant** l'upload avec un mot de passe qui ne quitte jamais la machine. Le S3 ne contient que du hash illisible.
 
-Résultat : Infomaniak (l'hébergeur) ne voit rien. C'est du vrai zero-knowledge.
+Résultat : Infomaniak (l'hébergeur) ne voit rien. Du vrai zero-knowledge, pas du marketing.
 
 ---
 
@@ -101,7 +101,7 @@ Les trois étapes, et pourquoi cet ordre :
 
 `restic forget --prune` : applique la politique de rétention **puis** libère réellement l'espace S3 (`--prune` supprime les blobs qui ne sont plus référencés par aucun snapshot).
 
-`restic check` : vérifie l'intégrité structurelle du repo (index + packs). Un backup qu'on ne vérifie jamais est un backup qu'on *espère* avoir.
+`restic check` : vérifie l'intégrité structurelle du repo (index + packs). Un backup qu'on ne vérifie jamais, c'est un backup qu'on *espère* avoir.
 
 `concurrencyPolicy: Forbid` : si un backup dure plus de 24h (peu probable mais possible au premier run), on n'en lance pas un deuxième par-dessus.
 
@@ -122,7 +122,7 @@ C'est le cœur d'une stratégie de backup : garder assez d'historique sans explo
 --keep-yearly  2    → 2 sauvegardes annuelles     (les 2 dernières années)
 ```
 
-Cette rétention « en escalier » (*grandfather-father-son*) donne une granularité fine sur le récent et grossière sur l'ancien. Tu peux restaurer un fichier tel qu'il était hier, la semaine dernière, ou il y a un an — sans stocker 730 snapshots quotidiens.
+Cette rétention « en escalier » (*grandfather-father-son*) donne une granularité fine sur le récent et grossière sur l'ancien. Restaurer un fichier tel qu'il était hier, la semaine dernière, ou il y a un an — sans stocker 730 snapshots quotidiens.
 
 > `--prune` est ce qui rend la rétention réelle. Sans lui, `forget` retire juste les snapshots de l'index, mais les blobs restent et l'espace n'est jamais récupéré. Avec, l'espace S3 reste borné dans le temps.
 
@@ -132,7 +132,7 @@ Cette rétention « en escalier » (*grandfather-father-son*) donne une granular
 
 Une seule chose peut rendre tout ce système inutile :
 
-> **Sans le `RESTIC_PASSWORD`, les données sont définitivement inaccessibles.** C'est la contrepartie du zero-knowledge : personne — pas même toi — ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé **hors de la machine** (gestionnaire de mots de passe, coffre physique). Le perdre = perdre le backup.
+> **Sans le `RESTIC_PASSWORD`, les données sont définitivement inaccessibles.** C'est la contrepartie du zero-knowledge : personne — pas même toi — ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé **hors de la machine** (gestionnaire de mots de passe, coffre physique). Le perdre égale perdre le backup.
 
 C'est le paradoxe du chiffrement fort : la sécurité qui protège tes données de l'hébergeur les protège aussi de toi si tu perds la clé.
 
@@ -155,7 +155,7 @@ restic restore latest --target /tmp/restore \
 restic mount /mnt/restic-restore
 ```
 
-> Un backup jamais restauré n'est pas un backup, c'est un pari. Tester une restauration de temps en temps, c'est la seule façon de savoir qu'il marchera le jour où on en a besoin.
+> Un backup jamais restauré n'est pas un backup, c'est un pari. Tester une restauration de temps en temps, c'est la seule façon de savoir qu'il marchera le jour où on en a vraiment besoin.
 
 ---
 
@@ -163,5 +163,7 @@ restic mount /mnt/restic-restore
 
 - **Backup d'une base live** : sauvegarder un fichier SQLite pendant que l'app écrit dedans demande une précaution (un dump WAL-safe). Sujet d'un article dédié.
 - **Les inodes SMB** : le `--ignore-inode` de la commande cache un vrai piège des montages réseau — j'en parle dans l'article sur les galères de backup SMB.
-- **Monitoring** : exporter le résultat des runs (durée, taille, succès) vers Prometheus pour être alerté si un backup échoue.
-- **Règle 3-2-1** : Restic couvre l'off-site chiffré ; le compléter avec une copie locale (snapshots ZFS) pour respecter le 3-2-1.
+- **Monitoring** : exporter le résultat des runs (durée, taille, succès) vers Prometheus pour être alerté si un backup échoue plutôt que de le découvrir six mois plus tard.
+- **Règle 3-2-1** : Restic couvre l'off-site chiffré ; à compléter avec une copie locale (snapshots ZFS) pour respecter le 3-2-1 en entier.
+
+*Le mot de passe Restic vit dans un coffre séparé de tout le reste. Le jour où je le perds, je perds aussi le droit de me plaindre.*

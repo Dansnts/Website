@@ -203,7 +203,7 @@
 
     <div class="blog-body">
       <p>Avec une dizaine de services en HTTPS, gérer les certificats à la main devient vite ingérable : un cert par sous-domaine, chacun à renouveler tous les 90 jours. La solution élégante, c'est un <strong>certificat wildcard</strong> <code>*.mondomaine.com</code> — un seul cert pour tous les services — signé par Let's Encrypt et renouvelé automatiquement.</p>
-<p>Le hic : un wildcard ne peut PAS être validé par le challenge HTTP classique. Il faut passer par un <strong>challenge DNS-01</strong>, ce qui demande de piloter sa zone DNS par API. Dans ce post :</p>
+<p>Le hic : un wildcard ne peut PAS être validé par le challenge HTTP classique. Il faut passer par un <strong>challenge DNS-01</strong>, ce qui demande de piloter sa zone DNS par API. Au menu :</p>
 <ol>
 <li>Pourquoi DNS-01 est obligatoire pour un wildcard</li>
 <li>Le ClusterIssuer avec le webhook du registrar (Infomaniak)</li>
@@ -253,7 +253,7 @@ spec:
                 name: infomaniak-api-token
                 key: api-token
 </code></pre>
-<p><code>server: .../directory</code> : l'endpoint de production de Let's Encrypt. <strong>Pendant les tests</strong>, utiliser le staging (<code>acme-staging-v02...</code>) pour ne pas taper les quotas de production — ils sont vite atteints à force d'essais.</p>
+<p><code>server: .../directory</code> : l'endpoint de production de Let's Encrypt. <strong>Pendant les tests</strong>, utiliser le staging (<code>acme-staging-v02...</code>) pour ne pas taper les quotas de production. Ils sont vite atteints à force d'essais, demande à celui qui a dû attendre une semaine après les avoir grillés.</p>
 <p><code>solvers.dns01.webhook</code> : c'est là que la magie opère. Le webhook <code>infomaniak</code> sait parler à l'API DNS d'Infomaniak pour créer/supprimer les enregistrements TXT.</p>
 <p><code>apiTokenSecretRef</code> : le token API du registrar, stocké dans un Secret (scellé avec Sealed Secrets, évidemment).</p>
 <p>Le webhook a besoin de <strong>lire</strong> ce token, ce qui demande un peu de RBAC :</p>
@@ -292,7 +292,7 @@ spec:
 <pre><code class="language-bash">kubectl get certificate -n homelab
 kubectl describe certificate fariadossantos-wildcard -n homelab
 </code></pre>
-<p>Un <code>Ready: True</code> = certificat émis. Le renouvellement (vers J-30 avant expiration à 90 jours) est <strong>entièrement automatique</strong>. Pour les services K8s, on n'y touche plus jamais.</p>
+<p>Un <code>Ready: True</code> = certificat émis. Le renouvellement (vers J-30 avant expiration à 90 jours) est <strong>entièrement automatique</strong>. Pour les services K8s, on n'y touche plus jamais. Enfin, presque — la suite gâche un peu la fête.</p>
 <hr>
 <h2>Le cas des services hors cluster</h2>
 <p>Voilà le point que les tutos oublient. Mon Proxmox et mon TrueNAS ne sont <strong>pas</strong> dans Kubernetes — ce sont les hyperviseur et NAS <em>sous</em> le cluster. Ils ne peuvent pas consommer directement le Secret K8s. Mais je veux quand même qu'ils servent le même wildcard.</p>
@@ -309,7 +309,7 @@ kubectl get secret fariadossantos-wildcard-tls -n homelab \
 <li><strong>Proxmox</strong> : <em>Node → System → Certificates → Upload Custom Certificate</em>.</li>
 </ul>
 <blockquote>
-<p>C'est l'exception manuelle dans un homelab par ailleurs automatisé. On pourrait scripter cette synchro (un CronJob qui pousse le cert via les API de Proxmox/TrueNAS), mais tous les ~90 jours, le faire à la main reste acceptable. À noter dans son agenda pour ne pas se retrouver avec un cert expiré.</p>
+<p>C'est l'exception manuelle dans un homelab par ailleurs automatisé. On pourrait scripter cette synchro (un CronJob qui pousse le cert via les API de Proxmox/TrueNAS), mais tous les ~90 jours, le faire à la main reste acceptable. À noter dans l'agenda, sinon c'est le certificat expiré qui le rappelle, et jamais au bon moment.</p>
 </blockquote>
 <hr>
 <h2>Récapitulatif</h2>
@@ -347,6 +347,7 @@ kubectl get secret fariadossantos-wildcard-tls -n homelab \
 <li><strong>Certificats par namespace</strong> : plutôt qu'un wildcard partagé, un cert dédié par app pour cloisonner davantage.</li>
 <li><strong>Monitoring d'expiration</strong> : une alerte Prometheus (<code>certmanager_certificate_expiration_timestamp_seconds</code>) pour être prévenu si un renouvellement échoue.</li>
 </ul>
+<p><em>Un wildcard, un webhook, et plus jamais à courir après un cert expiré un dimanche soir — sauf sur Proxmox et TrueNAS, qui n'ont pas eu ce mémo.</em></p>
 
     </div>
   </article>

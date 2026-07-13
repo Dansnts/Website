@@ -261,3 +261,5 @@ rejouable à l'infini → changed=0 au 2e run
 - **Ansible Vault** : pour chiffrer les secrets (mots de passe, tokens) directement dans le repo, au lieu de les garder à part.
 - **`--check` (dry-run)** : `ansible-playbook --check` montre ce qui *changerait* sans rien appliquer. Idéal pour vérifier avant de lancer pour de vrai.
 - **Galaxy** : beaucoup de rôles courants (node_exporter inclus) existent déjà sur Ansible Galaxy. Réinventer la roue est un bon exercice, mais en prod on réutilise.
+
+*Le vrai test de confiance : rejouer le playbook un dimanche soir, sans lire le diff avant.*

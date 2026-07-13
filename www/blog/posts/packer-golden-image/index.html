@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner : un <strong>template</strong>. On peut le fabriquer à la main — installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou on peut décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.</p>
+      <p>Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner : un <strong>template</strong>. On peut le fabriquer à la main — installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.</p>
 <p>C'est le principe de la <em>golden image</em> : une image de base, propre, réutilisable, versionnée dans Git. Dans ce post, on construit une image Debian 12 pour Proxmox avec Packer. On va voir :</p>
 <ol>
 <li>Installer Debian <strong>sans interaction</strong> grâce au preseed</li>
@@ -393,6 +393,7 @@ packer build -var-file=&quot;variables.pkrvars.hcl&quot; .
 <li><strong>Un template par usage</strong> : ici c'est une image « K8s ». On pourrait en avoir une pour Docker, une pour les VMs de test… chacune avec son <code>setup.sh</code>.</li>
 <li><strong>CI</strong> : lancer <code>packer build</code> automatiquement quand le <code>.pkr.hcl</code> change, pour régénérer l'image à chaque mise à jour de sécurité Debian.</li>
 </ul>
+<p><em>Le jour où j'oublierai le <code>rm /etc/ssh/ssh_host_*</code>, toutes mes VMs partageront la même clé et <code>known_hosts</code> hurlera en chœur. La checklist de nettoyage existe précisément pour ce jour-là.</em></p>
 
     </div>
   </article>

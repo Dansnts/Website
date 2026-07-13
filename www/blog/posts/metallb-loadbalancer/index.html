@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Sur un cloud public, déclarer un <code>Service type: LoadBalancer</code> provoque la création d'un vrai load-balancer avec une IP publique. Sur du bare-metal — un serveur chez soi — il ne se passe rien : le service reste bloqué en <code>&lt;pending&gt;</code>, éternellement, faute de quelqu'un pour lui attribuer une IP.</p>
+      <p>Sur un cloud public, déclarer un <code>Service type: LoadBalancer</code> provoque la création d'un vrai load-balancer avec une IP publique. Sur du bare-metal, un serveur chez soi, il ne se passe rien. Le service reste bloqué en <code>&lt;pending&gt;</code>, éternellement, faute de quelqu'un pour lui attribuer une IP.</p>
 <p><strong>MetalLB</strong> comble ce trou. Il donne à Kubernetes la capacité de distribuer des IP de ton réseau local aux services <code>LoadBalancer</code>. Dans ce post :</p>
 <ol>
 <li>Le problème du <code>type: LoadBalancer</code> en bare-metal</li>
@@ -216,14 +216,12 @@
 <li>Une plage d'IP libre sur ton LAN (hors DHCP)</li>
 <li>MetalLB installé</li>
 </ul>
-<hr>
 <h2>Le problème à résoudre</h2>
 <p>Traefik gère très bien le HTTP/HTTPS via les Ingress. Mais tout n'est pas du HTTP : un serveur WireGuard écoute en UDP, un serveur vocal aussi. Ces services ont besoin de <strong>leur propre IP</strong>, pas d'un routage par nom d'hôte.</p>
 <pre><code>Service type: LoadBalancer  ──sans MetalLB──&gt; &lt;pending&gt; (jamais d'IP)
 Service type: LoadBalancer  ──avec MetalLB──&gt; 10.0.0.102 (IP du LAN)
 </code></pre>
-<p>MetalLB pioche dans un pool d'IP que tu lui réserves et les attribue aux services. Simple, mais ça change tout pour exposer proprement.</p>
-<hr>
+<p>MetalLB pioche dans un pool d'IP que tu lui réserves et les attribue aux services. Simple sur le papier, mais ça change tout pour exposer proprement.</p>
 <h2>Le pool d'adresses et le mode L2</h2>
 <p>La config MetalLB tient en deux ressources. D'abord, le <strong>pool</strong> d'IP disponibles :</p>
 <pre><code class="language-yaml">apiVersion: metallb.io/v1beta1
@@ -245,12 +243,9 @@ spec:
   ipAddressPools:
     - homelab-pool
 </code></pre>
-<p><code>addresses: 10.0.0.100-10.0.0.110</code> : la plage réservée. <strong>Crucial</strong> : ces IP doivent être <em>hors</em> de la plage DHCP de ton routeur. Chez moi, le DHCP du MikroTik distribue <code>10.0.0.200-250</code>, donc <code>100-110</code> est libre — aucun conflit possible.</p>
-<p><code>L2Advertisement</code> : le mode L2 fait que le node répond aux requêtes ARP pour les IP du pool. Du point de vue du réseau, c'est comme si le node « possédait » ces IP. Pas de config routeur, pas de BGP — ça marche tel quel sur un LAN simple.</p>
-<blockquote>
-<p>Le mode L2 a une limite : tout le trafic d'une IP passe par <strong>un seul</strong> node (pas de vraie répartition de charge). Sur un cluster single-node comme le mien, aucune importance. Sur du multi-node, on regarderait le mode BGP pour une vraie distribution.</p>
-</blockquote>
-<hr>
+<p><code>addresses: 10.0.0.100-10.0.0.110</code> : la plage réservée. <strong>Crucial</strong> : ces IP doivent être <em>hors</em> de la plage DHCP de ton routeur. Chez moi, le DHCP du MikroTik distribue <code>10.0.0.200-250</code>, donc <code>100-110</code> est libre. Aucun conflit possible, et c'est le genre de conflit qui, sinon, se découvre un dimanche soir.</p>
+<p><code>L2Advertisement</code> : le mode L2 fait que le node répond aux requêtes ARP pour les IP du pool. Du point de vue du réseau, c'est comme si le node « possédait » ces IP. Pas de config routeur, pas de BGP, ça marche tel quel sur un LAN simple.</p>
+<p>Le mode L2 a une limite : tout le trafic d'une IP passe par <strong>un seul</strong> node, pas de vraie répartition de charge. Sur un cluster single-node comme le mien, aucune importance, vu qu'il n'y a qu'un node de toute façon. Sur du multi-node, on regarderait plutôt le mode BGP pour une vraie distribution.</p>
 <h2>Assigner une IP fixe à un service</h2>
 <p>Par défaut MetalLB pioche une IP au hasard dans le pool. Mais pour un service exposé (dont on fait un port-forward depuis la box), on veut une IP <strong>stable</strong>. Ça se fait avec une annotation :</p>
 <pre><code class="language-yaml">apiVersion: v1
@@ -273,10 +268,9 @@ spec:
       targetPort: 51821
       name: web-ui
 </code></pre>
-<p><code>metallb.universe.tf/loadBalancerIPs: 10.0.0.102</code> : force cette IP précise. WireGuard sera toujours sur <code>10.0.0.102</code>, ce qui me permet de configurer un port-forward fixe <code>51820/UDP</code> depuis la box vers cette adresse.</p>
-<hr>
+<p><code>metallb.universe.tf/loadBalancerIPs: 10.0.0.102</code> : force cette IP précise. WireGuard sera toujours sur <code>10.0.0.102</code>, ce qui me permet de configurer un port-forward fixe <code>51820/UDP</code> depuis la box vers cette adresse, sans y repenser après un redéploiement.</p>
 <h2>Là où MetalLB devient indispensable : le non-HTTP</h2>
-<p>C'est le vrai intérêt par rapport à Traefik seul. Un Ingress route du HTTP par nom de domaine. Mais WireGuard (UDP) ou TeamSpeak (UDP voix + TCP) ne sont pas du HTTP — Traefik ne peut pas les router par hostname. Il leur faut une IP dédiée, et c'est exactement ce que MetalLB fournit.</p>
+<p>C'est le vrai intérêt par rapport à Traefik seul. Un Ingress route du HTTP par nom de domaine. Mais WireGuard (UDP) ou TeamSpeak (UDP voix + TCP) ne sont pas du HTTP, Traefik ne peut pas les router par hostname. Il leur faut une IP dédiée, et c'est exactement ce que MetalLB fournit.</p>
 <p>Chez moi, le pool sert à :</p>
 <table>
 <thead>
@@ -315,17 +309,15 @@ spec:
 </tbody>
 </table>
 <p>Traefik lui-même est un service MetalLB (<code>10.0.0.100</code>) : c'est par cette IP que tout le trafic HTTP entre. Le DNS interne (CoreDNS, Pi-hole) pointe les noms de services vers cette adresse.</p>
-<blockquote>
-<p>Le pattern : <strong>HTTP → un Ingress derrière Traefik (10.0.0.100)</strong>. <strong>Non-HTTP → un Service LoadBalancer avec sa propre IP MetalLB</strong>. Chaque protocole trouve sa route.</p>
-</blockquote>
-<hr>
+<p>Le pattern à retenir : HTTP passe par un Ingress derrière Traefik (<code>10.0.0.100</code>), non-HTTP passe par un Service LoadBalancer avec sa propre IP MetalLB. Chaque protocole trouve sa route, personne ne se marche dessus.</p>
 <h2>Aller plus loin</h2>
 <ul>
 <li><strong>Mode BGP</strong> : sur du multi-node, remplacer le L2 par du BGP pour une vraie répartition de charge (nécessite un routeur qui parle BGP).</li>
 <li><strong>IP partagées</strong> : plusieurs services peuvent partager une IP via l'annotation <code>allow-shared-ip</code> si les ports ne se chevauchent pas.</li>
 <li><strong>Pools multiples</strong> : séparer un pool « interne » et un pool « exposé » pour clarifier ce qui est joignable depuis l'extérieur.</li>
-<li><strong>Le lien avec le port-forward</strong> : l'IP MetalLB n'est que la moitié du chemin — voir l'article MikroTik pour le DNAT qui expose ces services vers internet.</li>
+<li><strong>Le lien avec le port-forward</strong> : l'IP MetalLB n'est que la moitié du chemin, voir l'article MikroTik pour le DNAT qui expose ces services vers internet.</li>
 </ul>
+<p><em>Un seul node, donc un seul point de défaillance sur le mode L2 — je sais, j'assume, l'électricité aussi n'a qu'un seul fournisseur chez moi.</em></p>
 
     </div>
   </article>

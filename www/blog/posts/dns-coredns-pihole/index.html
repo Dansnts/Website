@@ -202,8 +202,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Le DNS, c'est le genre de service dont on ne parle jamais — jusqu'à ce qu'il tombe et que <em>tout</em> casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne <em>dans</em> ce cluster.</p>
-<p>La solution, c'est une architecture DNS à <strong>deux niveaux</strong>, où chaque résolveur a un rôle clair et où Pi-hole n'est jamais dans le chemin critique. Dans ce post :</p>
+      <p>Le DNS, personne n'y pense — jusqu'à ce qu'il tombe et que <em>tout</em> casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel qui guette : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne <em>dans</em> ce cluster. Un cluster qui a besoin de lui-même pour démarrer.</p>
+<p>La solution : une architecture DNS à <strong>deux niveaux</strong>, où chaque résolveur a un rôle clair et où Pi-hole n'est jamais dans le chemin critique. Dans ce post :</p>
 <ol>
 <li>Les deux résolveurs et qui résout quoi</li>
 <li>CoreDNS avec des entrées statiques vers Traefik</li>
@@ -355,6 +355,7 @@ sudo systemctl start systemd-resolved
 <li><strong>La dépendance circulaire RADIUS</strong> : le même raisonnement, appliqué à l'authentification réseau — sujet d'un article dédié.</li>
 <li><strong>Métriques Pi-hole</strong> : exporter les stats (requêtes bloquées, top domaines) vers Prometheus/Grafana pour visualiser ce que le réseau raconte.</li>
 </ul>
+<p><em>Le jour où le DNS tombe, tu redécouvres en combien de choses tu avais confiance sans le savoir.</em></p>
 
     </div>
   </article>

@@ -8,7 +8,7 @@ tags: [homelab, kubernetes, tls, cert-manager, lets-encrypt]
 
 Avec une dizaine de services en HTTPS, gérer les certificats à la main devient vite ingérable : un cert par sous-domaine, chacun à renouveler tous les 90 jours. La solution élégante, c'est un **certificat wildcard** `*.mondomaine.com` — un seul cert pour tous les services — signé par Let's Encrypt et renouvelé automatiquement.
 
-Le hic : un wildcard ne peut PAS être validé par le challenge HTTP classique. Il faut passer par un **challenge DNS-01**, ce qui demande de piloter sa zone DNS par API. Dans ce post :
+Le hic : un wildcard ne peut PAS être validé par le challenge HTTP classique. Il faut passer par un **challenge DNS-01**, ce qui demande de piloter sa zone DNS par API. Au menu :
 
 1. Pourquoi DNS-01 est obligatoire pour un wildcard
 2. Le ClusterIssuer avec le webhook du registrar (Infomaniak)
@@ -68,7 +68,7 @@ spec:
                 key: api-token
 ```
 
-`server: .../directory` : l'endpoint de production de Let's Encrypt. **Pendant les tests**, utiliser le staging (`acme-staging-v02...`) pour ne pas taper les quotas de production — ils sont vite atteints à force d'essais.
+`server: .../directory` : l'endpoint de production de Let's Encrypt. **Pendant les tests**, utiliser le staging (`acme-staging-v02...`) pour ne pas taper les quotas de production. Ils sont vite atteints à force d'essais, demande à celui qui a dû attendre une semaine après les avoir grillés.
 
 `solvers.dns01.webhook` : c'est là que la magie opère. Le webhook `infomaniak` sait parler à l'API DNS d'Infomaniak pour créer/supprimer les enregistrements TXT.
 
@@ -124,7 +124,7 @@ kubectl get certificate -n homelab
 kubectl describe certificate fariadossantos-wildcard -n homelab
 ```
 
-Un `Ready: True` = certificat émis. Le renouvellement (vers J-30 avant expiration à 90 jours) est **entièrement automatique**. Pour les services K8s, on n'y touche plus jamais.
+Un `Ready: True` = certificat émis. Le renouvellement (vers J-30 avant expiration à 90 jours) est **entièrement automatique**. Pour les services K8s, on n'y touche plus jamais. Enfin, presque — la suite gâche un peu la fête.
 
 ---
 
@@ -146,7 +146,7 @@ Puis on importe `tls.crt` / `tls.key` dans les interfaces respectives :
 - **TrueNAS** : *Credentials → Certificates → Import*, puis *System → GUI → HTTPS Certificate*.
 - **Proxmox** : *Node → System → Certificates → Upload Custom Certificate*.
 
-> C'est l'exception manuelle dans un homelab par ailleurs automatisé. On pourrait scripter cette synchro (un CronJob qui pousse le cert via les API de Proxmox/TrueNAS), mais tous les ~90 jours, le faire à la main reste acceptable. À noter dans son agenda pour ne pas se retrouver avec un cert expiré.
+> C'est l'exception manuelle dans un homelab par ailleurs automatisé. On pourrait scripter cette synchro (un CronJob qui pousse le cert via les API de Proxmox/TrueNAS), mais tous les ~90 jours, le faire à la main reste acceptable. À noter dans l'agenda, sinon c'est le certificat expiré qui le rappelle, et jamais au bon moment.
 
 ---
 
@@ -166,3 +166,5 @@ Puis on importe `tls.crt` / `tls.key` dans les interfaces respectives :
 - **DNS-over-HTTPS interne** : coupler avec un DNS qui résout les noms en interne (voir l'article CoreDNS + Pi-hole).
 - **Certificats par namespace** : plutôt qu'un wildcard partagé, un cert dédié par app pour cloisonner davantage.
 - **Monitoring d'expiration** : une alerte Prometheus (`certmanager_certificate_expiration_timestamp_seconds`) pour être prévenu si un renouvellement échoue.
+
+*Un wildcard, un webhook, et plus jamais à courir après un cert expiré un dimanche soir — sauf sur Proxmox et TrueNAS, qui n'ont pas eu ce mémo.*

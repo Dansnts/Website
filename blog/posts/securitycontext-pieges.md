@@ -6,9 +6,9 @@ date: 2024-08-02
 tags: [homelab, kubernetes, sécurité, securitycontext]
 ---
 
-On lit partout qu'il faut durcir ses pods : `runAsNonRoot`, `allowPrivilegeEscalation: false`, `capabilities: drop: ["ALL"]`. Bon conseil… jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique ou — pire — aucun message du tout.
+On lit partout qu'il faut durcir ses pods : `runAsNonRoot`, `allowPrivilegeEscalation: false`, `capabilities: drop: ["ALL"]`. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique ou — pire — aucun message du tout.
 
-Cet article est un catalogue de pièges **vécus** sur mon homelab. À chaque fois : un durcissement trop zélé, un service cassé, et la subtilité qui explique pourquoi. Le but : durcir *juste ce qu'il faut*, sans tout casser.
+Cet article est un catalogue de pièges **vécus** sur mon homelab. À chaque fois : un durcissement trop zélé, un service cassé, une subtilité qui explique pourquoi. Le but n'est pas de tout durcir. C'est de durcir *juste ce qu'il faut*.
 
 ## Prérequis
 
@@ -175,3 +175,5 @@ docker run --rm <image> id
 - **seccomp profiles** : restreindre les appels système autorisés, un cran plus fin que les capabilities.
 - **Distroless / rootless images** : choisir des images conçues pour tourner non-root dès le départ, qui acceptent le `drop ALL` sans broncher.
 - **Un rootful à part** : isoler les rares services qui ont besoin de privilèges (wireguard) et durcir agressivement tout le reste.
+
+*Chaque `CrashLoopBackOff` de cette liste m'a coûté un `kubectl describe` et un peu de fierté.*

@@ -202,8 +202,8 @@
     </header>
 
     <div class="blog-body">
-      <p>On lit partout qu'il faut durcir ses pods : <code>runAsNonRoot</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities: drop: [&quot;ALL&quot;]</code>. Bon conseil… jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique ou — pire — aucun message du tout.</p>
-<p>Cet article est un catalogue de pièges <strong>vécus</strong> sur mon homelab. À chaque fois : un durcissement trop zélé, un service cassé, et la subtilité qui explique pourquoi. Le but : durcir <em>juste ce qu'il faut</em>, sans tout casser.</p>
+      <p>On lit partout qu'il faut durcir ses pods : <code>runAsNonRoot</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities: drop: [&quot;ALL&quot;]</code>. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique ou — pire — aucun message du tout.</p>
+<p>Cet article est un catalogue de pièges <strong>vécus</strong> sur mon homelab. À chaque fois : un durcissement trop zélé, un service cassé, une subtilité qui explique pourquoi. Le but n'est pas de tout durcir. C'est de durcir <em>juste ce qu'il faut</em>.</p>
 <h2>Prérequis</h2>
 <ul>
 <li>Des bases sur les <code>securityContext</code> K8s</li>
@@ -372,6 +372,7 @@ docker run --rm &lt;image&gt; id
 <li><strong>Distroless / rootless images</strong> : choisir des images conçues pour tourner non-root dès le départ, qui acceptent le <code>drop ALL</code> sans broncher.</li>
 <li><strong>Un rootful à part</strong> : isoler les rares services qui ont besoin de privilèges (wireguard) et durcir agressivement tout le reste.</li>
 </ul>
+<p><em>Chaque <code>CrashLoopBackOff</code> de cette liste m'a coûté un <code>kubectl describe</code> et un peu de fierté.</em></p>
 
     </div>
   </article>

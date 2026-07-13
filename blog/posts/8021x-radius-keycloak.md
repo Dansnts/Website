@@ -252,3 +252,5 @@ Un `Access-Accept` en retour = toute la chaîne fonctionne (RADIUS → EAP → K
 - **VLAN dynamique** : RADIUS peut renvoyer un VLAN dans sa réponse — assigner automatiquement un client à un sous-réseau selon son identité.
 - **Accounting** : les ports `1813` (acct) permettent de logguer qui s'est connecté, quand, combien de temps.
 - **CoA (Change of Authorization)** : révoquer une session active sans attendre la reconnexion.
+
+*Le node K8s qui héberge FreeRADIUS est lui-même derrière un port 802.1X. Devine qui authentifie qui en premier.*

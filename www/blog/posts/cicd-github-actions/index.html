@@ -202,8 +202,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Une CI/CD (Intégration Continue / Déploiement Continu) est une pipeline automatique qui se déclenche à chaque fois que du code est poussé. L'objectif : ne plus jamais déployer à la main et avoir un flux automatique de suivi du processus complet.</p>
-<p>Dans ce post, nous allons voir comment construire pipeline <em>GitHub Actions</em> pour une application Node.js qui :</p>
+      <p>Une CI/CD (Intégration Continue / Déploiement Continu) est un pipeline automatique qui se déclenche à chaque push. Le but : plus jamais déployer à la main, et un flux qui trace tout le processus.</p>
+<p>On construit un pipeline <em>GitHub Actions</em> pour une application Node.js qui :</p>
 <ol>
 <li>Lance les tests automatiquement</li>
 <li>Build une image Docker</li>
@@ -213,7 +213,7 @@
 <h2>Prérequis</h2>
 <ul>
 <li>Un repo GitHub</li>
-<li>Une application avec ses tests déja écrits</li>
+<li>Une application avec ses tests déjà écrits</li>
 <li>Un <code>Dockerfile</code></li>
 <li>Un serveur (VPS, cloud, peu importe)</li>
 </ul>
@@ -225,8 +225,8 @@
     └── workflows/
         └── ci.yml   ← ici
 </code></pre>
-<p>Chaque workflow contient des <strong>jobs</strong> et chaque job contient des <strong>steps</strong>.</p>
-<p>Pour faire simple, c'est un container qui va executer des tâches en cascade, et les outputs que on recupère en stdout son les valeurs qui vont définir le status de succès ou non de notre pipeline.</p>
+<p>Chaque workflow contient des <strong>jobs</strong>, chaque job contient des <strong>steps</strong>.</p>
+<p>En gros : un container qui exécute des tâches en cascade. Ce qui sort en stdout détermine si le job passe ou casse.</p>
 <hr>
 <h2>Étape 1 : Lancer les tests à chaque push</h2>
 <p>Le fichier ci.yml :</p>
@@ -252,11 +252,11 @@ jobs:
 
       - run: npm test
 </code></pre>
-<p><code>on: push: branches: [main]</code> : le pipeline se déclenche uniquement sur des pushs vers la branche <code>main</code>.</p>
+<p><code>on: push: branches: [main]</code> : déclenche uniquement sur les pushs vers <code>main</code>.</p>
 <p><code>actions/checkout@v4</code> : clone la branche dans le runner.</p>
-<p><code>npm ci</code> : installe les dépendances depuis le lock file (plus strict que <code>npm install</code>).</p>
+<p><code>npm ci</code> : installe les dépendances depuis le lock file. Plus strict que <code>npm install</code>, il échoue si le lock file et le <code>package.json</code> ne correspondent pas.</p>
 <blockquote>
-<p>À ce stade, chaque push vers main lance les tests. Si un test échoue, le job passe en rouge et une notification est levée.</p>
+<p>Chaque push vers main lance les tests. Un test qui échoue, le job passe rouge, notification envoyée.</p>
 </blockquote>
 <hr>
 <h2>Étape 2 : Builder une image Docker</h2>
@@ -281,9 +281,9 @@ jobs:
           push: true
           tags: ghcr.io/$:latest
 </code></pre>
-<p><code>ghcr.io</code> est le registre Docker intégré à GitHub, pas besoin de compte Docker Hub. <code>GITHUB_TOKEN</code> est automatiquement disponible dans chaque workflow, rien à configurer.</p>
+<p><code>ghcr.io</code> : registre Docker intégré à GitHub. Pas besoin de compte Docker Hub. <code>GITHUB_TOKEN</code> est disponible automatiquement dans chaque workflow, rien à configurer.</p>
 <blockquote>
-<p>Le <code>Dockerfile</code> à la racine du projet est utilisé par défaut.</p>
+<p>Le <code>Dockerfile</code> à la racine du projet est utilisé par défaut. Si le tien vit ailleurs, <code>context</code> et <code>file</code> existent pour ça.</p>
 </blockquote>
 <hr>
 <h2>Étape 3 : Déployer sur le serveur</h2>
@@ -305,8 +305,8 @@ jobs:
             docker run -d --name mon-app -p 3000:3000 \
               ghcr.io/$:latest
 </code></pre>
-<p>Le serveur pull la nouvelle image et relance le container.
-Le <code>|| true</code> sur <code>stop</code> et <code>rm</code> évite que le job échoue si le container n'existe pas encore au premier déploiement.</p>
+<p>Le serveur pull la nouvelle image et relance le container.</p>
+<p><code>|| true</code> sur <code>stop</code> et <code>rm</code> : évite que le job échoue si le container n'existe pas encore, typiquement au tout premier déploiement.</p>
 <hr>
 <h2>Le pipeline complet</h2>
 <pre><code>push → main
@@ -320,16 +320,16 @@ Le <code>|| true</code> sur <code>stop</code> et <code>rm</code> évite que le j
         V
      [deploy]         SSH -&gt; docker pull + run
 </code></pre>
-<p>Si une étape échoue, les suivantes ne tournent pas.</p>
+<p>Une étape échoue, les suivantes ne tournent pas. Simple.</p>
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Environments</strong> : GitHub permet de définir des environnements (<code>staging</code>, <code>production</code>) avec des approbations manuelles avant le déploiement en prod.</li>
-<li><strong>Matrix builds</strong> : tester sur plusieurs versions de Node/Python en parallèle avec <code>strategy: matrix</code>.</li>
+<li><strong>Environments</strong> : GitHub permet de définir des environnements (<code>staging</code>, <code>production</code>) avec approbation manuelle avant la prod.</li>
+<li><strong>Matrix builds</strong> : tester plusieurs versions de Node/Python en parallèle avec <code>strategy: matrix</code>.</li>
 <li><strong>Cache</strong> : <code>actions/cache</code> pour mettre en cache <code>node_modules</code> et accélérer les builds.</li>
-<li><strong>Gestion des secrets</strong> : faire un autre article là-dessus, c'est un sujet à part entière.</li>
+<li><strong>Gestion des secrets</strong> : un sujet entier à lui tout seul, ça mérite son propre article.</li>
 </ul>
-<p>Tout cela sera traité dans un autre post.</p>
+<p><em>Le jour où je remplace le SSH bricolé par un vrai GitOps (ArgoCD), je supprime ce <code>deploy</code> job avec un plaisir non dissimulé.</em></p>
 
     </div>
   </article>

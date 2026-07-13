@@ -6,7 +6,7 @@ date: 2025-05-21
 tags: [homelab, packer, proxmox, iac]
 ---
 
-Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner : un **template**. On peut le fabriquer à la main — installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou on peut décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.
+Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner : un **template**. On peut le fabriquer à la main — installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.
 
 C'est le principe de la *golden image* : une image de base, propre, réutilisable, versionnée dans Git. Dans ce post, on construit une image Debian 12 pour Proxmox avec Packer. On va voir :
 
@@ -245,3 +245,5 @@ packer build -var-file="variables.pkrvars.hcl" .
 - **Versionner les images** : incrémenter le `template_description` ou tagguer avec une date à chaque build permet de savoir quelle image tourne sur quelle VM.
 - **Un template par usage** : ici c'est une image « K8s ». On pourrait en avoir une pour Docker, une pour les VMs de test… chacune avec son `setup.sh`.
 - **CI** : lancer `packer build` automatiquement quand le `.pkr.hcl` change, pour régénérer l'image à chaque mise à jour de sécurité Debian.
+
+*Le jour où j'oublierai le `rm /etc/ssh/ssh_host_*`, toutes mes VMs partageront la même clé et `known_hosts` hurlera en chœur. La checklist de nettoyage existe précisément pour ce jour-là.*

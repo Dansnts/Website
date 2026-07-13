@@ -202,10 +202,10 @@
     </header>
 
     <div class="blog-body">
-      <p>Cliquer dans l'interface Proxmox pour créer une VM, c'est bien une fois. Le faire dix fois, à l'identique, sans en oublier un paramètre, c'est une autre histoire. L'<em>Infrastructure as Code</em> règle le problème : la VM est décrite dans un fichier, versionnée dans Git, et recréable à l'identique en une commande.</p>
-<p>Dans ce post, nous allons provisionner une VM K3s sur Proxmox avec Terraform, en utilisant le provider <code>bpg/proxmox</code>. On va voir :</p>
+      <p>Cliquer dans l'interface Proxmox pour créer une VM, ça va une fois. Le refaire dix fois, à l'identique, sans oublier un paramètre, c'est une autre histoire. L'<em>Infrastructure as Code</em> règle ça : la VM est décrite dans un fichier, versionnée dans Git, recréable à l'identique en une commande.</p>
+<p>On va provisionner une VM K3s sur Proxmox avec Terraform, provider <code>bpg/proxmox</code>. Au programme :</p>
 <ol>
-<li>Configurer le provider et l'authentification par token</li>
+<li>Le provider et l'authentification par token</li>
 <li>Cloner un template et injecter la config réseau via cloud-init</li>
 <li>Le piège du <strong>passthrough disque</strong>, que le provider ne sait pas faire</li>
 </ol>
@@ -227,7 +227,7 @@
     └── cloud-init/
         └── k3s.yaml         # Le cloud-init injecté dans la VM
 </code></pre>
-<p>Un point sur le provider utilisé : <strong><code>bpg/proxmox</code></strong>, pas le vieux <code>telmate/proxmox</code>. Le <code>bpg</code> est bien plus à jour, mieux documenté, et gère proprement cloud-init. C'est celui à prendre aujourd'hui.</p>
+<p>Un mot sur le provider : <strong><code>bpg/proxmox</code></strong>, pas le vieux <code>telmate/proxmox</code>. Le <code>bpg</code> est à jour, bien documenté, et gère proprement cloud-init. C'est celui-là qu'il faut prendre en 2026.</p>
 <hr>
 <h2>Étape 1 : Le provider et l'authentification</h2>
 <pre><code class="language-hcl">terraform {
@@ -258,10 +258,10 @@ provider &quot;proxmox&quot; {
   }
 }
 </code></pre>
-<p>Deux mécanismes d'auth cohabitent ici, et c'est <strong>normal</strong> :</p>
-<p><code>api_token</code> : pour l'API REST de Proxmox (créer/cloner/configurer les VMs). Le token se génère dans <em>Datacenter → Permissions → API Tokens</em>. Format <code>user@realm!nom-du-token=secret</code>.</p>
-<p>Le bloc <code>ssh</code> : le provider a <strong>aussi</strong> besoin d'un accès SSH au node. Certaines opérations (uploader un snippet cloud-init, notamment) ne passent pas par l'API mais par SSH. Sans ça, tu tombes sur des erreurs obscures au moment de l'upload du cloud-init.</p>
-<p><code>insecure = true</code> : le certificat auto-signé de Proxmox. En homelab, on assume. En prod, on importerait un vrai cert.</p>
+<p>Deux mécanismes d'auth cohabitent, et c'est <strong>voulu</strong> :</p>
+<p><code>api_token</code> : l'API REST de Proxmox (créer/cloner/configurer les VMs). Le token se génère dans <em>Datacenter → Permissions → API Tokens</em>, format <code>user@realm!nom-du-token=secret</code>.</p>
+<p>Le bloc <code>ssh</code> : le provider a <strong>aussi</strong> besoin d'un accès SSH au node. Certaines opérations — uploader un snippet cloud-init, typiquement — ne passent pas par l'API. Sans ce bloc, tu tombes sur des erreurs obscures au moment de l'upload du cloud-init, et tu perds vingt minutes à chercher pourquoi.</p>
+<p><code>insecure = true</code> : le certificat auto-signé de Proxmox. En homelab, on assume. En prod, on importe un vrai cert.</p>
 <p>Les variables sont déclarées à part, le secret marqué comme tel :</p>
 <pre><code class="language-hcl">variable &quot;proxmox_token_secret&quot; {
   type      = string
@@ -275,7 +275,7 @@ proxmox_token_secret = &quot;TON_SECRET&quot;
 </code></pre>
 <hr>
 <h2>Étape 2 : Cloner le template et injecter cloud-init</h2>
-<p>Le cœur du sujet. On ne construit pas la VM de zéro : on <strong>clone</strong> un template Ubuntu (VM 9000) et on lui injecte sa personnalité via cloud-init.</p>
+<p>Le cœur du sujet. On ne construit pas la VM depuis rien : on <strong>clone</strong> un template Ubuntu (VM 9000) et on lui injecte sa personnalité via cloud-init.</p>
 <pre><code class="language-hcl">resource &quot;proxmox_virtual_environment_vm&quot; &quot;k3s&quot; {
   name      = &quot;k3s&quot;
   node_name = &quot;proxmox&quot;
@@ -325,12 +325,12 @@ proxmox_token_secret = &quot;TON_SECRET&quot;
   }
 }
 </code></pre>
-<p>Les points qui comptent :</p>
-<p><code>clone { full = true }</code> : clone <strong>complet</strong>, pas lié. La nouvelle VM est totalement indépendante du template — on peut supprimer le template sans casser la VM.</p>
-<p><code>cpu { type = &quot;host&quot; }</code> : la VM voit le vrai CPU de l'hôte (pas un CPU générique émulé). Meilleures perfs, indispensable si tu veux des instructions modernes.</p>
-<p><code>agent { enabled = true }</code> : active le QEMU guest agent. Sans lui, Terraform ne connaît jamais l'IP réelle de la VM et attend indéfiniment. Le paquet <code>qemu-guest-agent</code> doit être présent dans le template.</p>
-<p><code>initialization.ip_config</code> : c'est cloud-init qui applique cette IP au premier boot. On fixe l'IP ici plutôt que de dépendre du DHCP.</p>
-<p><code>user_data_file_id</code> : pointe vers le fichier cloud-init (le <em>user-data</em>), qu'on déclare comme une ressource séparée :</p>
+<p>Ce qui compte vraiment ici :</p>
+<p><code>clone { full = true }</code> : clone <strong>complet</strong>, pas lié. La nouvelle VM est totalement indépendante du template — tu peux supprimer le template sans rien casser.</p>
+<p><code>cpu { type = &quot;host&quot; }</code> : la VM voit le vrai CPU de l'hôte, pas un CPU générique émulé. Meilleures perfs, indispensable pour les instructions modernes.</p>
+<p><code>agent { enabled = true }</code> : active le QEMU guest agent. Sans lui, Terraform ne connaît jamais l'IP réelle de la VM et attend indéfiniment. Le paquet <code>qemu-guest-agent</code> doit déjà être dans le template — sinon tu attends pour rien.</p>
+<p><code>initialization.ip_config</code> : cloud-init applique cette IP au premier boot. On fixe l'IP ici plutôt que de dépendre du DHCP.</p>
+<p><code>user_data_file_id</code> : pointe vers le fichier cloud-init, déclaré comme ressource séparée :</p>
 <pre><code class="language-hcl">resource &quot;proxmox_virtual_environment_file&quot; &quot;k3s_cloud_init&quot; {
   content_type = &quot;snippets&quot;
   datastore_id = &quot;local&quot;
@@ -342,7 +342,7 @@ proxmox_token_secret = &quot;TON_SECRET&quot;
   }
 }
 </code></pre>
-<p>Terraform lit le fichier <code>cloud-init/k3s.yaml</code> local et l'uploade comme <em>snippet</em> sur Proxmox (c'est là que le SSH sert). Ce snippet installe K3s au premier boot :</p>
+<p>Terraform lit <code>cloud-init/k3s.yaml</code> en local et l'uploade comme <em>snippet</em> sur Proxmox — c'est là que le SSH sert. Ce snippet installe K3s au premier boot :</p>
 <pre><code class="language-yaml">#cloud-config
 package_update: true
 packages:
@@ -356,23 +356,23 @@ runcmd:
   - systemctl enable k3s
 </code></pre>
 <blockquote>
-<p>Le combo est propre : Terraform crée la VM et pose le cloud-init, cloud-init installe K3s. À la fin de <code>apply</code>, tu as un cluster K3s qui tourne, sans avoir touché le clavier.</p>
+<p>Le combo est propre : Terraform crée la VM et pose le cloud-init, cloud-init installe K3s. À la fin du <code>apply</code>, un cluster K3s tourne. Zéro clavier touché après le premier Enter.</p>
 </blockquote>
 <hr>
 <h2>Un garde-fou avant de commencer</h2>
-<p>Petit détail que j'aime bien : un <code>null_resource</code> qui vérifie que Proxmox répond <strong>avant</strong> de tenter quoi que ce soit.</p>
+<p>Un détail que j'aime bien : un <code>null_resource</code> qui vérifie que Proxmox répond <strong>avant</strong> de tenter quoi que ce soit.</p>
 <pre><code class="language-hcl">resource &quot;null_resource&quot; &quot;check_proxmox&quot; {
   provisioner &quot;local-exec&quot; {
     command = &quot;ping -c 1 -W 3 10.0.0.10 || (echo 'Proxmox unreachable' &amp;&amp; exit 1)&quot;
   }
 }
 </code></pre>
-<p>Ça évite de partir dans un <code>apply</code> qui va échouer à mi-chemin parce que l'hôte était éteint. Un ping, trois secondes de timeout, et on sait tout de suite.</p>
+<p>Ça évite de partir dans un <code>apply</code> qui échoue à mi-chemin parce que l'hôte était éteint. Un ping, trois secondes de timeout, et on sait tout de suite si ça vaut le coup de continuer.</p>
 <hr>
 <h2>Étape 3 : Le piège du passthrough disque</h2>
-<p>Voilà le vrai piège de ce setup. Ma VM TrueNAS a besoin d'accéder à des <strong>disques physiques entiers</strong> (passthrough), pas à des disques virtuels. Et là, <code>bpg/proxmox</code> ne suit pas.</p>
-<p>Le provider sait créer des disques virtuels dans un datastore. Il ne sait <strong>pas</strong> attacher un disque physique par son <code>/dev/disk/by-id/...</code>. Impossible à décrire en HCL.</p>
-<p>La solution : on déclare la VM sans les disques data dans Terraform, puis on les ajoute <strong>à la main</strong> avec <code>qm set</code> après le <code>apply</code> :</p>
+<p>Le vrai piège du setup. Ma VM TrueNAS a besoin d'accéder à des <strong>disques physiques entiers</strong> (passthrough), pas à des disques virtuels. Et là, <code>bpg/proxmox</code> ne suit plus.</p>
+<p>Le provider sait créer des disques virtuels dans un datastore. Il ne sait <strong>pas</strong> attacher un disque physique par son <code>/dev/disk/by-id/...</code>. Impossible à décrire en HCL — pas une limitation qu'on contourne en cherchant mieux dans la doc, elle n'y est juste pas.</p>
+<p>La solution : déclarer la VM sans les disques data dans Terraform, puis les ajouter <strong>à la main</strong> avec <code>qm set</code> après le <code>apply</code> :</p>
 <pre><code class="language-hcl">resource &quot;proxmox_virtual_environment_vm&quot; &quot;truenas&quot; {
   name  = &quot;truenas&quot;
   vm_id = 102
@@ -385,13 +385,13 @@ runcmd:
   # qm set 102 --scsi3 /dev/disk/by-id/ata-ST6000VN006-2ZM186_WPR071LM
 }
 </code></pre>
-<p>Deux conseils tirés de l'expérience :</p>
+<p>Deux conseils tirés du terrain :</p>
 <ul>
-<li><strong>Toujours utiliser <code>/dev/disk/by-id/</code></strong>, jamais <code>/dev/sdb</code>. Les lettres <code>sdX</code> peuvent changer d'ordre à un reboot ; l'ID (basé sur le modèle + numéro de série) est stable.</li>
-<li><strong>Garde la commande en commentaire dans le <code>.tf</code>.</strong> Terraform ne connaît pas ces disques, donc ils ne sont pas dans le state. Si tu fais un <code>destroy</code>/<code>recreate</code>, il faudra les rebrancher manuellement — autant avoir la commande sous la main.</li>
+<li><strong>Toujours <code>/dev/disk/by-id/</code>, jamais <code>/dev/sdb</code>.</strong> Les lettres <code>sdX</code> peuvent changer d'ordre à un reboot ; l'ID (modèle + numéro de série) est stable, lui.</li>
+<li><strong>Garde la commande en commentaire dans le <code>.tf</code>.</strong> Terraform ne connaît pas ces disques, donc ils ne sont pas dans le state. Un <code>destroy</code>/<code>recreate</code> et il faudra les rebrancher à la main — autant avoir la commande sous les yeux plutôt que dans un coin de mémoire.</li>
 </ul>
 <blockquote>
-<p>Le point à retenir : Terraform gère 95 % du provisioning, mais le passthrough matériel reste hors de sa portée. Ce n'est pas un bug, c'est une limite de ce que l'API Proxmox expose proprement. On documente le contournement et on avance.</p>
+<p>À retenir : Terraform gère 95 % du provisioning, le passthrough matériel reste hors de sa portée. Pas un bug, une limite de ce que l'API Proxmox expose proprement. On documente le contournement et on avance.</p>
 </blockquote>
 <hr>
 <h2>Le workflow complet</h2>
@@ -415,10 +415,11 @@ terraform apply -var-file=&quot;../.secrets.tfvars&quot;
 <h2>Aller plus loin</h2>
 <ul>
 <li><strong>Golden image</strong> : ce provisioning suppose un template déjà prêt (VM 9000). Le construire proprement avec Packer plutôt qu'à la main mérite son propre article.</li>
-<li><strong>Ansible en relais</strong> : Terraform crée la VM, mais la config fine de l'OS (netplan fixe, node_exporter…) se fait mieux avec Ansible. Un outil pour le provisioning, un autre pour la configuration.</li>
-<li><strong><code>for_each</code></strong> : au lieu de dupliquer le bloc <code>resource</code> pour chaque VM, on peut décrire un <code>map</code> de VMs et itérer dessus. À creuser quand le nombre de VMs grandit.</li>
-<li><strong>Backend distant</strong> : ici le state est local. Le mettre sur un backend partagé (S3, ou même un partage NAS) évite de le perdre et permet de travailler à plusieurs.</li>
+<li><strong>Ansible en relais</strong> : Terraform crée la VM, mais la config fine de l'OS (netplan fixe, node_exporter…) se fait mieux avec Ansible. Un outil pour le provisioning, un autre pour la configuration — ne pas mélanger les deux.</li>
+<li><strong><code>for_each</code></strong> : au lieu de dupliquer le bloc <code>resource</code> pour chaque VM, décrire un <code>map</code> de VMs et itérer dessus. À creuser quand le nombre de VMs grandit.</li>
+<li><strong>Backend distant</strong> : ici le state est local. Le mettre sur un backend partagé (S3, ou même un partage NAS) évite de le perdre le jour où le disque lâche, et permet de travailler à plusieurs sans se marcher dessus.</li>
 </ul>
+<p><em>Le jour où j'ajoute une quatrième VM, ce <code>.tf</code> devient un <code>for_each</code>. Pas avant.</em></p>
 
     </div>
   </article>

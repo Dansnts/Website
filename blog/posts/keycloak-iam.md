@@ -6,7 +6,7 @@ date: 2026-04-10
 tags: [homelab, keycloak, sso, oidc, iam, kubernetes]
 ---
 
-Au début d'un homelab, chaque service a son propre login. Un mot de passe pour Grafana, un autre pour le wiki, un troisième pour Vaultwarden… et forcément, on finit par réutiliser le même partout, ou par les noter dans un fichier. C'est exactement ce qu'on veut éviter dans un lab qui prétend être sérieux.
+Au début d'un homelab, chaque service a son propre login. Un mot de passe pour Grafana, un autre pour le wiki, un troisième pour Vaultwarden. Et forcément, on finit par réutiliser le même partout, ou par les noter dans un fichier texte quelque part. C'est exactement ce qu'on veut éviter dans un lab qui prétend être sérieux.
 
 La solution, c'est un **IAM** (Identity and Access Management) : un annuaire d'identités unique, et tous les services qui viennent s'y authentifier. Chez moi, c'est **Keycloak**. Un seul compte, un seul mot de passe, et du SSO qui se propage aux applications — jusqu'à l'authentification des ports Ethernet.
 
@@ -195,3 +195,5 @@ Résultat : le mot de passe d'un utilisateur vit **à un seul endroit**, Keycloa
 - **La dépendance circulaire** : héberger l'auth réseau dans le cluster qui dépend du réseau crée un deadlock — un piège que je raconte dans son propre article.
 - **Brancher d'autres services** : Vaultwarden, ArgoCD, le wiki… tout ce qui parle OIDC peut rejoindre le SSO avec le même pattern « deux URLs » que Grafana.
 - **Sauvegarder le realm** : un export régulier de la base PostgreSQL de Keycloak (ou un `kc.sh export`) pour ne pas reconstruire clients et rôles à la main après un incident.
+
+*Un seul mot de passe à retenir, et un seul endroit où le changer un dimanche soir parce qu'on a un doute.*

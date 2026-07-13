@@ -6,7 +6,7 @@ date: 2025-06-01
 tags: [homelab, kubernetes, k3s]
 ---
 
-Kubernetes en homelab, on croit souvent qu'il faut trois nœuds, etcd, un load-balancer et un week-end entier. En réalité, pour un lab personnel, un **cluster K3s single-node** suffit largement — et se monte en quelques minutes si l'infra en dessous est bien posée.
+Kubernetes en homelab, on croit souvent qu'il faut trois nœuds, etcd, un load-balancer et un week-end entier. Faux. Un **cluster K3s single-node** suffit largement, et se monte en quelques minutes si l'infra en dessous est bien posée.
 
 Dans ce post, on assemble tout ce qu'on a vu jusqu'ici (Packer, Terraform, Ansible) pour arriver à un cluster K3s fonctionnel. On va voir :
 
@@ -42,7 +42,7 @@ runcmd:
   - systemctl enable k3s
 ```
 
-À la fin de cette commande, tu as un cluster Kubernetes qui tourne. C'est tout.
+Une ligne, `Enter`, et t'as un cluster Kubernetes qui tourne. C'est tout.
 
 ---
 
@@ -149,3 +149,5 @@ Un node `Ready`, Traefik en `Running` : le socle est prêt à accueillir les ser
 - **MetalLB** : remplacer le LoadBalancer basique de K3s pour exposer proprement plusieurs services sur des IPs dédiées.
 - **cert-manager** : générer et renouveler automatiquement les certificats TLS (wildcard Let's Encrypt) pour tous les services.
 - **Multi-node** : le jour où la HA compte, ajouter des nodes avec etcd embarqué et un token d'agent.
+
+*Un seul binaire, un seul point de défaillance, une seule personne à blâmer si ça casse. Moi.*

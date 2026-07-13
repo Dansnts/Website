@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Un cluster single-node a un problème de stockage : les volumes <code>local-path</code> vivent sur le disque du node. Or mes données volumineuses (photos, médias, sauvegardes) sont sur un NAS TrueNAS séparé, exposé en SMB. Comment faire consommer ce stockage réseau par des pods Kubernetes ?</p>
+      <p>Un cluster single-node a un problème de stockage : les volumes <code>local-path</code> vivent sur le disque du node. Mes données volumineuses (photos, médias, sauvegardes), elles, sont sur un NAS TrueNAS séparé, exposé en SMB. Comment faire consommer ce stockage réseau par des pods Kubernetes ?</p>
 <p>La réponse : le <strong>CSI driver SMB</strong>. Il permet à Kubernetes de monter des partages SMB comme des volumes, exactement comme n'importe quel PVC. Dans ce post :</p>
 <ol>
 <li>Le rôle d'un driver CSI</li>
@@ -289,7 +289,7 @@ spec:
 </blockquote>
 <hr>
 <h2>Le piège de la version <code>canary</code></h2>
-<p>Retour d'expérience qui coûte cher. Beaucoup de tutos (et le README du projet lui-même par défaut) installent le driver via l'URL <code>.../deploy/master/...</code> ou une balise <code>canary</code>. <strong>À éviter absolument.</strong></p>
+<p>Retour d'expérience qui coûte cher, payé une fois pour toi. Beaucoup de tutos (et le README du projet lui-même, par défaut) installent le driver via l'URL <code>.../deploy/master/...</code> ou une balise <code>canary</code>. <strong>À éviter absolument.</strong></p>
 <p><code>canary</code>, c'est la branche de développement du driver : instable, susceptible de casser d'un jour à l'autre sur un <code>apply</code>. Un matin, tes montages SMB tombent sans que tu aies rien changé — juste parce que la <code>canary</code> a évolué.</p>
 <p><strong>Toujours pinner une version stable :</strong></p>
 <pre><code class="language-bash">#  BON — version figée
@@ -313,6 +313,7 @@ kubectl apply -f k8s/storageclass-smb.yaml
 <li><strong>Les inodes SMB</strong> : les montages SMB ont des inodes instables, ce qui pose problème aux outils de backup — un piège que j'aborde dans l'article sur les galères de backup SMB.</li>
 <li><strong>Sécuriser les credentials</strong> : les secrets SMB sont scellés avec Sealed Secrets — voir l'article dédié.</li>
 </ul>
+<p><em><code>canary</code> en prod, c'est comme goûter le gâteau avec la main dans le four allumé.</em></p>
 
     </div>
   </article>
