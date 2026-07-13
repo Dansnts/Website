@@ -66,14 +66,14 @@ Le point commun : ça marche parfaitement tant que tout tourne. Le problème n'a
 
 ## La solution : casser le cycle sur un port
 
-Il faut qu'**au moins un port** — celui du serveur RADIUS lui-même — ne dépende pas de RADIUS pour fonctionner. Deux approches, que j'ai combinées.
+Il faut qu'**au moins un port**, celui du serveur RADIUS lui-même, ne dépende pas de RADIUS pour fonctionner. Deux approches, que j'ai combinées.
 
 ### 1. Sortir le node du 802.1X : le mettre en MAB
 
 Plutôt que du 802.1X (qui exige que RADIUS valide un login), le port du node K8s est passé en **MAB** (auth par adresse MAC). C'est moins strict, mais surtout, sur MikroTik, on peut le faire avec un simple **filtre de bridge par MAC**, qui ne dépend pas du tout de RADIUS :
 
 ```rsc
-# ether2 — serveur K8s : whitelist MAC au niveau du bridge, PAS de dot1x
+# ether2 : serveur K8s, whitelist MAC au niveau du bridge, PAS de dot1x
 /interface bridge filter
 add chain=input   in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=drop
 add chain=forward in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=drop
@@ -101,10 +101,10 @@ Toute la leçon tient dans ce choix :
 
 | Mode | Comportement si RADIUS tombe | Pour quoi |
 |------|------------------------------|-----------|
-| **fail-closed** (défaut) | Port fermé, trafic coupé | Ports clients — la sécurité prime |
-| **fail-open** (`allow`) | Port ouvert, trafic passe | Port de l'infra RADIUS — la disponibilité prime |
+| **fail-closed** (défaut) | Port fermé, trafic coupé | Ports clients, la sécurité prime |
+| **fail-open** (`allow`) | Port ouvert, trafic passe | Port de l'infra RADIUS, la disponibilité prime |
 
-La sécurité par défaut (fail-closed) est la bonne, sauf pour le maillon dont dépend la sécurité elle-même. Là, il faut accepter un fail-open, sinon on se verrouille dehors soi-même — le pire genre d'incident, celui qu'on s'inflige.
+La sécurité par défaut (fail-closed) est la bonne, sauf pour le maillon dont dépend la sécurité elle-même. Là, il faut accepter un fail-open, sinon on se verrouille dehors soi-même, le pire genre d'incident, celui qu'on s'inflige.
 
 ## Ce que j'en retiens
 

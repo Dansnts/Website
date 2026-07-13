@@ -39,7 +39,7 @@ Un `node_exporter`, c'est justement ça : un binaire qui expose les métriques d
 
 ## Sur les hôtes : node_exporter en Ansible
 
-Toutes mes machines ne sont pas dans Kubernetes. Le Proxmox, par exemple, est un hôte nu. Pour lui — et les autres serveurs bare-metal — j'installe `node_exporter` avec un rôle Ansible dédié.
+Toutes mes machines ne sont pas dans Kubernetes. Le Proxmox, par exemple, est un hôte nu. Pour lui, et les autres serveurs bare-metal, j'installe `node_exporter` avec un rôle Ansible dédié.
 
 Les valeurs par défaut du rôle :
 
@@ -61,7 +61,7 @@ ExecStart=/usr/local/bin/node_exporter {% for c in node_exporter_collectors %}--
 Restart=always
 ```
 
-- `node_exporter_collectors` : la liste des collecteurs activés, injectée dans la commande via une boucle Jinja. J'active `hwmon` (capteurs de température), `nvme` (santé des SSD), `diskstats` et `filesystem` — exactement ce qui m'intéresse sur un hyperviseur.
+- `node_exporter_collectors` : la liste des collecteurs activés, injectée dans la commande via une boucle Jinja. J'active `hwmon` (capteurs de température), `nvme` (santé des SSD), `diskstats` et `filesystem` : exactement ce qui m'intéresse sur un hyperviseur.
 - `Restart=always` : si le process meurt, systemd le relance. Un exporter doit être « toujours là ».
 
 Le tout est **idempotent** : un `handler` `restart node_exporter` n'est déclenché que si le binaire ou l'unité change réellement. On peut relancer le playbook sans effet de bord.
@@ -92,12 +92,12 @@ spec:
           readOnly: true
 ```
 
-- `hostNetwork` / `hostPID` : le pod partage la stack réseau et l'arbre des processus de l'hôte — sinon il ne mesurerait que lui-même.
+- `hostNetwork` / `hostPID` : le pod partage la stack réseau et l'arbre des processus de l'hôte, sinon il ne mesurerait que lui-même.
 - `--path.procfs=/host/proc` (et `sysfs`, `rootfs`) : on monte `/proc`, `/sys` et `/` de l'hôte **en lecture seule** dans le pod, et on dit à node_exporter de lire **là** plutôt que dans son propre namespace. C'est ce qui lui fait voir les vraies métriques de la machine.
 
 Tout est `readOnly` et non-privilégié (`runAsNonRoot`, `drop: ["ALL"]`, `readOnlyRootFilesystem`) : un exporter n'a besoin que de **lire**.
 
-> Deux exporters, deux mondes : Ansible/systemd pour les hôtes nus, DaemonSet pour ce qui est cloud-native. C'est normal et complémentaire — chaque environnement a son mécanisme de déploiement naturel, mais tous exposent le **même** `/metrics` sur le **même** port 9100. Prometheus, lui, ne fait pas la différence.
+> Deux exporters, deux mondes : Ansible/systemd pour les hôtes nus, DaemonSet pour ce qui est cloud-native. C'est normal et complémentaire : chaque environnement a son mécanisme de déploiement naturel, mais tous exposent le **même** `/metrics` sur le **même** port 9100. Prometheus, lui, ne fait pas la différence.
 
 ---
 
@@ -116,7 +116,7 @@ scrape_configs:
 ```
 
 - `scrape_interval: 15s` : Prometheus interroge chaque cible toutes les 15 secondes.
-- La première cible est le **Service interne** du DaemonSet (résolu par le DNS du cluster) — le node K3s.
+- La première cible est le **Service interne** du DaemonSet (résolu par le DNS du cluster), le node K3s.
 - La seconde est **une IP en dur, `10.0.0.10:9100`** : le Proxmox, joint directement sur le LAN. Le même job mélange sans problème une cible cluster et une cible bare-metal.
 
 Le conteneur est lancé avec `--web.enable-lifecycle` (permet de recharger la config à chaud via l'API) et `--storage.tsdb.path=/prometheus`, la base time-series posée sur un PVC de 5 Gi. Le Service est exposé en `NodePort` (30090), et Traefik le publie sur `prometheus.fariadossantos.com`.
@@ -149,9 +149,9 @@ datasources:
     url: http://loki.homelab.svc.cluster.local:3100
 ```
 
-Deux sources déclarées en code : Prometheus (par défaut, pour les métriques) et Loki (pour les logs — sujet d'un autre article). Au démarrage, Grafana les crée tout seul. **La config est reproductible**, versionnée dans Git, jamais cliquée à la main.
+Deux sources déclarées en code : Prometheus (par défaut, pour les métriques) et Loki (pour les logs, sujet d'un autre article). Au démarrage, Grafana les crée tout seul. **La config est reproductible**, versionnée dans Git, jamais cliquée à la main.
 
-Côté auth, pas de compte local : Grafana délègue son login à Keycloak en OIDC (`GF_AUTH_GENERIC_OAUTH_*`), avec un mapping de rôles qui décide qui est `Admin` et qui est `Viewer`. Le détail de ce montage — et le fameux piège des deux URLs (publique pour le navigateur, interne pour le backend) — est dans l'article sur Keycloak.
+Côté auth, pas de compte local : Grafana délègue son login à Keycloak en OIDC (`GF_AUTH_GENERIC_OAUTH_*`), avec un mapping de rôles qui décide qui est `Admin` et qui est `Viewer`. Le détail de ce montage, et le fameux piège des deux URLs (publique pour le navigateur, interne pour le backend), est dans l'article sur Keycloak.
 
 Le pod tourne en `runAsUser: 472` (l'UID attendu par l'image Grafana), avec sa config et ses dashboards persistés sur un PVC de 5 Gi.
 
@@ -159,7 +159,7 @@ Le pod tourne en `runAsUser: 472` (l'UID attendu par l'image Grafana), avec sa c
 
 ## Aller plus loin
 
-- **Loki pour les logs** : Prometheus fait les métriques, Loki fait les logs — la datasource Loki est déjà branchée dans Grafana. Voir l'article « Centraliser ses logs ».
+- **Loki pour les logs** : Prometheus fait les métriques, Loki fait les logs : la datasource Loki est déjà branchée dans Grafana. Voir l'article « Centraliser ses logs ».
 - **Alerting** : Prometheus a un langage de règles (PromQL) et un Alertmanager pour notifier (mail, Discord…) quand un disque dépasse 90 %.
 - **Des dashboards prêts à l'emploi** : le dashboard « Node Exporter Full » (grafana.com/dashboards, ID 1860) donne une vue complète en quelques clics.
 - **Surveiller Kubernetes lui-même** : kube-state-metrics et cAdvisor exposent l'état des pods/deployments, au-delà des seules métriques d'hôte.

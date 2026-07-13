@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Les securityContext Kubernetes qui cassent tout silencieusement — Dani Faria dos Santos</title>
-  <meta name="description" content="Durcir ses pods, c&#39;est bien — jusqu&#39;à ce qu&#39;un drop ALL fasse planter Postgres sans un message d&#39;erreur clair. Guide des pièges vécus." />
+  <meta name="description" content="Durcir ses pods, c&#39;est bien, jusqu&#39;à ce qu&#39;un drop ALL fasse planter Postgres sans un message d&#39;erreur clair. Guide des pièges vécus." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>On lit partout qu'il faut durcir ses pods : <code>runAsNonRoot</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities: drop: [&quot;ALL&quot;]</code>. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique ou — pire — aucun message du tout.</p>
+      <p>On lit partout qu'il faut durcir ses pods : <code>runAsNonRoot</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities: drop: [&quot;ALL&quot;]</code>. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique, ou pire, aucun message du tout.</p>
 <p>Cet article est un catalogue de pièges <strong>vécus</strong> sur mon homelab. À chaque fois : un durcissement trop zélé, un service cassé, une subtilité qui explique pourquoi. Le but n'est pas de tout durcir. C'est de durcir <em>juste ce qu'il faut</em>.</p>
 <h2>Prérequis</h2>
 <ul>
@@ -240,8 +240,8 @@
 </table>
 <p>Le problème vient presque toujours d'images qui font des opérations <strong>root au démarrage</strong> (chown, setcap, setgid) avant de laisser la main. Les durcir comme un service stateless les casse.</p>
 <hr>
-<h2>Le cas d'école : quand ça marche</h2>
-<p>Commençons par un service qui accepte le durcissement complet — Vaultwarden (un binaire Rust statique) :</p>
+<h2>Quand le durcissement complet fonctionne</h2>
+<p>Commençons par un service qui accepte le durcissement complet : Vaultwarden, un binaire Rust statique.</p>
 <pre><code class="language-yaml">securityContext:
   runAsNonRoot: true
   runAsUser: 65534
@@ -261,7 +261,7 @@
 </code></pre>
 <p>L'entrypoint ne peut plus chown (pas la capability), et l'UID ne correspond pas. Crash.</p>
 <p><strong>Solution</strong> : ne pas mettre de securityContext qui force l'UID. Laisser l'image gérer :</p>
-<pre><code class="language-yaml">#  Pour postgres:alpine — laisser tranquille
+<pre><code class="language-yaml">#  Pour postgres:alpine, laisser tranquille
 securityContext:
   allowPrivilegeEscalation: false
   # PAS de runAsUser, PAS de drop ALL
@@ -293,10 +293,10 @@ securityContext:
 <p><strong>Solution</strong> : garder <code>allowPrivilegeEscalation: false</code> mais <strong>pas</strong> de <code>drop ALL</code> :</p>
 <pre><code class="language-yaml">securityContext:
   allowPrivilegeEscalation: false
-  # pas de drop ALL — l'image a besoin de CAP_CHOWN au boot
+  # pas de drop ALL, l'image a besoin de CAP_CHOWN au boot
 </code></pre>
 <hr>
-<h2>Piège n°4 : WireGuard, l'inverse — il faut AJOUTER des caps</h2>
+<h2>Piège n°4 : WireGuard a besoin de plus de capabilities, pas de moins</h2>
 <p>Le cas symétrique. WireGuard (wg-easy) fait du NAT iptables : il lui faut <strong>plus</strong> de privilèges, pas moins.</p>
 <pre><code class="language-yaml">securityContext:
   capabilities:
@@ -362,7 +362,7 @@ kubectl describe pod &lt;pod&gt; -n homelab
 docker run --rm &lt;image&gt; id
 </code></pre>
 <blockquote>
-<p>Le vrai piège de ces bugs, c'est qu'ils sont <strong>silencieux ou cryptiques</strong>. Un <code>CrashLoopBackOff</code> sans message clair, alors que la vraie cause est une capability manquante. Quand un pod refuse de démarrer <em>après</em> que tu as ajouté un securityContext, c'est presque toujours ça — enlève-le et réintroduis les restrictions une par une.</p>
+<p>Le vrai piège de ces bugs, c'est qu'ils sont <strong>silencieux ou cryptiques</strong>. Un <code>CrashLoopBackOff</code> sans message clair, alors que la vraie cause est une capability manquante. Quand un pod refuse de démarrer <em>après</em> que tu as ajouté un securityContext, c'est presque toujours ça. Enlève-le et réintroduis les restrictions une par une.</p>
 </blockquote>
 <hr>
 <h2>Aller plus loin</h2>

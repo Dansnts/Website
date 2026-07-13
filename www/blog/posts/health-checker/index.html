@@ -323,7 +323,7 @@ def get_result() -&gt; dict:
     add_result(url, current_time, elapsed_ms, status_code)
 </code></pre>
 <p>Deux points importants ici :</p>
-<p><code>client.stream(&quot;GET&quot;, ...)</code> : on <strong>ne télécharge pas le body</strong>. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP compte — rapatrier 2 Mo de HTML pour vérifier un <code>200</code>, non merci.</p>
+<p><code>client.stream(&quot;GET&quot;, ...)</code> : on <strong>ne télécharge pas le body</strong>. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP compte, rapatrier 2 Mo de HTML pour vérifier un <code>200</code>, non merci.</p>
 <p><code>time.perf_counter()</code> : c'est l'horloge monotone, faite pour mesurer des durées. On ne la mélange pas avec <code>datetime.now()</code> (qui elle sert au timestamp affiché).</p>
 <p>Et la boucle qui orchestre tout ça :</p>
 <pre><code class="language-python">async def poll_urls(config: Config):
@@ -343,7 +343,7 @@ def get_result() -&gt; dict:
 <pre><code class="language-python">elapsed = ... - cycle_start
 await asyncio.sleep(max(0, config.polling_interval - elapsed))
 </code></pre>
-<p>Un <code>sleep(60)</code> bête et méchant donnerait un intervalle réel de <code>60s + temps de polling</code>, et ça <strong>dériverait</strong> dans le temps, cycle après cycle. En retranchant le temps déjà passé, on garde un intervalle effectif proche des 60s demandées. Le <code>max(0, ...)</code> couvre le cas où un cycle prend plus longtemps que l'intervalle lui-même — sans lui, <code>sleep</code> recevrait un nombre négatif et <code>asyncio</code> ne serait pas content.</p>
+<p>Un <code>sleep(60)</code> bête et méchant donnerait un intervalle réel de <code>60s + temps de polling</code>, et ça <strong>dériverait</strong> dans le temps, cycle après cycle. En retranchant le temps déjà passé, on garde un intervalle effectif proche des 60s demandées. Le <code>max(0, ...)</code> couvre le cas où un cycle prend plus longtemps que l'intervalle lui-même. Sans lui, <code>sleep</code> recevrait un nombre négatif et <code>asyncio</code> ne serait pas content.</p>
 <hr>
 <h2>Étape 4 : L'API et le cycle de vie</h2>
 <p>FastAPI expose le store, et surtout démarre le worker en tâche de fond via le <code>lifespan</code>.</p>
@@ -437,7 +437,7 @@ CMD [&quot;python&quot;, &quot;api.py&quot;]
     tmpfs:
       - /tmp
 </code></pre>
-<p>Le <code>config.yaml</code> est monté en volume read-only : on édite la liste des URLs <strong>sans rebuild l'image</strong>. Et <code>read_only</code>, <code>cap_drop: ALL</code>, <code>no-new-privileges</code> réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le <code>/tmp</code> en tmpfs — même compromis, il n'a nulle part où poser quoi que ce soit.</p>
+<p>Le <code>config.yaml</code> est monté en volume read-only : on édite la liste des URLs <strong>sans rebuild l'image</strong>. Et <code>read_only</code>, <code>cap_drop: ALL</code>, <code>no-new-privileges</code> réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le <code>/tmp</code> en tmpfs. Même compromis, il n'a nulle part où poser quoi que ce soit.</p>
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
@@ -447,7 +447,7 @@ CMD [&quot;python&quot;, &quot;api.py&quot;]
 <li><strong>Alerting</strong> : déclencher une notification (Slack, mail) quand une URL enchaîne plusieurs échecs.</li>
 </ul>
 <p>Chacun de ces points mérite son propre article.</p>
-<p><em>Pour l'instant il tourne dans mon cluster et me dit quand quelque chose est mort avant que je m'en aperçoive tout seul — c'est déjà tout ce que je lui demandais.</em></p>
+<p><em>Pour l'instant il tourne dans mon cluster et me dit quand quelque chose est mort avant que je m'en aperçoive tout seul. C'est déjà tout ce que je lui demandais.</em></p>
 
     </div>
   </article>

@@ -33,7 +33,7 @@
             <span class="tag">cert-manager</span>
           </div>
           <h1 data-i18n="homelab-title">Homelab Infrastructure</h1>
-          <p class="project-subtitle" data-i18n="homelab-subtitle">Infrastructure Kubernetes sur Proxmox — GitOps, IaC, monitoring, media, VPN, backups</p>
+          <p class="project-subtitle" data-i18n="homelab-subtitle">Infrastructure Kubernetes sur Proxmox, GitOps, IaC, monitoring, media, VPN, backups</p>
         </header>
 
         <!-- Architecture -->
@@ -49,7 +49,7 @@
    │
 Box maison (192.168.1.1)
    │
-MikroTik RB750Gr3 — WAN: 192.168.1.2 / LAN: 10.0.0.1/24
+MikroTik RB750Gr3 (WAN: 192.168.1.2 / LAN: 10.0.0.1/24)
    │
    ├── Proxmox         10.0.0.10   (hyperviseur)
    ├── TrueNAS Scale   10.0.0.11   (stockage ZFS + SMB)
@@ -91,8 +91,8 @@ MikroTik RB750Gr3 — WAN: 192.168.1.2 / LAN: 10.0.0.1/24
               <tr><td>Proxmox</td><td><code>proxmox.&lt;domain&gt;</code></td><td>8006</td></tr>
               <tr><td>NAS</td><td><code>nas.&lt;domain&gt;</code></td><td>80</td></tr>
               <tr><td>TeamSpeak</td><td><code>teamspeak.&lt;domain&gt;</code></td><td>30987</td></tr>
-              <tr><td>ArgoCD</td><td><code>argocd.&lt;domain&gt;</code></td><td>—</td></tr>
-              <tr><td>Syslog</td><td><code>10.0.0.20:30514</code> UDP / <code>:30515</code> TCP</td><td>—</td></tr>
+              <tr><td>ArgoCD</td><td><code>argocd.&lt;domain&gt;</code></td><td>N/A</td></tr>
+              <tr><td>Syslog</td><td><code>10.0.0.20:30514</code> UDP / <code>:30515</code> TCP</td><td>N/A</td></tr>
             </tbody>
           </table>
         </section>
@@ -107,7 +107,7 @@ MikroTik RB750Gr3 — WAN: 192.168.1.2 / LAN: 10.0.0.1/24
             </div>
             <div class="tech-item">
               <strong>Proxmox</strong>
-              <span>Hyperviseur — VMs provisionnées via Terraform (bpg/proxmox ~0.73)</span>
+              <span>Hyperviseur. VMs provisionnées via Terraform (bpg/proxmox ~0.73)</span>
             </div>
             <div class="tech-item">
               <strong>TrueNAS Scale</strong>
@@ -115,7 +115,7 @@ MikroTik RB750Gr3 — WAN: 192.168.1.2 / LAN: 10.0.0.1/24
             </div>
             <div class="tech-item">
               <strong>Ansible</strong>
-              <span>Configuration idempotente — Proxmox, K3s node, node_exporter</span>
+              <span>Configuration idempotente : Proxmox, K3s node, node_exporter</span>
             </div>
             <div class="tech-item">
               <strong>cert-manager + Infomaniak</strong>
@@ -135,7 +135,7 @@ MikroTik RB750Gr3 — WAN: 192.168.1.2 / LAN: 10.0.0.1/24
             </div>
             <div class="tech-item">
               <strong>rclone CronJob</strong>
-              <span>Backup quotidien 2h — NAS → Google Drive</span>
+              <span>Backup quotidien 2h, NAS → Google Drive</span>
             </div>
           </div>
         </section>
@@ -225,7 +225,7 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
           <h2>Réseau</h2>
 
           <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">DNS (Pi-hole v6)</h3>
-          <p>Pi-hole tourne sur <code>10.0.0.101</code>. Depuis le réseau maison (192.168.1.x), MikroTik forwarde le port 53 vers Pi-hole. Le node K3s utilise <code>1.1.1.1</code> directement (pas Pi-hole — chicken-and-egg au boot).</p>
+          <p>Pi-hole tourne sur <code>10.0.0.101</code>. Depuis le réseau maison (192.168.1.x), MikroTik forwarde le port 53 vers Pi-hole. Le node K3s utilise <code>1.1.1.1</code> directement (pas Pi-hole : chicken-and-egg au boot).</p>
 
           <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">Certificats TLS</h3>
           <p>Wildcard <code>*.&lt;domain&gt;</code> via cert-manager (Let's Encrypt DNS-01, webhook Infomaniak). Renouvellement automatique tous les ~60 jours. TrueNAS et Proxmox utilisent le wildcard importé manuellement (~90 jours).</p>
@@ -273,16 +273,16 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
         <!-- Backup -->
         <section class="project-section" data-anim="up">
           <h2>Backup NAS → Infomaniak Swiss Backup (Restic)</h2>
-          <p>Restic est un outil de backup incrémental avec déduplication et chiffrement <strong>zero-knowledge côté client</strong> (AES-256). Le stockage S3 est hébergé en Suisse chez Infomaniak — les blobs uploadés sont entièrement opaques, la clé ne quitte jamais le cluster.</p>
+          <p>Restic est un outil de backup incrémental avec déduplication et chiffrement <strong>zero-knowledge côté client</strong> (AES-256). Le stockage S3 est hébergé en Suisse chez Infomaniak. Les blobs uploadés sont entièrement opaques, la clé ne quitte jamais le cluster.</p>
 
           <div class="tech-grid" style="margin:1.25rem 0">
             <div class="tech-item">
               <strong>Chiffrement</strong>
-              <span>AES-256 côté client avant envoi — Infomaniak ne voit que des blobs opaques</span>
+              <span>AES-256 côté client avant envoi, Infomaniak ne voit que des blobs opaques</span>
             </div>
             <div class="tech-item">
               <strong>Rétention</strong>
-              <span>7 jours / 4 semaines / 6 mois / 2 ans — <code>restic forget --prune</code> automatique</span>
+              <span>7 jours / 4 semaines / 6 mois / 2 ans, <code>restic forget --prune</code> automatique</span>
             </div>
             <div class="tech-item">
               <strong>Source</strong>
@@ -366,11 +366,11 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
         <!-- GitOps / ArgoCD -->
         <section class="project-section" data-anim="up">
           <h2>GitOps avec ArgoCD</h2>
-          <p>Tout changement infra passe par Git — ArgoCD synchronise automatiquement l'état du cluster sur l'état déclaré dans le repo. Pas de <code>kubectl apply</code> manuel en production.</p>
+          <p>Tout changement infra passe par Git. ArgoCD synchronise automatiquement l'état du cluster sur l'état déclaré dans le repo, pas de <code>kubectl apply</code> manuel en production.</p>
 
           <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">1. Résolution du conflit de sync sur StorageClass</h3>
-          <p>ArgoCD utilisait la stratégie <code>Apply</code> par défaut. Les StorageClass ont des champs immuables — ArgoCD retournait une erreur de réconciliation en tentant de patcher des paramètres qu'il ne peut pas modifier.</p>
-          <p style="margin-top:0.75rem"><strong>Fix :</strong> annotation <code>Replace=true</code> — ArgoCD supprime et recrée la ressource au lieu de patcher, contournant la contrainte d'immutabilité de l'API Kubernetes.</p>
+          <p>ArgoCD utilisait la stratégie <code>Apply</code> par défaut. Les StorageClass ont des champs immuables : ArgoCD retournait une erreur de réconciliation en tentant de patcher des paramètres qu'il ne peut pas modifier.</p>
+          <p style="margin-top:0.75rem"><strong>Fix :</strong> annotation <code>Replace=true</code>. ArgoCD supprime et recrée la ressource au lieu de patcher, ce qui contourne la contrainte d'immutabilité de l'API Kubernetes.</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -427,7 +427,7 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
                 <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">80</span> }</code></pre>
           </div>
 
-          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">3. Nettoyage — suppression de l'Ingress obsolète</h3>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">3. Nettoyage : suppression de l'Ingress obsolète</h3>
           <p>Suppression de <code>k8s/dashboard-ingress.yaml</code> : ancienne configuration Ingress nginx pour <code>kubernetes-dashboard</code>, incompatible avec Traefik et plus utilisée.</p>
         </section>
 
@@ -473,15 +473,15 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
               <span class="code-lang">Bash</span>
               <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
-            <pre><code><span class="tok-comment"># Terraform — provisionner les VMs</span>
+            <pre><code><span class="tok-comment"># Terraform : provisionner les VMs</span>
 cd terraform/proxmox/
 <span class="tok-fn">terraform</span> init
 <span class="tok-fn">terraform</span> apply -var-file=../../.secrets.tfvars
 
-<span class="tok-comment"># Ansible — configurer Proxmox</span>
+<span class="tok-comment"># Ansible : configurer Proxmox</span>
 <span class="tok-fn">ansible-playbook</span> -i ansible/inventory.yml ansible/proxmox.yml
 
-<span class="tok-comment"># Ansible — configurer K3s node</span>
+<span class="tok-comment"># Ansible : configurer K3s node</span>
 <span class="tok-fn">ansible-playbook</span> -i ansible/inventory.yml ansible/k3s.yml</code></pre>
           </div>
         </section>

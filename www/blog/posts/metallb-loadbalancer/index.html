@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LoadBalancer bare-metal avec MetalLB — Dani Faria dos Santos</title>
-  <meta name="description" content="Donner de vraies IP à ses services Kubernetes sur du matériel maison — et exposer autre chose que du HTTP." />
+  <meta name="description" content="Donner de vraies IP à ses services Kubernetes sur du matériel maison, et exposer autre chose que du HTTP." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -208,7 +208,7 @@
 <li>Le problème du <code>type: LoadBalancer</code> en bare-metal</li>
 <li>Le pool d'adresses et le mode L2</li>
 <li>Assigner une IP fixe à un service</li>
-<li>Exposer des services <strong>non-HTTP</strong> (VPN, voix) — là où MetalLB brille</li>
+<li>Exposer des services <strong>non-HTTP</strong> (VPN, voix), là où MetalLB brille</li>
 </ol>
 <h2>Prérequis</h2>
 <ul>
@@ -233,7 +233,7 @@ spec:
   addresses:
     - 10.0.0.100-10.0.0.110
 </code></pre>
-<p>Puis le mode d'annonce — ici <strong>L2 (layer 2)</strong> :</p>
+<p>Puis le mode d'annonce, ici <strong>L2 (layer 2)</strong> :</p>
 <pre><code class="language-yaml">apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
@@ -317,7 +317,7 @@ spec:
 <li><strong>Pools multiples</strong> : séparer un pool « interne » et un pool « exposé » pour clarifier ce qui est joignable depuis l'extérieur.</li>
 <li><strong>Le lien avec le port-forward</strong> : l'IP MetalLB n'est que la moitié du chemin, voir l'article MikroTik pour le DNAT qui expose ces services vers internet.</li>
 </ul>
-<p><em>Un seul node, donc un seul point de défaillance sur le mode L2 — je sais, j'assume, l'électricité aussi n'a qu'un seul fournisseur chez moi.</em></p>
+<p><em>Un seul node, donc un seul point de défaillance sur le mode L2. Je sais, j'assume, l'électricité aussi n'a qu'un seul fournisseur chez moi.</em></p>
 
     </div>
   </article>

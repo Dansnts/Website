@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Le DNS, personne n'y pense — jusqu'à ce qu'il tombe et que <em>tout</em> casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel qui guette : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne <em>dans</em> ce cluster. Un cluster qui a besoin de lui-même pour démarrer.</p>
+      <p>Le DNS, personne n'y pense, jusqu'à ce qu'il tombe et que <em>tout</em> casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel qui guette : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne <em>dans</em> ce cluster. Un cluster qui a besoin de lui-même pour démarrer.</p>
 <p>La solution : une architecture DNS à <strong>deux niveaux</strong>, où chaque résolveur a un rôle clair et où Pi-hole n'est jamais dans le chemin critique. Dans ce post :</p>
 <ol>
 <li>Les deux résolveurs et qui résout quoi</li>
@@ -232,7 +232,7 @@ Machines du LAN ───&gt;│ Pi-hole (10.0.0.101)        │──&gt; bloca
 <p>L'idée directrice : <strong>CoreDNS ne dépend pas de Pi-hole</strong>. Les pods du cluster résolvent les services via CoreDNS, qui pointe directement sur Traefik. Si Pi-hole tombe, les pods continuent de se parler. Pi-hole ne sert que le réseau (machines physiques) et le confort (blocage de pub).</p>
 <hr>
 <h2>Niveau 1 : CoreDNS pour l'intérieur du cluster</h2>
-<p>K3s embarque CoreDNS. Par défaut, il résout les services internes du cluster. Mais nos pods ont aussi besoin de résoudre les noms publics des services (<code>grafana.fariadossantos.com</code>, etc.) — et on veut qu'ils tapent <strong>directement Traefik</strong>, sans faire un aller-retour par le réseau externe.</p>
+<p>K3s embarque CoreDNS. Par défaut, il résout les services internes du cluster. Mais nos pods ont aussi besoin de résoudre les noms publics des services (<code>grafana.fariadossantos.com</code>, etc.), et on veut qu'ils tapent <strong>directement Traefik</strong>, sans faire un aller-retour par le réseau externe.</p>
 <p>On ajoute un ConfigMap <code>coredns-custom</code> (mécanisme prévu par K3s) avec des entrées <code>hosts</code> statiques :</p>
 <pre><code>fariadossantos.com:53 {
     hosts {
@@ -251,7 +251,7 @@ Machines du LAN ───&gt;│ Pi-hole (10.0.0.101)        │──&gt; bloca
 <li>Le <code>fallthrough</code> : si le nom n'est pas dans la liste, on continue vers les résolveurs suivants (le <code>forward</code>).</li>
 <li>Aucun passage par Pi-hole. CoreDNS est <strong>autonome</strong>.</li>
 </ul>
-<p>Pour ajouter un service, on édite le ConfigMap — CoreDNS recharge sans redémarrage :</p>
+<p>Pour ajouter un service, on édite le ConfigMap, CoreDNS recharge sans redémarrage :</p>
 <pre><code class="language-bash">kubectl edit configmap coredns-custom -n kube-system
 # ajouter la ligne dans le bloc hosts, sauvegarder, c'est pris en compte
 </code></pre>
@@ -305,14 +305,14 @@ si le node utilise Pi-hole comme DNS...
 </code></pre>
 <p>C'est exactement la même famille de bug que la dépendance circulaire RADIUS : un service d'infra qui dépend de ce qu'il rend possible. Au démarrage à froid, personne ne cède.</p>
 <p>La règle est simple et non négociable : <strong>le node K3s utilise un DNS externe</strong> (<code>1.1.1.1</code>), jamais Pi-hole.</p>
-<p>C'est d'ailleurs un point de vigilance dans la config Ansible du node. Le <code>defaults/main.yml</code> du rôle définit <code>k3s_dns: &quot;10.0.0.101&quot;</code> (Pi-hole) — pratique en fonctionnement normal, mais un piège au boot à froid. En pratique, le resolver du node doit pointer sur <code>1.1.1.1</code> pour casser le cycle.</p>
+<p>C'est d'ailleurs un point de vigilance dans la config Ansible du node. Le <code>defaults/main.yml</code> du rôle définit <code>k3s_dns: &quot;10.0.0.101&quot;</code> (Pi-hole), pratique en fonctionnement normal, mais un piège au boot à froid. En pratique, le resolver du node doit pointer sur <code>1.1.1.1</code> pour casser le cycle.</p>
 <p>Si le node perd sa résolution DNS après un changement :</p>
 <pre><code class="language-bash">echo &quot;nameserver 1.1.1.1&quot; | sudo tee /etc/resolv.conf
 # ou relancer systemd-resolved
 sudo systemctl start systemd-resolved
 </code></pre>
 <blockquote>
-<p>La leçon se répète d'un service d'infra à l'autre : <strong>DNS, DHCP, auth réseau — ces briques doivent démarrer de façon autonome.</strong> Un résolveur qui tourne dans le cluster ne peut pas être le résolveur <em>du</em> cluster.</p>
+<p>La leçon se répète d'un service d'infra à l'autre : <strong>DNS, DHCP, auth réseau, ces briques doivent démarrer de façon autonome.</strong> Un résolveur qui tourne dans le cluster ne peut pas être le résolveur <em>du</em> cluster.</p>
 </blockquote>
 <hr>
 <h2>Récapitulatif : qui résout quoi</h2>
@@ -352,7 +352,7 @@ sudo systemctl start systemd-resolved
 <ul>
 <li><strong>DNS-over-HTTPS en upstream</strong> : configurer Pi-hole pour chiffrer ses requêtes vers l'upstream (cloudflared), au lieu du DNS en clair vers <code>1.1.1.1</code>.</li>
 <li><strong>Redondance Pi-hole</strong> : une seconde instance + <code>keepalived</code> pour que le blocage de pub survive à un crash. Attention à ne pas recréer une dépendance au cluster.</li>
-<li><strong>La dépendance circulaire RADIUS</strong> : le même raisonnement, appliqué à l'authentification réseau — sujet d'un article dédié.</li>
+<li><strong>La dépendance circulaire RADIUS</strong> : le même raisonnement, appliqué à l'authentification réseau, sujet d'un article dédié.</li>
 <li><strong>Métriques Pi-hole</strong> : exporter les stats (requêtes bloquées, top domaines) vers Prometheus/Grafana pour visualiser ce que le réseau raconte.</li>
 </ul>
 <p><em>Le jour où le DNS tombe, tu redécouvres en combien de choses tu avais confiance sans le savoir.</em></p>

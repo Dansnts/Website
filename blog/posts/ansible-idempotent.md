@@ -6,9 +6,9 @@ date: 2025-07-09
 tags: [homelab, ansible, iac]
 ---
 
-Terraform crée la VM, Packer fournit le template — mais une fois la machine debout, il reste à la **configurer** : installer des outils, poser un DNS, déployer un exporter de métriques. On pourrait s'y connecter en SSH et taper les commandes. Sauf qu'au bout de trois machines, on ne sait plus laquelle a reçu quoi.
+Terraform crée la VM, Packer fournit le template. Mais une fois la machine debout, il reste à la **configurer** : installer des outils, poser un DNS, déployer un exporter de métriques. On pourrait s'y connecter en SSH et taper les commandes. Sauf qu'au bout de trois machines, on ne sait plus laquelle a reçu quoi.
 
-Ansible résout ça avec deux idées : la configuration est **décrite** (pas exécutée à la main) et elle est **idempotente** — la rejouer dix fois donne toujours le même résultat, sans rien casser.
+Ansible résout ça avec deux idées : la configuration est **décrite** (pas exécutée à la main) et elle est **idempotente**, la rejouer dix fois donne toujours le même résultat, sans rien casser.
 
 Dans ce post, on configure deux hôtes du homelab (Proxmox et un node K3s) avec Ansible. On va voir :
 
@@ -27,7 +27,7 @@ Dans ce post, on configure deux hôtes du homelab (Proxmox et un node K3s) avec 
 
 ## L'inventaire : qui sont mes machines
 
-Tout part de l'inventaire — la liste des machines et comment s'y connecter.
+Tout part de l'inventaire, la liste des machines et comment s'y connecter.
 
 ```yaml
 all:
@@ -45,7 +45,7 @@ all:
           ansible_become: true
 ```
 
-Deux groupes : `proxmox` et `k3s`. Chacun avec sa façon de se connecter — Proxmox en `root`, le node K3s en `dani` avec `ansible_become: true` (Ansible fera `sudo` pour les tâches qui le demandent).
+Deux groupes : `proxmox` et `k3s`. Chacun avec sa façon de se connecter : Proxmox en `root`, le node K3s en `dani` avec `ansible_become: true` (Ansible fera `sudo` pour les tâches qui le demandent).
 
 Regrouper les machines permet de leur appliquer des configs différentes. C'est ce que font les playbooks.
 
@@ -127,11 +127,11 @@ Regardons cette tâche du rôle `common` :
     creates: /etc/modules-load.d/lm_sensors.conf
 ```
 
-`sensors-detect` est une **commande** — Ansible ne sait pas si elle a déjà tourné. Sans garde, elle se relancerait à chaque exécution du playbook. Le `creates` dit : « si ce fichier existe déjà, la commande a déjà fait son travail, ne la relance pas ».
+`sensors-detect` est une **commande**, Ansible ne sait pas si elle a déjà tourné. Sans garde, elle se relancerait à chaque exécution du playbook. Le `creates` dit : « si ce fichier existe déjà, la commande a déjà fait son travail, ne la relance pas ».
 
 C'est ça, rendre une commande idempotente. La majorité des modules Ansible (`apt`, `copy`, `template`, `systemd`) sont idempotents par nature. Pour `command` et `shell`, qui ne le sont pas, on ajoute une garde comme `creates`.
 
-> La règle mentale : après un premier `ansible-playbook`, un second doit afficher **`changed=0`**. Si quelque chose change à chaque run, c'est que cette tâche n'est pas idempotente — et c'est un bug à corriger.
+> La règle mentale : après un premier `ansible-playbook`, un second doit afficher **`changed=0`**. Si quelque chose change à chaque run, c'est que cette tâche n'est pas idempotente, et c'est un bug à corriger.
 
 ---
 
@@ -176,7 +176,7 @@ node_exporter_collectors:
 ExecStart=/usr/local/bin/node_exporter {% for c in node_exporter_collectors %}--collector.{{ c }} {% endfor %}
 ```
 
-Changer la liste des collectors dans `defaults/`, rejouer le playbook, et le service est mis à jour + redémarré — uniquement parce que le fichier a changé.
+Changer la liste des collectors dans `defaults/`, rejouer le playbook, et le service est mis à jour et redémarré, uniquement parce que le fichier a changé.
 
 ---
 
@@ -224,7 +224,7 @@ Le `match: macaddress` garantit que la config s'applique à la bonne carte rése
 
 > Le piège classique : sans désactiver cloud-init, tu poses ton netplan, tout marche, puis un reboot plus tard cloud-init réécrit par-dessus et l'IP saute. On coupe les deux sources de vérité pour n'en garder qu'une.
 
-Une variable importante à surveiller — le DNS du node :
+Une variable importante à surveiller : le DNS du node.
 
 ```yaml
 # defaults/main.yml

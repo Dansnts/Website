@@ -8,7 +8,7 @@ tags: [homelab, kubernetes, gitops, argocd]
 
 Quand on gère un cluster Kubernetes à la main, on finit toujours par se poser la même question : est-ce que ce qui tourne dans le cluster correspond vraiment à ce qu'il y a dans le repo ? Un `kubectl apply` oublié, un patch fait en urgence un soir de panne, et le cluster diverge silencieusement de Git. Plus personne ne sait quel est l'état réel.
 
-Le **GitOps** renverse le problème : Git devient la **seule source de vérité**, et un contrôleur dans le cluster se charge de faire correspondre le réel au désiré. On ne pousse plus vers le cluster — le cluster tire depuis Git.
+Le **GitOps** renverse le problème : Git devient la **seule source de vérité**, et un contrôleur dans le cluster se charge de faire correspondre le réel au désiré. On ne pousse plus vers le cluster, le cluster tire depuis Git.
 
 Dans ce post, on met en place ArgoCD. On va voir :
 
@@ -113,7 +113,7 @@ data:
 
 `issuer` : l'URL du realm Keycloak. ArgoCD y découvre automatiquement les endpoints OIDC.
 
-`clientSecret: $oidc.keycloak.clientSecret` : le `$` fait référence à une clé stockée dans un Secret K8s — le secret n'est pas en clair dans le ConfigMap.
+`clientSecret: $oidc.keycloak.clientSecret` : le `$` fait référence à une clé stockée dans un Secret K8s, le secret n'est pas en clair dans le ConfigMap.
 
 `requestedScopes: [... "groups"]` : c'est le scope `groups` qui va permettre de mapper les groupes Keycloak vers des rôles ArgoCD. Essentiel pour le RBAC juste après.
 
@@ -145,7 +145,7 @@ data:
 
 ## Le piège du single-node : les patchs du repo-server
 
-Petit retour d'expérience, gratuit. Sur un cluster single-node, certaines valeurs par défaut d'ArgoCD (anti-affinité, réplicas multiples du `repo-server`) ne collent pas — il n'y a qu'un seul nœud, pas grand-chose à répartir. J'ai dû patcher le Deployment du `repo-server` pour satisfaire la validation K8s (nom de conteneur, champs requis) et utiliser l'annotation `ServerSideApply`.
+Petit retour d'expérience, gratuit. Sur un cluster single-node, certaines valeurs par défaut d'ArgoCD (anti-affinité, réplicas multiples du `repo-server`) ne collent pas : il n'y a qu'un seul nœud, pas grand-chose à répartir. J'ai dû patcher le Deployment du `repo-server` pour satisfaire la validation K8s (nom de conteneur, champs requis) et utiliser l'annotation `ServerSideApply`.
 
 > La leçon : ArgoCD est pensé pour du multi-node HA. En single-node, il faut parfois adapter les manifests fournis. Rien de dramatique, mais à prévoir.
 
@@ -155,7 +155,7 @@ Petit retour d'expérience, gratuit. Sur un cluster single-node, certaines valeu
 
 - **App of Apps** : déclarer une application ArgoCD qui elle-même déclare toutes les autres. Un seul point d'entrée pour tout le cluster.
 - **Sync waves** : ordonner le déploiement (les CRDs avant les ressources qui les utilisent, les secrets avant les pods).
-- **Sealed Secrets** : le GitOps suppose que *tout* est dans Git, y compris les secrets — mais chiffrés. C'est le sujet d'un article dédié.
+- **Sealed Secrets** : le GitOps suppose que *tout* est dans Git, y compris les secrets, mais chiffrés. C'est le sujet d'un article dédié.
 - **Notifications** : brancher ArgoCD sur un webhook pour être alerté quand une app passe `OutOfSync` ou `Degraded`.
 
 *Git ne ment jamais. Le cluster, si tu le laisses faire, oui.*

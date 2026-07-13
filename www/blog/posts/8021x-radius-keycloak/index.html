@@ -203,7 +203,7 @@
 
     <div class="blog-body">
       <p>Le firewall protège le lab depuis internet. Mais à l'intérieur, brancher un câble sur un port du switch suffit à obtenir une IP et l'accès réseau. Pour un lab sérieux, c'est une faille : n'importe qui avec un accès physique entre.</p>
-<p>La réponse, c'est <strong>802.1X</strong> — l'authentification au niveau du port. Le switch ne laisse rien passer tant que la machine (ou l'utilisateur) ne s'est pas authentifiée. C'est le standard en entreprise, et on peut le faire chez soi.</p>
+<p>La réponse, c'est <strong>802.1X</strong>, l'authentification au niveau du port. Le switch ne laisse rien passer tant que la machine (ou l'utilisateur) ne s'est pas authentifiée. C'est le standard en entreprise, et on peut le faire chez soi.</p>
 <p>C'est l'article le plus dense du blog, parce que le sujet est peu documenté hors contexte pro. On va monter la chaîne complète :</p>
 <ol>
 <li>Le principe de 802.1X et des trois acteurs</li>
@@ -242,7 +242,7 @@
     timeout=3s \
     comment=&quot;FreeRADIUS homelab&quot;
 
-# ether3-5 — clients 802.1X EAP-TTLS
+# ether3-5 : clients 802.1X EAP-TTLS
 /interface dot1x server add interface=ether3 auth-types=dot1x comment=&quot;client 802.1X&quot;
 /interface dot1x server add interface=ether4 auth-types=dot1x comment=&quot;client 802.1X&quot;
 /interface dot1x server add interface=ether5 auth-types=dot1x comment=&quot;client 802.1X&quot;
@@ -268,7 +268,7 @@
 <pre><code class="language-bash">sed &quot;s|@@RADIUS_SECRET@@|${RADIUS_SECRET}|g&quot; \
     /templates/clients.conf &gt; /etc/freeradius/clients.conf
 </code></pre>
-<p>Les clients autorisés à interroger FreeRADIUS sont déclarés dans <code>clients.conf</code> — le MikroTik, et le subnet des pods au cas où :</p>
+<p>Les clients autorisés à interroger FreeRADIUS sont déclarés dans <code>clients.conf</code> : le MikroTik, et le subnet des pods au cas où.</p>
 <pre><code>client homelab-lan {
     ipaddr                        = 10.0.0.0/24
     secret                        = @@RADIUS_SECRET@@
@@ -276,17 +276,17 @@
     shortname                     = mikrotik
 }
 </code></pre>
-<p><code>require_message_authenticator = true</code> durcit contre les requêtes forgées — bonne pratique RADIUS.</p>
+<p><code>require_message_authenticator = true</code> durcit contre les requêtes forgées, bonne pratique RADIUS.</p>
 <hr>
 <h2>Étape 3 : L'auth EAP-TTLS/PAP → Keycloak</h2>
-<p>Voilà le cœur intellectuel du montage. On veut que les utilisateurs se connectent avec leur <strong>login/mot de passe Keycloak</strong> — pas un mot de passe local dupliqué. Le défi : faire remonter un mot de passe jusqu'à Keycloak, de façon sécurisée.</p>
+<p>Voilà le cœur intellectuel du montage. On veut que les utilisateurs se connectent avec leur <strong>login/mot de passe Keycloak</strong>, pas un mot de passe local dupliqué. Le défi : faire remonter un mot de passe jusqu'à Keycloak, de façon sécurisée.</p>
 <h3>La structure en tunnel</h3>
 <p>EAP-TTLS crée un <strong>tunnel TLS chiffré</strong> entre le client et FreeRADIUS, puis fait passer l'authentification <em>à l'intérieur</em> de ce tunnel :</p>
 <pre><code>Client ══ tunnel TLS (EAP-TTLS) ══&gt; FreeRADIUS
               └── à l'intérieur : PAP (login + mot de passe en clair, mais chiffré par le tunnel)
 </code></pre>
 <ul>
-<li><strong>Outer (extérieur)</strong> : EAP-TTLS, sécurisé par le certificat wildcard. C'est ce que le réseau voit — du chiffré.</li>
+<li><strong>Outer (extérieur)</strong> : EAP-TTLS, sécurisé par le certificat wildcard. C'est ce que le réseau voit : du chiffré.</li>
 <li><strong>Inner (intérieur)</strong> : PAP. Le mot de passe circule « en clair », mais <strong>dans</strong> le tunnel TLS, donc protégé.</li>
 </ul>
 <p>Pourquoi PAP en inner ? Parce qu'on a besoin du mot de passe en clair côté FreeRADIUS pour le rejouer vers Keycloak. Les méthodes qui hachent (MSCHAPv2…) rendraient ça impossible.</p>
@@ -304,7 +304,7 @@
     }
 }
 </code></pre>
-<p>Le tunnel utilise le <strong>wildcard <code>*.fariadossantos.com</code></strong> — le même cert que les services web. Le client vérifie qu'il parle bien au bon serveur.</p>
+<p>Le tunnel utilise le <strong>wildcard <code>*.fariadossantos.com</code></strong>, le même cert que les services web. Le client vérifie qu'il parle bien au bon serveur.</p>
 <h3>Le relais vers Keycloak (ROPC)</h3>
 <p>Une fois dans le tunnel, l'<code>inner-tunnel</code> délègue à un module <code>rest</code> qui appelle Keycloak avec le <strong>Resource Owner Password Credentials grant</strong> (<code>grant_type=password</code>) :</p>
 <pre><code>rest {
@@ -350,7 +350,7 @@
 fc9d0563b3bf   Auth-Type := Accept
 </code></pre>
 <blockquote>
-<p>Le MAB est <strong>moins sûr</strong> que 802.1X (une MAC se spoofe). On le réserve aux machines qui ne peuvent pas faire mieux, et idéalement sur des ports/segments dédiés. Ici, le node K8s est en MAB sur <code>ether2</code> — et ce choix a une raison précise liée à une dépendance circulaire (voir l'article dédié).</p>
+<p>Le MAB est <strong>moins sûr</strong> que 802.1X (une MAC se spoofe). On le réserve aux machines qui ne peuvent pas faire mieux, et idéalement sur des ports/segments dédiés. Ici, le node K8s est en MAB sur <code>ether2</code>, et ce choix a une raison précise liée à une dépendance circulaire (voir l'article dédié).</p>
 </blockquote>
 <hr>
 <h2>Étape 5 : Le piège macOS</h2>
@@ -380,7 +380,7 @@ fc9d0563b3bf   Auth-Type := Accept
 <h2>Aller plus loin</h2>
 <ul>
 <li><strong>La dépendance circulaire</strong> : mettre le node K8s (qui héberge FreeRADIUS) derrière un port 802.1X crée un deadlock potentiel. C'est un piège si sérieux qu'il mérite son propre article.</li>
-<li><strong>VLAN dynamique</strong> : RADIUS peut renvoyer un VLAN dans sa réponse — assigner automatiquement un client à un sous-réseau selon son identité.</li>
+<li><strong>VLAN dynamique</strong> : RADIUS peut renvoyer un VLAN dans sa réponse, pour assigner automatiquement un client à un sous-réseau selon son identité.</li>
 <li><strong>Accounting</strong> : les ports <code>1813</code> (acct) permettent de logguer qui s'est connecté, quand, combien de temps.</li>
 <li><strong>CoA (Change of Authorization)</strong> : révoquer une session active sans attendre la reconnexion.</li>
 </ul>

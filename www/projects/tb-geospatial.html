@@ -36,22 +36,22 @@
 
         <section class="project-section">
           <h2 data-i18n="tb-context-title">Contexte</h2>
-          <p data-i18n="tb-context-text">L'Institut IICT de la HEIG-VD conduit le projet <strong>NearAI</strong>, dont l'objectif est de construire une base de données géospatiale d'éléments routiers à partir d'acquisitions mobiles. Les images sont capturées par des véhicules équipés d'un Trimble MX50 ou d'une GoPro Max et produisent des panoramas équirectangulaires allant jusqu'à 8'192 × 4'096 pixels, accompagnés de coordonnées GPS enregistrées dans l'EXIF. Le corpus cible dépasse <strong>300'000 images</strong>. Annoter manuellement ce volume représenterait plus de 2'500 heures de travail — l'annotation automatisée est la seule voie viable.</p>
+          <p data-i18n="tb-context-text">L'Institut IICT de la HEIG-VD conduit le projet <strong>NearAI</strong>, dont l'objectif est de construire une base de données géospatiale d'éléments routiers à partir d'acquisitions mobiles. Les images sont capturées par des véhicules équipés d'un Trimble MX50 ou d'une GoPro Max et produisent des panoramas équirectangulaires allant jusqu'à 8'192 × 4'096 pixels, accompagnés de coordonnées GPS enregistrées dans l'EXIF. Le corpus cible dépasse <strong>300'000 images</strong>. Annoter manuellement ce volume représenterait plus de 2'500 heures de travail : l'annotation automatisée est la seule voie viable.</p>
         </section>
 
         <section class="project-section">
           <h2 data-i18n="tb-problem-title">Problème</h2>
-          <p data-i18n="tb-problem-text">Deux classes d'objets sont ciblées : les <strong>panneaux de signalisation</strong> (<code>sign</code>) et les <strong>marquages au sol</strong> (<code>road_marking</code>). Chaque image à 8'192 × 4'096 pixels dépasse la fenêtre d'entrée de tout modèle de segmentation courant — il faut découper en tuiles avant l'inférence. Traiter 300'000 images en un délai raisonnable impose de distribuer le calcul sur plusieurs GPUs en parallèle.</p>
+          <p data-i18n="tb-problem-text">Deux classes d'objets sont ciblées : les <strong>panneaux de signalisation</strong> (<code>sign</code>) et les <strong>marquages au sol</strong> (<code>road_marking</code>). Chaque image à 8'192 × 4'096 pixels dépasse la fenêtre d'entrée de tout modèle de segmentation courant, il faut découper en tuiles avant l'inférence. Traiter 300'000 images en un délai raisonnable impose de distribuer le calcul sur plusieurs GPUs en parallèle.</p>
         </section>
 
         <section class="project-section">
           <h2 data-i18n="tb-pipeline-title">Pipeline en 5 étapes</h2>
           <ul class="benefits-list">
-            <li data-i18n="tb-pipeline-1"><strong>Lecture</strong> — le driver liste les objets du préfixe S3 d'entrée et distribue les clés d'image aux workers Ray.</li>
-            <li data-i18n="tb-pipeline-2"><strong>Téléchargement</strong> — chaque worker télécharge l'image depuis MinIO et extrait les coordonnées GPS de l'EXIF.</li>
-            <li data-i18n="tb-pipeline-3"><strong>Inférence</strong> — l'image est découpée en tuiles 512 × 512 px (après downsampling optionnel à 50%), chaque tuile est passée à SAM3 en mode <em>everything</em>.</li>
-            <li data-i18n="tb-pipeline-4"><strong>Agrégation</strong> — les masques produits sont convertis en polygones, normalisés en pourcentage des dimensions de l'image, filtrés par score de confiance.</li>
-            <li data-i18n="tb-pipeline-5"><strong>Écriture</strong> — les polygones sont sérialisés dans un fichier Parquet (compression Snappy) et envoyés sur MinIO.</li>
+            <li data-i18n="tb-pipeline-1"><strong>Lecture</strong> : le driver liste les objets du préfixe S3 d'entrée et distribue les clés d'image aux workers Ray.</li>
+            <li data-i18n="tb-pipeline-2"><strong>Téléchargement</strong> : chaque worker télécharge l'image depuis MinIO et extrait les coordonnées GPS de l'EXIF.</li>
+            <li data-i18n="tb-pipeline-3"><strong>Inférence</strong> : l'image est découpée en tuiles 512 × 512 px (après downsampling optionnel à 50%), chaque tuile est passée à SAM3 en mode <em>everything</em>.</li>
+            <li data-i18n="tb-pipeline-4"><strong>Agrégation</strong> : les masques produits sont convertis en polygones, normalisés en pourcentage des dimensions de l'image, filtrés par score de confiance.</li>
+            <li data-i18n="tb-pipeline-5"><strong>Écriture</strong> : les polygones sont sérialisés dans un fichier Parquet (compression Snappy) et envoyés sur MinIO.</li>
           </ul>
         </section>
 
@@ -99,7 +99,7 @@
             <li data-i18n="tb-done-1">Image Docker publiée sur GHCR (<code>ghcr.io/nearai-interreg/ray-sam3:latest</code>) basée sur <code>nvidia/cuda:12.6.3</code></li>
             <li data-i18n="tb-done-2">Pipeline Python (<code>sam3_minio_pipeline.py</code>) en mode <strong>batch</strong> (Parquet) et <strong>solo</strong> (JSON Label Studio)</li>
             <li data-i18n="tb-done-3">RayCluster déployé via KubeRay avec nodeAffinity sur nœuds L40S et A40, credentials MinIO et HuggingFace injectés via Secrets</li>
-            <li data-i18n="tb-done-4">Sortie Parquet avec GPS EXIF, polygones normalisés et score de confiance SAM3 — queryable directement via DuckDB ou PyArrow</li>
+            <li data-i18n="tb-done-4">Sortie Parquet avec GPS EXIF, polygones normalisés et score de confiance SAM3, queryable directement via DuckDB ou PyArrow</li>
             <li data-i18n="tb-done-5">Conversion Parquet → JSON Label Studio et intégration pré-annotations via API REST</li>
             <li data-i18n="tb-done-6">Stack d'observabilité complète : DCGM Exporter, Prometheus, Grafana Alloy, Loki, dashboards Grafana GPU + logs</li>
             <li data-i18n="tb-done-7">Tests validés sur données réelles : 40 images (dataset Samples) et 2'000 images (dataset HSN)</li>
