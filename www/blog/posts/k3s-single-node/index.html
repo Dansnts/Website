@@ -222,9 +222,9 @@
 <p><strong>K3s</strong> est une distribution Kubernetes certifiée, empaquetée par Rancher, pensée pour l'edge et les petits environnements :</p>
 <ul>
 <li><strong>Un seul binaire</strong> (~70 Mo) qui contient tout : API server, scheduler, controller-manager, kubelet.</li>
-<li><strong>SQLite au lieu d'etcd</strong> par défaut en single-node — un composant de moins à opérer.</li>
+<li><strong>SQLite au lieu d'etcd</strong> par défaut en single-node, un composant de moins à opérer.</li>
 <li><strong>Léger</strong> : tourne confortablement là où un cluster classique s'essoufflerait.</li>
-<li><strong>100 % compatible</strong> : c'est du vrai Kubernetes. <code>kubectl</code>, les manifests, Helm — tout fonctionne à l'identique.</li>
+<li><strong>100 % compatible</strong> : c'est du vrai Kubernetes. <code>kubectl</code>, les manifests, Helm : tout fonctionne à l'identique.</li>
 </ul>
 <p>L'installation tient en une ligne, et c'est justement celle qu'on a mise dans le cloud-init Terraform :</p>
 <pre><code class="language-yaml">runcmd:
@@ -243,7 +243,7 @@
 </ul>
 <p>Résultat : pour exposer un service, on écrit un <code>Ingress</code>, et Traefik s'en occupe. Pas d'installation, pas de câblage manuel.</p>
 <blockquote>
-<p>K3s embarque aussi un LoadBalancer simpliste (ServiceLB / Klipper). En homelab avec plusieurs services à exposer sur des IPs dédiées, je lui préfère MetalLB — mais c'est un autre sujet. L'important : le socle ingress est fourni.</p>
+<p>K3s embarque aussi un LoadBalancer simpliste (ServiceLB / Klipper). En homelab avec plusieurs services à exposer sur des IPs dédiées, je lui préfère MetalLB, mais c'est un autre sujet. L'important : le socle ingress est fourni.</p>
 </blockquote>
 <hr>
 <h2>La chaîne complète : Packer → Terraform → Ansible → K3s</h2>
@@ -260,7 +260,7 @@
 [Ansible]    fige le réseau (netplan), déploie node_exporter
    │
    V
-Cluster K3s prêt — kubectl, ArgoCD, les services
+Cluster K3s prêt : kubectl, ArgoCD, les services
 </code></pre>
 <p>Chaque outil fait <strong>une</strong> chose bien :</p>
 <table>
@@ -307,21 +307,21 @@ Cluster K3s prêt — kubectl, ArgoCD, les services
 <p>Soyons honnêtes sur le compromis.</p>
 <p><strong>Ce qu'on gagne :</strong></p>
 <ul>
-<li>Simplicité maximale — un seul serveur à gérer, à sauvegarder, à comprendre.</li>
-<li>Coût et conso réduits — une seule VM (8 cœurs / 48 Go chez moi).</li>
+<li>Simplicité maximale : un seul serveur à gérer, à sauvegarder, à comprendre.</li>
+<li>Coût et conso réduits : une seule VM (8 cœurs / 48 Go chez moi).</li>
 <li>Zéro complexité réseau inter-nœuds.</li>
 </ul>
 <p><strong>Ce qu'on perd :</strong></p>
 <ul>
 <li><strong>La haute disponibilité.</strong> Si le node tombe, tout tombe. C'est un SPOF assumé.</li>
-<li>Le scaling horizontal — pas de répartition de charge sur plusieurs machines.</li>
+<li>Le scaling horizontal : pas de répartition de charge sur plusieurs machines.</li>
 <li>La tolérance aux pannes matérielles.</li>
 </ul>
 <p>Pour un homelab, c'est le bon compromis : je ne fais pas tourner un service critique pour des millions d'utilisateurs, je fais tourner mes services perso. Une panne = quelques minutes d'indispo pendant que je redémarre, pas une catastrophe.</p>
 <blockquote>
-<p>Le vrai risque du single-node n'est pas la disponibilité, c'est la <strong>perte de données</strong>. Un node qui reboote, ça revient. Un disque qui meurt avec les PVC dessus, c'est autre chose. D'où l'importance d'une stratégie de backup sérieuse (snapshots, Restic hors-machine…) — le sujet d'un prochain article.</p>
+<p>Le vrai risque du single-node n'est pas la disponibilité, c'est la <strong>perte de données</strong>. Un node qui reboote, ça revient. Un disque qui meurt avec les PVC dessus, c'est autre chose. D'où l'importance d'une stratégie de backup sérieuse (snapshots, Restic hors-machine…), le sujet d'un prochain article.</p>
 </blockquote>
-<p>Si un jour le besoin de HA se fait sentir, K3s sait faire du multi-node : on bascule le datastore sur etcd embarqué et on ajoute des serveurs avec un token. Mais ça, ce sera quand j'en aurai vraiment besoin — pas avant.</p>
+<p>Si un jour le besoin de HA se fait sentir, K3s sait faire du multi-node : on bascule le datastore sur etcd embarqué et on ajoute des serveurs avec un token. Mais ça, ce sera quand j'en aurai vraiment besoin, pas avant.</p>
 <hr>
 <h2>Vérifier que ça tourne</h2>
 <pre><code class="language-bash"># Sur le node

@@ -6,7 +6,7 @@ date: 2025-12-19
 tags: [homelab, réseau, dns, pihole, kubernetes]
 ---
 
-Le DNS, personne n'y pense — jusqu'à ce qu'il tombe et que *tout* casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel qui guette : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne *dans* ce cluster. Un cluster qui a besoin de lui-même pour démarrer.
+Le DNS, personne n'y pense, jusqu'à ce qu'il tombe et que *tout* casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel qui guette : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne *dans* ce cluster. Un cluster qui a besoin de lui-même pour démarrer.
 
 La solution : une architecture DNS à **deux niveaux**, où chaque résolveur a un rôle clair et où Pi-hole n'est jamais dans le chemin critique. Dans ce post :
 
@@ -44,7 +44,7 @@ L'idée directrice : **CoreDNS ne dépend pas de Pi-hole**. Les pods du cluster 
 
 ## Niveau 1 : CoreDNS pour l'intérieur du cluster
 
-K3s embarque CoreDNS. Par défaut, il résout les services internes du cluster. Mais nos pods ont aussi besoin de résoudre les noms publics des services (`grafana.fariadossantos.com`, etc.) — et on veut qu'ils tapent **directement Traefik**, sans faire un aller-retour par le réseau externe.
+K3s embarque CoreDNS. Par défaut, il résout les services internes du cluster. Mais nos pods ont aussi besoin de résoudre les noms publics des services (`grafana.fariadossantos.com`, etc.), et on veut qu'ils tapent **directement Traefik**, sans faire un aller-retour par le réseau externe.
 
 On ajoute un ConfigMap `coredns-custom` (mécanisme prévu par K3s) avec des entrées `hosts` statiques :
 
@@ -67,7 +67,7 @@ Ce que ça fait, dans l'ordre :
 - Le `fallthrough` : si le nom n'est pas dans la liste, on continue vers les résolveurs suivants (le `forward`).
 - Aucun passage par Pi-hole. CoreDNS est **autonome**.
 
-Pour ajouter un service, on édite le ConfigMap — CoreDNS recharge sans redémarrage :
+Pour ajouter un service, on édite le ConfigMap, CoreDNS recharge sans redémarrage :
 
 ```bash
 kubectl edit configmap coredns-custom -n kube-system
@@ -139,7 +139,7 @@ C'est exactement la même famille de bug que la dépendance circulaire RADIUS : 
 
 La règle est simple et non négociable : **le node K3s utilise un DNS externe** (`1.1.1.1`), jamais Pi-hole.
 
-C'est d'ailleurs un point de vigilance dans la config Ansible du node. Le `defaults/main.yml` du rôle définit `k3s_dns: "10.0.0.101"` (Pi-hole) — pratique en fonctionnement normal, mais un piège au boot à froid. En pratique, le resolver du node doit pointer sur `1.1.1.1` pour casser le cycle.
+C'est d'ailleurs un point de vigilance dans la config Ansible du node. Le `defaults/main.yml` du rôle définit `k3s_dns: "10.0.0.101"` (Pi-hole), pratique en fonctionnement normal, mais un piège au boot à froid. En pratique, le resolver du node doit pointer sur `1.1.1.1` pour casser le cycle.
 
 Si le node perd sa résolution DNS après un changement :
 
@@ -149,7 +149,7 @@ echo "nameserver 1.1.1.1" | sudo tee /etc/resolv.conf
 sudo systemctl start systemd-resolved
 ```
 
-> La leçon se répète d'un service d'infra à l'autre : **DNS, DHCP, auth réseau — ces briques doivent démarrer de façon autonome.** Un résolveur qui tourne dans le cluster ne peut pas être le résolveur *du* cluster.
+> La leçon se répète d'un service d'infra à l'autre : **DNS, DHCP, auth réseau, ces briques doivent démarrer de façon autonome.** Un résolveur qui tourne dans le cluster ne peut pas être le résolveur *du* cluster.
 
 ---
 
@@ -168,7 +168,7 @@ sudo systemctl start systemd-resolved
 
 - **DNS-over-HTTPS en upstream** : configurer Pi-hole pour chiffrer ses requêtes vers l'upstream (cloudflared), au lieu du DNS en clair vers `1.1.1.1`.
 - **Redondance Pi-hole** : une seconde instance + `keepalived` pour que le blocage de pub survive à un crash. Attention à ne pas recréer une dépendance au cluster.
-- **La dépendance circulaire RADIUS** : le même raisonnement, appliqué à l'authentification réseau — sujet d'un article dédié.
+- **La dépendance circulaire RADIUS** : le même raisonnement, appliqué à l'authentification réseau, sujet d'un article dédié.
 - **Métriques Pi-hole** : exporter les stats (requêtes bloquées, top domaines) vers Prometheus/Grafana pour visualiser ce que le réseau raconte.
 
 *Le jour où le DNS tombe, tu redécouvres en combien de choses tu avais confiance sans le savoir.*

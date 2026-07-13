@@ -8,7 +8,7 @@ tags: [homelab, keycloak, sso, oidc, iam, kubernetes]
 
 Au début d'un homelab, chaque service a son propre login. Un mot de passe pour Grafana, un autre pour le wiki, un troisième pour Vaultwarden. Et forcément, on finit par réutiliser le même partout, ou par les noter dans un fichier texte quelque part. C'est exactement ce qu'on veut éviter dans un lab qui prétend être sérieux.
 
-La solution, c'est un **IAM** (Identity and Access Management) : un annuaire d'identités unique, et tous les services qui viennent s'y authentifier. Chez moi, c'est **Keycloak**. Un seul compte, un seul mot de passe, et du SSO qui se propage aux applications — jusqu'à l'authentification des ports Ethernet.
+La solution, c'est un **IAM** (Identity and Access Management) : un annuaire d'identités unique, et tous les services qui viennent s'y authentifier. Chez moi, c'est **Keycloak**. Un seul compte, un seul mot de passe, et du SSO qui se propage aux applications, jusqu'à l'authentification des ports Ethernet.
 
 Dans ce post, on va voir :
 
@@ -29,13 +29,13 @@ Dans ce post, on va voir :
 
 ## Pourquoi Keycloak
 
-Keycloak est un serveur d'identité open source, maintenu par Red Hat. Il parle les protocoles standards — **OIDC** (OpenID Connect) et **SAML** — que la plupart des applications savent consommer. Concrètement, il joue trois rôles :
+Keycloak est un serveur d'identité open source, maintenu par Red Hat. Il parle les protocoles standards, **OIDC** (OpenID Connect) et **SAML**, que la plupart des applications savent consommer. Concrètement, il joue trois rôles :
 
 - **Annuaire** : il stocke les utilisateurs, leurs mots de passe (hachés), leurs rôles.
 - **Serveur d'authentification** : les apps le délèguent pour dire « oui, c'est bien Dani ».
 - **Point de SSO** : une fois connecté à un service, on l'est pour les autres.
 
-L'alternative « légère » serait Authelia ou Authentik. J'ai choisi Keycloak parce qu'il gère nativement le grant **ROPC** (`grant_type=password`), dont j'ai besoin pour le pont RADIUS (on y revient plus bas), et parce que c'est la référence côté entreprise — autant apprendre l'outil qu'on retrouvera au boulot.
+L'alternative « légère » serait Authelia ou Authentik. J'ai choisi Keycloak parce qu'il gère nativement le grant **ROPC** (`grant_type=password`), dont j'ai besoin pour le pont RADIUS (on y revient plus bas), et parce que c'est la référence côté entreprise, autant apprendre l'outil qu'on retrouvera au boulot.
 
 ---
 
@@ -69,7 +69,7 @@ containers:
 
 Quelques lignes méritent une explication :
 
-- `args: ["start"]` : c'est le **mode production** de Keycloak (par opposition à `start-dev`). Il exige un hostname et une base externe — pas de raccourci.
+- `args: ["start"]` : c'est le **mode production** de Keycloak (par opposition à `start-dev`). Il exige un hostname et une base externe, pas de raccourci.
 - `KC_HOSTNAME` : l'URL publique par laquelle Keycloak se sait joignable. Il l'utilise pour construire les URLs dans les tokens et les redirections. Se tromper ici casse les redirections OIDC de façon très déroutante.
 - `KC_PROXY_HEADERS: xforwarded` + `KC_HTTP_ENABLED: true` + `KC_HTTPS_ENABLED: false` : le TLS est **terminé par Traefik**, en amont. Keycloak reçoit du HTTP en clair à l'intérieur du cluster, mais il fait confiance aux en-têtes `X-Forwarded-*` pour savoir que le client, lui, était en HTTPS. C'est le pattern classique « TLS au bord, HTTP à l'intérieur ».
 - `KC_HEALTH_ENABLED: true` : expose `/health/ready` et `/health/live`, mais sur un **port de management séparé** (9000), pas sur le 8080 applicatif.
@@ -140,7 +140,7 @@ Le détail à ne pas rater, ce sont les **deux URLs différentes** pour joindre 
 
 Cette dissociation « URL navigateur publique / URL backend interne » est LE point qui fait galérer tout le monde la première fois. Si on met l'URL interne côté navigateur, la redirection échoue ; si on met l'URL publique côté backend, on fait un aller-retour inutile par le proxy.
 
-Dernière ligne intéressante, le `ROLE_ATTRIBUTE_PATH` : c'est une expression JMESPath évaluée sur le token. Elle lit `resource_access.grafana.roles` — les rôles que Keycloak attache au client `grafana` — et mappe le rôle `admin` de Keycloak sur le rôle `Admin` de Grafana. **La gestion des droits reste centralisée dans Keycloak** : je donne le rôle à l'utilisateur une fois, Grafana suit.
+Dernière ligne intéressante, le `ROLE_ATTRIBUTE_PATH` : c'est une expression JMESPath évaluée sur le token. Elle lit `resource_access.grafana.roles`, les rôles que Keycloak attache au client `grafana`, et mappe le rôle `admin` de Keycloak sur le rôle `Admin` de Grafana. **La gestion des droits reste centralisée dans Keycloak** : je donne le rôle à l'utilisateur une fois, Grafana suit.
 
 Le secret du client (`GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET`) est, là encore, injecté depuis un SealedSecret.
 
@@ -192,7 +192,7 @@ Résultat : le mot de passe d'un utilisateur vit **à un seul endroit**, Keycloa
 ## Aller plus loin
 
 - **802.1X de bout en bout** : le montage complet EAP-TTLS/PAP → ROPC, côté MikroTik et FreeRADIUS, est détaillé dans l'article « Sécuriser ses ports Ethernet avec 802.1X ».
-- **La dépendance circulaire** : héberger l'auth réseau dans le cluster qui dépend du réseau crée un deadlock — un piège que je raconte dans son propre article.
+- **La dépendance circulaire** : héberger l'auth réseau dans le cluster qui dépend du réseau crée un deadlock, un piège que je raconte dans son propre article.
 - **Brancher d'autres services** : Vaultwarden, ArgoCD, le wiki… tout ce qui parle OIDC peut rejoindre le SSO avec le même pattern « deux URLs » que Grafana.
 - **Sauvegarder le realm** : un export régulier de la base PostgreSQL de Keycloak (ou un `kc.sh export`) pour ne pas reconstruire clients et rôles à la main après un incident.
 

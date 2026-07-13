@@ -108,7 +108,7 @@ Les points clés :
 
 `vaultwarden-data` monté en `readOnly: true` : l'initContainer lit la base de production sans jamais risquer de la modifier. `.backup` n'a besoin que de lire.
 
-`emptyDir: {}` : un volume temporaire qui vit le temps du pod. L'initContainer y écrit le dump, le conteneur Restic l'y lit. Il disparaît à la fin du job — le dump n'est qu'un intermédiaire.
+`emptyDir: {}` : un volume temporaire qui vit le temps du pod. L'initContainer y écrit le dump, le conteneur Restic l'y lit. Il disparaît à la fin du job, le dump n'est qu'un intermédiaire.
 
 `drop: ["ALL"]` sur l'initContainer : c'est un simple `sqlite3` dans une Alpine, aucun besoin de privilège, donc durcissement complet possible (contrairement à d'autres images, cf. l'article sur les securityContext).
 

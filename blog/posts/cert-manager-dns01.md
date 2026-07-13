@@ -1,19 +1,19 @@
 ---
 layout: post.njk
 title: "Certificat wildcard automatique avec cert-manager et DNS-01"
-description: "Un *.mondomaine.com signé par Let's Encrypt, renouvelé tout seul, via un challenge DNS — et le cas des services hors cluster."
+description: "Un *.mondomaine.com signé par Let's Encrypt, renouvelé tout seul, via un challenge DNS, et le cas des services hors cluster."
 date: 2025-11-17
 tags: [homelab, kubernetes, tls, cert-manager, lets-encrypt]
 ---
 
-Avec une dizaine de services en HTTPS, gérer les certificats à la main devient vite ingérable : un cert par sous-domaine, chacun à renouveler tous les 90 jours. La solution élégante, c'est un **certificat wildcard** `*.mondomaine.com` — un seul cert pour tous les services — signé par Let's Encrypt et renouvelé automatiquement.
+Avec une dizaine de services en HTTPS, gérer les certificats à la main devient vite ingérable : un cert par sous-domaine, chacun à renouveler tous les 90 jours. La solution élégante, c'est un **certificat wildcard** `*.mondomaine.com`, un seul cert pour tous les services, signé par Let's Encrypt et renouvelé automatiquement.
 
 Le hic : un wildcard ne peut PAS être validé par le challenge HTTP classique. Il faut passer par un **challenge DNS-01**, ce qui demande de piloter sa zone DNS par API. Au menu :
 
 1. Pourquoi DNS-01 est obligatoire pour un wildcard
 2. Le ClusterIssuer avec le webhook du registrar (Infomaniak)
 3. La ressource Certificate
-4. Les services **hors cluster** (Proxmox, TrueNAS) — le renouvellement manuel
+4. Les services **hors cluster** (Proxmox, TrueNAS), le renouvellement manuel
 
 ## Prérequis
 
@@ -44,7 +44,7 @@ Le défi technique : créer/supprimer ce TXT automatiquement. C'est le rôle du 
 
 ## Le ClusterIssuer
 
-Le `ClusterIssuer` décrit *comment* obtenir des certificats — l'autorité (Let's Encrypt) et le solveur (DNS-01 via le webhook Infomaniak).
+Le `ClusterIssuer` décrit *comment* obtenir des certificats : l'autorité (Let's Encrypt) et le solveur (DNS-01 via le webhook Infomaniak).
 
 ```yaml
 apiVersion: cert-manager.io/v1
@@ -113,7 +113,7 @@ spec:
     - "*.fariadossantos.com"
 ```
 
-`secretName` : cert-manager dépose le certificat (et le renouvelle) dans ce Secret. Les Ingress Traefik le référencent, et voilà — tous les services sont en HTTPS.
+`secretName` : cert-manager dépose le certificat (et le renouvelle) dans ce Secret. Les Ingress Traefik le référencent, et voilà, tous les services sont en HTTPS.
 
 `dnsNames` : on met à la fois le domaine nu et le wildcard. Le wildcard `*.fariadossantos.com` ne couvre PAS `fariadossantos.com` lui-même, il faut les deux.
 
@@ -124,13 +124,13 @@ kubectl get certificate -n homelab
 kubectl describe certificate fariadossantos-wildcard -n homelab
 ```
 
-Un `Ready: True` = certificat émis. Le renouvellement (vers J-30 avant expiration à 90 jours) est **entièrement automatique**. Pour les services K8s, on n'y touche plus jamais. Enfin, presque — la suite gâche un peu la fête.
+Un `Ready: True` = certificat émis. Le renouvellement (vers J-30 avant expiration à 90 jours) est **entièrement automatique**. Pour les services K8s, on n'y touche plus jamais. Enfin, presque, la suite gâche un peu la fête.
 
 ---
 
 ## Le cas des services hors cluster
 
-Voilà le point que les tutos oublient. Mon Proxmox et mon TrueNAS ne sont **pas** dans Kubernetes — ce sont les hyperviseur et NAS *sous* le cluster. Ils ne peuvent pas consommer directement le Secret K8s. Mais je veux quand même qu'ils servent le même wildcard.
+Voilà le point que les tutos oublient. Mon Proxmox et mon TrueNAS ne sont **pas** dans Kubernetes, ce sont les hyperviseur et NAS *sous* le cluster. Ils ne peuvent pas consommer directement le Secret K8s. Mais je veux quand même qu'ils servent le même wildcard.
 
 La solution : **exporter le cert depuis K8s et l'importer manuellement**, à chaque renouvellement (~90 jours).
 
@@ -167,4 +167,4 @@ Puis on importe `tls.crt` / `tls.key` dans les interfaces respectives :
 - **Certificats par namespace** : plutôt qu'un wildcard partagé, un cert dédié par app pour cloisonner davantage.
 - **Monitoring d'expiration** : une alerte Prometheus (`certmanager_certificate_expiration_timestamp_seconds`) pour être prévenu si un renouvellement échoue.
 
-*Un wildcard, un webhook, et plus jamais à courir après un cert expiré un dimanche soir — sauf sur Proxmox et TrueNAS, qui n'ont pas eu ce mémo.*
+*Un wildcard, un webhook, et plus jamais à courir après un cert expiré un dimanche soir, sauf sur Proxmox et TrueNAS, qui n'ont pas eu ce mémo.*

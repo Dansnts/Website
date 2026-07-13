@@ -6,7 +6,7 @@ date: 2025-05-21
 tags: [homelab, packer, proxmox, iac]
 ---
 
-Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner : un **template**. On peut le fabriquer à la main — installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.
+Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner : un **template**. On peut le fabriquer à la main : installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.
 
 C'est le principe de la *golden image* : une image de base, propre, réutilisable, versionnée dans Git. Dans ce post, on construit une image Debian 12 pour Proxmox avec Packer. On va voir :
 
@@ -44,7 +44,7 @@ Le fichier Packer principal (`k8s-debian.pkr.hcl`) est en deux morceaux : une **
 
 ---
 
-## Étape 1 : La source — installer Debian sans y toucher
+## Étape 1 : la source, installer Debian sans y toucher
 
 ```hcl
 source "proxmox-iso" "debian-k8s" {
@@ -56,7 +56,7 @@ source "proxmox-iso" "debian-k8s" {
 
   vm_id                = 9000
   vm_name              = "debian12-golden"
-  template_description  = "Debian 12 Bookworm — template K8s/k3s (généré par Packer)"
+  template_description  = "Debian 12 Bookworm, template K8s/k3s (généré par Packer)"
 
   iso_file         = "local:iso/debian-12.10.0-amd64-netinst.iso"
   iso_storage_pool = "local"
@@ -100,7 +100,7 @@ source "proxmox-iso" "debian-k8s" {
 
 Le mécanisme clé, c'est le duo `boot_command` + `http_directory` :
 
-`http_directory = "http"` : Packer démarre un petit serveur HTTP local qui sert le contenu du dossier `http/` — notre fichier `preseed.cfg`.
+`http_directory = "http"` : Packer démarre un petit serveur HTTP local qui sert le contenu du dossier `http/`, notre fichier `preseed.cfg`.
 
 `boot_command` : Packer simule des frappes clavier au boot de l'ISO. Il tape littéralement `install auto=true ...` puis pointe l'installeur Debian vers le preseed via `http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg`. Debian télécharge le preseed et s'installe tout seul.
 
@@ -115,7 +115,7 @@ Le mécanisme clé, c'est le duo `boot_command` + `http_directory` :
 Le `preseed.cfg` répond à toutes les questions que l'installeur Debian poserait normalement. Les blocs importants :
 
 ```
-# Partitionnement — tout sur une partition, automatique
+# Partitionnement : tout sur une partition, automatique
 d-i partman-auto/method string regular
 d-i partman-auto/choose_recipe select atomic
 d-i partman/confirm_nooverwrite boolean true
@@ -129,7 +129,7 @@ d-i passwd/user-password password packer
 d-i pkgsel/include string openssh-server sudo curl
 ```
 
-Et un détail qui vaut de l'or — le `late_command`, qui donne à `packer` un sudo sans mot de passe :
+Et un détail qui vaut de l'or : le `late_command`, qui donne à `packer` un sudo sans mot de passe.
 
 ```
 d-i preseed/late_command string \
@@ -193,7 +193,7 @@ Le `datasource_list: [ConfigDrive, NoCloud]` : dit à cloud-init d'aller lire la
 
 ---
 
-## Étape 3 : Le nettoyage — le secret d'un template clonable
+## Étape 3 : le nettoyage, le secret d'un template clonable
 
 C'est l'étape que **tout le monde oublie**, et qui casse tout ensuite. Un template, ce n'est pas juste « une VM éteinte ». Il faut effacer toute l'identité unique de la machine, sinon toutes les VMs clonées la partageront.
 
@@ -215,7 +215,7 @@ Pourquoi chaque ligne compte :
 
 `cloud-init clean` : efface l'état de cloud-init pour qu'il se relance proprement au premier boot du clone (et applique la nouvelle IP, le nouveau user…).
 
-`rm /etc/ssh/ssh_host_*` : supprime les clés d'hôte SSH. **Critique.** Sinon, toutes tes VMs auraient la même empreinte SSH — un désastre de sécurité et une source d'avertissements `known_hosts`. Elles sont régénérées au premier boot.
+`rm /etc/ssh/ssh_host_*` : supprime les clés d'hôte SSH. **Critique.** Sinon, toutes tes VMs auraient la même empreinte SSH, un désastre de sécurité et une source d'avertissements `known_hosts`. Elles sont régénérées au premier boot.
 
 `truncate /etc/machine-id` : vide l'ID machine. S'il n'est pas vide, toutes les VMs clonées partagent le même `machine-id`, ce qui casse la résolution DHCP, systemd, journald… Vidé, il est regénéré au boot, unique par VM.
 
@@ -241,7 +241,7 @@ packer build -var-file="variables.pkrvars.hcl" .
 
 ## Aller plus loin
 
-- **Terraform derrière** : la golden image n'a de sens que si quelque chose la clone. C'est le job de Terraform (`clone { vm_id = 9000 }`) — sujet d'un autre article.
+- **Terraform derrière** : la golden image n'a de sens que si quelque chose la clone. C'est le job de Terraform (`clone { vm_id = 9000 }`), sujet d'un autre article.
 - **Versionner les images** : incrémenter le `template_description` ou tagguer avec une date à chaque build permet de savoir quelle image tourne sur quelle VM.
 - **Un template par usage** : ici c'est une image « K8s ». On pourrait en avoir une pour Docker, une pour les VMs de test… chacune avec son `setup.sh`.
 - **CI** : lancer `packer build` automatiquement quand le `.pkr.hcl` change, pour régénérer l'image à chaque mise à jour de sécurité Debian.

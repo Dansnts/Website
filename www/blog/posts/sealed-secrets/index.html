@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Committer ses secrets dans Git sans pleurer : Sealed Secrets — Dani Faria dos Santos</title>
-  <meta name="description" content="Chiffrer ses secrets K8s en RSA-4096 pour les versionner dans Git — et le point critique que tout le monde oublie : sauvegarder la master key." />
+  <meta name="description" content="Chiffrer ses secrets K8s en RSA-4096 pour les versionner dans Git, et le point critique que tout le monde oublie : sauvegarder la master key." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -202,13 +202,13 @@
     </header>
 
     <div class="blog-body">
-      <p>Le GitOps a une exigence gênante : <em>tout</em> doit être dans Git, y compris les secrets. Sauf qu'un <code>Secret</code> Kubernetes, c'est juste du base64 — pas du chiffrement. Le committer, c'est publier ses mots de passe en clair. Alors on les garde à part, et on casse le principe « tout est dans Git ».</p>
+      <p>Le GitOps a une exigence gênante : <em>tout</em> doit être dans Git, y compris les secrets. Sauf qu'un <code>Secret</code> Kubernetes, c'est juste du base64, pas du chiffrement. Le committer, c'est publier ses mots de passe en clair. Alors on les garde à part, et on casse le principe « tout est dans Git ».</p>
 <p><strong>Sealed Secrets</strong> (Bitnami) résout ça proprement : on chiffre le secret avec une clé publique, et seul le contrôleur dans le cluster (qui détient la clé privée) peut le déchiffrer. Le fichier chiffré est <strong>committable sans risque</strong>.</p>
 <p>Dans ce post :</p>
 <ol>
 <li>Le principe du chiffrement asymétrique appliqué aux secrets</li>
 <li>Le workflow <code>kubeseal</code></li>
-<li><strong>Le backup de la master key — le point critique</strong></li>
+<li><strong>Le backup de la master key, le point critique</strong></li>
 <li>La rotation automatique des clés</li>
 </ol>
 <h2>Prérequis</h2>
@@ -254,7 +254,7 @@ kubeseal --format yaml &lt; secret.yaml &gt; sealedsecret.yaml
 rm secret.yaml
 git add sealedsecret.yaml
 </code></pre>
-<p>Le résultat ressemble à ça — de l'illisible, safe à committer :</p>
+<p>Le résultat ressemble à ça : de l'illisible, safe à committer.</p>
 <pre><code class="language-yaml">apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
@@ -274,7 +274,7 @@ spec:
 <p>Détail important : un <code>SealedSecret</code> est <strong>lié à son namespace et à son nom</strong>. On ne peut pas le déplacer ou le renommer sans le re-sceller. C'est une protection : ça empêche de réutiliser un secret chiffré ailleurs pour extraire sa valeur.</p>
 </blockquote>
 <hr>
-<h2>LE point critique : sauvegarder la master key</h2>
+<h2>Le point critique : sauvegarder la master key</h2>
 <p>Voici ce que tout le monde néglige, et qui transforme un incident mineur en catastrophe pure.</p>
 <p><strong>La clé privée (master key) vit dans le cluster.</strong> Si tu perds le cluster (disque mort, réinstallation, node détruit), tu perds la clé. Et sans la clé, <strong>tous tes <code>SealedSecret</code> deviennent définitivement indéchiffrables</strong>. Tu as tes secrets chiffrés dans Git, mais plus aucun moyen de les ouvrir.</p>
 <p>La master key doit donc être <strong>exportée et sauvegardée hors du cluster</strong> :</p>
@@ -339,7 +339,7 @@ keyrenewperiod: &quot;720h&quot;   # 30 jours
 <li><strong>Rotation des secrets applicatifs</strong> : Sealed Secrets chiffre, mais ne fait pas tourner les mots de passe eux-mêmes. Pour ça, on regarde du côté d'External Secrets + un vrai vault.</li>
 <li><strong>External Secrets Operator</strong> : l'alternative qui va chercher les secrets dans un backend externe (Vault, cloud) au lieu de les stocker chiffrés dans Git.</li>
 <li><strong>Sauvegarde automatisée de la master key</strong> : un CronJob qui exporte la clé vers un stockage chiffré hors cluster après chaque rotation.</li>
-<li><strong>La dépendance circulaire</strong> : master key dans Vaultwarden, secret Vaultwarden scellé par la master key — un thème récurrent du homelab que j'aborde ailleurs.</li>
+<li><strong>La dépendance circulaire</strong> : master key dans Vaultwarden, secret Vaultwarden scellé par la master key, un thème récurrent du homelab que j'aborde ailleurs.</li>
 </ul>
 <p><em>Un secret chiffré sans sa clé, c'est un coffre-fort jeté à la mer avec la combinaison dedans.</em></p>
 

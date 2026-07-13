@@ -202,8 +202,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Terraform crée la VM, Packer fournit le template — mais une fois la machine debout, il reste à la <strong>configurer</strong> : installer des outils, poser un DNS, déployer un exporter de métriques. On pourrait s'y connecter en SSH et taper les commandes. Sauf qu'au bout de trois machines, on ne sait plus laquelle a reçu quoi.</p>
-<p>Ansible résout ça avec deux idées : la configuration est <strong>décrite</strong> (pas exécutée à la main) et elle est <strong>idempotente</strong> — la rejouer dix fois donne toujours le même résultat, sans rien casser.</p>
+      <p>Terraform crée la VM, Packer fournit le template. Mais une fois la machine debout, il reste à la <strong>configurer</strong> : installer des outils, poser un DNS, déployer un exporter de métriques. On pourrait s'y connecter en SSH et taper les commandes. Sauf qu'au bout de trois machines, on ne sait plus laquelle a reçu quoi.</p>
+<p>Ansible résout ça avec deux idées : la configuration est <strong>décrite</strong> (pas exécutée à la main) et elle est <strong>idempotente</strong>, la rejouer dix fois donne toujours le même résultat, sans rien casser.</p>
 <p>Dans ce post, on configure deux hôtes du homelab (Proxmox et un node K3s) avec Ansible. On va voir :</p>
 <ol>
 <li>L'inventaire et les playbooks</li>
@@ -219,7 +219,7 @@
 </ul>
 <hr>
 <h2>L'inventaire : qui sont mes machines</h2>
-<p>Tout part de l'inventaire — la liste des machines et comment s'y connecter.</p>
+<p>Tout part de l'inventaire, la liste des machines et comment s'y connecter.</p>
 <pre><code class="language-yaml">all:
   children:
     proxmox:
@@ -234,7 +234,7 @@
           ansible_user: dani
           ansible_become: true
 </code></pre>
-<p>Deux groupes : <code>proxmox</code> et <code>k3s</code>. Chacun avec sa façon de se connecter — Proxmox en <code>root</code>, le node K3s en <code>dani</code> avec <code>ansible_become: true</code> (Ansible fera <code>sudo</code> pour les tâches qui le demandent).</p>
+<p>Deux groupes : <code>proxmox</code> et <code>k3s</code>. Chacun avec sa façon de se connecter : Proxmox en <code>root</code>, le node K3s en <code>dani</code> avec <code>ansible_become: true</code> (Ansible fera <code>sudo</code> pour les tâches qui le demandent).</p>
 <p>Regrouper les machines permet de leur appliquer des configs différentes. C'est ce que font les playbooks.</p>
 <hr>
 <h2>Les playbooks : quoi appliquer à qui</h2>
@@ -291,10 +291,10 @@ ansible-playbook -i ansible/inventory.yml ansible/k3s.yml
   args:
     creates: /etc/modules-load.d/lm_sensors.conf
 </code></pre>
-<p><code>sensors-detect</code> est une <strong>commande</strong> — Ansible ne sait pas si elle a déjà tourné. Sans garde, elle se relancerait à chaque exécution du playbook. Le <code>creates</code> dit : « si ce fichier existe déjà, la commande a déjà fait son travail, ne la relance pas ».</p>
+<p><code>sensors-detect</code> est une <strong>commande</strong>, Ansible ne sait pas si elle a déjà tourné. Sans garde, elle se relancerait à chaque exécution du playbook. Le <code>creates</code> dit : « si ce fichier existe déjà, la commande a déjà fait son travail, ne la relance pas ».</p>
 <p>C'est ça, rendre une commande idempotente. La majorité des modules Ansible (<code>apt</code>, <code>copy</code>, <code>template</code>, <code>systemd</code>) sont idempotents par nature. Pour <code>command</code> et <code>shell</code>, qui ne le sont pas, on ajoute une garde comme <code>creates</code>.</p>
 <blockquote>
-<p>La règle mentale : après un premier <code>ansible-playbook</code>, un second doit afficher <strong><code>changed=0</code></strong>. Si quelque chose change à chaque run, c'est que cette tâche n'est pas idempotente — et c'est un bug à corriger.</p>
+<p>La règle mentale : après un premier <code>ansible-playbook</code>, un second doit afficher <strong><code>changed=0</code></strong>. Si quelque chose change à chaque run, c'est que cette tâche n'est pas idempotente, et c'est un bug à corriger.</p>
 </blockquote>
 <hr>
 <h2>Les handlers : n'agir que si ça change</h2>
@@ -326,7 +326,7 @@ node_exporter_collectors:
 <pre><code class="language-jinja"># templates/node_exporter.service.j2
 ExecStart=/usr/local/bin/node_exporter 
 </code></pre>
-<p>Changer la liste des collectors dans <code>defaults/</code>, rejouer le playbook, et le service est mis à jour + redémarré — uniquement parce que le fichier a changé.</p>
+<p>Changer la liste des collectors dans <code>defaults/</code>, rejouer le playbook, et le service est mis à jour et redémarré, uniquement parce que le fichier a changé.</p>
 <hr>
 <h2>Netplan fixe vs cloud-init : reprendre la main sur le réseau</h2>
 <p>Le rôle <code>k3s_node</code> règle un problème précis. Souvenons-nous : cloud-init a configuré le réseau au premier boot (via Terraform). Mais <strong>cloud-init peut re-toucher au réseau</strong> à un reboot ultérieur, et on ne veut pas de ça sur un node K8s dont l'IP doit être gravée dans le marbre.</p>
@@ -364,7 +364,7 @@ ExecStart=/usr/local/bin/node_exporter
 <blockquote>
 <p>Le piège classique : sans désactiver cloud-init, tu poses ton netplan, tout marche, puis un reboot plus tard cloud-init réécrit par-dessus et l'IP saute. On coupe les deux sources de vérité pour n'en garder qu'une.</p>
 </blockquote>
-<p>Une variable importante à surveiller — le DNS du node :</p>
+<p>Une variable importante à surveiller : le DNS du node.</p>
 <pre><code class="language-yaml"># defaults/main.yml
 k3s_dns: &quot;10.0.0.101&quot;   # Pi-hole
 </code></pre>

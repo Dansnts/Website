@@ -30,9 +30,9 @@ Kubernetes « vanilla » (kubeadm) est fait pour la prod à grande échelle : co
 **K3s** est une distribution Kubernetes certifiée, empaquetée par Rancher, pensée pour l'edge et les petits environnements :
 
 - **Un seul binaire** (~70 Mo) qui contient tout : API server, scheduler, controller-manager, kubelet.
-- **SQLite au lieu d'etcd** par défaut en single-node — un composant de moins à opérer.
+- **SQLite au lieu d'etcd** par défaut en single-node, un composant de moins à opérer.
 - **Léger** : tourne confortablement là où un cluster classique s'essoufflerait.
-- **100 % compatible** : c'est du vrai Kubernetes. `kubectl`, les manifests, Helm — tout fonctionne à l'identique.
+- **100 % compatible** : c'est du vrai Kubernetes. `kubectl`, les manifests, Helm : tout fonctionne à l'identique.
 
 L'installation tient en une ligne, et c'est justement celle qu'on a mise dans le cloud-init Terraform :
 
@@ -58,7 +58,7 @@ Concrètement, dès que le cluster démarre :
 
 Résultat : pour exposer un service, on écrit un `Ingress`, et Traefik s'en occupe. Pas d'installation, pas de câblage manuel.
 
-> K3s embarque aussi un LoadBalancer simpliste (ServiceLB / Klipper). En homelab avec plusieurs services à exposer sur des IPs dédiées, je lui préfère MetalLB — mais c'est un autre sujet. L'important : le socle ingress est fourni.
+> K3s embarque aussi un LoadBalancer simpliste (ServiceLB / Klipper). En homelab avec plusieurs services à exposer sur des IPs dédiées, je lui préfère MetalLB, mais c'est un autre sujet. L'important : le socle ingress est fourni.
 
 ---
 
@@ -79,7 +79,7 @@ Le cluster n'apparaît pas par magie. Il est le résultat d'une **chaîne d'outi
 [Ansible]    fige le réseau (netplan), déploie node_exporter
    │
    V
-Cluster K3s prêt — kubectl, ArgoCD, les services
+Cluster K3s prêt : kubectl, ArgoCD, les services
 ```
 
 Chaque outil fait **une** chose bien :
@@ -111,20 +111,20 @@ Il ne reste qu'à récupérer ce `k3s.yaml`, remplacer `127.0.0.1` par l'IP du n
 Soyons honnêtes sur le compromis.
 
 **Ce qu'on gagne :**
-- Simplicité maximale — un seul serveur à gérer, à sauvegarder, à comprendre.
-- Coût et conso réduits — une seule VM (8 cœurs / 48 Go chez moi).
+- Simplicité maximale : un seul serveur à gérer, à sauvegarder, à comprendre.
+- Coût et conso réduits : une seule VM (8 cœurs / 48 Go chez moi).
 - Zéro complexité réseau inter-nœuds.
 
 **Ce qu'on perd :**
 - **La haute disponibilité.** Si le node tombe, tout tombe. C'est un SPOF assumé.
-- Le scaling horizontal — pas de répartition de charge sur plusieurs machines.
+- Le scaling horizontal : pas de répartition de charge sur plusieurs machines.
 - La tolérance aux pannes matérielles.
 
 Pour un homelab, c'est le bon compromis : je ne fais pas tourner un service critique pour des millions d'utilisateurs, je fais tourner mes services perso. Une panne = quelques minutes d'indispo pendant que je redémarre, pas une catastrophe.
 
-> Le vrai risque du single-node n'est pas la disponibilité, c'est la **perte de données**. Un node qui reboote, ça revient. Un disque qui meurt avec les PVC dessus, c'est autre chose. D'où l'importance d'une stratégie de backup sérieuse (snapshots, Restic hors-machine…) — le sujet d'un prochain article.
+> Le vrai risque du single-node n'est pas la disponibilité, c'est la **perte de données**. Un node qui reboote, ça revient. Un disque qui meurt avec les PVC dessus, c'est autre chose. D'où l'importance d'une stratégie de backup sérieuse (snapshots, Restic hors-machine…), le sujet d'un prochain article.
 
-Si un jour le besoin de HA se fait sentir, K3s sait faire du multi-node : on bascule le datastore sur etcd embarqué et on ajoute des serveurs avec un token. Mais ça, ce sera quand j'en aurai vraiment besoin — pas avant.
+Si un jour le besoin de HA se fait sentir, K3s sait faire du multi-node : on bascule le datastore sur etcd embarqué et on ajoute des serveurs avec un token. Mais ça, ce sera quand j'en aurai vraiment besoin, pas avant.
 
 ---
 

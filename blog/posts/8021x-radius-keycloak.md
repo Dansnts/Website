@@ -8,7 +8,7 @@ tags: [homelab, réseau, 802.1x, radius, keycloak, sécurité]
 
 Le firewall protège le lab depuis internet. Mais à l'intérieur, brancher un câble sur un port du switch suffit à obtenir une IP et l'accès réseau. Pour un lab sérieux, c'est une faille : n'importe qui avec un accès physique entre.
 
-La réponse, c'est **802.1X** — l'authentification au niveau du port. Le switch ne laisse rien passer tant que la machine (ou l'utilisateur) ne s'est pas authentifiée. C'est le standard en entreprise, et on peut le faire chez soi.
+La réponse, c'est **802.1X**, l'authentification au niveau du port. Le switch ne laisse rien passer tant que la machine (ou l'utilisateur) ne s'est pas authentifiée. C'est le standard en entreprise, et on peut le faire chez soi.
 
 C'est l'article le plus dense du blog, parce que le sujet est peu documenté hors contexte pro. On va monter la chaîne complète :
 
@@ -56,7 +56,7 @@ Côté switch, deux choses : pointer vers FreeRADIUS, et définir quels ports fo
     timeout=3s \
     comment="FreeRADIUS homelab"
 
-# ether3-5 — clients 802.1X EAP-TTLS
+# ether3-5 : clients 802.1X EAP-TTLS
 /interface dot1x server add interface=ether3 auth-types=dot1x comment="client 802.1X"
 /interface dot1x server add interface=ether4 auth-types=dot1x comment="client 802.1X"
 /interface dot1x server add interface=ether5 auth-types=dot1x comment="client 802.1X"
@@ -94,7 +94,7 @@ sed "s|@@RADIUS_SECRET@@|${RADIUS_SECRET}|g" \
     /templates/clients.conf > /etc/freeradius/clients.conf
 ```
 
-Les clients autorisés à interroger FreeRADIUS sont déclarés dans `clients.conf` — le MikroTik, et le subnet des pods au cas où :
+Les clients autorisés à interroger FreeRADIUS sont déclarés dans `clients.conf` : le MikroTik, et le subnet des pods au cas où.
 
 ```
 client homelab-lan {
@@ -105,13 +105,13 @@ client homelab-lan {
 }
 ```
 
-`require_message_authenticator = true` durcit contre les requêtes forgées — bonne pratique RADIUS.
+`require_message_authenticator = true` durcit contre les requêtes forgées, bonne pratique RADIUS.
 
 ---
 
 ## Étape 3 : L'auth EAP-TTLS/PAP → Keycloak
 
-Voilà le cœur intellectuel du montage. On veut que les utilisateurs se connectent avec leur **login/mot de passe Keycloak** — pas un mot de passe local dupliqué. Le défi : faire remonter un mot de passe jusqu'à Keycloak, de façon sécurisée.
+Voilà le cœur intellectuel du montage. On veut que les utilisateurs se connectent avec leur **login/mot de passe Keycloak**, pas un mot de passe local dupliqué. Le défi : faire remonter un mot de passe jusqu'à Keycloak, de façon sécurisée.
 
 ### La structure en tunnel
 
@@ -122,7 +122,7 @@ Client ══ tunnel TLS (EAP-TTLS) ══> FreeRADIUS
               └── à l'intérieur : PAP (login + mot de passe en clair, mais chiffré par le tunnel)
 ```
 
-- **Outer (extérieur)** : EAP-TTLS, sécurisé par le certificat wildcard. C'est ce que le réseau voit — du chiffré.
+- **Outer (extérieur)** : EAP-TTLS, sécurisé par le certificat wildcard. C'est ce que le réseau voit : du chiffré.
 - **Inner (intérieur)** : PAP. Le mot de passe circule « en clair », mais **dans** le tunnel TLS, donc protégé.
 
 Pourquoi PAP en inner ? Parce qu'on a besoin du mot de passe en clair côté FreeRADIUS pour le rejouer vers Keycloak. Les méthodes qui hachent (MSCHAPv2…) rendraient ça impossible.
@@ -144,7 +144,7 @@ eap {
 }
 ```
 
-Le tunnel utilise le **wildcard `*.fariadossantos.com`** — le même cert que les services web. Le client vérifie qu'il parle bien au bon serveur.
+Le tunnel utilise le **wildcard `*.fariadossantos.com`**, le même cert que les services web. Le client vérifie qu'il parle bien au bon serveur.
 
 ### Le relais vers Keycloak (ROPC)
 
@@ -206,7 +206,7 @@ Le fichier des MAC autorisées :
 fc9d0563b3bf   Auth-Type := Accept
 ```
 
-> Le MAB est **moins sûr** que 802.1X (une MAC se spoofe). On le réserve aux machines qui ne peuvent pas faire mieux, et idéalement sur des ports/segments dédiés. Ici, le node K8s est en MAB sur `ether2` — et ce choix a une raison précise liée à une dépendance circulaire (voir l'article dédié).
+> Le MAB est **moins sûr** que 802.1X (une MAC se spoofe). On le réserve aux machines qui ne peuvent pas faire mieux, et idéalement sur des ports/segments dédiés. Ici, le node K8s est en MAB sur `ether2`, et ce choix a une raison précise liée à une dépendance circulaire (voir l'article dédié).
 
 ---
 
@@ -249,7 +249,7 @@ Un `Access-Accept` en retour = toute la chaîne fonctionne (RADIUS → EAP → K
 ## Aller plus loin
 
 - **La dépendance circulaire** : mettre le node K8s (qui héberge FreeRADIUS) derrière un port 802.1X crée un deadlock potentiel. C'est un piège si sérieux qu'il mérite son propre article.
-- **VLAN dynamique** : RADIUS peut renvoyer un VLAN dans sa réponse — assigner automatiquement un client à un sous-réseau selon son identité.
+- **VLAN dynamique** : RADIUS peut renvoyer un VLAN dans sa réponse, pour assigner automatiquement un client à un sous-réseau selon son identité.
 - **Accounting** : les ports `1813` (acct) permettent de logguer qui s'est connecté, quand, combien de temps.
 - **CoA (Change of Authorization)** : révoquer une session active sans attendre la reconnexion.
 

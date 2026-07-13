@@ -249,10 +249,10 @@ impossible de redémarrer FreeRADIUS (pas de réseau, pas d'image)
 </ul>
 <p>Le point commun : ça marche parfaitement tant que tout tourne. Le problème n'apparaît qu'au redémarrage à froid ou après une panne, exactement quand on a le moins envie de déboguer.</p>
 <h2>La solution : casser le cycle sur un port</h2>
-<p>Il faut qu'<strong>au moins un port</strong> — celui du serveur RADIUS lui-même — ne dépende pas de RADIUS pour fonctionner. Deux approches, que j'ai combinées.</p>
+<p>Il faut qu'<strong>au moins un port</strong>, celui du serveur RADIUS lui-même, ne dépende pas de RADIUS pour fonctionner. Deux approches, que j'ai combinées.</p>
 <h3>1. Sortir le node du 802.1X : le mettre en MAB</h3>
 <p>Plutôt que du 802.1X (qui exige que RADIUS valide un login), le port du node K8s est passé en <strong>MAB</strong> (auth par adresse MAC). C'est moins strict, mais surtout, sur MikroTik, on peut le faire avec un simple <strong>filtre de bridge par MAC</strong>, qui ne dépend pas du tout de RADIUS :</p>
-<pre><code class="language-rsc"># ether2 — serveur K8s : whitelist MAC au niveau du bridge, PAS de dot1x
+<pre><code class="language-rsc"># ether2 : serveur K8s, whitelist MAC au niveau du bridge, PAS de dot1x
 /interface bridge filter
 add chain=input   in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=drop
 add chain=forward in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=drop
@@ -279,16 +279,16 @@ add chain=forward in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=
 <tr>
 <td><strong>fail-closed</strong> (défaut)</td>
 <td>Port fermé, trafic coupé</td>
-<td>Ports clients — la sécurité prime</td>
+<td>Ports clients, la sécurité prime</td>
 </tr>
 <tr>
 <td><strong>fail-open</strong> (<code>allow</code>)</td>
 <td>Port ouvert, trafic passe</td>
-<td>Port de l'infra RADIUS — la disponibilité prime</td>
+<td>Port de l'infra RADIUS, la disponibilité prime</td>
 </tr>
 </tbody>
 </table>
-<p>La sécurité par défaut (fail-closed) est la bonne, sauf pour le maillon dont dépend la sécurité elle-même. Là, il faut accepter un fail-open, sinon on se verrouille dehors soi-même — le pire genre d'incident, celui qu'on s'inflige.</p>
+<p>La sécurité par défaut (fail-closed) est la bonne, sauf pour le maillon dont dépend la sécurité elle-même. Là, il faut accepter un fail-open, sinon on se verrouille dehors soi-même, le pire genre d'incident, celui qu'on s'inflige.</p>
 <h2>Ce que j'en retiens</h2>
 <ul>
 <li><strong>Cartographier les dépendances de démarrage à froid.</strong> Se poser la question : « si tout est éteint et que je rallume, dans quel ordre ça doit remonter ? ». Si A a besoin de B qui a besoin de A, il y a un problème.</li>

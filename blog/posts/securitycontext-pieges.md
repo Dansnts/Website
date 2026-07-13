@@ -1,12 +1,12 @@
 ---
 layout: post.njk
 title: "Les securityContext Kubernetes qui cassent tout silencieusement"
-description: "Durcir ses pods, c'est bien — jusqu'à ce qu'un drop ALL fasse planter Postgres sans un message d'erreur clair. Guide des pièges vécus."
+description: "Durcir ses pods, c'est bien, jusqu'à ce qu'un drop ALL fasse planter Postgres sans un message d'erreur clair. Guide des pièges vécus."
 date: 2024-08-02
 tags: [homelab, kubernetes, sécurité, securitycontext]
 ---
 
-On lit partout qu'il faut durcir ses pods : `runAsNonRoot`, `allowPrivilegeEscalation: false`, `capabilities: drop: ["ALL"]`. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique ou — pire — aucun message du tout.
+On lit partout qu'il faut durcir ses pods : `runAsNonRoot`, `allowPrivilegeEscalation: false`, `capabilities: drop: ["ALL"]`. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique, ou pire, aucun message du tout.
 
 Cet article est un catalogue de pièges **vécus** sur mon homelab. À chaque fois : un durcissement trop zélé, un service cassé, une subtilité qui explique pourquoi. Le but n'est pas de tout durcir. C'est de durcir *juste ce qu'il faut*.
 
@@ -31,9 +31,9 @@ Le problème vient presque toujours d'images qui font des opérations **root au 
 
 ---
 
-## Le cas d'école : quand ça marche
+## Quand le durcissement complet fonctionne
 
-Commençons par un service qui accepte le durcissement complet — Vaultwarden (un binaire Rust statique) :
+Commençons par un service qui accepte le durcissement complet : Vaultwarden, un binaire Rust statique.
 
 ```yaml
 securityContext:
@@ -66,7 +66,7 @@ L'entrypoint ne peut plus chown (pas la capability), et l'UID ne correspond pas.
 **Solution** : ne pas mettre de securityContext qui force l'UID. Laisser l'image gérer :
 
 ```yaml
-#  Pour postgres:alpine — laisser tranquille
+#  Pour postgres:alpine, laisser tranquille
 securityContext:
   allowPrivilegeEscalation: false
   # PAS de runAsUser, PAS de drop ALL
@@ -108,12 +108,12 @@ Un `drop ALL` retire `CAP_CHOWN`, et le conteneur plante au démarrage.
 ```yaml
 securityContext:
   allowPrivilegeEscalation: false
-  # pas de drop ALL — l'image a besoin de CAP_CHOWN au boot
+  # pas de drop ALL, l'image a besoin de CAP_CHOWN au boot
 ```
 
 ---
 
-## Piège n°4 : WireGuard, l'inverse — il faut AJOUTER des caps
+## Piège n°4 : WireGuard a besoin de plus de capabilities, pas de moins
 
 Le cas symétrique. WireGuard (wg-easy) fait du NAT iptables : il lui faut **plus** de privilèges, pas moins.
 
@@ -165,7 +165,7 @@ kubectl describe pod <pod> -n homelab
 docker run --rm <image> id
 ```
 
-> Le vrai piège de ces bugs, c'est qu'ils sont **silencieux ou cryptiques**. Un `CrashLoopBackOff` sans message clair, alors que la vraie cause est une capability manquante. Quand un pod refuse de démarrer *après* que tu as ajouté un securityContext, c'est presque toujours ça — enlève-le et réintroduis les restrictions une par une.
+> Le vrai piège de ces bugs, c'est qu'ils sont **silencieux ou cryptiques**. Un `CrashLoopBackOff` sans message clair, alors que la vraie cause est une capability manquante. Quand un pod refuse de démarrer *après* que tu as ajouté un securityContext, c'est presque toujours ça. Enlève-le et réintroduis les restrictions une par une.
 
 ---
 

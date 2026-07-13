@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Certificat wildcard automatique avec cert-manager et DNS-01 — Dani Faria dos Santos</title>
-  <meta name="description" content="Un *.mondomaine.com signé par Let&#39;s Encrypt, renouvelé tout seul, via un challenge DNS — et le cas des services hors cluster." />
+  <meta name="description" content="Un *.mondomaine.com signé par Let&#39;s Encrypt, renouvelé tout seul, via un challenge DNS, et le cas des services hors cluster." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -202,13 +202,13 @@
     </header>
 
     <div class="blog-body">
-      <p>Avec une dizaine de services en HTTPS, gérer les certificats à la main devient vite ingérable : un cert par sous-domaine, chacun à renouveler tous les 90 jours. La solution élégante, c'est un <strong>certificat wildcard</strong> <code>*.mondomaine.com</code> — un seul cert pour tous les services — signé par Let's Encrypt et renouvelé automatiquement.</p>
+      <p>Avec une dizaine de services en HTTPS, gérer les certificats à la main devient vite ingérable : un cert par sous-domaine, chacun à renouveler tous les 90 jours. La solution élégante, c'est un <strong>certificat wildcard</strong> <code>*.mondomaine.com</code>, un seul cert pour tous les services, signé par Let's Encrypt et renouvelé automatiquement.</p>
 <p>Le hic : un wildcard ne peut PAS être validé par le challenge HTTP classique. Il faut passer par un <strong>challenge DNS-01</strong>, ce qui demande de piloter sa zone DNS par API. Au menu :</p>
 <ol>
 <li>Pourquoi DNS-01 est obligatoire pour un wildcard</li>
 <li>Le ClusterIssuer avec le webhook du registrar (Infomaniak)</li>
 <li>La ressource Certificate</li>
-<li>Les services <strong>hors cluster</strong> (Proxmox, TrueNAS) — le renouvellement manuel</li>
+<li>Les services <strong>hors cluster</strong> (Proxmox, TrueNAS), le renouvellement manuel</li>
 </ol>
 <h2>Prérequis</h2>
 <ul>
@@ -232,7 +232,7 @@
 <p>Le défi technique : créer/supprimer ce TXT automatiquement. C'est le rôle du <strong>webhook</strong> du registrar.</p>
 <hr>
 <h2>Le ClusterIssuer</h2>
-<p>Le <code>ClusterIssuer</code> décrit <em>comment</em> obtenir des certificats — l'autorité (Let's Encrypt) et le solveur (DNS-01 via le webhook Infomaniak).</p>
+<p>Le <code>ClusterIssuer</code> décrit <em>comment</em> obtenir des certificats : l'autorité (Let's Encrypt) et le solveur (DNS-01 via le webhook Infomaniak).</p>
 <pre><code class="language-yaml">apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -286,16 +286,16 @@ spec:
     - &quot;fariadossantos.com&quot;
     - &quot;*.fariadossantos.com&quot;
 </code></pre>
-<p><code>secretName</code> : cert-manager dépose le certificat (et le renouvelle) dans ce Secret. Les Ingress Traefik le référencent, et voilà — tous les services sont en HTTPS.</p>
+<p><code>secretName</code> : cert-manager dépose le certificat (et le renouvelle) dans ce Secret. Les Ingress Traefik le référencent, et voilà, tous les services sont en HTTPS.</p>
 <p><code>dnsNames</code> : on met à la fois le domaine nu et le wildcard. Le wildcard <code>*.fariadossantos.com</code> ne couvre PAS <code>fariadossantos.com</code> lui-même, il faut les deux.</p>
 <p>Vérifier que tout roule :</p>
 <pre><code class="language-bash">kubectl get certificate -n homelab
 kubectl describe certificate fariadossantos-wildcard -n homelab
 </code></pre>
-<p>Un <code>Ready: True</code> = certificat émis. Le renouvellement (vers J-30 avant expiration à 90 jours) est <strong>entièrement automatique</strong>. Pour les services K8s, on n'y touche plus jamais. Enfin, presque — la suite gâche un peu la fête.</p>
+<p>Un <code>Ready: True</code> = certificat émis. Le renouvellement (vers J-30 avant expiration à 90 jours) est <strong>entièrement automatique</strong>. Pour les services K8s, on n'y touche plus jamais. Enfin, presque, la suite gâche un peu la fête.</p>
 <hr>
 <h2>Le cas des services hors cluster</h2>
-<p>Voilà le point que les tutos oublient. Mon Proxmox et mon TrueNAS ne sont <strong>pas</strong> dans Kubernetes — ce sont les hyperviseur et NAS <em>sous</em> le cluster. Ils ne peuvent pas consommer directement le Secret K8s. Mais je veux quand même qu'ils servent le même wildcard.</p>
+<p>Voilà le point que les tutos oublient. Mon Proxmox et mon TrueNAS ne sont <strong>pas</strong> dans Kubernetes, ce sont les hyperviseur et NAS <em>sous</em> le cluster. Ils ne peuvent pas consommer directement le Secret K8s. Mais je veux quand même qu'ils servent le même wildcard.</p>
 <p>La solution : <strong>exporter le cert depuis K8s et l'importer manuellement</strong>, à chaque renouvellement (~90 jours).</p>
 <pre><code class="language-bash"># Exporter le cert et la clé depuis le Secret K8s
 kubectl get secret fariadossantos-wildcard-tls -n homelab \
@@ -347,7 +347,7 @@ kubectl get secret fariadossantos-wildcard-tls -n homelab \
 <li><strong>Certificats par namespace</strong> : plutôt qu'un wildcard partagé, un cert dédié par app pour cloisonner davantage.</li>
 <li><strong>Monitoring d'expiration</strong> : une alerte Prometheus (<code>certmanager_certificate_expiration_timestamp_seconds</code>) pour être prévenu si un renouvellement échoue.</li>
 </ul>
-<p><em>Un wildcard, un webhook, et plus jamais à courir après un cert expiré un dimanche soir — sauf sur Proxmox et TrueNAS, qui n'ont pas eu ce mémo.</em></p>
+<p><em>Un wildcard, un webhook, et plus jamais à courir après un cert expiré un dimanche soir, sauf sur Proxmox et TrueNAS, qui n'ont pas eu ce mémo.</em></p>
 
     </div>
   </article>

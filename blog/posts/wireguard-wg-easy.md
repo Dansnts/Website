@@ -1,7 +1,7 @@
 ---
 layout: post.njk
 title: "WireGuard self-hosted avec wg-easy"
-description: "Un VPN pour rentrer chez soi de n'importe où — port forward en cascade, modules kernel, et la migration douloureuse v14 → v15."
+description: "Un VPN pour rentrer chez soi de n'importe où : port forward en cascade, modules kernel, et la migration douloureuse v14 → v15."
 date: 2024-09-10
 tags: [homelab, réseau, vpn, wireguard, kubernetes]
 ---
@@ -25,7 +25,7 @@ Faire tourner WireGuard *dans Kubernetes*, derrière une box FAI et un routeur, 
 
 ## Le déploiement wg-easy
 
-wg-easy tourne comme un Deployment, avec un securityContext particulier — WireGuard a besoin de privilèges réseau :
+wg-easy tourne comme un Deployment, avec un securityContext particulier : WireGuard a besoin de privilèges réseau :
 
 ```yaml
 spec:
@@ -56,7 +56,7 @@ Les points sensibles :
 
 `INSECURE: "true"` : **obligatoire en v15 derrière Traefik**. L'UI est servie en HTTP côté pod (c'est Traefik qui fait le TLS devant). Sans cette variable, wg-easy v15 refuse tout bonnement de démarrer.
 
-`capabilities: add: [NET_ADMIN, NET_RAW, SYS_MODULE]` : WireGuard manipule les interfaces réseau et le NAT iptables. Ces trois capabilities sont indispensables. Et **surtout pas** de `allowPrivilegeEscalation: false` — ça bloque iptables net (voir l'article sur les securityContext qui cassent tout, un classique du genre).
+`capabilities: add: [NET_ADMIN, NET_RAW, SYS_MODULE]` : WireGuard manipule les interfaces réseau et le NAT iptables. Ces trois capabilities sont indispensables. Et **surtout pas** de `allowPrivilegeEscalation: false`, ça bloque iptables net (voir l'article sur les securityContext qui cassent tout, un classique du genre).
 
 Le service utilise une IP MetalLB fixe pour permettre le port forward :
 
@@ -110,7 +110,7 @@ Comme l'IP publique de la box change (FAI résidentiel), un CronJob de DDNS met 
 
 ## Les modules kernel sur le node
 
-WireGuard fait du NAT pour router le trafic des clients VPN vers le LAN. Ça exige des modules kernel `iptable_nat` chargés **sur le node K3s** (pas dans le pod — le pod partage le kernel de l'hôte).
+WireGuard fait du NAT pour router le trafic des clients VPN vers le LAN. Ça exige des modules kernel `iptable_nat` chargés **sur le node K3s** (pas dans le pod, le pod partage le kernel de l'hôte).
 
 ```bash
 # Charger immédiatement
@@ -131,7 +131,7 @@ wg-easy v15 est une réécriture majeure. La migration depuis v14 est un champ d
 
 ### Des variables d'environnement supprimées
 
-En v14, on configurait tout par variables d'env. En v15, plusieurs sont **rejetées** — elles sont maintenant gérées depuis l'UI :
+En v14, on configurait tout par variables d'env. En v15, plusieurs sont **rejetées** : elles sont maintenant gérées depuis l'UI :
 
 ```
 #  Variables v14 à SUPPRIMER du manifest en v15 :
@@ -146,7 +146,7 @@ Si on les laisse, v15 peut refuser de démarrer. Le manifest v15 est minimal : `
 
 Le fichier `wg0.json` (qui stocke les clients) a changé de format entre v14 et v15. On ne peut pas juste réutiliser l'ancien. La migration se fait via l'**assistant de setup** (`/ui/init`) en réimportant la config.
 
-> Retour d'expérience : garder un **backup du `wg0.json`** avant toute migration (chez moi, dans Vaultwarden). Si la migration échoue, les clients peuvent être recréés depuis les données de l'ancien fichier. Sans backup, il faut regénérer et redistribuer toutes les configs clients — pénible, et c'est toujours au proche le moins technophile qu'on doit réexpliquer comment scanner le QR code.
+> Retour d'expérience : garder un **backup du `wg0.json`** avant toute migration (chez moi, dans Vaultwarden). Si la migration échoue, les clients peuvent être recréés depuis les données de l'ancien fichier. Sans backup, il faut regénérer et redistribuer toutes les configs clients, ce qui est pénible, et c'est toujours au proche le moins technophile qu'on doit réexpliquer comment scanner le QR code.
 
 Le récap des changements v14 → v15 :
 
@@ -162,8 +162,8 @@ Le récap des changements v14 → v15 :
 ## Aller plus loin
 
 - **DNS split-tunnel** : configurer les clients VPN pour n'router que le trafic homelab par le tunnel, et laisser le reste passer en direct.
-- **Le DDNS** : l'IP publique résidentielle change — un CronJob qui met à jour l'enregistrement DNS est indispensable (sujet connexe à creuser).
-- **Le double NAT** : cet article suppose la segmentation MikroTik déjà en place — voir l'article sur l'isolation du homelab derrière le MikroTik.
+- **Le DDNS** : l'IP publique résidentielle change, un CronJob qui met à jour l'enregistrement DNS est indispensable (sujet connexe à creuser).
+- **Le double NAT** : cet article suppose la segmentation MikroTik déjà en place, voir l'article sur l'isolation du homelab derrière le MikroTik.
 - **Clients mobiles** : wg-easy génère des QR codes pour configurer WireGuard sur téléphone en un scan.
 
 *Deux niveaux de NAT, trois capabilities kernel et une migration v14→v15 plus tard, le VPN tient. Jusqu'à la prochaine réécriture majeure.*

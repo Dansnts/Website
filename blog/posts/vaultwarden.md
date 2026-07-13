@@ -21,7 +21,7 @@ Dans ce post, on va voir :
 ## Prérequis
 
 - Un cluster Kubernetes (ici K3s single-node)
-- Un ingress HTTPS — le HTTPS est **obligatoire**, les clients Bitwarden refusent le HTTP
+- Un ingress HTTPS : le HTTPS est **obligatoire**, les clients Bitwarden refusent le HTTP
 - Un peu de stockage persistant (ici 1 Gi en `local-path`)
 - Un mécanisme de secrets (ici SealedSecrets)
 
@@ -58,7 +58,7 @@ containers:
 
 Ligne par ligne, ce qui compte :
 
-- `DOMAIN` : l'URL publique du coffre. Vaultwarden l'utilise pour les liens d'invitation, WebAuthn/2FA et les notifications. **Elle doit être en HTTPS et correspondre exactement** à l'URL réelle — sinon le WebAuthn et certains liens cassent silencieusement.
+- `DOMAIN` : l'URL publique du coffre. Vaultwarden l'utilise pour les liens d'invitation, WebAuthn/2FA et les notifications. **Elle doit être en HTTPS et correspondre exactement** à l'URL réelle, sinon le WebAuthn et certains liens cassent silencieusement.
 - `SIGNUPS_ALLOWED: "false"` : coupe l'auto-inscription. Sur une instance exposée sur internet, laisser ça à `true` reviendrait à offrir un coffre à qui passe. On crée les comptes soi-même, à la main, via le panneau admin.
 - `ADMIN_TOKEN` : le sésame du panneau `/admin`. Il n'est **jamais en clair** dans le manifeste ; il sort d'un SealedSecret (on en reparle juste après).
 

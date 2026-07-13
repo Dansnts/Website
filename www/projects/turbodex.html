@@ -46,11 +46,11 @@
           <div class="figure-grid">
             <figure class="project-figure">
               <img src="https://raw.githubusercontent.com/Turbo-Dex/deliverables/main/week2/images/frontend.png" alt="TurboDex, interface mobile Flutter" loading="lazy">
-              <figcaption><strong>Fig. 1</strong> — Interface mobile Flutter (iOS/Android)</figcaption>
+              <figcaption><strong>Fig. 1</strong> : Interface mobile Flutter (iOS/Android)</figcaption>
             </figure>
             <figure class="project-figure">
               <img src="https://raw.githubusercontent.com/Turbo-Dex/deliverables/main/week2/images/blurred_car2.png" alt="TurboDex, floutage automatique IA" loading="lazy">
-              <figcaption><strong>Fig. 2</strong> — Floutage IA des plaques et visages (privacy-first)</figcaption>
+              <figcaption><strong>Fig. 2</strong> : Floutage IA des plaques et visages (privacy-first)</figcaption>
             </figure>
           </div>
         </section>
@@ -61,7 +61,7 @@
 
           <figure class="project-figure" data-anim="up">
             <img src="https://raw.githubusercontent.com/Turbo-Dex/deliverables/main/week2/images/arch.png" alt="TurboDex, architecture Azure complète" loading="lazy">
-            <figcaption><strong>Fig. 3</strong> — Architecture Azure complète : AKS, ACR, Cosmos DB MongoDB, Blob Storage, Function App, Application Insights</figcaption>
+            <figcaption><strong>Fig. 3</strong> : Architecture Azure complète, AKS, ACR, Cosmos DB MongoDB, Blob Storage, Function App, Application Insights</figcaption>
           </figure>
         </section>
 
@@ -76,7 +76,7 @@
               <span class="code-lang">HCL</span>
               <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
-            <pre><code><span class="tok-comment"># AKS Cluster — SystemAssigned identity</span>
+            <pre><code><span class="tok-comment"># AKS Cluster, SystemAssigned identity</span>
 <span class="tok-keyword">resource</span> <span class="tok-string">"azurerm_kubernetes_cluster"</span> <span class="tok-string">"aks"</span> {
   <span class="tok-property">name</span>                = <span class="tok-string">"${var.project_name}-${var.environment}-aks"</span>
   <span class="tok-property">location</span>            = azurerm_resource_group.rg.location
@@ -91,7 +91,7 @@
   <span class="tok-keyword">identity</span> { <span class="tok-property">type</span> = <span class="tok-string">"SystemAssigned"</span> }
 }
 
-<span class="tok-comment"># Cosmos DB MongoDB — Session consistency, shard sur _id</span>
+<span class="tok-comment"># Cosmos DB MongoDB, Session consistency, shard sur _id</span>
 <span class="tok-keyword">resource</span> <span class="tok-string">"azurerm_cosmosdb_account"</span> <span class="tok-string">"cosmos"</span> {
   <span class="tok-property">name</span>        = local.cosmos_account_name
   <span class="tok-property">kind</span>        = <span class="tok-string">"MongoDB"</span>
@@ -144,7 +144,7 @@
               <span class="code-lang">HCL</span>
               <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
-            <pre><code><span class="tok-comment"># Secret K8s — ACR + Cosmos DB + Blob Storage</span>
+            <pre><code><span class="tok-comment"># Secret K8s, ACR + Cosmos DB + Blob Storage</span>
 <span class="tok-keyword">resource</span> <span class="tok-string">"kubernetes_secret"</span> <span class="tok-string">"app_secrets"</span> {
   <span class="tok-keyword">metadata</span> { <span class="tok-property">name</span> = <span class="tok-string">"app-secrets"</span>; <span class="tok-property">namespace</span> = <span class="tok-string">"default"</span> }
   <span class="tok-property">data</span> = {
@@ -156,7 +156,7 @@
   }
 }
 
-<span class="tok-comment"># Deployment Blur IA — 2 replicas, image depuis ACR</span>
+<span class="tok-comment"># Deployment Blur IA, 2 replicas, image depuis ACR</span>
 <span class="tok-keyword">resource</span> <span class="tok-string">"kubernetes_deployment"</span> <span class="tok-string">"blur"</span> {
   <span class="tok-keyword">spec</span> {
     <span class="tok-property">replicas</span> = <span class="tok-number">2</span>
@@ -184,7 +184,7 @@
   }
 }
 
-<span class="tok-comment"># Deployment Analyse IA — même pattern, port 5000</span>
+<span class="tok-comment"># Deployment Analyse IA, même pattern, port 5000</span>
 <span class="tok-keyword">resource</span> <span class="tok-string">"kubernetes_deployment"</span> <span class="tok-string">"analyse"</span> {
   <span class="tok-keyword">spec</span> {
     <span class="tok-property">replicas</span> = <span class="tok-number">2</span>
@@ -327,14 +327,14 @@
     <span class="tok-keyword">steps</span><span class="tok-operator">:</span>
       - <span class="tok-keyword">uses</span><span class="tok-operator">:</span> <span class="tok-string">actions/checkout@v4</span>
 
-      <span class="tok-comment"># 1 — Build</span>
+      <span class="tok-comment"># 1. Build</span>
       - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Build image</span>
         <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-operator">|</span>
           <span class="tok-fn">docker</span> build \
             -t <span class="tok-string">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}</span> \
             -t <span class="tok-string">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest</span> .
 
-      <span class="tok-comment"># 2 — Test (pytest s'exécute dans le container)</span>
+      <span class="tok-comment"># 2. Test (pytest s'exécute dans le container)</span>
       - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Run tests</span>
         <span class="tok-keyword">run</span><span class="tok-operator">:</span> <span class="tok-operator">|</span>
           <span class="tok-fn">docker</span> run --rm \
@@ -342,7 +342,7 @@
             <span class="tok-string">${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}</span> \
             <span class="tok-fn">pytest</span> tests/ -v --tb=short
 
-      <span class="tok-comment"># 3 — Push uniquement si tests OK + merge sur main</span>
+      <span class="tok-comment"># 3. Push uniquement si tests OK + merge sur main</span>
       - <span class="tok-keyword">name</span><span class="tok-operator">:</span> <span class="tok-string">Login to ACR</span>
         <span class="tok-keyword">if</span><span class="tok-operator">:</span> <span class="tok-string">github.ref == 'refs/heads/main' &amp;&amp; github.event_name == 'push'</span>
         <span class="tok-keyword">uses</span><span class="tok-operator">:</span> <span class="tok-string">azure/docker-login@v1</span>

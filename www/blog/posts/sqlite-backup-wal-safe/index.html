@@ -284,7 +284,7 @@ db.sqlite3-shm   ← la mémoire partagée d'index du WAL
 <p>Les points clés :</p>
 <p><code>initContainers</code> : s'exécute <strong>entièrement avant</strong> le conteneur principal. Le dump est garanti terminé avant que Restic ne démarre. Ordre déterministe.</p>
 <p><code>vaultwarden-data</code> monté en <code>readOnly: true</code> : l'initContainer lit la base de production sans jamais risquer de la modifier. <code>.backup</code> n'a besoin que de lire.</p>
-<p><code>emptyDir: {}</code> : un volume temporaire qui vit le temps du pod. L'initContainer y écrit le dump, le conteneur Restic l'y lit. Il disparaît à la fin du job — le dump n'est qu'un intermédiaire.</p>
+<p><code>emptyDir: {}</code> : un volume temporaire qui vit le temps du pod. L'initContainer y écrit le dump, le conteneur Restic l'y lit. Il disparaît à la fin du job, le dump n'est qu'un intermédiaire.</p>
 <p><code>drop: [&quot;ALL&quot;]</code> sur l'initContainer : c'est un simple <code>sqlite3</code> dans une Alpine, aucun besoin de privilège, donc durcissement complet possible (contrairement à d'autres images, cf. l'article sur les securityContext).</p>
 <h2>Le flux complet</h2>
 <pre><code>[initContainer sqlite-dump]

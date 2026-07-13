@@ -35,7 +35,7 @@ Toute la différence tient dans **ce qu'on indexe**.
 
 **ELK** indexe le texte intégral. Chaque ligne de log est analysée, tokenisée, et rangée dans un index inversé Elasticsearch. Résultat : on peut chercher n'importe quel mot dans n'importe quel log, très vite. Le prix à payer : cet index est **énorme** (souvent plus gros que les logs eux-mêmes), Elasticsearch tourne sur la JVM et réclame plusieurs Go de RAM, et il faut gérer un pipeline (Logstash) et un agent de collecte (Filebeat).
 
-**Loki** prend le contre-pied, avec l'intuition de Grafana : « on n'indexe que les métadonnées, comme Prometheus ». Loki n'indexe que des **labels** (`namespace`, `pod`, `app`, `container`…) et stocke le corps des logs en **chunks compressés**, sans les analyser. Chercher revient à filtrer par labels pour cibler un petit lot de chunks, puis à `grep` dedans à la volée. L'index est minuscule, la RAM ridicule en comparaison, et — bonus — la même interface Grafana sert pour les métriques **et** les logs.
+**Loki** prend le contre-pied, avec l'intuition de Grafana : « on n'indexe que les métadonnées, comme Prometheus ». Loki n'indexe que des **labels** (`namespace`, `pod`, `app`, `container`…) et stocke le corps des logs en **chunks compressés**, sans les analyser. Chercher revient à filtrer par labels pour cibler un petit lot de chunks, puis à `grep` dedans à la volée. L'index est minuscule, la RAM ridicule en comparaison, et bonus : la même interface Grafana sert pour les métriques **et** les logs.
 
 En une image :
 
@@ -95,10 +95,10 @@ Les points qui comptent :
 
 - `storage: filesystem` + `ring.kvstore: inmemory` + `replication_factor: 1` : pas d'objet-store S3, pas de cluster de ring. Tout tient sur un système de fichiers local, avec un anneau en mémoire. C'est la config mono-instance assumée.
 - `schema: v13` / `store: tsdb` : le format d'index moderne de Loki (le même moteur que Prometheus pour l'index).
-- `retention_period: 30d` + `compactor.retention_enabled: true` : Loki purge tout seul les logs de plus de 30 jours. Sans le compactor avec rétention active, **rien n'est jamais supprimé** — un piège classique qui finit par remplir le disque.
+- `retention_period: 30d` + `compactor.retention_enabled: true` : Loki purge tout seul les logs de plus de 30 jours. Sans le compactor avec rétention active, **rien n'est jamais supprimé** : un piège classique qui finit par remplir le disque.
 - `auth_enabled: false` : pas de multi-tenant, on est seul sur notre Loki interne au cluster.
 
-Détail d'infra que j'aime bien : le PVC de Loki n'est pas sur le disque du node mais sur un **partage NFS du NAS** (`10.0.0.11`, `/mnt/logs/Logs`, 1 Ti en `ReadWriteMany`). Les logs vivent sur le stockage ZFS du NAS, pas sur le SSD du node — de la place, et de la durabilité.
+Détail d'infra que j'aime bien : le PVC de Loki n'est pas sur le disque du node mais sur un **partage NFS du NAS** (`10.0.0.11`, `/mnt/logs/Logs`, 1 Ti en `ReadWriteMany`). Les logs vivent sur le stockage ZFS du NAS, pas sur le SSD du node. De la place, et de la durabilité.
 
 ---
 
@@ -132,7 +132,7 @@ discovery.relabel "pods" {
 }
 ```
 
-- `discovery.kubernetes` interroge l'API pour lister les pods. Alloy a donc besoin d'un ServiceAccount avec les droits de lecture (`get/list/watch` sur `pods`, `nodes`, etc.) — d'où le RBAC associé.
+- `discovery.kubernetes` interroge l'API pour lister les pods. Alloy a donc besoin d'un ServiceAccount avec les droits de lecture (`get/list/watch` sur `pods`, `nodes`, etc.), d'où le RBAC associé.
 - Le `relabel` fait deux choses : il **jette** les pods terminés (`Succeeded|Failed|Completed`) pour ne pas ingérer du bruit, et il transforme les métadonnées Kubernetes (`__meta_kubernetes_*`) en **labels Loki** propres (`namespace`, `pod`, `app`, `container`, `node`). Ce sont exactement ces labels sur lesquels on filtrera dans Grafana.
 
 Puis la lecture, le parsing et l'envoi :
@@ -155,7 +155,7 @@ loki.write "loki" {
 }
 ```
 
-- `stage.cri {}` : les logs de conteneurs sous containerd/k3s sont au **format CRI** (`2024-01-01T00:00:00Z stdout F <message>`). Cette stage les parse pour extraire le vrai message et l'horodatage. Sans elle, on ingérerait la ligne brute avec son préfixe — inexploitable.
+- `stage.cri {}` : les logs de conteneurs sous containerd/k3s sont au **format CRI** (`2024-01-01T00:00:00Z stdout F <message>`). Cette stage les parse pour extraire le vrai message et l'horodatage. Sans elle, on ingérerait la ligne brute avec son préfixe, inexploitable.
 - `loki.write` pousse vers le Service Loki interne. On boucle la boucle.
 
 Une fois en place, la datasource Loki de Grafana (déjà provisionnée, cf. l'article Prometheus + Grafana) permet de requêter en **LogQL** : `{namespace="homelab", app="vaultwarden"}` et on a tous les logs du coffre, filtrables en direct.
@@ -164,9 +164,9 @@ Une fois en place, la datasource Loki de Grafana (déjà provisionnée, cf. l'ar
 
 ## Ce que faisait ELK, et pourquoi j'ai basculé
 
-Avant Loki, le lab tournait sur une stack **ELK** : Elasticsearch (en StatefulSet), Kibana exposé sur `kibana.fariadossantos.com`, Logstash pour le pipeline et Filebeat comme collecteur. La sécurité `xpack.security` était activée — Kibana se connectait avec l'utilisateur `kibana_system` (jamais le superuser `elastic`), et les identifiants vivaient dans un SealedSecret `elastic-credentials`.
+Avant Loki, le lab tournait sur une stack **ELK** : Elasticsearch (en StatefulSet), Kibana exposé sur `kibana.fariadossantos.com`, Logstash pour le pipeline et Filebeat comme collecteur. La sécurité `xpack.security` était activée. Kibana se connectait avec l'utilisateur `kibana_system` (jamais le superuser `elastic`), et les identifiants vivaient dans un SealedSecret `elastic-credentials`.
 
-> Note d'honnêteté : cette partie ELK est **documentée** dans mon repo mais ses manifests ne sont plus versionnés — la migration vers Loki + Alloy est passée par là. Les détails ci-dessus viennent de ma doc d'exploitation, pas de fichiers YAML encore présents. Je reste donc volontairement général sur ELK et précis sur Loki, qui est ce qui tourne aujourd'hui.
+> Note d'honnêteté : cette partie ELK est **documentée** dans mon repo mais ses manifests ne sont plus versionnés : la migration vers Loki + Alloy est passée par là. Les détails ci-dessus viennent de ma doc d'exploitation, pas de fichiers YAML encore présents. Je reste donc volontairement général sur ELK et précis sur Loki, qui est ce qui tourne aujourd'hui.
 
 Ce qui m'a fait basculer, concrètement :
 
@@ -189,15 +189,15 @@ Ce que je perds : le full-text search ultra-puissant de Kibana et son écosystè
 | UI | Grafana (partagée avec les métriques) | Kibana (dédiée) |
 | Idéal pour | Homelab, petit cluster | Gros volumes, analyse forensique |
 
-La règle que j'en tire : **on choisit ELK pour ce qu'il fait de mieux — le full-text à grande échelle.** Si on ne l'exploite pas, c'est du poids pour rien. Dans un homelab single-node, Loki + Alloy est presque toujours le bon défaut.
+La règle que j'en tire : **on choisit ELK pour ce qu'il fait de mieux : le full-text à grande échelle.** Si on ne l'exploite pas, c'est du poids pour rien. Dans un homelab single-node, Loki + Alloy est presque toujours le bon défaut.
 
 ---
 
 ## Aller plus loin
 
-- **Corréler métriques et logs** : depuis un pic sur un graphe Prometheus, sauter aux logs Loki de la même fenêtre — tout dans Grafana. Voir l'article Prometheus + Grafana.
+- **Corréler métriques et logs** : depuis un pic sur un graphe Prometheus, sauter aux logs Loki de la même fenêtre, tout dans Grafana. Voir l'article Prometheus + Grafana.
 - **Alerting sur les logs** : Loki sait déclencher des alertes sur des motifs (`|= "error"` qui dépasse un seuil), via les mêmes règles que Prometheus.
-- **Structurer les logs à la source** : passer les applis en logs JSON permet à `stage.json` d'Alloy d'extraire des champs — sans payer le coût d'un index full-text.
+- **Structurer les logs à la source** : passer les applis en logs JSON permet à `stage.json` d'Alloy d'extraire des champs, sans payer le coût d'un index full-text.
 - **Rétention par flux** : affiner la rétention Loki par label (garder les logs d'auth plus longtemps que le reste) plutôt qu'un `30d` global.
 
 *Le jour où je devrai vraiment faire du forensique sur des To de logs, je réinstallerai ELK sans regret. En attendant, `{app="vaultwarden"} |= "error"` me suffit largement.*

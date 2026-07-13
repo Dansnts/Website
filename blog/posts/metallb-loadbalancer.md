@@ -1,7 +1,7 @@
 ---
 layout: post.njk
 title: "LoadBalancer bare-metal avec MetalLB"
-description: "Donner de vraies IP à ses services Kubernetes sur du matériel maison — et exposer autre chose que du HTTP."
+description: "Donner de vraies IP à ses services Kubernetes sur du matériel maison, et exposer autre chose que du HTTP."
 date: 2025-05-02
 tags: [homelab, kubernetes, réseau, metallb]
 ---
@@ -13,7 +13,7 @@ Sur un cloud public, déclarer un `Service type: LoadBalancer` provoque la créa
 1. Le problème du `type: LoadBalancer` en bare-metal
 2. Le pool d'adresses et le mode L2
 3. Assigner une IP fixe à un service
-4. Exposer des services **non-HTTP** (VPN, voix) — là où MetalLB brille
+4. Exposer des services **non-HTTP** (VPN, voix), là où MetalLB brille
 
 ## Prérequis
 
@@ -47,7 +47,7 @@ spec:
     - 10.0.0.100-10.0.0.110
 ```
 
-Puis le mode d'annonce — ici **L2 (layer 2)** :
+Puis le mode d'annonce, ici **L2 (layer 2)** :
 
 ```yaml
 apiVersion: metallb.io/v1beta1
@@ -118,4 +118,4 @@ Le pattern à retenir : HTTP passe par un Ingress derrière Traefik (`10.0.0.100
 - **Pools multiples** : séparer un pool « interne » et un pool « exposé » pour clarifier ce qui est joignable depuis l'extérieur.
 - **Le lien avec le port-forward** : l'IP MetalLB n'est que la moitié du chemin, voir l'article MikroTik pour le DNAT qui expose ces services vers internet.
 
-*Un seul node, donc un seul point de défaillance sur le mode L2 — je sais, j'assume, l'électricité aussi n'a qu'un seul fournisseur chez moi.*
+*Un seul node, donc un seul point de défaillance sur le mode L2. Je sais, j'assume, l'électricité aussi n'a qu'un seul fournisseur chez moi.*

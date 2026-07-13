@@ -1,7 +1,7 @@
 ---
 layout: post.njk
 title: "Les galères du backup sur montage SMB"
-description: "Inodes qui bougent, fichiers Pokémon avec des  dans le nom, node_modules à l'infini — le journal de bord d'un backup qui marche vraiment."
+description: "Inodes qui bougent, fichiers Pokémon avec des  dans le nom, node_modules à l'infini. Le journal de bord d'un backup qui marche vraiment."
 date: 2025-04-21
 tags: [homelab, backup, smb, restic, rclone]
 ---
@@ -38,7 +38,7 @@ Le piège avec ça : rien ne casse visiblement. Le backup « marche », il est j
 
 Celle-là est ma préférée. Des fichiers de jeu Pokémon dont le nom contient des caractères Unicode, les symboles de genre ♂ et ♀. Sur un montage SMB, l'encodage de ces caractères est mal géré : le mount les traduit mal, et l'accès à ces fichiers déclenche des **erreurs d'I/O** qui font échouer le backup entier.
 
-Un seul fichier au nom exotique, et tout le run se plante. J'ai perdu du temps à comprendre pourquoi le backup échouait « sans raison » avant de trouver le coupable — un Pikachu mal encodé.
+Un seul fichier au nom exotique, et tout le run se plante. J'ai perdu du temps à comprendre pourquoi le backup échouait « sans raison » avant de trouver le coupable : un Pikachu mal encodé.
 
 La solution : exclure ces fichiers.
 

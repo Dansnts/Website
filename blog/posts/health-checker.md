@@ -158,7 +158,7 @@ async def check_urls(client: httpx.AsyncClient, config: Config, url: str):
 
 Deux points importants ici :
 
-`client.stream("GET", ...)` : on **ne télécharge pas le body**. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP compte — rapatrier 2 Mo de HTML pour vérifier un `200`, non merci.
+`client.stream("GET", ...)` : on **ne télécharge pas le body**. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP compte, rapatrier 2 Mo de HTML pour vérifier un `200`, non merci.
 
 `time.perf_counter()` : c'est l'horloge monotone, faite pour mesurer des durées. On ne la mélange pas avec `datetime.now()` (qui elle sert au timestamp affiché).
 
@@ -188,7 +188,7 @@ elapsed = ... - cycle_start
 await asyncio.sleep(max(0, config.polling_interval - elapsed))
 ```
 
-Un `sleep(60)` bête et méchant donnerait un intervalle réel de `60s + temps de polling`, et ça **dériverait** dans le temps, cycle après cycle. En retranchant le temps déjà passé, on garde un intervalle effectif proche des 60s demandées. Le `max(0, ...)` couvre le cas où un cycle prend plus longtemps que l'intervalle lui-même — sans lui, `sleep` recevrait un nombre négatif et `asyncio` ne serait pas content.
+Un `sleep(60)` bête et méchant donnerait un intervalle réel de `60s + temps de polling`, et ça **dériverait** dans le temps, cycle après cycle. En retranchant le temps déjà passé, on garde un intervalle effectif proche des 60s demandées. Le `max(0, ...)` couvre le cas où un cycle prend plus longtemps que l'intervalle lui-même. Sans lui, `sleep` recevrait un nombre négatif et `asyncio` ne serait pas content.
 
 ---
 
@@ -306,7 +306,7 @@ services:
       - /tmp
 ```
 
-Le `config.yaml` est monté en volume read-only : on édite la liste des URLs **sans rebuild l'image**. Et `read_only`, `cap_drop: ALL`, `no-new-privileges` réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le `/tmp` en tmpfs — même compromis, il n'a nulle part où poser quoi que ce soit.
+Le `config.yaml` est monté en volume read-only : on édite la liste des URLs **sans rebuild l'image**. Et `read_only`, `cap_drop: ALL`, `no-new-privileges` réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le `/tmp` en tmpfs. Même compromis, il n'a nulle part où poser quoi que ce soit.
 
 ---
 
@@ -319,4 +319,4 @@ Le `config.yaml` est monté en volume read-only : on édite la liste des URLs **
 
 Chacun de ces points mérite son propre article.
 
-*Pour l'instant il tourne dans mon cluster et me dit quand quelque chose est mort avant que je m'en aperçoive tout seul — c'est déjà tout ce que je lui demandais.*
+*Pour l'instant il tourne dans mon cluster et me dit quand quelque chose est mort avant que je m'en aperçoive tout seul. C'est déjà tout ce que je lui demandais.*

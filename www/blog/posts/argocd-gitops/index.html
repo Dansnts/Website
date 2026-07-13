@@ -203,7 +203,7 @@
 
     <div class="blog-body">
       <p>Quand on gère un cluster Kubernetes à la main, on finit toujours par se poser la même question : est-ce que ce qui tourne dans le cluster correspond vraiment à ce qu'il y a dans le repo ? Un <code>kubectl apply</code> oublié, un patch fait en urgence un soir de panne, et le cluster diverge silencieusement de Git. Plus personne ne sait quel est l'état réel.</p>
-<p>Le <strong>GitOps</strong> renverse le problème : Git devient la <strong>seule source de vérité</strong>, et un contrôleur dans le cluster se charge de faire correspondre le réel au désiré. On ne pousse plus vers le cluster — le cluster tire depuis Git.</p>
+<p>Le <strong>GitOps</strong> renverse le problème : Git devient la <strong>seule source de vérité</strong>, et un contrôleur dans le cluster se charge de faire correspondre le réel au désiré. On ne pousse plus vers le cluster, le cluster tire depuis Git.</p>
 <p>Dans ce post, on met en place ArgoCD. On va voir :</p>
 <ol>
 <li>Ce que change le GitOps par rapport à <code>kubectl apply</code></li>
@@ -317,7 +317,7 @@ data:
     requestedScopes: [&quot;openid&quot;, &quot;profile&quot;, &quot;email&quot;, &quot;groups&quot;]
 </code></pre>
 <p><code>issuer</code> : l'URL du realm Keycloak. ArgoCD y découvre automatiquement les endpoints OIDC.</p>
-<p><code>clientSecret: $oidc.keycloak.clientSecret</code> : le <code>$</code> fait référence à une clé stockée dans un Secret K8s — le secret n'est pas en clair dans le ConfigMap.</p>
+<p><code>clientSecret: $oidc.keycloak.clientSecret</code> : le <code>$</code> fait référence à une clé stockée dans un Secret K8s, le secret n'est pas en clair dans le ConfigMap.</p>
 <p><code>requestedScopes: [... &quot;groups&quot;]</code> : c'est le scope <code>groups</code> qui va permettre de mapper les groupes Keycloak vers des rôles ArgoCD. Essentiel pour le RBAC juste après.</p>
 <hr>
 <h2>RBAC : qui a le droit de quoi</h2>
@@ -339,7 +339,7 @@ data:
 </blockquote>
 <hr>
 <h2>Le piège du single-node : les patchs du repo-server</h2>
-<p>Petit retour d'expérience, gratuit. Sur un cluster single-node, certaines valeurs par défaut d'ArgoCD (anti-affinité, réplicas multiples du <code>repo-server</code>) ne collent pas — il n'y a qu'un seul nœud, pas grand-chose à répartir. J'ai dû patcher le Deployment du <code>repo-server</code> pour satisfaire la validation K8s (nom de conteneur, champs requis) et utiliser l'annotation <code>ServerSideApply</code>.</p>
+<p>Petit retour d'expérience, gratuit. Sur un cluster single-node, certaines valeurs par défaut d'ArgoCD (anti-affinité, réplicas multiples du <code>repo-server</code>) ne collent pas : il n'y a qu'un seul nœud, pas grand-chose à répartir. J'ai dû patcher le Deployment du <code>repo-server</code> pour satisfaire la validation K8s (nom de conteneur, champs requis) et utiliser l'annotation <code>ServerSideApply</code>.</p>
 <blockquote>
 <p>La leçon : ArgoCD est pensé pour du multi-node HA. En single-node, il faut parfois adapter les manifests fournis. Rien de dramatique, mais à prévoir.</p>
 </blockquote>
@@ -348,7 +348,7 @@ data:
 <ul>
 <li><strong>App of Apps</strong> : déclarer une application ArgoCD qui elle-même déclare toutes les autres. Un seul point d'entrée pour tout le cluster.</li>
 <li><strong>Sync waves</strong> : ordonner le déploiement (les CRDs avant les ressources qui les utilisent, les secrets avant les pods).</li>
-<li><strong>Sealed Secrets</strong> : le GitOps suppose que <em>tout</em> est dans Git, y compris les secrets — mais chiffrés. C'est le sujet d'un article dédié.</li>
+<li><strong>Sealed Secrets</strong> : le GitOps suppose que <em>tout</em> est dans Git, y compris les secrets, mais chiffrés. C'est le sujet d'un article dédié.</li>
 <li><strong>Notifications</strong> : brancher ArgoCD sur un webhook pour être alerté quand une app passe <code>OutOfSync</code> ou <code>Degraded</code>.</li>
 </ul>
 <p><em>Git ne ment jamais. Le cluster, si tu le laisses faire, oui.</em></p>
