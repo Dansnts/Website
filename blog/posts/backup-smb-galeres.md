@@ -1,7 +1,7 @@
 ---
 layout: post.njk
-title: "Les galères du backup sur montage SMB"
-description: "Inodes qui bougent, fichiers Pokémon avec des  dans le nom, node_modules à l'infini. Le journal de bord d'un backup qui marche vraiment."
+title: "Problèmes de backup sur montage SMB"
+description: "Inodes qui changent, caractères spéciaux dans les noms de fichiers, node_modules trop profonds : les problèmes rencontrés en sauvegardant un montage SMB, et comment les résoudre."
 date: 2025-04-21
 tags: [homelab, backup, smb, restic, rclone]
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post.njk
-title: "Committer ses secrets dans Git sans pleurer : Sealed Secrets"
+title: "Chiffrer ses secrets Kubernetes avec Sealed Secrets"
 description: "Chiffrer ses secrets K8s en RSA-4096 pour les versionner dans Git, et le point critique que tout le monde oublie : sauvegarder la master key."
 date: 2024-10-06
 tags: [homelab, kubernetes, sécurité, gitops, sealed-secrets]

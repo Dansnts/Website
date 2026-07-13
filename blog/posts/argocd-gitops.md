@@ -1,6 +1,6 @@
 ---
 layout: post.njk
-title: "GitOps avec ArgoCD : quand Git devient la source de vérité"
+title: "GitOps avec ArgoCD"
 description: "Arrêter de faire kubectl apply à la main et laisser un contrôleur synchroniser le cluster sur le repo Git."
 date: 2026-04-13
 tags: [homelab, kubernetes, gitops, argocd]

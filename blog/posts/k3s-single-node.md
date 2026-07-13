@@ -1,6 +1,6 @@
 ---
 layout: post.njk
-title: "De zéro à un cluster K3s single-node"
+title: "Monter un cluster K3s single-node"
 description: "Pourquoi K3s plutôt que Kubernetes complet, le Traefik intégré, et la chaîne Packer → Terraform → Ansible qui mène au cluster."
 date: 2025-06-01
 tags: [homelab, kubernetes, k3s]

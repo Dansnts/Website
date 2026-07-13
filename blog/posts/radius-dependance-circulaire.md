@@ -1,7 +1,7 @@
 ---
 layout: post.njk
-title: "La dépendance circulaire qui peut tuer ton réseau"
-description: "Retour d'expérience : comment mettre son serveur RADIUS derrière son propre 802.1X crée un deadlock dont on ne sort pas tout seul."
+title: "Dépendance circulaire entre RADIUS et 802.1X"
+description: "Retour d'expérience : mettre son serveur RADIUS derrière son propre 802.1X crée un deadlock dont on ne sort pas tout seul."
 date: 2025-03-21
 tags: [homelab, réseau, 802.1x, radius, retour-experience]
 ---
