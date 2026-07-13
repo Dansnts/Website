@@ -1,6 +1,6 @@
 ---
 layout: post.njk
-title: "DNS à deux niveaux : CoreDNS et Pi-hole sans dépendance circulaire"
+title: "DNS à deux niveaux avec CoreDNS et Pi-hole"
 description: "Garder Pi-hole hors du chemin critique du cluster, et pourquoi le node K3s ne doit surtout pas l'utiliser comme résolveur."
 date: 2025-12-19
 tags: [homelab, réseau, dns, pihole, kubernetes]

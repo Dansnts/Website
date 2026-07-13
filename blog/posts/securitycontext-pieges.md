@@ -1,6 +1,6 @@
 ---
 layout: post.njk
-title: "Les securityContext Kubernetes qui cassent tout silencieusement"
+title: "Pièges des securityContext Kubernetes"
 description: "Durcir ses pods, c'est bien, jusqu'à ce qu'un drop ALL fasse planter Postgres sans un message d'erreur clair. Guide des pièges vécus."
 date: 2024-08-02
 tags: [homelab, kubernetes, sécurité, securitycontext]

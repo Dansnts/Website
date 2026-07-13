@@ -212,14 +212,14 @@
     </li>
     <li>
       <div class="post-date">20 juin 2026</div>
-      <a href="/blog/posts/loki-alloy-elk/">Centraliser ses logs : Loki + Alloy face à ELK</a>
+      <a href="/blog/posts/loki-alloy-elk/">Centraliser ses logs avec Loki, Alloy et ELK</a>
       
-      <p class="post-desc">Deux philosophies pour les logs d&#39;un homelab. La stack légère Loki + Alloy (index sur labels) contre l&#39;artillerie ELK (full-text). Comparaison depuis un lab qui a essayé les deux.</p>
+      <p class="post-desc">Comparaison de deux stacks de logs pour un homelab : Loki + Alloy (index sur labels) et ELK (full-text), testées toutes les deux en conditions réelles.</p>
       
     </li>
     <li>
       <div class="post-date">13 avril 2026</div>
-      <a href="/blog/posts/argocd-gitops/">GitOps avec ArgoCD : quand Git devient la source de vérité</a>
+      <a href="/blog/posts/argocd-gitops/">GitOps avec ArgoCD</a>
       
       <p class="post-desc">Arrêter de faire kubectl apply à la main et laisser un contrôleur synchroniser le cluster sur le repo Git.</p>
       
@@ -240,7 +240,7 @@
     </li>
     <li>
       <div class="post-date">19 décembre 2025</div>
-      <a href="/blog/posts/dns-coredns-pihole/">DNS à deux niveaux : CoreDNS et Pi-hole sans dépendance circulaire</a>
+      <a href="/blog/posts/dns-coredns-pihole/">DNS à deux niveaux avec CoreDNS et Pi-hole</a>
       
       <p class="post-desc">Garder Pi-hole hors du chemin critique du cluster, et pourquoi le node K3s ne doit surtout pas l&#39;utiliser comme résolveur.</p>
       
@@ -296,7 +296,7 @@
     </li>
     <li>
       <div class="post-date">1 juin 2025</div>
-      <a href="/blog/posts/k3s-single-node/">De zéro à un cluster K3s single-node</a>
+      <a href="/blog/posts/k3s-single-node/">Monter un cluster K3s single-node</a>
       
       <p class="post-desc">Pourquoi K3s plutôt que Kubernetes complet, le Traefik intégré, et la chaîne Packer → Terraform → Ansible qui mène au cluster.</p>
       
@@ -324,16 +324,16 @@
     </li>
     <li>
       <div class="post-date">21 avril 2025</div>
-      <a href="/blog/posts/backup-smb-galeres/">Les galères du backup sur montage SMB</a>
+      <a href="/blog/posts/backup-smb-galeres/">Problèmes de backup sur montage SMB</a>
       
-      <p class="post-desc">Inodes qui bougent, fichiers Pokémon avec des  dans le nom, node_modules à l&#39;infini. Le journal de bord d&#39;un backup qui marche vraiment.</p>
+      <p class="post-desc">Inodes qui changent, caractères spéciaux dans les noms de fichiers, node_modules trop profonds : les problèmes rencontrés en sauvegardant un montage SMB, et comment les résoudre.</p>
       
     </li>
     <li>
       <div class="post-date">21 mars 2025</div>
-      <a href="/blog/posts/radius-dependance-circulaire/">La dépendance circulaire qui peut tuer ton réseau</a>
+      <a href="/blog/posts/radius-dependance-circulaire/">Dépendance circulaire entre RADIUS et 802.1X</a>
       
-      <p class="post-desc">Retour d&#39;expérience : comment mettre son serveur RADIUS derrière son propre 802.1X crée un deadlock dont on ne sort pas tout seul.</p>
+      <p class="post-desc">Retour d&#39;expérience : mettre son serveur RADIUS derrière son propre 802.1X crée un deadlock dont on ne sort pas tout seul.</p>
       
     </li>
     <li>
@@ -352,7 +352,7 @@
     </li>
     <li>
       <div class="post-date">6 octobre 2024</div>
-      <a href="/blog/posts/sealed-secrets/">Committer ses secrets dans Git sans pleurer : Sealed Secrets</a>
+      <a href="/blog/posts/sealed-secrets/">Chiffrer ses secrets Kubernetes avec Sealed Secrets</a>
       
       <p class="post-desc">Chiffrer ses secrets K8s en RSA-4096 pour les versionner dans Git, et le point critique que tout le monde oublie : sauvegarder la master key.</p>
       
@@ -366,7 +366,7 @@
     </li>
     <li>
       <div class="post-date">2 août 2024</div>
-      <a href="/blog/posts/securitycontext-pieges/">Les securityContext Kubernetes qui cassent tout silencieusement</a>
+      <a href="/blog/posts/securitycontext-pieges/">Pièges des securityContext Kubernetes</a>
       
       <p class="post-desc">Durcir ses pods, c&#39;est bien, jusqu&#39;à ce qu&#39;un drop ALL fasse planter Postgres sans un message d&#39;erreur clair. Guide des pièges vécus.</p>
       

@@ -1,7 +1,7 @@
 ---
 layout: post.njk
-title: "Centraliser ses logs : Loki + Alloy face à ELK"
-description: "Deux philosophies pour les logs d'un homelab. La stack légère Loki + Alloy (index sur labels) contre l'artillerie ELK (full-text). Comparaison depuis un lab qui a essayé les deux."
+title: "Centraliser ses logs avec Loki, Alloy et ELK"
+description: "Comparaison de deux stacks de logs pour un homelab : Loki + Alloy (index sur labels) et ELK (full-text), testées toutes les deux en conditions réelles."
 date: 2026-06-20
 tags: [homelab, logs, loki, alloy, elk, observabilité, kubernetes]
 ---
