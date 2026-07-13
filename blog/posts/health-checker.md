@@ -6,9 +6,9 @@ date: 2026-07-04
 tags: [python, asyncio, fastapi, docker]
 ---
 
-Un *health check* est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif : savoir en temps réel qu'un service est tombé, avant que les utilisateurs ne s'en rendent compte.
+Un *health check* est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif : savoir qu'un service est tombé avant que les utilisateurs ne s'en chargent à ta place.
 
-Dans ce post, nous allons construire un petit service en Python qui :
+On construit un petit service en Python qui :
 
 1. Poll une liste d'URLs configurables à intervalle régulier
 2. Le fait **en parallèle** pour qu'une URL lente n'en bloque pas d'autres
@@ -39,7 +39,7 @@ python/
     └── api.py      # l'API FastAPI + le lifespan
 ```
 
-L'idée directrice : le **worker** écrit dans le **store**, l'**API** lit dans le **store**. Les deux ne se parlent jamais directement, ils passent par la donnée. Ça garde le code découplé et testable.
+L'idée directrice : le **worker** écrit dans le **store**, l'**API** lit dans le **store**. Les deux ne se parlent jamais directement, ils passent par la donnée. Découplé, testable, rien à débattre.
 
 ---
 
@@ -126,9 +126,9 @@ def get_result() -> dict:
     return {url: list(results) for url, results in store.items()}
 ```
 
-`deque(maxlen=100)` : la structure parfaite ici. Quand elle atteint 100 éléments, elle **évince automatiquement le plus ancien**. Pas de logique de nettoyage à écrire, on garde toujours les 100 derniers checks par URL.
+`deque(maxlen=100)` : la structure parfaite ici. Quand elle atteint 100 éléments, elle **évince automatiquement le plus ancien**. Pas de logique de nettoyage à écrire, on garde toujours les 100 derniers checks par URL, et la stdlib fait tout le travail.
 
-> Trade-off assumé : tout est perdu au redémarrage, et ça ne scale pas sur plusieurs instances. Pour de la prod, on brancherait une TimeSeries DB (InfluxDB) et un dashboard Grafana. Mais pour un service simple, c'est overkill.
+> Trade-off assumé : tout est perdu au redémarrage, et ça ne scale pas sur plusieurs instances. Pour de la prod, on brancherait une TimeSeries DB (InfluxDB) et un dashboard Grafana. Pour un service qui tient dans un seul fichier, c'est overkill. Chaque chose en son temps.
 
 ---
 
@@ -158,7 +158,7 @@ async def check_urls(client: httpx.AsyncClient, config: Config, url: str):
 
 Deux points importants ici :
 
-`client.stream("GET", ...)` : on **ne télécharge pas le body**. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP nous intéresse — pas besoin de rapatrier 2 Mo de HTML.
+`client.stream("GET", ...)` : on **ne télécharge pas le body**. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP compte — rapatrier 2 Mo de HTML pour vérifier un `200`, non merci.
 
 `time.perf_counter()` : c'est l'horloge monotone, faite pour mesurer des durées. On ne la mélange pas avec `datetime.now()` (qui elle sert au timestamp affiché).
 
@@ -188,7 +188,7 @@ elapsed = ... - cycle_start
 await asyncio.sleep(max(0, config.polling_interval - elapsed))
 ```
 
-Si on faisait bêtement `sleep(60)`, l'intervalle réel serait de `60s + temps de polling`, et ça **dériverait** dans le temps. En retranchant le temps déjà passé, on garde un intervalle effectif proche des 60s demandées. Le `max(0, ...)` protège le cas où un cycle prendrait plus longtemps que l'intervalle.
+Un `sleep(60)` bête et méchant donnerait un intervalle réel de `60s + temps de polling`, et ça **dériverait** dans le temps, cycle après cycle. En retranchant le temps déjà passé, on garde un intervalle effectif proche des 60s demandées. Le `max(0, ...)` couvre le cas où un cycle prend plus longtemps que l'intervalle lui-même — sans lui, `sleep` recevrait un nombre négatif et `asyncio` ne serait pas content.
 
 ---
 
@@ -220,9 +220,9 @@ async def get_status():
     return get_result()
 ```
 
-Le `lifespan` est le bon endroit pour lancer un worker : la tâche démarre **avec** l'app, dans la même boucle asyncio, et un seul container suffit. Pas de process séparé à gérer.
+Le `lifespan` est le bon endroit pour lancer un worker : la tâche démarre **avec** l'app, dans la même boucle asyncio, un seul container suffit. Pas de process séparé à gérer, pas de supervisord.
 
-Le `add_done_callback` sert de garde-fou : si le worker crash sans qu'on l'ait annulé, on log l'erreur au lieu de la voir disparaître silencieusement.
+Le `add_done_callback` sert de garde-fou : si le worker crash sans qu'on l'ait annulé, on log l'erreur au lieu de la voir disparaître silencieusement dans le néant d'une tâche asyncio morte.
 
 Un appel `GET /status` renvoie :
 
@@ -306,7 +306,7 @@ services:
       - /tmp
 ```
 
-Le `config.yaml` est monté en volume read-only : on peut éditer la liste des URLs **sans rebuild l'image**. Et `read_only`, `cap_drop: ALL`, `no-new-privileges` réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le `/tmp` en tmpfs.
+Le `config.yaml` est monté en volume read-only : on édite la liste des URLs **sans rebuild l'image**. Et `read_only`, `cap_drop: ALL`, `no-new-privileges` réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le `/tmp` en tmpfs — même compromis, il n'a nulle part où poser quoi que ce soit.
 
 ---
 
@@ -317,4 +317,6 @@ Le `config.yaml` est monté en volume read-only : on peut éditer la liste des U
 - **Config à chaud** : aujourd'hui la liste des URLs est lue une seule fois au démarrage. On pourrait la recharger sans restart.
 - **Alerting** : déclencher une notification (Slack, mail) quand une URL enchaîne plusieurs échecs.
 
-Chacun de ces points mérite son propre article. On les traitera plus tard.
+Chacun de ces points mérite son propre article.
+
+*Pour l'instant il tourne dans mon cluster et me dit quand quelque chose est mort avant que je m'en aperçoive tout seul — c'est déjà tout ce que je lui demandais.*

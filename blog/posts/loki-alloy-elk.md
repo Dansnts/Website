@@ -6,7 +6,7 @@ date: 2026-06-20
 tags: [homelab, logs, loki, alloy, elk, observabilité, kubernetes]
 ---
 
-Les métriques disent *que* quelque chose va mal ; les **logs** disent *pourquoi*. Dès qu'on a plus de deux ou trois services, faire `kubectl logs` pod par pod ne tient plus : on veut tout au même endroit, cherchable, avec une rétention. C'est la centralisation des logs.
+Les métriques disent *que* quelque chose va mal ; les **logs** disent *pourquoi*. Dès qu'on a plus de deux ou trois services, faire `kubectl logs` pod par pod ne tient plus. On veut tout au même endroit, cherchable, avec une rétention. C'est la centralisation des logs.
 
 Il existe deux grandes écoles pour ça, et j'ai fait tourner les deux dans mon lab :
 
@@ -199,3 +199,5 @@ La règle que j'en tire : **on choisit ELK pour ce qu'il fait de mieux — le fu
 - **Alerting sur les logs** : Loki sait déclencher des alertes sur des motifs (`|= "error"` qui dépasse un seuil), via les mêmes règles que Prometheus.
 - **Structurer les logs à la source** : passer les applis en logs JSON permet à `stage.json` d'Alloy d'extraire des champs — sans payer le coût d'un index full-text.
 - **Rétention par flux** : affiner la rétention Loki par label (garder les logs d'auth plus longtemps que le reste) plutôt qu'un `30d` global.
+
+*Le jour où je devrai vraiment faire du forensique sur des To de logs, je réinstallerai ELK sans regret. En attendant, `{app="vaultwarden"} |= "error"` me suffit largement.*

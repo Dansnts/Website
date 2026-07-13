@@ -6,7 +6,7 @@ date: 2024-12-04
 tags: [homelab, monitoring, prometheus, grafana, node-exporter, kubernetes]
 ---
 
-Sans monitoring, un homelab marche « jusqu'à ce qu'il ne marche plus » — et on l'apprend au pire moment. On veut savoir si un disque se remplit, si la RAM sature, si un node chauffe, avant que ça casse. La stack de référence pour ça, c'est **Prometheus + Grafana**, alimentée par des **exporters**.
+Sans monitoring, un homelab marche « jusqu'à ce qu'il ne marche plus », et on l'apprend toujours au pire moment. On veut savoir si un disque se remplit, si la RAM sature, si un node chauffe, avant que ça casse, pas après. La stack de référence pour ça, c'est **Prometheus + Grafana**, alimentée par des **exporters**.
 
 Le principe tient en une phrase : des exporters exposent des métriques en HTTP, Prometheus va les **scraper** à intervalle régulier et les stocke, Grafana lit Prometheus et dessine les courbes. Simple, robuste, et le standard de fait du monde cloud-native.
 
@@ -163,3 +163,5 @@ Le pod tourne en `runAsUser: 472` (l'UID attendu par l'image Grafana), avec sa c
 - **Alerting** : Prometheus a un langage de règles (PromQL) et un Alertmanager pour notifier (mail, Discord…) quand un disque dépasse 90 %.
 - **Des dashboards prêts à l'emploi** : le dashboard « Node Exporter Full » (grafana.com/dashboards, ID 1860) donne une vue complète en quelques clics.
 - **Surveiller Kubernetes lui-même** : kube-state-metrics et cAdvisor exposent l'état des pods/deployments, au-delà des seules métriques d'hôte.
+
+*Un système sans dashboard, c'est un système que tu surveilles avec les yeux fermés en espérant fort.*

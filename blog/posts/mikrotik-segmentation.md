@@ -6,7 +6,7 @@ date: 2026-02-20
 tags: [homelab, réseau, mikrotik, firewall]
 ---
 
-Brancher son homelab directement sur la box du FAI, c'est simple — jusqu'au jour où une VM compromise se retrouve sur le même réseau que ton téléphone, ta TV et l'ordi du salon. La bonne pratique, c'est d'**isoler** : le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.
+Brancher son homelab directement sur la box du FAI, c'est simple. Jusqu'au jour où une VM compromise se retrouve sur le même réseau que ton téléphone, ta TV et l'ordi du salon. La bonne pratique, c'est d'**isoler** : le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.
 
 Chez moi, ce rôle est tenu par un **MikroTik RB750Gr3** — un petit routeur pas cher mais redoutablement complet (RouterOS). Dans ce post, on construit la segmentation complète. On va voir :
 
@@ -206,3 +206,5 @@ Internet             ──X──> Lab (reste)  (drop tout depuis WAN)
 - **VLANs** : pour aller plus loin dans la segmentation (séparer IoT, invités, serveurs), les VLANs découpent le LAN en sous-réseaux logiques sur les mêmes câbles.
 - **Sauvegarder la config** : `/export file=backup` génère un `.rsc` rejouable. À versionner dans Git comme le reste de l'infra.
 - **Silent boot** : `/system routerboard settings set silent-boot=yes` — désactive les bips au démarrage, détail mais appréciable.
+
+*Un routeur à 60 balles qui fait tourner un firewall stateful plus rigoureux que certaines box "pro". RouterOS mérite sa réputation.*

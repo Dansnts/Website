@@ -98,7 +98,7 @@ Une fois committé et synchronisé (par ArgoCD ou `kubectl apply`), le contrôle
 
 ## LE point critique : sauvegarder la master key
 
-Voici ce que tout le monde néglige, et qui transforme un incident mineur en catastrophe.
+Voici ce que tout le monde néglige, et qui transforme un incident mineur en catastrophe pure.
 
 **La clé privée (master key) vit dans le cluster.** Si tu perds le cluster (disque mort, réinstallation, node détruit), tu perds la clé. Et sans la clé, **tous tes `SealedSecret` deviennent définitivement indéchiffrables**. Tu as tes secrets chiffrés dans Git, mais plus aucun moyen de les ouvrir.
 
@@ -155,3 +155,5 @@ keyrenewperiod: "720h"   # 30 jours
 - **External Secrets Operator** : l'alternative qui va chercher les secrets dans un backend externe (Vault, cloud) au lieu de les stocker chiffrés dans Git.
 - **Sauvegarde automatisée de la master key** : un CronJob qui exporte la clé vers un stockage chiffré hors cluster après chaque rotation.
 - **La dépendance circulaire** : master key dans Vaultwarden, secret Vaultwarden scellé par la master key — un thème récurrent du homelab que j'aborde ailleurs.
+
+*Un secret chiffré sans sa clé, c'est un coffre-fort jeté à la mer avec la combinaison dedans.*

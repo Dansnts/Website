@@ -6,7 +6,7 @@ date: 2025-07-24
 tags: [homelab, kubernetes, stockage, truenas, smb]
 ---
 
-Un cluster single-node a un problème de stockage : les volumes `local-path` vivent sur le disque du node. Or mes données volumineuses (photos, médias, sauvegardes) sont sur un NAS TrueNAS séparé, exposé en SMB. Comment faire consommer ce stockage réseau par des pods Kubernetes ?
+Un cluster single-node a un problème de stockage : les volumes `local-path` vivent sur le disque du node. Mes données volumineuses (photos, médias, sauvegardes), elles, sont sur un NAS TrueNAS séparé, exposé en SMB. Comment faire consommer ce stockage réseau par des pods Kubernetes ?
 
 La réponse : le **CSI driver SMB**. Il permet à Kubernetes de monter des partages SMB comme des volumes, exactement comme n'importe quel PVC. Dans ce post :
 
@@ -123,7 +123,7 @@ spec:
 
 ## Le piège de la version `canary`
 
-Retour d'expérience qui coûte cher. Beaucoup de tutos (et le README du projet lui-même par défaut) installent le driver via l'URL `.../deploy/master/...` ou une balise `canary`. **À éviter absolument.**
+Retour d'expérience qui coûte cher, payé une fois pour toi. Beaucoup de tutos (et le README du projet lui-même, par défaut) installent le driver via l'URL `.../deploy/master/...` ou une balise `canary`. **À éviter absolument.**
 
 `canary`, c'est la branche de développement du driver : instable, susceptible de casser d'un jour à l'autre sur un `apply`. Un matin, tes montages SMB tombent sans que tu aies rien changé — juste parce que la `canary` a évolué.
 
@@ -154,3 +154,5 @@ kubectl apply -f k8s/storageclass-smb.yaml
 - **Snapshots** : côté TrueNAS (ZFS), planifier des snapshots des datasets pour un point de restauration côté stockage, en plus des backups applicatifs.
 - **Les inodes SMB** : les montages SMB ont des inodes instables, ce qui pose problème aux outils de backup — un piège que j'aborde dans l'article sur les galères de backup SMB.
 - **Sécuriser les credentials** : les secrets SMB sont scellés avec Sealed Secrets — voir l'article dédié.
+
+*`canary` en prod, c'est comme goûter le gâteau avec la main dans le four allumé.*

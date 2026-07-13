@@ -6,9 +6,9 @@ date: 2025-12-19
 tags: [homelab, réseau, dns, pihole, kubernetes]
 ---
 
-Le DNS, c'est le genre de service dont on ne parle jamais — jusqu'à ce qu'il tombe et que *tout* casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne *dans* ce cluster.
+Le DNS, personne n'y pense — jusqu'à ce qu'il tombe et que *tout* casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel qui guette : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne *dans* ce cluster. Un cluster qui a besoin de lui-même pour démarrer.
 
-La solution, c'est une architecture DNS à **deux niveaux**, où chaque résolveur a un rôle clair et où Pi-hole n'est jamais dans le chemin critique. Dans ce post :
+La solution : une architecture DNS à **deux niveaux**, où chaque résolveur a un rôle clair et où Pi-hole n'est jamais dans le chemin critique. Dans ce post :
 
 1. Les deux résolveurs et qui résout quoi
 2. CoreDNS avec des entrées statiques vers Traefik
@@ -170,3 +170,5 @@ sudo systemctl start systemd-resolved
 - **Redondance Pi-hole** : une seconde instance + `keepalived` pour que le blocage de pub survive à un crash. Attention à ne pas recréer une dépendance au cluster.
 - **La dépendance circulaire RADIUS** : le même raisonnement, appliqué à l'authentification réseau — sujet d'un article dédié.
 - **Métriques Pi-hole** : exporter les stats (requêtes bloquées, top domaines) vers Prometheus/Grafana pour visualiser ce que le réseau raconte.
+
+*Le jour où le DNS tombe, tu redécouvres en combien de choses tu avais confiance sans le savoir.*

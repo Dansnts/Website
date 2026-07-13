@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Voici une erreur qu'on fait tous une fois : sauvegarder un fichier de base de données SQLite en le copiant bêtement (<code>cp</code>, <code>rsync</code>, ou en l'incluant dans un backup Restic) pendant que l'application écrit dedans. Le résultat peut être une base <strong>corrompue</strong> — inutilisable au moment où on en aurait le plus besoin.</p>
+      <p>Voici une erreur qu'on fait tous une fois : sauvegarder un fichier de base de données SQLite en le copiant bêtement (<code>cp</code>, <code>rsync</code>, ou en l'incluant dans un backup Restic) pendant que l'application écrit dedans. Le résultat peut être une base <strong>corrompue</strong>, inutilisable au moment précis où on en a le plus besoin.</p>
 <p>Le problème et sa solution sont subtils. Dans ce post, on sauvegarde proprement la base SQLite de Vaultwarden depuis un CronJob Kubernetes :</p>
 <ol>
 <li>Pourquoi copier un <code>.sqlite3</code> live est dangereux</li>
@@ -216,7 +216,6 @@
 <li>Un CronJob de backup (ici Restic)</li>
 <li>Des bases sur les initContainers K8s</li>
 </ul>
-<hr>
 <h2>Pourquoi un <code>cp</code> peut corrompre la base</h2>
 <p>SQLite en mode WAL (<em>Write-Ahead Logging</em>) répartit son état sur plusieurs fichiers :</p>
 <pre><code>db.sqlite3       ← le fichier principal
@@ -228,7 +227,7 @@ db.sqlite3-shm   ← la mémoire partagée d'index du WAL
 <li>Le fichier principal peut être dans un état <strong>intermédiaire</strong> (une transaction à moitié écrite).</li>
 <li>Les écritures récentes sont dans le <code>-wal</code>, que tu n'as peut-être pas copié de façon cohérente avec le principal.</li>
 </ul>
-<p>Résultat : une copie qui reflète un instant incohérent. Elle peut sembler OK et se révéler corrompue à la restauration. Le pire type de bug de backup — celui qu'on découvre trop tard.</p>
+<p>Résultat : une copie qui reflète un instant incohérent. Elle peut sembler OK et se révéler corrompue à la restauration. Le pire type de bug de backup, celui qu'on découvre trop tard, en général le jour où on en a besoin.</p>
 <pre><code>App écrit ──&gt; db.sqlite3 (moitié d'une transaction) + db.sqlite3-wal
                      │
               cp au mauvais moment
@@ -236,7 +235,6 @@ db.sqlite3-shm   ← la mémoire partagée d'index du WAL
                      V
         copie incohérente → base potentiellement corrompue
 </code></pre>
-<hr>
 <h2>La solution : <code>sqlite3 .backup</code></h2>
 <p>SQLite fournit une commande faite exactement pour ça :</p>
 <pre><code class="language-bash">sqlite3 /chemin/db.sqlite3 &quot;.backup '/chemin/dump/db.sqlite3'&quot;
@@ -247,8 +245,7 @@ db.sqlite3-shm   ← la mémoire partagée d'index du WAL
 <li>Elle gère la concurrence : si une écriture survient pendant le backup, l'API s'en accommode.</li>
 <li>Le fichier de sortie est une base propre, unique, restaurable telle quelle.</li>
 </ul>
-<p>C'est la différence entre « copier des octets » (dangereux) et « demander à SQLite un backup cohérent » (sûr).</p>
-<hr>
+<p>C'est la différence entre « copier des octets » et « demander à SQLite un backup cohérent ». Le premier est dangereux, le second est sûr, et ça ne coûte qu'une commande.</p>
 <h2>Le pattern : initContainer + emptyDir partagé</h2>
 <p>Comment intégrer ce dump dans un CronJob Restic ? Avec un <strong>initContainer</strong> qui fait le dump <em>avant</em> que le conteneur principal ne sauvegarde. Les deux communiquent via un volume <code>emptyDir</code> partagé.</p>
 <pre><code class="language-yaml">spec:
@@ -288,8 +285,7 @@ db.sqlite3-shm   ← la mémoire partagée d'index du WAL
 <p><code>initContainers</code> : s'exécute <strong>entièrement avant</strong> le conteneur principal. Le dump est garanti terminé avant que Restic ne démarre. Ordre déterministe.</p>
 <p><code>vaultwarden-data</code> monté en <code>readOnly: true</code> : l'initContainer lit la base de production sans jamais risquer de la modifier. <code>.backup</code> n'a besoin que de lire.</p>
 <p><code>emptyDir: {}</code> : un volume temporaire qui vit le temps du pod. L'initContainer y écrit le dump, le conteneur Restic l'y lit. Il disparaît à la fin du job — le dump n'est qu'un intermédiaire.</p>
-<p><code>drop: [&quot;ALL&quot;]</code> sur l'initContainer : c'est un simple <code>sqlite3</code> dans une Alpine, aucun besoin de privilège → durcissement complet possible (contrairement à d'autres images, cf. l'article sur les securityContext).</p>
-<hr>
+<p><code>drop: [&quot;ALL&quot;]</code> sur l'initContainer : c'est un simple <code>sqlite3</code> dans une Alpine, aucun besoin de privilège, donc durcissement complet possible (contrairement à d'autres images, cf. l'article sur les securityContext).</p>
 <h2>Le flux complet</h2>
 <pre><code>[initContainer sqlite-dump]
    lit  /mnt/vaultwarden/db.sqlite3 (RO)
@@ -302,17 +298,15 @@ db.sqlite3-shm   ← la mémoire partagée d'index du WAL
    → snapshot chiffré vers S3
 </code></pre>
 <p>Le dump WAL-safe se retrouve inclus dans le snapshot Restic, aux côtés des autres données. On restaure la base Vaultwarden comme n'importe quel fichier, avec la certitude qu'elle est cohérente.</p>
-<blockquote>
-<p>Ce pattern se généralise : <strong>toute base « fichier » live</strong> (SQLite, mais aussi les dumps <code>pg_dump</code>/<code>mysqldump</code> pour Postgres/MySQL) doit être exportée proprement <em>avant</em> le backup, jamais copiée à chaud. L'initContainer est l'endroit idéal pour ce pré-traitement.</p>
-</blockquote>
-<hr>
+<p>Ce pattern se généralise : toute base « fichier » live (SQLite, mais aussi les dumps <code>pg_dump</code>/<code>mysqldump</code> pour Postgres/MySQL) doit être exportée proprement <em>avant</em> le backup, jamais copiée à chaud. L'initContainer est l'endroit idéal pour ce pré-traitement.</p>
 <h2>Aller plus loin</h2>
 <ul>
 <li><strong>Postgres / MySQL</strong> : même logique avec <code>pg_dump</code> ou <code>mysqldump</code> dans l'initContainer, pour un dump cohérent d'une vraie base serveur.</li>
 <li><strong>Vérifier le dump</strong> : ajouter un <code>PRAGMA integrity_check</code> après le <code>.backup</code> pour valider le fichier avant de le sauvegarder.</li>
-<li><strong>Le backup principal</strong> : ce dump n'est qu'une brique du CronJob Restic — voir l'article sur le backup zero-knowledge pour la partie chiffrement/rétention.</li>
-<li><strong>Hooks applicatifs</strong> : certaines apps offrent un endpoint de backup natif ; à préférer quand il existe.</li>
+<li><strong>Le backup principal</strong> : ce dump n'est qu'une brique du CronJob Restic, voir l'article sur le backup zero-knowledge pour la partie chiffrement/rétention.</li>
+<li><strong>Hooks applicatifs</strong> : certaines apps offrent un endpoint de backup natif, à préférer quand il existe.</li>
 </ul>
+<p><em>Une base de données, c'est déjà un fichier qui ment un peu sur son propre état pendant qu'on écrit dedans. Autant lui demander poliment un instantané plutôt que de la surprendre en plein travail.</em></p>
 
     </div>
   </article>

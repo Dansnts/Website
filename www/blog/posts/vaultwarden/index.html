@@ -202,8 +202,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Un gestionnaire de mots de passe, c'est la brique la plus sensible du lab : s'il fuit, tout fuit. On le confie donc souvent à un service cloud (Bitwarden, 1Password…). Ça marche très bien — mais dans un homelab, l'intérêt est justement de garder le coffre chez soi, sur son propre stockage, sous son propre chiffrement.</p>
-<p><strong>Vaultwarden</strong> rend ça trivial. C'est une réimplémentation en Rust du serveur Bitwarden, <strong>compatible avec les clients Bitwarden officiels</strong> (extensions navigateur, apps mobiles, CLI). Un seul conteneur, quelques dizaines de Mo de RAM, et on a son propre Bitwarden.</p>
+      <p>Un gestionnaire de mots de passe, c'est la brique la plus sensible du lab. S'il fuit, tout fuit. On le confie donc souvent à un service cloud (Bitwarden, 1Password…), et ça marche très bien. Mais dans un homelab, l'intérêt est justement de garder le coffre chez soi, sur son propre stockage, sous son propre chiffrement.</p>
+<p><strong>Vaultwarden</strong> rend ça trivial. Une réimplémentation en Rust du serveur Bitwarden, <strong>compatible avec les clients Bitwarden officiels</strong> (extensions navigateur, apps mobiles, CLI). Un seul conteneur, quelques dizaines de Mo de RAM, et voilà son propre Bitwarden.</p>
 <p>Dans ce post, on va voir :</p>
 <ol>
 <li>Ce qu'est Vaultwarden et pourquoi il est si léger</li>
@@ -219,11 +219,9 @@
 <li>Un peu de stockage persistant (ici 1 Gi en <code>local-path</code>)</li>
 <li>Un mécanisme de secrets (ici SealedSecrets)</li>
 </ul>
-<hr>
 <h2>Vaultwarden, ou Bitwarden sans la lourdeur</h2>
-<p>Le serveur Bitwarden officiel, c'est une dizaine de conteneurs (API, Identity, SQL Server, etc.) — pensé pour l'entreprise. Pour un usage perso, c'est disproportionné.</p>
-<p>Vaultwarden fait tenir tout ça dans <strong>un seul binaire Rust</strong>, avec une base <strong>SQLite</strong> par défaut. Le protocole étant le même, les applications ne voient aucune différence : elles pointent vers mon URL au lieu de <code>bitwarden.com</code>. Chez moi, il tourne avec 64 Mi de RAM en requête et un plafond à 256 Mi — un poids plume.</p>
-<hr>
+<p>Le serveur Bitwarden officiel, c'est une dizaine de conteneurs (API, Identity, SQL Server, etc.), pensé pour l'entreprise. Pour un usage perso, c'est disproportionné.</p>
+<p>Vaultwarden fait tenir tout ça dans <strong>un seul binaire Rust</strong>, avec une base <strong>SQLite</strong> par défaut. Le protocole étant identique, les applications ne voient aucune différence : elles pointent vers mon URL au lieu de <code>bitwarden.com</code>, et c'est tout. Chez moi, il tourne avec 64 Mi de RAM en requête et un plafond à 256 Mi. Un poids plume.</p>
 <h2>Le déploiement</h2>
 <p>Le Deployment est minimaliste. L'essentiel se joue dans les variables d'environnement :</p>
 <pre><code class="language-yaml">containers:
@@ -257,43 +255,35 @@
     persistentVolumeClaim:
       claimName: vaultwarden-data
 </code></pre>
-<blockquote>
-<p><code>strategy: Recreate</code> est important ici : SQLite n'aime pas deux processus qui écrivent le même fichier. On veut qu'un pod meure avant que le suivant ne monte le volume.</p>
-</blockquote>
+<p><code>strategy: Recreate</code> est important ici. SQLite n'aime pas deux processus qui écrivent dans le même fichier en même temps. On veut qu'un pod meure avant que le suivant ne monte le volume, pas les deux en même temps sur le même PVC.</p>
 <p>Côté exposition, le Service est en <code>NodePort</code> (30080), et c'est Traefik qui publie <code>vault.fariadossantos.com</code> en HTTPS par-dessus.</p>
-<hr>
 <h2>L'ADMIN_TOKEN en Argon2id</h2>
 <p>Le panneau <code>/admin</code> permet de créer des utilisateurs, régler la rétention, gérer les invitations. Autant dire qu'il faut le protéger sérieusement.</p>
-<p>Historiquement, <code>ADMIN_TOKEN</code> était un mot de passe en clair : Vaultwarden le comparait tel quel. Problème : il est présent dans l'environnement du conteneur, donc lisible par quiconque peut faire un <code>kubectl exec</code> ou lire le manifeste. Une fuite du token = accès admin total.</p>
-<p>La bonne pratique aujourd'hui, c'est de stocker non pas le token mais son <strong>hash Argon2id</strong> (au format PHC, <code>$argon2id$...</code>). Vaultwarden hache alors ce que tu tapes et compare les empreintes — le secret réel ne transite plus en clair dans la config. Argon2id est une fonction de dérivation « memory-hard », conçue pour résister au brute-force GPU : c'est le bon choix pour ce genre de secret.</p>
+<p>Historiquement, <code>ADMIN_TOKEN</code> était un mot de passe en clair : Vaultwarden le comparait tel quel. Problème, il est présent dans l'environnement du conteneur, donc lisible par quiconque peut faire un <code>kubectl exec</code> ou lire le manifeste. Une fuite du token, c'est un accès admin total offert sur un plateau.</p>
+<p>La bonne pratique aujourd'hui, c'est de stocker non pas le token mais son <strong>hash Argon2id</strong> (au format PHC, <code>$argon2id$...</code>). Vaultwarden hache alors ce que tu tapes et compare les empreintes, le secret réel ne transite plus en clair dans la config. Argon2id est une fonction de dérivation « memory-hard », conçue pour résister au brute-force GPU. Le bon choix pour ce genre de secret.</p>
 <p>On génère ce hash avec l'outil embarqué dans l'image :</p>
 <pre><code class="language-bash">docker run --rm -it vaultwarden/server /vaultwarden hash
 </code></pre>
-<p>Il demande un mot de passe et recrache une chaîne <code>$argon2id$v=19$m=...</code> — c'est <strong>cette chaîne</strong> qu'on met dans le secret, pas le mot de passe. Chez moi, elle est scellée dans <code>vaultwarden-secret</code> (SealedSecret), donc chiffrée dans le repo Git et déchiffrable uniquement par le contrôleur dans le cluster.</p>
-<blockquote>
-<p>À retenir : ce qu'on tape pour se connecter au <code>/admin</code>, c'est le mot de passe d'origine ; ce qui est stocké, c'est son empreinte Argon2id. Même en lisant le secret déchiffré, on ne récupère pas le mot de passe.</p>
-</blockquote>
-<hr>
+<p>Il demande un mot de passe et recrache une chaîne <code>$argon2id$v=19$m=...</code> : c'est <strong>cette chaîne</strong> qu'on met dans le secret, jamais le mot de passe. Chez moi, elle est scellée dans <code>vaultwarden-secret</code> (SealedSecret), donc chiffrée dans le repo Git et déchiffrable uniquement par le contrôleur dans le cluster.</p>
+<p>À retenir : ce qu'on tape pour se connecter au <code>/admin</code>, c'est le mot de passe d'origine. Ce qui est stocké, c'est son empreinte Argon2id. Même en lisant le secret déchiffré, on ne récupère pas le mot de passe.</p>
 <h2>Sauvegarder un coffre SQLite sans le corrompre</h2>
-<p>C'est le point qu'on néglige, et qui fait mal le jour où ça compte. La base de Vaultwarden est un <strong>fichier SQLite</strong> avec journalisation WAL. Le copier bêtement pendant qu'il y a des écritures en cours, c'est risquer une sauvegarde <strong>incohérente</strong> : on récupère un <code>.sqlite3</code> à moitié écrit, inutilisable.</p>
+<p>C'est le point qu'on néglige, et qui fait mal le jour où ça compte. La base de Vaultwarden est un <strong>fichier SQLite</strong> avec journalisation WAL. Le copier bêtement pendant qu'il y a des écritures en cours, c'est risquer une sauvegarde <strong>incohérente</strong> : on récupère un <code>.sqlite3</code> à moitié écrit, bon pour la poubelle.</p>
 <p>Chez moi, la sauvegarde passe par un CronJob Restic (le même qui archive le NAS vers un stockage S3 suisse chiffré). L'astuce est dans un <strong>initContainer</strong> qui prépare un dump propre avant que Restic ne s'exécute :</p>
 <ul>
 <li>Un container <code>sqlite-dump</code> lance un <code>sqlite3 .backup</code> sur la base. Cette commande est <strong>WAL-safe</strong> : elle produit une copie cohérente même si des écritures sont en cours, en s'appuyant sur le mécanisme de sauvegarde en ligne de SQLite.</li>
 <li>Le dump est écrit dans un volume <code>emptyDir</code> partagé (<code>/mnt/dump/db.sqlite3</code>).</li>
 <li>Le container Restic archive <strong>ce dump-là</strong>, jamais le fichier vivant.</li>
 </ul>
-<p>Le tout est chiffré côté client (AES-256) avant de partir : l'hébergeur ne voit que des blobs opaques, la clé de chiffrement ne quitte pas la machine.</p>
-<blockquote>
-<p>La règle générale : <strong>on ne sauvegarde jamais un fichier de base de données à chaud par une simple copie</strong>. On passe par le mécanisme de dump de la base (<code>.backup</code> pour SQLite, <code>pg_dump</code> pour PostgreSQL…), qui garantit la cohérence. Une sauvegarde non testée qui ne se restaure pas ne vaut rien.</p>
-</blockquote>
-<hr>
+<p>Le tout est chiffré côté client (AES-256) avant de partir. L'hébergeur ne voit que des blobs opaques, la clé de chiffrement ne quitte jamais la machine.</p>
+<p>Règle générale : on ne sauvegarde jamais un fichier de base de données à chaud par une simple copie. On passe par le mécanisme de dump de la base (<code>.backup</code> pour SQLite, <code>pg_dump</code> pour PostgreSQL…), qui garantit la cohérence. Une sauvegarde non testée qui ne se restaure pas ne vaut rien, elle donne juste un faux sentiment de sécurité.</p>
 <h2>Aller plus loin</h2>
 <ul>
 <li><strong>La chaîne de backup complète</strong> : le CronJob Restic, la rotation et le chiffrement côté client vers Infomaniak Swiss Backup méritent leur propre article.</li>
-<li><strong>Le 2FA/WebAuthn</strong> : Vaultwarden gère les clés matérielles (YubiKey) et le TOTP — à activer une fois <code>DOMAIN</code> bien réglé.</li>
-<li><strong>SSO via Keycloak</strong> : les versions récentes de Vaultwarden expérimentent la connexion OIDC ; un candidat naturel pour rejoindre le realm <code>homelab</code> (voir l'article sur Keycloak).</li>
-<li><strong>Cercle vertueux des secrets</strong> : ma clé maître SealedSecrets est elle-même stockée dans Vaultwarden — pratique, mais attention à la dépendance de restauration : il faut pouvoir rouvrir le coffre sans le cluster.</li>
+<li><strong>Le 2FA/WebAuthn</strong> : Vaultwarden gère les clés matérielles (YubiKey) et le TOTP, à activer une fois <code>DOMAIN</code> bien réglé.</li>
+<li><strong>SSO via Keycloak</strong> : les versions récentes de Vaultwarden expérimentent la connexion OIDC, un candidat naturel pour rejoindre le realm <code>homelab</code> (voir l'article sur Keycloak).</li>
+<li><strong>Cercle vertueux des secrets</strong> : ma clé maître SealedSecrets est elle-même stockée dans Vaultwarden. Pratique, mais attention à la dépendance de restauration : il faut pouvoir rouvrir le coffre sans le cluster.</li>
 </ul>
+<p><em>Le jour où je perds l'accès aux deux en même temps, je retourne aux post-it sous le clavier.</em></p>
 
     </div>
   </article>

@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Cet article est un retour d'expérience, pas un tutoriel. Il raconte une erreur d'architecture qui semble anodine et qui peut te couper complètement du réseau, sans porte de sortie logicielle. Le genre de piège qu'on ne voit pas venir — jusqu'à ce qu'on soit dedans.</p>
+      <p>Cet article est un retour d'expérience, pas un tutoriel. Il raconte une erreur d'architecture qui semble anodine et qui peut te couper complètement du réseau, sans porte de sortie logicielle. Le genre de piège qu'on ne voit pas venir, jusqu'à ce qu'on soit dedans.</p>
 <p>Le contexte : j'ai monté du 802.1X sur les ports de mon switch, avec FreeRADIUS comme serveur d'authentification (voir l'article précédent). FreeRADIUS tourne dans mon cluster Kubernetes. Et c'est là que le piège se referme.</p>
 <h2>Le décor</h2>
 <p>Trois faits, chacun anodin :</p>
@@ -211,8 +211,7 @@
 <li>Le node K3s est <strong>branché sur un port du switch</strong>.</li>
 <li>Les ports du switch exigent une <strong>authentification RADIUS</strong> pour laisser passer le trafic.</li>
 </ol>
-<p>Tu vois déjà le problème se dessiner ? Le serveur qui autorise les ports dépend d'un port… qui a besoin de ce serveur pour s'ouvrir.</p>
-<hr>
+<p>Tu vois déjà le problème se dessiner ? Le serveur qui autorise les ports dépend d'un port qui a besoin de ce serveur pour s'ouvrir. Un serpent qui se mord la queue, sauf que le serpent héberge aussi mes conteneurs.</p>
 <h2>L'enchaînement fatal</h2>
 <p>Imaginons que FreeRADIUS redémarre (mise à jour, crash, reboot du node). Voici ce qui se passe :</p>
 <pre><code>FreeRADIUS down
@@ -239,9 +238,8 @@ impossible de redémarrer FreeRADIUS (pas de réseau, pas d'image)
 │  → deadlock, personne ne cède                │
 └─────────────────────────────────────────────┘
 </code></pre>
-<p>C'est une <strong>dépendance circulaire</strong> classique, mais particulièrement vicieuse : elle ne se déclenche qu'au <em>pire</em> moment (quand RADIUS est déjà tombé), et aucune action logicielle ne t'en sort. Le node est isolé. Pas de SSH, pas de <code>kubectl</code>, pas d'internet.</p>
-<p>La seule issue à ce stade : un accès physique/console au switch pour désactiver 802.1X à la main. En pleine nuit, ce n'est pas idéal.</p>
-<hr>
+<p>C'est une <strong>dépendance circulaire</strong> classique, mais particulièrement vicieuse : elle ne se déclenche qu'au <em>pire</em> moment, quand RADIUS est déjà tombé, et aucune action logicielle ne t'en sort. Le node est isolé. Pas de SSH, pas de <code>kubectl</code>, pas d'internet.</p>
+<p>La seule issue à ce stade : un accès physique/console au switch pour désactiver 802.1X à la main. En pleine nuit, ce n'est pas idéal, et devine à quelle heure ces choses-là arrivent toujours.</p>
 <h2>Pourquoi c'est un piège si courant</h2>
 <p>Ce genre de deadlock revient dès qu'un service d'infrastructure critique <strong>dépend de la chose qu'il rend possible</strong> :</p>
 <ul>
@@ -249,8 +247,7 @@ impossible de redémarrer FreeRADIUS (pas de réseau, pas d'image)
 <li>Le serveur DHCP qui a besoin d'une IP fournie par DHCP.</li>
 <li>Le serveur d'auth réseau qui est derrière l'auth réseau qu'il fournit.</li>
 </ul>
-<p>Le point commun : ça marche parfaitement <strong>tant que tout tourne</strong>. Le problème n'apparaît qu'au redémarrage à froid ou après une panne — exactement quand on a le moins envie de déboguer.</p>
-<hr>
+<p>Le point commun : ça marche parfaitement tant que tout tourne. Le problème n'apparaît qu'au redémarrage à froid ou après une panne, exactement quand on a le moins envie de déboguer.</p>
 <h2>La solution : casser le cycle sur un port</h2>
 <p>Il faut qu'<strong>au moins un port</strong> — celui du serveur RADIUS lui-même — ne dépende pas de RADIUS pour fonctionner. Deux approches, que j'ai combinées.</p>
 <h3>1. Sortir le node du 802.1X : le mettre en MAB</h3>
@@ -260,17 +257,14 @@ impossible de redémarrer FreeRADIUS (pas de réseau, pas d'image)
 add chain=input   in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=drop
 add chain=forward in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=drop
 </code></pre>
-<p>Ce filtre laisse passer uniquement la MAC du node K8s, et il vit <strong>entièrement dans le switch</strong>. Si FreeRADIUS est mort, ça change rien : le port du node reste ouvert. Le cycle est brisé.</p>
-<blockquote>
-<p>Les autres ports (<code>ether3-5</code>), eux, restent en vrai 802.1X. Seul le port qui héberge l'infra RADIUS est exempté. On ne sacrifie la sécurité que là où c'est strictement nécessaire.</p>
-</blockquote>
+<p>Ce filtre laisse passer uniquement la MAC du node K8s, et il vit <strong>entièrement dans le switch</strong>. Si FreeRADIUS est mort, ça ne change rien : le port du node reste ouvert. Le cycle est brisé.</p>
+<p>Les autres ports (<code>ether3-5</code>), eux, restent en vrai 802.1X. Seul le port qui héberge l'infra RADIUS est exempté. On ne sacrifie la sécurité que là où c'est strictement nécessaire, pas partout par flemme.</p>
 <h3>2. Le filet de sécurité : <code>auth-timeout-action=allow</code></h3>
 <p>Si un jour je veux quand même mettre le node en 802.1X, il existe un garde-fou côté MikroTik : dire au port « si le serveur RADIUS ne répond pas dans le délai, <strong>ouvre</strong> le port au lieu de le fermer ».</p>
 <pre><code class="language-rsc">/interface dot1x server set interface=ether2 auth-timeout-action=allow
 </code></pre>
-<p><code>auth-timeout-action=allow</code> inverse le comportement par défaut. Normalement, pas de réponse RADIUS = port fermé (fail-closed). Là, on passe en <strong>fail-open</strong> sur ce port précis : le timeout ouvre le port. RADIUS peut tomber, le node garde le réseau, et peut redémarrer FreeRADIUS.</p>
-<p>Le compromis est explicite : <strong>fail-open = moins sûr</strong> (si RADIUS tombe, ce port n'est plus protégé). On ne l'active que sur le port de l'infra critique, jamais sur les ports clients.</p>
-<hr>
+<p><code>auth-timeout-action=allow</code> inverse le comportement par défaut. Normalement, pas de réponse RADIUS = port fermé (fail-closed). Là, on passe en <strong>fail-open</strong> sur ce port précis : le timeout ouvre le port. RADIUS peut tomber, le node garde le réseau, et peut redémarrer FreeRADIUS lui-même.</p>
+<p>Le compromis est explicite : fail-open, c'est moins sûr, si RADIUS tombe, ce port n'est plus protégé du tout. On ne l'active que sur le port de l'infra critique, jamais sur les ports clients.</p>
 <h2>Fail-closed vs fail-open : le vrai arbitrage</h2>
 <p>Toute la leçon tient dans ce choix :</p>
 <table>
@@ -294,25 +288,22 @@ add chain=forward in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=
 </tr>
 </tbody>
 </table>
-<p>La sécurité par défaut (fail-closed) est la bonne — <strong>sauf</strong> pour le maillon dont dépend la sécurité elle-même. Là, il faut accepter un fail-open, sinon on se verrouille dehors.</p>
-<hr>
+<p>La sécurité par défaut (fail-closed) est la bonne, sauf pour le maillon dont dépend la sécurité elle-même. Là, il faut accepter un fail-open, sinon on se verrouille dehors soi-même — le pire genre d'incident, celui qu'on s'inflige.</p>
 <h2>Ce que j'en retiens</h2>
 <ul>
 <li><strong>Cartographier les dépendances de démarrage à froid.</strong> Se poser la question : « si tout est éteint et que je rallume, dans quel ordre ça doit remonter ? ». Si A a besoin de B qui a besoin de A, il y a un problème.</li>
-<li><strong>Un service d'infra ne doit jamais dépendre de ce qu'il fournit.</strong> DNS, DHCP, auth réseau — ces briques doivent pouvoir démarrer de façon autonome.</li>
+<li><strong>Un service d'infra ne doit jamais dépendre de ce qu'il fournit.</strong> DNS, DHCP, auth réseau, ces briques doivent pouvoir démarrer de façon autonome.</li>
 <li><strong>Prévoir une porte de sortie hors-bande.</strong> Un accès console au switch, une IP de management non filtrée, un port « toujours ouvert ». Le jour où le cycle se referme, c'est la seule issue.</li>
-<li><strong>Le pire moment est le seul moment.</strong> Ces bugs ne se manifestent qu'en panne. Les tester volontairement (couper RADIUS et vérifier qu'on s'en sort) vaut mieux que les découvrir en vrai.</li>
+<li><strong>Le pire moment est le seul moment.</strong> Ces bugs ne se manifestent qu'en panne. Les tester volontairement, couper RADIUS et vérifier qu'on s'en sort, vaut mieux que les découvrir en vrai à 2h du matin.</li>
 </ul>
-<blockquote>
 <p>Mon garde-fou actuel : le node K8s est en MAB (filtre bridge, indépendant de RADIUS), et <code>auth-timeout-action=allow</code> est documenté comme prérequis avant toute réactivation du 802.1X sur ce port. Le cycle ne peut plus se refermer.</p>
-</blockquote>
-<hr>
 <h2>Aller plus loin</h2>
 <ul>
 <li><strong>Un RADIUS secondaire hors-cluster</strong> : héberger une instance FreeRADIUS de secours sur une machine qui n'est pas derrière 802.1X (le Proxmox lui-même, par exemple), pour la redondance.</li>
 <li><strong>Watchdog de démarrage</strong> : un script au boot du node qui vérifie l'ordre des dépendances et alerte si un cycle est détecté.</li>
-<li><strong>Le même raisonnement pour le DNS</strong> : mon Pi-hole tourne aussi dans K8s — j'en parle dans l'article sur le DNS à deux niveaux, où le node ne doit surtout pas utiliser Pi-hole comme résolveur.</li>
+<li><strong>Le même raisonnement pour le DNS</strong> : mon Pi-hole tourne aussi dans K8s, j'en parle dans l'article sur le DNS à deux niveaux, où le node ne doit surtout pas utiliser Pi-hole comme résolveur.</li>
 </ul>
+<p><em>La prochaine fois que quelque chose « ne peut logiquement pas planter en même temps que son propre prérequis », je vérifie quand même.</em></p>
 
     </div>
   </article>
