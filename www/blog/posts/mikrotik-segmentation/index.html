@@ -202,7 +202,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Brancher son homelab directement sur la box du FAI, c'est simple. Jusqu'au jour où une VM compromise se retrouve sur le même réseau que ton téléphone, ta TV et l'ordi du salon. La bonne pratique, c'est d'<strong>isoler</strong> : le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.</p>
+      <p>Brancher son homelab directement sur la box du FAI, c'est simple. Jusqu'au jour où une VM compromise se retrouve sur le même réseau que le téléphone, la TV et l'ordi du salon. La bonne pratique, c'est d'<strong>isoler</strong> : le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.</p>
 <p>Chez moi, ce rôle est tenu par un <strong>MikroTik RB750Gr3</strong>, un petit routeur pas cher mais redoutablement complet (RouterOS). Dans ce post, on construit la segmentation complète. On va voir :</p>
 <ol>
 <li>Le WAN statique vers la box et le LAN isolé en <code>10.0.0.0/24</code></li>
@@ -306,7 +306,7 @@ MikroTik RB750Gr3
     in-interface=bridge dst-address=192.168.1.0/24 \
     comment=&quot;isolation: homelab ne peut pas joindre reseau maison&quot;
 </code></pre>
-<p><strong>Le lab ne peut pas parler au réseau de la maison.</strong> Une VM compromise dans le lab ne verra jamais ton NAS perso, ta TV, ton téléphone. C'est la règle centrale de la segmentation.</p>
+<p><strong>Le lab ne peut pas parler au réseau de la maison.</strong> Une VM compromise dans le lab ne verra jamais le NAS perso, la TV, le téléphone. C'est la règle centrale de la segmentation.</p>
 <p>Le reste de la chaîne autorise ce qui doit passer :</p>
 <pre><code class="language-rsc"># Fasttrack pour les perfs
 /ip firewall filter add chain=forward action=fasttrack-connection \

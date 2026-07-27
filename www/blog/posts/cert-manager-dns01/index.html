@@ -213,15 +213,15 @@
 <h2>Prérequis</h2>
 <ul>
 <li>cert-manager installé dans le cluster</li>
-<li>Un domaine dont tu contrôles la zone DNS via API</li>
-<li>Le webhook cert-manager de ton registrar (ici Infomaniak)</li>
+<li>Un domaine dont on contrôle la zone DNS via API</li>
+<li>Le webhook cert-manager du registrar (ici Infomaniak)</li>
 </ul>
 <hr>
 <h2>Pourquoi DNS-01 et pas HTTP-01 ?</h2>
-<p>Let's Encrypt doit vérifier que tu contrôles bien le domaine. Deux méthodes :</p>
+<p>Let's Encrypt doit vérifier qu'on contrôle bien le domaine. Deux méthodes :</p>
 <ul>
 <li><strong>HTTP-01</strong> : LE serveur pose un fichier sur <code>http://sous-domaine/.well-known/...</code>. Problème : pour un <strong>wildcard</strong> <code>*.domaine</code>, il n'existe pas de « sous-domaine » unique à valider. HTTP-01 ne sait pas faire.</li>
-<li><strong>DNS-01</strong> : tu prouves ton contrôle en créant un enregistrement TXT dans la zone DNS. Ça marche pour n'importe quel nom, <strong>y compris un wildcard</strong>. C'est la seule option ici.</li>
+<li><strong>DNS-01</strong> : on prouve le contrôle en créant un enregistrement TXT dans la zone DNS. Ça marche pour n'importe quel nom, <strong>y compris un wildcard</strong>. C'est la seule option ici.</li>
 </ul>
 <pre><code>cert-manager ──&gt; crée un TXT _acme-challenge.domaine ──&gt; via API du registrar
       │                                                        │

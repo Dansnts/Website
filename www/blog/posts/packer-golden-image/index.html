@@ -369,7 +369,7 @@ EOF
 </code></pre>
 <p>Pourquoi chaque ligne compte :</p>
 <p><code>cloud-init clean</code> : efface l'état de cloud-init pour qu'il se relance proprement au premier boot du clone (et applique la nouvelle IP, le nouveau user…).</p>
-<p><code>rm /etc/ssh/ssh_host_*</code> : supprime les clés d'hôte SSH. <strong>Critique.</strong> Sinon, toutes tes VMs auraient la même empreinte SSH, un désastre de sécurité et une source d'avertissements <code>known_hosts</code>. Elles sont régénérées au premier boot.</p>
+<p><code>rm /etc/ssh/ssh_host_*</code> : supprime les clés d'hôte SSH. <strong>Critique.</strong> Sinon, toutes les VMs auraient la même empreinte SSH, un désastre de sécurité et une source d'avertissements <code>known_hosts</code>. Elles sont régénérées au premier boot.</p>
 <p><code>truncate /etc/machine-id</code> : vide l'ID machine. S'il n'est pas vide, toutes les VMs clonées partagent le même <code>machine-id</code>, ce qui casse la résolution DHCP, systemd, journald… Vidé, il est regénéré au boot, unique par VM.</p>
 <blockquote>
 <p>Règle du template : <strong>tout ce qui est unique à une machine doit être effacé.</strong> Clés SSH, machine-id, logs, état cloud-init. Ce qui reste, c'est le socle commun. C'est exactement ça, une golden image.</p>

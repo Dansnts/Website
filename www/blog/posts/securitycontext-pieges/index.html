@@ -362,7 +362,7 @@ kubectl describe pod &lt;pod&gt; -n homelab
 docker run --rm &lt;image&gt; id
 </code></pre>
 <blockquote>
-<p>Le vrai piège de ces bugs, c'est qu'ils sont <strong>silencieux ou cryptiques</strong>. Un <code>CrashLoopBackOff</code> sans message clair, alors que la vraie cause est une capability manquante. Quand un pod refuse de démarrer <em>après</em> que tu as ajouté un securityContext, c'est presque toujours ça. Enlève-le et réintroduis les restrictions une par une.</p>
+<p>Le vrai piège de ces bugs, c'est qu'ils sont <strong>silencieux ou cryptiques</strong>. Un <code>CrashLoopBackOff</code> sans message clair, alors que la vraie cause est une capability manquante. Quand un pod refuse de démarrer <em>après</em> l'ajout d'un securityContext, c'est presque toujours ça. On l'enlève et on réintroduit les restrictions une par une.</p>
 </blockquote>
 <hr>
 <h2>Aller plus loin</h2>

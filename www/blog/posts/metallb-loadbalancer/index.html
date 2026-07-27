@@ -203,7 +203,7 @@
 
     <div class="blog-body">
       <p>Sur un cloud public, déclarer un <code>Service type: LoadBalancer</code> provoque la création d'un vrai load-balancer avec une IP publique. Sur du bare-metal, un serveur chez soi, il ne se passe rien. Le service reste bloqué en <code>&lt;pending&gt;</code>, éternellement, faute de quelqu'un pour lui attribuer une IP.</p>
-<p><strong>MetalLB</strong> comble ce trou. Il donne à Kubernetes la capacité de distribuer des IP de ton réseau local aux services <code>LoadBalancer</code>. Dans ce post :</p>
+<p><strong>MetalLB</strong> comble ce trou. Il donne à Kubernetes la capacité de distribuer des IP du réseau local aux services <code>LoadBalancer</code>. Dans ce post :</p>
 <ol>
 <li>Le problème du <code>type: LoadBalancer</code> en bare-metal</li>
 <li>Le pool d'adresses et le mode L2</li>
@@ -213,7 +213,7 @@
 <h2>Prérequis</h2>
 <ul>
 <li>Un cluster K3s (ou tout Kubernetes bare-metal)</li>
-<li>Une plage d'IP libre sur ton LAN (hors DHCP)</li>
+<li>Une plage d'IP libre sur le LAN (hors DHCP)</li>
 <li>MetalLB installé</li>
 </ul>
 <h2>Le problème à résoudre</h2>
@@ -221,7 +221,7 @@
 <pre><code>Service type: LoadBalancer  ──sans MetalLB──&gt; &lt;pending&gt; (jamais d'IP)
 Service type: LoadBalancer  ──avec MetalLB──&gt; 10.0.0.102 (IP du LAN)
 </code></pre>
-<p>MetalLB pioche dans un pool d'IP que tu lui réserves et les attribue aux services. Simple sur le papier, mais ça change tout pour exposer proprement.</p>
+<p>MetalLB pioche dans un pool d'IP qu'on lui réserve et les attribue aux services. Simple sur le papier, mais ça change tout pour exposer proprement.</p>
 <h2>Le pool d'adresses et le mode L2</h2>
 <p>La config MetalLB tient en deux ressources. D'abord, le <strong>pool</strong> d'IP disponibles :</p>
 <pre><code class="language-yaml">apiVersion: metallb.io/v1beta1
@@ -243,7 +243,7 @@ spec:
   ipAddressPools:
     - homelab-pool
 </code></pre>
-<p><code>addresses: 10.0.0.100-10.0.0.110</code> : la plage réservée. <strong>Crucial</strong> : ces IP doivent être <em>hors</em> de la plage DHCP de ton routeur. Chez moi, le DHCP du MikroTik distribue <code>10.0.0.200-250</code>, donc <code>100-110</code> est libre. Aucun conflit possible, et c'est le genre de conflit qui, sinon, se découvre un dimanche soir.</p>
+<p><code>addresses: 10.0.0.100-10.0.0.110</code> : la plage réservée. <strong>Crucial</strong> : ces IP doivent être <em>hors</em> de la plage DHCP du routeur. Chez moi, le DHCP du MikroTik distribue <code>10.0.0.200-250</code>, donc <code>100-110</code> est libre. Aucun conflit possible, et c'est le genre de conflit qui, sinon, se découvre un dimanche soir.</p>
 <p><code>L2Advertisement</code> : le mode L2 fait que le node répond aux requêtes ARP pour les IP du pool. Du point de vue du réseau, c'est comme si le node « possédait » ces IP. Pas de config routeur, pas de BGP, ça marche tel quel sur un LAN simple.</p>
 <p>Le mode L2 a une limite : tout le trafic d'une IP passe par <strong>un seul</strong> node, pas de vraie répartition de charge. Sur un cluster single-node comme le mien, aucune importance, vu qu'il n'y a qu'un node de toute façon. Sur du multi-node, on regarderait plutôt le mode BGP pour une vraie distribution.</p>
 <h2>Assigner une IP fixe à un service</h2>

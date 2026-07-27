@@ -260,7 +260,7 @@ provider &quot;proxmox&quot; {
 </code></pre>
 <p>Deux mécanismes d'auth cohabitent, et c'est <strong>voulu</strong> :</p>
 <p><code>api_token</code> : l'API REST de Proxmox (créer/cloner/configurer les VMs). Le token se génère dans <em>Datacenter → Permissions → API Tokens</em>, format <code>user@realm!nom-du-token=secret</code>.</p>
-<p>Le bloc <code>ssh</code> : le provider a <strong>aussi</strong> besoin d'un accès SSH au node. Certaines opérations, uploader un snippet cloud-init typiquement, ne passent pas par l'API. Sans ce bloc, tu tombes sur des erreurs obscures au moment de l'upload du cloud-init, et tu perds vingt minutes à chercher pourquoi.</p>
+<p>Le bloc <code>ssh</code> : le provider a <strong>aussi</strong> besoin d'un accès SSH au node. Certaines opérations, uploader un snippet cloud-init typiquement, ne passent pas par l'API. Sans ce bloc, on tombe sur des erreurs obscures au moment de l'upload du cloud-init, et on perd vingt minutes à chercher pourquoi.</p>
 <p><code>insecure = true</code> : le certificat auto-signé de Proxmox. En homelab, on assume. En prod, on importe un vrai cert.</p>
 <p>Les variables sont déclarées à part, le secret marqué comme tel :</p>
 <pre><code class="language-hcl">variable &quot;proxmox_token_secret&quot; {
@@ -326,9 +326,9 @@ proxmox_token_secret = &quot;TON_SECRET&quot;
 }
 </code></pre>
 <p>Ce qui compte vraiment ici :</p>
-<p><code>clone { full = true }</code> : clone <strong>complet</strong>, pas lié. La nouvelle VM est totalement indépendante du template, tu peux supprimer le template sans rien casser.</p>
+<p><code>clone { full = true }</code> : clone <strong>complet</strong>, pas lié. La nouvelle VM est totalement indépendante du template, on peut supprimer le template sans rien casser.</p>
 <p><code>cpu { type = &quot;host&quot; }</code> : la VM voit le vrai CPU de l'hôte, pas un CPU générique émulé. Meilleures perfs, indispensable pour les instructions modernes.</p>
-<p><code>agent { enabled = true }</code> : active le QEMU guest agent. Sans lui, Terraform ne connaît jamais l'IP réelle de la VM et attend indéfiniment. Le paquet <code>qemu-guest-agent</code> doit déjà être dans le template, sinon tu attends pour rien.</p>
+<p><code>agent { enabled = true }</code> : active le QEMU guest agent. Sans lui, Terraform ne connaît jamais l'IP réelle de la VM et attend indéfiniment. Le paquet <code>qemu-guest-agent</code> doit déjà être dans le template, sinon on attend pour rien.</p>
 <p><code>initialization.ip_config</code> : cloud-init applique cette IP au premier boot. On fixe l'IP ici plutôt que de dépendre du DHCP.</p>
 <p><code>user_data_file_id</code> : pointe vers le fichier cloud-init, déclaré comme ressource séparée :</p>
 <pre><code class="language-hcl">resource &quot;proxmox_virtual_environment_file&quot; &quot;k3s_cloud_init&quot; {

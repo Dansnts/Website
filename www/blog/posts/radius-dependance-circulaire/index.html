@@ -238,8 +238,8 @@ impossible de redémarrer FreeRADIUS (pas de réseau, pas d'image)
 │  → deadlock, personne ne cède                │
 └─────────────────────────────────────────────┘
 </code></pre>
-<p>C'est une <strong>dépendance circulaire</strong> classique, mais particulièrement vicieuse : elle ne se déclenche qu'au <em>pire</em> moment, quand RADIUS est déjà tombé, et aucune action logicielle ne t'en sort. Le node est isolé. Pas de SSH, pas de <code>kubectl</code>, pas d'internet.</p>
-<p>La seule issue à ce stade : un accès physique/console au switch pour désactiver 802.1X à la main. En pleine nuit, ce n'est pas idéal, et devine à quelle heure ces choses-là arrivent toujours.</p>
+<p>C'est une <strong>dépendance circulaire</strong> classique, mais particulièrement vicieuse : elle ne se déclenche qu'au <em>pire</em> moment, quand RADIUS est déjà tombé, et aucune action logicielle ne permet d'en sortir. Le node est isolé. Pas de SSH, pas de <code>kubectl</code>, pas d'internet.</p>
+<p>La seule issue à ce stade : un accès physique/console au switch pour désactiver 802.1X à la main. En pleine nuit, ce n'est pas idéal, et on devine à quelle heure ces choses-là arrivent toujours.</p>
 <h2>Pourquoi c'est un piège si courant</h2>
 <p>Ce genre de deadlock revient dès qu'un service d'infrastructure critique <strong>dépend de la chose qu'il rend possible</strong> :</p>
 <ul>

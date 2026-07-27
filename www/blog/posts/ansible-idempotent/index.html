@@ -213,7 +213,7 @@
 </ol>
 <h2>Prérequis</h2>
 <ul>
-<li>Ansible installé sur ta machine</li>
+<li>Ansible installé sur la machine</li>
 <li>Un accès SSH aux hôtes cibles</li>
 <li>Des VMs déjà provisionnées (voir les articles Terraform / Packer)</li>
 </ul>
@@ -362,14 +362,14 @@ ExecStart=/usr/local/bin/node_exporter
 </code></pre>
 <p>Le <code>match: macaddress</code> garantit que la config s'applique à la bonne carte réseau, quel que soit son nom d'interface. La seconde tâche (<code>network: {config: disabled}</code>) empêche cloud-init de régénérer un netplan concurrent au prochain boot.</p>
 <blockquote>
-<p>Le piège classique : sans désactiver cloud-init, tu poses ton netplan, tout marche, puis un reboot plus tard cloud-init réécrit par-dessus et l'IP saute. On coupe les deux sources de vérité pour n'en garder qu'une.</p>
+<p>Le piège classique : sans désactiver cloud-init, on pose son netplan, tout marche, puis un reboot plus tard cloud-init réécrit par-dessus et l'IP saute. On coupe les deux sources de vérité pour n'en garder qu'une.</p>
 </blockquote>
 <p>Une variable importante à surveiller : le DNS du node.</p>
 <pre><code class="language-yaml"># defaults/main.yml
 k3s_dns: &quot;10.0.0.101&quot;   # Pi-hole
 </code></pre>
 <blockquote>
-<p><strong>Attention</strong> : <code>10.0.0.101</code> c'est Pi-hole, qui tourne <em>dans</em> le cluster K3s. Mettre Pi-hole comme DNS du node crée une dépendance circulaire au boot (le node a besoin de DNS pour démarrer K8s, mais le DNS est dans K8s). En pratique, le node doit pointer sur un DNS externe (<code>1.1.1.1</code>). À garder en tête selon ton ordre de démarrage.</p>
+<p><strong>Attention</strong> : <code>10.0.0.101</code> c'est Pi-hole, qui tourne <em>dans</em> le cluster K3s. Mettre Pi-hole comme DNS du node crée une dépendance circulaire au boot (le node a besoin de DNS pour démarrer K8s, mais le DNS est dans K8s). En pratique, le node doit pointer sur un DNS externe (<code>1.1.1.1</code>). À garder en tête selon l'ordre de démarrage.</p>
 </blockquote>
 <hr>
 <h2>Le flux Ansible</h2>
@@ -390,7 +390,7 @@ rejouable à l'infini → changed=0 au 2e run
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong><code>ansible-lint</code></strong> : passe tes rôles au linter, il attrape les tâches non idempotentes et les mauvaises pratiques avant qu'elles ne mordent.</li>
+<li><strong><code>ansible-lint</code></strong> : passe les rôles au linter, il attrape les tâches non idempotentes et les mauvaises pratiques avant qu'elles ne mordent.</li>
 <li><strong>Ansible Vault</strong> : pour chiffrer les secrets (mots de passe, tokens) directement dans le repo, au lieu de les garder à part.</li>
 <li><strong><code>--check</code> (dry-run)</strong> : <code>ansible-playbook --check</code> montre ce qui <em>changerait</em> sans rien appliquer. Idéal pour vérifier avant de lancer pour de vrai.</li>
 <li><strong>Galaxy</strong> : beaucoup de rôles courants (node_exporter inclus) existent déjà sur Ansible Galaxy. Réinventer la roue est un bon exercice, mais en prod on réutilise.</li>

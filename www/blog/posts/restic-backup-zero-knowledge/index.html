@@ -303,9 +303,9 @@ spec:
 <h2>L'avertissement à graver</h2>
 <p>Une seule chose peut rendre tout ce système inutile :</p>
 <blockquote>
-<p><strong>Sans le <code>RESTIC_PASSWORD</code>, les données sont définitivement inaccessibles.</strong> C'est la contrepartie du zero-knowledge : personne, pas même toi, ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé <strong>hors de la machine</strong> (gestionnaire de mots de passe, coffre physique). Le perdre égale perdre le backup.</p>
+<p><strong>Sans le <code>RESTIC_PASSWORD</code>, les données sont définitivement inaccessibles.</strong> C'est la contrepartie du zero-knowledge : personne, pas même le propriétaire des données, ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé <strong>hors de la machine</strong> (gestionnaire de mots de passe, coffre physique). Le perdre égale perdre le backup.</p>
 </blockquote>
-<p>C'est le paradoxe du chiffrement fort : la sécurité qui protège tes données de l'hébergeur les protège aussi de toi si tu perds la clé.</p>
+<p>C'est le paradoxe du chiffrement fort : la sécurité qui protège les données de l'hébergeur les protège aussi de leur propriétaire en cas de perte de la clé.</p>
 <hr>
 <h2>Restaurer (parce qu'un backup se teste)</h2>
 <pre><code class="language-bash"># Lister les snapshots

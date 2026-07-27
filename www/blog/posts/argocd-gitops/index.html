@@ -214,7 +214,7 @@
 <h2>Prérequis</h2>
 <ul>
 <li>Un cluster K3s fonctionnel</li>
-<li>Un repo Git avec tes manifests</li>
+<li>Un repo Git avec les manifests</li>
 <li>Un ingress (Traefik) et un certificat TLS</li>
 </ul>
 <hr>
@@ -231,12 +231,12 @@
 <tbody>
 <tr>
 <td>Source de vérité</td>
-<td>Ta machine / ta mémoire</td>
+<td>La machine / la mémoire</td>
 <td>Le repo Git</td>
 </tr>
 <tr>
 <td>Qui applique</td>
-<td>Toi, à la main</td>
+<td>Manuellement</td>
 <td>Le contrôleur ArgoCD</td>
 </tr>
 <tr>
@@ -256,7 +256,7 @@
 </tr>
 </tbody>
 </table>
-<p>Le mode <code>kubectl apply</code>, c'est <strong>impératif</strong> : tu dis au cluster <em>quoi faire</em>. Le GitOps, c'est <strong>déclaratif</strong> : tu déclares l'état voulu dans Git, et ArgoCD réconcilie en boucle. Si quelqu'un modifie une ressource à la main dans le cluster, ArgoCD le voit (<code>OutOfSync</code>) et peut la remettre en conformité.</p>
+<p>Le mode <code>kubectl apply</code>, c'est <strong>impératif</strong> : on dit au cluster <em>quoi faire</em>. Le GitOps, c'est <strong>déclaratif</strong> : on déclare l'état voulu dans Git, et ArgoCD réconcilie en boucle. Si quelqu'un modifie une ressource à la main dans le cluster, ArgoCD le voit (<code>OutOfSync</code>) et peut la remettre en conformité.</p>
 <pre><code>        AVANT (push)                       APRÈS (pull, GitOps)
 
    toi ──kubectl apply──&gt; cluster     Git &lt;──git push── toi
@@ -351,7 +351,7 @@ data:
 <li><strong>Sealed Secrets</strong> : le GitOps suppose que <em>tout</em> est dans Git, y compris les secrets, mais chiffrés. C'est le sujet d'un article dédié.</li>
 <li><strong>Notifications</strong> : brancher ArgoCD sur un webhook pour être alerté quand une app passe <code>OutOfSync</code> ou <code>Degraded</code>.</li>
 </ul>
-<p><em>Git ne ment jamais. Le cluster, si tu le laisses faire, oui.</em></p>
+<p><em>Git ne ment jamais. Le cluster, si on le laisse faire, oui.</em></p>
 
     </div>
   </article>

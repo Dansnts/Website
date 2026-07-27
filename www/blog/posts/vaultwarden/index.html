@@ -260,7 +260,7 @@
 <h2>L'ADMIN_TOKEN en Argon2id</h2>
 <p>Le panneau <code>/admin</code> permet de créer des utilisateurs, régler la rétention, gérer les invitations. Autant dire qu'il faut le protéger sérieusement.</p>
 <p>Historiquement, <code>ADMIN_TOKEN</code> était un mot de passe en clair : Vaultwarden le comparait tel quel. Problème, il est présent dans l'environnement du conteneur, donc lisible par quiconque peut faire un <code>kubectl exec</code> ou lire le manifeste. Une fuite du token, c'est un accès admin total offert sur un plateau.</p>
-<p>La bonne pratique aujourd'hui, c'est de stocker non pas le token mais son <strong>hash Argon2id</strong> (au format PHC, <code>$argon2id$...</code>). Vaultwarden hache alors ce que tu tapes et compare les empreintes, le secret réel ne transite plus en clair dans la config. Argon2id est une fonction de dérivation « memory-hard », conçue pour résister au brute-force GPU. Le bon choix pour ce genre de secret.</p>
+<p>La bonne pratique aujourd'hui, c'est de stocker non pas le token mais son <strong>hash Argon2id</strong> (au format PHC, <code>$argon2id$...</code>). Vaultwarden hache alors ce qui est saisi et compare les empreintes, le secret réel ne transite plus en clair dans la config. Argon2id est une fonction de dérivation « memory-hard », conçue pour résister au brute-force GPU. Le bon choix pour ce genre de secret.</p>
 <p>On génère ce hash avec l'outil embarqué dans l'image :</p>
 <pre><code class="language-bash">docker run --rm -it vaultwarden/server /vaultwarden hash
 </code></pre>

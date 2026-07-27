@@ -222,10 +222,10 @@
 db.sqlite3-wal   ← les écritures récentes, pas encore fusionnées
 db.sqlite3-shm   ← la mémoire partagée d'index du WAL
 </code></pre>
-<p>Si tu copies <code>db.sqlite3</code> à un instant T pendant que l'app écrit :</p>
+<p>Si on copie <code>db.sqlite3</code> à un instant T pendant que l'app écrit :</p>
 <ul>
 <li>Le fichier principal peut être dans un état <strong>intermédiaire</strong> (une transaction à moitié écrite).</li>
-<li>Les écritures récentes sont dans le <code>-wal</code>, que tu n'as peut-être pas copié de façon cohérente avec le principal.</li>
+<li>Les écritures récentes sont dans le <code>-wal</code>, peut-être pas copié de façon cohérente avec le principal.</li>
 </ul>
 <p>Résultat : une copie qui reflète un instant incohérent. Elle peut sembler OK et se révéler corrompue à la restauration. Le pire type de bug de backup, celui qu'on découvre trop tard, en général le jour où on en a besoin.</p>
 <pre><code>App écrit ──&gt; db.sqlite3 (moitié d'une transaction) + db.sqlite3-wal
