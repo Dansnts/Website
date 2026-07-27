@@ -50,9 +50,9 @@ impossible de redémarrer FreeRADIUS (pas de réseau, pas d'image)
 └─────────────────────────────────────────────┘
 ```
 
-C'est une **dépendance circulaire** classique, mais particulièrement vicieuse : elle ne se déclenche qu'au *pire* moment, quand RADIUS est déjà tombé, et aucune action logicielle ne t'en sort. Le node est isolé. Pas de SSH, pas de `kubectl`, pas d'internet.
+C'est une **dépendance circulaire** classique, mais particulièrement vicieuse : elle ne se déclenche qu'au *pire* moment, quand RADIUS est déjà tombé, et aucune action logicielle ne permet d'en sortir. Le node est isolé. Pas de SSH, pas de `kubectl`, pas d'internet.
 
-La seule issue à ce stade : un accès physique/console au switch pour désactiver 802.1X à la main. En pleine nuit, ce n'est pas idéal, et devine à quelle heure ces choses-là arrivent toujours.
+La seule issue à ce stade : un accès physique/console au switch pour désactiver 802.1X à la main. En pleine nuit, ce n'est pas idéal, et on devine à quelle heure ces choses-là arrivent toujours.
 
 ## Pourquoi c'est un piège si courant
 

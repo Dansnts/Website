@@ -1,2 +1,23 @@
-User-agent: *
+# Bots d'entrainement IA (scraping pour de futurs modeles, pas de recherche en direct)
+User-agent: GPTBot
 Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+# Tout le reste (SEO classique + recherche IA en direct type OAI-SearchBot/ChatGPT-User) : autorise,
+# sauf les PDF du CV pour ne pas les faire remonter dans les resultats de recherche
+User-agent: *
+Allow: /
+Disallow: /cv.pdf
+Disallow: /cv-fr.pdf
+Disallow: /cv-en.pdf

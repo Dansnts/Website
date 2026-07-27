@@ -41,7 +41,7 @@
 
         <section class="project-section">
           <h2 data-i18n="tb-problem-title">Problème</h2>
-          <p data-i18n="tb-problem-text">Deux classes d'objets sont ciblées : les <strong>panneaux de signalisation</strong> (<code>sign</code>) et les <strong>marquages au sol</strong> (<code>road_marking</code>). Chaque image à 8'192 × 4'096 pixels dépasse la fenêtre d'entrée de tout modèle de segmentation courant, il faut découper en tuiles avant l'inférence. Traiter 300'000 images en un délai raisonnable impose de distribuer le calcul sur plusieurs GPUs en parallèle.</p>
+          <p data-i18n="tb-problem-text">Plusieurs classes d'objets sont ciblées : <strong>panneaux de signalisation</strong>, <strong>marquages au sol</strong> et <strong>plaques d'égout</strong>, avec une granularité configurable de 2 à 6 labels selon le run. Chaque image à 8'192 × 4'096 pixels dépasse la fenêtre d'entrée de tout modèle de segmentation courant. Il faut découper en tuiles avant l'inférence. Traiter des dizaines de milliers d'images en un délai raisonnable impose de distribuer le calcul sur plusieurs GPUs en parallèle.</p>
         </section>
 
         <section class="project-section">
@@ -49,7 +49,7 @@
           <ul class="benefits-list">
             <li data-i18n="tb-pipeline-1"><strong>Lecture</strong> : le driver liste les objets du préfixe S3 d'entrée et distribue les clés d'image aux workers Ray.</li>
             <li data-i18n="tb-pipeline-2"><strong>Téléchargement</strong> : chaque worker télécharge l'image depuis MinIO et extrait les coordonnées GPS de l'EXIF.</li>
-            <li data-i18n="tb-pipeline-3"><strong>Inférence</strong> : l'image est découpée en tuiles 512 × 512 px (après downsampling optionnel à 50%), chaque tuile est passée à SAM3 en mode <em>everything</em>.</li>
+            <li data-i18n="tb-pipeline-3"><strong>Inférence</strong> : l'image est découpée en tuiles (504 ou 1008 px selon la configuration), chaque tuile est redimensionnée à 1008×1008 (résolution fixe de SAM3) puis passée au modèle en mode <em>everything</em>.</li>
             <li data-i18n="tb-pipeline-4"><strong>Agrégation</strong> : les masques produits sont convertis en polygones, normalisés en pourcentage des dimensions de l'image, filtrés par score de confiance.</li>
             <li data-i18n="tb-pipeline-5"><strong>Écriture</strong> : les polygones sont sérialisés dans un fichier Parquet (compression Snappy) et envoyés sur MinIO.</li>
           </ul>
@@ -60,7 +60,7 @@
           <div class="tech-grid">
             <div class="tech-item">
               <strong data-i18n="tb-arch-label-cluster">Cluster GPU</strong>
-              <span data-i18n="tb-arch-cluster">iict-rad · K8s 1.33.9 · 9 GPUs (L40S × 3, A40 × 2 actifs)</span>
+              <span data-i18n="tb-arch-cluster">iict-rad · K8s 1.33.9 · 9 GPUs au total (L40S × 3, A40 × 2, L4 × 4), 3 mobilisables en parallèle selon la charge du cluster partagé</span>
             </div>
             <div class="tech-item">
               <strong data-i18n="tb-arch-label-compute">Calcul distribué</strong>
@@ -90,6 +90,18 @@
               <strong data-i18n="tb-arch-label-runtime">Runtime</strong>
               <span data-i18n="tb-arch-runtime">Python 3.12 · PyTorch 2.7.0 · CUDA 12.6 · boto3 · PyArrow</span>
             </div>
+            <div class="tech-item">
+              <strong data-i18n="tb-arch-label-interactive">Segmentation interactive</strong>
+              <span data-i18n="tb-arch-interactive">Service à modèle chaud, scale-to-zero piloté par l'API (/segment/up, /segment/down), prompt visuel via Ultralytics</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="tb-arch-label-secrets">Secrets &amp; sécurité</strong>
+              <span data-i18n="tb-arch-secrets">SOPS + age (secrets chiffrés versionnés dans Git), conteneurs non-root, registre privé GHCR</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="tb-arch-label-cicd">CI/CD</strong>
+              <span data-i18n="tb-arch-cicd">GitHub Actions : tests, build et publication automatique des images Docker sur GHCR à chaque push</span>
+            </div>
           </div>
         </section>
 
@@ -102,7 +114,19 @@
             <li data-i18n="tb-done-4">Sortie Parquet avec GPS EXIF, polygones normalisés et score de confiance SAM3, queryable directement via DuckDB ou PyArrow</li>
             <li data-i18n="tb-done-5">Conversion Parquet → JSON Label Studio et intégration pré-annotations via API REST</li>
             <li data-i18n="tb-done-6">Stack d'observabilité complète : DCGM Exporter, Prometheus, Grafana Alloy, Loki, dashboards Grafana GPU + logs</li>
-            <li data-i18n="tb-done-7">Tests validés sur données réelles : 40 images (dataset Samples) et 2'000 images (dataset HSN)</li>
+            <li data-i18n="tb-done-7">Run de production complet sur 21'819 images réelles (dataset Vevey), jusqu'à 34h17 pour la configuration à 6 labels (≈ 637 images/heure)</li>
+            <li data-i18n="tb-done-8">Service de segmentation interactive à la demande (prompt visuel, scale-to-zero) pour la validation humaine ponctuelle</li>
+            <li data-i18n="tb-done-9">Gestion des secrets versionnée et chiffrée (SOPS + age), sans composant à l'échelle du cluster</li>
+          </ul>
+        </section>
+
+        <section class="project-section">
+          <h2 data-i18n="tb-results-title">Résultats</h2>
+          <ul class="benefits-list">
+            <li data-i18n="tb-results-1"><strong>Scalabilité :</strong> le passage de 1 à 3 workers GPU multiplie le débit par ≈ 2,5× (778 → 1'920 images/heure à tuile 1008 px)</li>
+            <li data-i18n="tb-results-2"><strong>L40S vs A40 :</strong> gain mesuré de 1,45× en faveur du L40S, contre 2,42× de gain théorique en calcul BF16 — les transferts mémoire pèsent autant que la puissance brute</li>
+            <li data-i18n="tb-results-3"><strong>Run de production Vevey :</strong> 21'819 images, de 18h30 (2 labels, ≈ 1'179 img/h) à 34h17 (6 labels, ≈ 637 img/h)</li>
+            <li data-i18n="tb-results-4"><strong>Goulot d'étranglement :</strong> GPU saturé à 90–100&nbsp;% en régime de production, stockage MinIO quasi inactif (≈ 2 Mo/s), largement sous sa capacité</li>
           </ul>
         </section>
 
@@ -115,6 +139,8 @@
             <span class="tag" data-i18n="tb-skill-4">Object Storage S3 / MinIO</span>
             <span class="tag" data-i18n="tb-skill-5">Parquet / PyArrow</span>
             <span class="tag" data-i18n="tb-skill-6">Observabilité (Prometheus · Grafana · Loki)</span>
+            <span class="tag" data-i18n="tb-skill-7">Analyse de goulots d'étranglement</span>
+            <span class="tag" data-i18n="tb-skill-8">Gestion des secrets (SOPS / age)</span>
           </div>
         </section>
       </article>

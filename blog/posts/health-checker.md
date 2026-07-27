@@ -6,7 +6,7 @@ date: 2026-07-04
 tags: [python, asyncio, fastapi, docker]
 ---
 
-Un *health check* est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif : savoir qu'un service est tombé avant que les utilisateurs ne s'en chargent à ta place.
+Un *health check* est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif : savoir qu'un service est tombé avant que les utilisateurs ne s'en chargent à notre place.
 
 On construit un petit service en Python qui :
 

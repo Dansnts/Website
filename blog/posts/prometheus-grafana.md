@@ -164,4 +164,4 @@ Le pod tourne en `runAsUser: 472` (l'UID attendu par l'image Grafana), avec sa c
 - **Des dashboards prêts à l'emploi** : le dashboard « Node Exporter Full » (grafana.com/dashboards, ID 1860) donne une vue complète en quelques clics.
 - **Surveiller Kubernetes lui-même** : kube-state-metrics et cAdvisor exposent l'état des pods/deployments, au-delà des seules métriques d'hôte.
 
-*Un système sans dashboard, c'est un système que tu surveilles avec les yeux fermés en espérant fort.*
+*Un système sans dashboard, c'est un système qu'on surveille avec les yeux fermés en espérant fort.*

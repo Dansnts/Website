@@ -20,7 +20,7 @@ Dans ce post, on met en place ArgoCD. On va voir :
 ## Prérequis
 
 - Un cluster K3s fonctionnel
-- Un repo Git avec tes manifests
+- Un repo Git avec les manifests
 - Un ingress (Traefik) et un certificat TLS
 
 ---
@@ -31,13 +31,13 @@ Voici le changement de mentalité, résumé :
 
 | | `kubectl apply` (push) | GitOps (pull) |
 |---|---|---|
-| Source de vérité | Ta machine / ta mémoire | Le repo Git |
-| Qui applique | Toi, à la main | Le contrôleur ArgoCD |
+| Source de vérité | La machine / la mémoire | Le repo Git |
+| Qui applique | Manuellement | Le contrôleur ArgoCD |
 | Traçabilité | « qui a fait quoi ? » | L'historique Git |
 | Dérive | Silencieuse | Détectée (OutOfSync) |
 | Rollback | Ré-appliquer un ancien YAML | `git revert` |
 
-Le mode `kubectl apply`, c'est **impératif** : tu dis au cluster *quoi faire*. Le GitOps, c'est **déclaratif** : tu déclares l'état voulu dans Git, et ArgoCD réconcilie en boucle. Si quelqu'un modifie une ressource à la main dans le cluster, ArgoCD le voit (`OutOfSync`) et peut la remettre en conformité.
+Le mode `kubectl apply`, c'est **impératif** : on dit au cluster *quoi faire*. Le GitOps, c'est **déclaratif** : on déclare l'état voulu dans Git, et ArgoCD réconcilie en boucle. Si quelqu'un modifie une ressource à la main dans le cluster, ArgoCD le voit (`OutOfSync`) et peut la remettre en conformité.
 
 ```
         AVANT (push)                       APRÈS (pull, GitOps)
@@ -158,4 +158,4 @@ Petit retour d'expérience, gratuit. Sur un cluster single-node, certaines valeu
 - **Sealed Secrets** : le GitOps suppose que *tout* est dans Git, y compris les secrets, mais chiffrés. C'est le sujet d'un article dédié.
 - **Notifications** : brancher ArgoCD sur un webhook pour être alerté quand une app passe `OutOfSync` ou `Degraded`.
 
-*Git ne ment jamais. Le cluster, si tu le laisses faire, oui.*
+*Git ne ment jamais. Le cluster, si on le laisse faire, oui.*

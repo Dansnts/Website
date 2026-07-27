@@ -18,17 +18,17 @@ Le hic : un wildcard ne peut PAS être validé par le challenge HTTP classique. 
 ## Prérequis
 
 - cert-manager installé dans le cluster
-- Un domaine dont tu contrôles la zone DNS via API
-- Le webhook cert-manager de ton registrar (ici Infomaniak)
+- Un domaine dont on contrôle la zone DNS via API
+- Le webhook cert-manager du registrar (ici Infomaniak)
 
 ---
 
 ## Pourquoi DNS-01 et pas HTTP-01 ?
 
-Let's Encrypt doit vérifier que tu contrôles bien le domaine. Deux méthodes :
+Let's Encrypt doit vérifier qu'on contrôle bien le domaine. Deux méthodes :
 
 - **HTTP-01** : LE serveur pose un fichier sur `http://sous-domaine/.well-known/...`. Problème : pour un **wildcard** `*.domaine`, il n'existe pas de « sous-domaine » unique à valider. HTTP-01 ne sait pas faire.
-- **DNS-01** : tu prouves ton contrôle en créant un enregistrement TXT dans la zone DNS. Ça marche pour n'importe quel nom, **y compris un wildcard**. C'est la seule option ici.
+- **DNS-01** : on prouve le contrôle en créant un enregistrement TXT dans la zone DNS. Ça marche pour n'importe quel nom, **y compris un wildcard**. C'est la seule option ici.
 
 ```
 cert-manager ──> crée un TXT _acme-challenge.domaine ──> via API du registrar

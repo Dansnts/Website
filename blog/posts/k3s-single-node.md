@@ -42,7 +42,7 @@ runcmd:
   - systemctl enable k3s
 ```
 
-Une ligne, `Enter`, et t'as un cluster Kubernetes qui tourne. C'est tout.
+Une ligne, `Enter`, et on a un cluster Kubernetes qui tourne. C'est tout.
 
 ---
 

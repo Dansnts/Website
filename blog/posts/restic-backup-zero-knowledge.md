@@ -132,9 +132,9 @@ Cette rétention « en escalier » (*grandfather-father-son*) donne une granular
 
 Une seule chose peut rendre tout ce système inutile :
 
-> **Sans le `RESTIC_PASSWORD`, les données sont définitivement inaccessibles.** C'est la contrepartie du zero-knowledge : personne, pas même toi, ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé **hors de la machine** (gestionnaire de mots de passe, coffre physique). Le perdre égale perdre le backup.
+> **Sans le `RESTIC_PASSWORD`, les données sont définitivement inaccessibles.** C'est la contrepartie du zero-knowledge : personne, pas même le propriétaire des données, ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé **hors de la machine** (gestionnaire de mots de passe, coffre physique). Le perdre égale perdre le backup.
 
-C'est le paradoxe du chiffrement fort : la sécurité qui protège tes données de l'hébergeur les protège aussi de toi si tu perds la clé.
+C'est le paradoxe du chiffrement fort : la sécurité qui protège les données de l'hébergeur les protège aussi de leur propriétaire en cas de perte de la clé.
 
 ---
 

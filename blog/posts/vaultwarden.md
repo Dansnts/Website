@@ -81,7 +81,7 @@ Le panneau `/admin` permet de créer des utilisateurs, régler la rétention, g�
 
 Historiquement, `ADMIN_TOKEN` était un mot de passe en clair : Vaultwarden le comparait tel quel. Problème, il est présent dans l'environnement du conteneur, donc lisible par quiconque peut faire un `kubectl exec` ou lire le manifeste. Une fuite du token, c'est un accès admin total offert sur un plateau.
 
-La bonne pratique aujourd'hui, c'est de stocker non pas le token mais son **hash Argon2id** (au format PHC, `$argon2id$...`). Vaultwarden hache alors ce que tu tapes et compare les empreintes, le secret réel ne transite plus en clair dans la config. Argon2id est une fonction de dérivation « memory-hard », conçue pour résister au brute-force GPU. Le bon choix pour ce genre de secret.
+La bonne pratique aujourd'hui, c'est de stocker non pas le token mais son **hash Argon2id** (au format PHC, `$argon2id$...`). Vaultwarden hache alors ce qui est saisi et compare les empreintes, le secret réel ne transite plus en clair dans la config. Argon2id est une fonction de dérivation « memory-hard », conçue pour résister au brute-force GPU. Le bon choix pour ce genre de secret.
 
 On génère ce hash avec l'outil embarqué dans l'image :
 

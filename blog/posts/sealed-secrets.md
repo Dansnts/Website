@@ -90,7 +90,7 @@ spec:
     type: Opaque
 ```
 
-Une fois committé et synchronisé (par ArgoCD ou `kubectl apply`), le contrôleur détecte le `SealedSecret`, le déchiffre, et crée le `Secret` K8s classique que tes pods consomment normalement.
+Une fois committé et synchronisé (par ArgoCD ou `kubectl apply`), le contrôleur détecte le `SealedSecret`, le déchiffre, et crée le `Secret` K8s classique que les pods consomment normalement.
 
 > Détail important : un `SealedSecret` est **lié à son namespace et à son nom**. On ne peut pas le déplacer ou le renommer sans le re-sceller. C'est une protection : ça empêche de réutiliser un secret chiffré ailleurs pour extraire sa valeur.
 
@@ -100,7 +100,7 @@ Une fois committé et synchronisé (par ArgoCD ou `kubectl apply`), le contrôle
 
 Voici ce que tout le monde néglige, et qui transforme un incident mineur en catastrophe pure.
 
-**La clé privée (master key) vit dans le cluster.** Si tu perds le cluster (disque mort, réinstallation, node détruit), tu perds la clé. Et sans la clé, **tous tes `SealedSecret` deviennent définitivement indéchiffrables**. Tu as tes secrets chiffrés dans Git, mais plus aucun moyen de les ouvrir.
+**La clé privée (master key) vit dans le cluster.** Si le cluster est perdu (disque mort, réinstallation, node détruit), la clé disparaît avec lui. Et sans la clé, **tous les `SealedSecret` deviennent définitivement indéchiffrables**. Les secrets restent chiffrés dans Git, mais plus aucun moyen de les ouvrir.
 
 La master key doit donc être **exportée et sauvegardée hors du cluster** :
 

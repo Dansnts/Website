@@ -215,7 +215,7 @@ Pourquoi chaque ligne compte :
 
 `cloud-init clean` : efface l'état de cloud-init pour qu'il se relance proprement au premier boot du clone (et applique la nouvelle IP, le nouveau user…).
 
-`rm /etc/ssh/ssh_host_*` : supprime les clés d'hôte SSH. **Critique.** Sinon, toutes tes VMs auraient la même empreinte SSH, un désastre de sécurité et une source d'avertissements `known_hosts`. Elles sont régénérées au premier boot.
+`rm /etc/ssh/ssh_host_*` : supprime les clés d'hôte SSH. **Critique.** Sinon, toutes les VMs auraient la même empreinte SSH, un désastre de sécurité et une source d'avertissements `known_hosts`. Elles sont régénérées au premier boot.
 
 `truncate /etc/machine-id` : vide l'ID machine. S'il n'est pas vide, toutes les VMs clonées partagent le même `machine-id`, ce qui casse la résolution DHCP, systemd, journald… Vidé, il est regénéré au boot, unique par VM.
 

@@ -171,4 +171,4 @@ sudo systemctl start systemd-resolved
 - **La dépendance circulaire RADIUS** : le même raisonnement, appliqué à l'authentification réseau, sujet d'un article dédié.
 - **Métriques Pi-hole** : exporter les stats (requêtes bloquées, top domaines) vers Prometheus/Grafana pour visualiser ce que le réseau raconte.
 
-*Le jour où le DNS tombe, tu redécouvres en combien de choses tu avais confiance sans le savoir.*
+*Le jour où le DNS tombe, on redécouvre en combien de choses on avait confiance sans le savoir.*

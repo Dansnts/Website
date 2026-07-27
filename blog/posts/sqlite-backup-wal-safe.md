@@ -31,10 +31,10 @@ db.sqlite3-wal   ← les écritures récentes, pas encore fusionnées
 db.sqlite3-shm   ← la mémoire partagée d'index du WAL
 ```
 
-Si tu copies `db.sqlite3` à un instant T pendant que l'app écrit :
+Si on copie `db.sqlite3` à un instant T pendant que l'app écrit :
 
 - Le fichier principal peut être dans un état **intermédiaire** (une transaction à moitié écrite).
-- Les écritures récentes sont dans le `-wal`, que tu n'as peut-être pas copié de façon cohérente avec le principal.
+- Les écritures récentes sont dans le `-wal`, peut-être pas copié de façon cohérente avec le principal.
 
 Résultat : une copie qui reflète un instant incohérent. Elle peut sembler OK et se révéler corrompue à la restauration. Le pire type de bug de backup, celui qu'on découvre trop tard, en général le jour où on en a besoin.
 

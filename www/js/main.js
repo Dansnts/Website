@@ -92,7 +92,7 @@ async function loadComponents() {
 
 // ─── Section spy (single-page nav) ───────────
 function initSectionSpy() {
-  const sectionIds = ['home', 'projects', 'cv'];
+  const sectionIds = ['home', 'projects', 'cv', 'qa'];
   // Only run on root page where the sections exist
   if (!document.getElementById('home')) return;
 
@@ -137,6 +137,17 @@ function initNavScroll() {
   update();
 }
 
+// ─── Accordion (Q&A) ──────────────────────────
+function initAccordion() {
+  document.querySelectorAll('.qa-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.qa-item');
+      const open = item.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open);
+    });
+  });
+}
+
 // ─── Age (born 2000-04-30) ────────────────────
 function initAge() {
   const el = document.getElementById('cv-age');
@@ -156,4 +167,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   initScrollReveal();
   initNavScroll();
   initAge();
+  initAccordion();
 });

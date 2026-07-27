@@ -76,7 +76,7 @@ Deux mécanismes d'auth cohabitent, et c'est **voulu** :
 
 `api_token` : l'API REST de Proxmox (créer/cloner/configurer les VMs). Le token se génère dans *Datacenter → Permissions → API Tokens*, format `user@realm!nom-du-token=secret`.
 
-Le bloc `ssh` : le provider a **aussi** besoin d'un accès SSH au node. Certaines opérations, uploader un snippet cloud-init typiquement, ne passent pas par l'API. Sans ce bloc, tu tombes sur des erreurs obscures au moment de l'upload du cloud-init, et tu perds vingt minutes à chercher pourquoi.
+Le bloc `ssh` : le provider a **aussi** besoin d'un accès SSH au node. Certaines opérations, uploader un snippet cloud-init typiquement, ne passent pas par l'API. Sans ce bloc, on tombe sur des erreurs obscures au moment de l'upload du cloud-init, et on perd vingt minutes à chercher pourquoi.
 
 `insecure = true` : le certificat auto-signé de Proxmox. En homelab, on assume. En prod, on importe un vrai cert.
 
@@ -156,11 +156,11 @@ resource "proxmox_virtual_environment_vm" "k3s" {
 
 Ce qui compte vraiment ici :
 
-`clone { full = true }` : clone **complet**, pas lié. La nouvelle VM est totalement indépendante du template, tu peux supprimer le template sans rien casser.
+`clone { full = true }` : clone **complet**, pas lié. La nouvelle VM est totalement indépendante du template, on peut supprimer le template sans rien casser.
 
 `cpu { type = "host" }` : la VM voit le vrai CPU de l'hôte, pas un CPU générique émulé. Meilleures perfs, indispensable pour les instructions modernes.
 
-`agent { enabled = true }` : active le QEMU guest agent. Sans lui, Terraform ne connaît jamais l'IP réelle de la VM et attend indéfiniment. Le paquet `qemu-guest-agent` doit déjà être dans le template, sinon tu attends pour rien.
+`agent { enabled = true }` : active le QEMU guest agent. Sans lui, Terraform ne connaît jamais l'IP réelle de la VM et attend indéfiniment. Le paquet `qemu-guest-agent` doit déjà être dans le template, sinon on attend pour rien.
 
 `initialization.ip_config` : cloud-init applique cette IP au premier boot. On fixe l'IP ici plutôt que de dépendre du DHCP.
 

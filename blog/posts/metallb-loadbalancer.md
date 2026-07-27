@@ -8,7 +8,7 @@ tags: [homelab, kubernetes, réseau, metallb]
 
 Sur un cloud public, déclarer un `Service type: LoadBalancer` provoque la création d'un vrai load-balancer avec une IP publique. Sur du bare-metal, un serveur chez soi, il ne se passe rien. Le service reste bloqué en `<pending>`, éternellement, faute de quelqu'un pour lui attribuer une IP.
 
-**MetalLB** comble ce trou. Il donne à Kubernetes la capacité de distribuer des IP de ton réseau local aux services `LoadBalancer`. Dans ce post :
+**MetalLB** comble ce trou. Il donne à Kubernetes la capacité de distribuer des IP du réseau local aux services `LoadBalancer`. Dans ce post :
 
 1. Le problème du `type: LoadBalancer` en bare-metal
 2. Le pool d'adresses et le mode L2
@@ -18,7 +18,7 @@ Sur un cloud public, déclarer un `Service type: LoadBalancer` provoque la créa
 ## Prérequis
 
 - Un cluster K3s (ou tout Kubernetes bare-metal)
-- Une plage d'IP libre sur ton LAN (hors DHCP)
+- Une plage d'IP libre sur le LAN (hors DHCP)
 - MetalLB installé
 
 ## Le problème à résoudre
@@ -30,7 +30,7 @@ Service type: LoadBalancer  ──sans MetalLB──> <pending> (jamais d'IP)
 Service type: LoadBalancer  ──avec MetalLB──> 10.0.0.102 (IP du LAN)
 ```
 
-MetalLB pioche dans un pool d'IP que tu lui réserves et les attribue aux services. Simple sur le papier, mais ça change tout pour exposer proprement.
+MetalLB pioche dans un pool d'IP qu'on lui réserve et les attribue aux services. Simple sur le papier, mais ça change tout pour exposer proprement.
 
 ## Le pool d'adresses et le mode L2
 
@@ -60,7 +60,7 @@ spec:
     - homelab-pool
 ```
 
-`addresses: 10.0.0.100-10.0.0.110` : la plage réservée. **Crucial** : ces IP doivent être *hors* de la plage DHCP de ton routeur. Chez moi, le DHCP du MikroTik distribue `10.0.0.200-250`, donc `100-110` est libre. Aucun conflit possible, et c'est le genre de conflit qui, sinon, se découvre un dimanche soir.
+`addresses: 10.0.0.100-10.0.0.110` : la plage réservée. **Crucial** : ces IP doivent être *hors* de la plage DHCP du routeur. Chez moi, le DHCP du MikroTik distribue `10.0.0.200-250`, donc `100-110` est libre. Aucun conflit possible, et c'est le genre de conflit qui, sinon, se découvre un dimanche soir.
 
 `L2Advertisement` : le mode L2 fait que le node répond aux requêtes ARP pour les IP du pool. Du point de vue du réseau, c'est comme si le node « possédait » ces IP. Pas de config routeur, pas de BGP, ça marche tel quel sur un LAN simple.
 

@@ -19,7 +19,7 @@ Dans ce post, on configure deux hôtes du homelab (Proxmox et un node K3s) avec 
 
 ## Prérequis
 
-- Ansible installé sur ta machine
+- Ansible installé sur la machine
 - Un accès SSH aux hôtes cibles
 - Des VMs déjà provisionnées (voir les articles Terraform / Packer)
 
@@ -222,7 +222,7 @@ network:
 
 Le `match: macaddress` garantit que la config s'applique à la bonne carte réseau, quel que soit son nom d'interface. La seconde tâche (`network: {config: disabled}`) empêche cloud-init de régénérer un netplan concurrent au prochain boot.
 
-> Le piège classique : sans désactiver cloud-init, tu poses ton netplan, tout marche, puis un reboot plus tard cloud-init réécrit par-dessus et l'IP saute. On coupe les deux sources de vérité pour n'en garder qu'une.
+> Le piège classique : sans désactiver cloud-init, on pose son netplan, tout marche, puis un reboot plus tard cloud-init réécrit par-dessus et l'IP saute. On coupe les deux sources de vérité pour n'en garder qu'une.
 
 Une variable importante à surveiller : le DNS du node.
 
@@ -231,7 +231,7 @@ Une variable importante à surveiller : le DNS du node.
 k3s_dns: "10.0.0.101"   # Pi-hole
 ```
 
-> **Attention** : `10.0.0.101` c'est Pi-hole, qui tourne *dans* le cluster K3s. Mettre Pi-hole comme DNS du node crée une dépendance circulaire au boot (le node a besoin de DNS pour démarrer K8s, mais le DNS est dans K8s). En pratique, le node doit pointer sur un DNS externe (`1.1.1.1`). À garder en tête selon ton ordre de démarrage.
+> **Attention** : `10.0.0.101` c'est Pi-hole, qui tourne *dans* le cluster K3s. Mettre Pi-hole comme DNS du node crée une dépendance circulaire au boot (le node a besoin de DNS pour démarrer K8s, mais le DNS est dans K8s). En pratique, le node doit pointer sur un DNS externe (`1.1.1.1`). À garder en tête selon l'ordre de démarrage.
 
 ---
 
@@ -257,7 +257,7 @@ rejouable à l'infini → changed=0 au 2e run
 
 ## Aller plus loin
 
-- **`ansible-lint`** : passe tes rôles au linter, il attrape les tâches non idempotentes et les mauvaises pratiques avant qu'elles ne mordent.
+- **`ansible-lint`** : passe les rôles au linter, il attrape les tâches non idempotentes et les mauvaises pratiques avant qu'elles ne mordent.
 - **Ansible Vault** : pour chiffrer les secrets (mots de passe, tokens) directement dans le repo, au lieu de les garder à part.
 - **`--check` (dry-run)** : `ansible-playbook --check` montre ce qui *changerait* sans rien appliquer. Idéal pour vérifier avant de lancer pour de vrai.
 - **Galaxy** : beaucoup de rôles courants (node_exporter inclus) existent déjà sur Ansible Galaxy. Réinventer la roue est un bon exercice, mais en prod on réutilise.

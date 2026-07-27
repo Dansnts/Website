@@ -6,7 +6,7 @@ date: 2026-02-20
 tags: [homelab, réseau, mikrotik, firewall]
 ---
 
-Brancher son homelab directement sur la box du FAI, c'est simple. Jusqu'au jour où une VM compromise se retrouve sur le même réseau que ton téléphone, ta TV et l'ordi du salon. La bonne pratique, c'est d'**isoler** : le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.
+Brancher son homelab directement sur la box du FAI, c'est simple. Jusqu'au jour où une VM compromise se retrouve sur le même réseau que le téléphone, la TV et l'ordi du salon. La bonne pratique, c'est d'**isoler** : le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.
 
 Chez moi, ce rôle est tenu par un **MikroTik RB750Gr3**, un petit routeur pas cher mais redoutablement complet (RouterOS). Dans ce post, on construit la segmentation complète. On va voir :
 
@@ -158,7 +158,7 @@ La règle qui justifie tout ce montage :
     comment="isolation: homelab ne peut pas joindre reseau maison"
 ```
 
-**Le lab ne peut pas parler au réseau de la maison.** Une VM compromise dans le lab ne verra jamais ton NAS perso, ta TV, ton téléphone. C'est la règle centrale de la segmentation.
+**Le lab ne peut pas parler au réseau de la maison.** Une VM compromise dans le lab ne verra jamais le NAS perso, la TV, le téléphone. C'est la règle centrale de la segmentation.
 
 Le reste de la chaîne autorise ce qui doit passer :
 

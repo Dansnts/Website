@@ -123,9 +123,9 @@ spec:
 
 ## Le piège de la version `canary`
 
-Retour d'expérience qui coûte cher, payé une fois pour toi. Beaucoup de tutos (et le README du projet lui-même, par défaut) installent le driver via l'URL `.../deploy/master/...` ou une balise `canary`. **À éviter absolument.**
+Retour d'expérience qui coûte cher, une bonne fois pour toutes. Beaucoup de tutos (et le README du projet lui-même, par défaut) installent le driver via l'URL `.../deploy/master/...` ou une balise `canary`. **À éviter absolument.**
 
-`canary`, c'est la branche de développement du driver : instable, susceptible de casser d'un jour à l'autre sur un `apply`. Un matin, tes montages SMB tombent sans que tu aies rien changé, juste parce que la `canary` a évolué.
+`canary`, c'est la branche de développement du driver : instable, susceptible de casser d'un jour à l'autre sur un `apply`. Un matin, les montages SMB tombent sans que rien n'ait changé, juste parce que la `canary` a évolué.
 
 **Toujours pinner une version stable :**
 

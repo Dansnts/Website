@@ -4,15 +4,23 @@ const commonTranslations = {
     'nav-home': 'Accueil',
     'nav-projects': 'Projets',
 	'nav-resume': 'CV',
+    'nav-qa': 'FAQ',
     'nav-blog': 'Blog',
-    'back-projects': 'Retour aux projets'
+    'back-projects': 'Retour aux projets',
+    'tooltip-theme': 'Changer de thème',
+    'tooltip-lang': 'Changer de langue',
+    'tooltip-menu': 'Menu'
   },
   en: {
     'nav-home': 'Home',
     'nav-projects': 'Projects',
 	'nav-resume': 'Resume',
+    'nav-qa': 'FAQ',
     'nav-blog': 'Blog',
-    'back-projects': 'Back to projects'
+    'back-projects': 'Back to projects',
+    'tooltip-theme': 'Toggle theme',
+    'tooltip-lang': 'Toggle language',
+    'tooltip-menu': 'Menu'
   }
 };
 
@@ -38,7 +46,21 @@ const pageTranslations = {
       'and-more': 'Voir une sélection de projets \u2192',
       'link-projects': 'Voir mes projets',
       'blog-intro': 'Notes techniques, retours d\'expérience et explorations.',
-      'blog-cta': 'Lire le blog →'
+      'blog-cta': 'Lire le blog →',
+      'qa-title': 'Questions fréquentes',
+      'qa-intro': 'Ce que les recruteurs me demandent le plus souvent.',
+      'qa-q1': 'Quand es-tu disponible ?',
+      'qa-a1': 'Mon Bachelor HES-SO se termine en août 2026. Je suis disponible à cette date pour un poste à temps plein.',
+      'qa-q2': 'Quel type de poste recherches-tu ?',
+      'qa-a2': 'Un poste où je fais du DevOps, du sysadmin et de l\'automatisation sur une infrastructure que je gère de bout en bout, avant tout entouré d\'experts du domaine.',
+      'qa-q3': 'As-tu une expérience professionnelle en dehors des projets scolaires ?',
+      'qa-a3': 'Oui, 2 ans et 6 mois d\'expérience professionnelle. Un an comme seul responsable IT chez eeproperty (infrastructure, réseau, identités, audit ISO 27001), 12 mois comme Analyste Systèmes & Automatisation chez Nestlé, et 6 mois comme MLOps Engineer sur un projet réel pour l\'institut IICT de la HEIG-VD. Mes projets personnels (homelab, pipeline de données) tournent en production en parallèle depuis plusieurs années.',
+      'qa-q4': 'Es-tu mobile pour te déplacer ?',
+      'qa-a4': 'Oui, permis de conduire catégorie B. J\'habite en région lausannoise et je suis mobile en Suisse romande.',
+      'qa-q5': 'Travailles-tu mieux sur site ou à distance ?',
+      'qa-a5': 'Les deux fonctionnent pour moi. Je travaille aussi bien en autonomie complète, sans supervision directe, qu\'en équipe.',
+      'qa-q6': 'Pourquoi un site plutôt qu\'un CV classique ?',
+      'qa-a6': 'Parce que je voulais un CV que je contrôle de bout en bout, hébergé sur mon infrastructure, sans dépendre d\'un outil tiers.'
     },
     en: {
       'hero-subtitle': 'Infrastructure & Security Engineer',
@@ -54,7 +76,21 @@ const pageTranslations = {
       'years-exp': 'yrs exp.',
       'languages-count': 'languages',
       'blog-intro': 'Technical notes, experience reports and explorations.',
-      'blog-cta': 'Read the blog →'
+      'blog-cta': 'Read the blog →',
+      'qa-title': 'Frequently Asked Questions',
+      'qa-intro': 'What recruiters ask me most often.',
+      'qa-q1': 'When are you available?',
+      'qa-a1': 'My HES-SO Bachelor\'s ends in August 2026. I\'m available from that date for a full-time position.',
+      'qa-q2': 'What type of role are you looking for?',
+      'qa-a2': 'A role where I do DevOps, sysadmin work and automation on infrastructure I manage end to end, above all surrounded by experts in the field.',
+      'qa-q3': 'Do you have professional experience outside of school projects?',
+      'qa-a3': 'Yes, 2 years and 6 months of professional experience. One year as sole IT manager at eeproperty (infrastructure, network, identities, ISO 27001 audit), 12 months as a Systems & Automation Analyst at Nestlé, and 6 months as an MLOps Engineer on a real project for the IICT institute at HEIG-VD. My personal projects (homelab, data pipeline) have been running in production in parallel for several years.',
+      'qa-q4': 'Can you travel for the role?',
+      'qa-a4': 'Yes, category B driving license. I live in the Lausanne area and I\'m mobile across French-speaking Switzerland.',
+      'qa-q5': 'Do you work better on-site or remote?',
+      'qa-a5': 'Both work for me. I work just as well in full autonomy, without direct supervision, as I do in a team.',
+      'qa-q6': 'Why a website instead of a standard resume?',
+      'qa-a6': 'Because I wanted a resume I control end to end, hosted on my own infrastructure, without depending on a third-party tool.'
     }
   },
   // Projects listing page
@@ -92,7 +128,7 @@ const pageTranslations = {
       'proj-turbodex': 'TurboDex',
       'proj-turbodex-desc': 'Application mobile de collection automobile avec reconnaissance IA - Projet PDG 2025.',
       'proj-tb': 'Travail de Bachelor',
-      'proj-tb-desc': 'Pipeline GPU distribuée d\'annotation automatique d\'images routières panoramiques avec SAM3 et Ray sur Kubernetes, projet NearAI de l\'IICT HEIG-VD.',
+      'proj-tb-desc': 'Pipeline GPU distribuée d\'annotation automatique d\'images géospatiales avec SAM3 et Ray sur Kubernetes, projet NearAI de l\'IICT HEIG-VD. Run de production sur 21\'819 images réelles.',
       'proj-picamera': 'PiCamera',
       'proj-picamera-desc': 'Appareil photo DIY avec Raspberry Pi, écran tactile Adafruit et coque imprimée en 3D.',
       'proj-root': 'ROOT',
@@ -131,7 +167,7 @@ const pageTranslations = {
       'proj-turbodex': 'TurboDex',
       'proj-turbodex-desc': 'Mobile car collection app with AI recognition - PDG 2025 group project.',
       'proj-tb': 'Bachelor Thesis',
-      'proj-tb-desc': 'Distributed GPU pipeline for automatic annotation of panoramic road images with SAM3 and Ray on Kubernetes, NearAI project at IICT HEIG-VD.',
+      'proj-tb-desc': 'Distributed GPU pipeline for automatic geospatial image annotation with SAM3 and Ray on Kubernetes, NearAI project at IICT HEIG-VD. Production run on 21,819 real images.',
       'proj-picamera': 'PiCamera',
       'proj-picamera-desc': 'DIY camera with Raspberry Pi, Adafruit touchscreen and 3D printed case.',
       'proj-root': 'ROOT',
@@ -710,16 +746,16 @@ const pageTranslations = {
       'tb-context-title': 'Contexte',
       'tb-context-text': 'L\'Institut IICT de la HEIG-VD conduit le projet <strong>NearAI</strong>, dont l\'objectif est de construire une base de données géospatiale d\'éléments routiers à partir d\'acquisitions mobiles. Les images sont capturées par des véhicules équipés d\'un Trimble MX50 ou d\'une GoPro Max et produisent des panoramas équirectangulaires allant jusqu\'aux 8\'192 × 4\'096 pixels, accompagnés de coordonnées GPS enregistrées dans l\'EXIF. Le corpus cible dépasse <strong>300\'000 images</strong>. Annoter manuellement ce volume représenterait plus de 2\'500 heures de travail. L\'annotation automatisée est la seule voie viable.',
       'tb-problem-title': 'Problème',
-      'tb-problem-text': 'Deux classes d\'objets sont ciblées : les <strong>panneaux de signalisation</strong> (<code>sign</code>) et les <strong>marquages au sol</strong> (<code>road_marking</code>). Chaque image à 8\'192 × 4\'096 pixels dépasse la fenêtre d\'entrée de tout modèle de segmentation courant. Il faut découper en tuiles avant l\'inférence. Traiter 300\'000 images en un délai raisonnable impose de distribuer le calcul sur plusieurs GPUs en parallèle.',
+      'tb-problem-text': 'Plusieurs classes d\'objets sont ciblées : panneaux de signalisation, marquages au sol et plaques d\'égout, avec une granularité configurable de 2 à 6 labels selon le run. Chaque image à 8\'192 × 4\'096 pixels dépasse la fenêtre d\'entrée de tout modèle de segmentation courant. Il faut découper en tuiles avant l\'inférence. Traiter des dizaines de milliers d\'images en un délai raisonnable impose de distribuer le calcul sur plusieurs GPUs en parallèle.',
       'tb-pipeline-title': 'Pipeline en 5 étapes',
       'tb-pipeline-1': '<strong>Lecture :</strong> le driver liste les objets du préfixe S3 d\'entrée et distribue les clés d\'image aux workers Ray.',
       'tb-pipeline-2': '<strong>Téléchargement :</strong> chaque worker télécharge l\'image depuis MinIO et extrait les coordonnées GPS de l\'EXIF.',
-      'tb-pipeline-3': '<strong>Inférence :</strong> l\'image est découpée en tuiles 512 × 512 px (après downsampling optionnel à 50%), chaque tuile est passée à SAM3 en mode <em>everything</em>.',
+      'tb-pipeline-3': '<strong>Inférence :</strong> l\'image est découpée en tuiles (504 ou 1008 px selon la configuration), chaque tuile est redimensionnée à 1008×1008 (résolution fixe de SAM3) puis passée au modèle en mode <em>everything</em>.',
       'tb-pipeline-4': '<strong>Agrégation :</strong> les masques produits sont convertis en polygones, normalisés en pourcentage des dimensions de l\'image, filtrés par score de confiance.',
       'tb-pipeline-5': '<strong>Écriture :</strong> les polygones sont sérialisés dans un fichier Parquet (compression Snappy) et envoyés sur MinIO.',
       'tb-arch-title': 'Architecture technique',
       'tb-arch-label-cluster': 'Cluster GPU',
-      'tb-arch-cluster': 'iict-rad · K8s 1.33.9 · 9 GPUs (L40S × 3, A40 × 2 actifs)',
+      'tb-arch-cluster': 'iict-rad · K8s 1.33.9 · 9 GPUs au total (L40S × 3, A40 × 2, L4 × 4), 3 mobilisables en parallèle selon la charge du cluster partagé',
       'tb-arch-label-compute': 'Calcul distribué',
       'tb-arch-compute': 'Ray 2.54.0 + KubeRay (RayCluster, Actors GPU)',
       'tb-arch-label-model': 'Modèle IA',
@@ -734,6 +770,12 @@ const pageTranslations = {
       'tb-arch-obs': 'Prometheus · Grafana · Loki · Alloy · DCGM (métriques GPU)',
       'tb-arch-label-runtime': 'Runtime',
       'tb-arch-runtime': 'Python 3.12 · PyTorch 2.7.0 · CUDA 12.6 · boto3 · PyArrow',
+      'tb-arch-label-interactive': 'Segmentation interactive',
+      'tb-arch-interactive': 'Service à modèle chaud, scale-to-zero piloté par l\'API (/segment/up, /segment/down), prompt visuel via Ultralytics',
+      'tb-arch-label-secrets': 'Secrets & sécurité',
+      'tb-arch-secrets': 'SOPS + age (secrets chiffrés versionnés dans Git), conteneurs non-root, registre privé GHCR',
+      'tb-arch-label-cicd': 'CI/CD',
+      'tb-arch-cicd': 'GitHub Actions : tests, build et publication automatique des images Docker sur GHCR à chaque push',
       'tb-done-title': 'Réalisations',
       'tb-done-1': 'Image Docker publiée sur GHCR (<code>ghcr.io/nearai-interreg/ray-sam3:latest</code>) basée sur <code>nvidia/cuda:12.6.3</code>',
       'tb-done-2': 'Pipeline Python (<code>sam3_minio_pipeline.py</code>) en mode <strong>batch</strong> (Parquet) et <strong>solo</strong> (JSON Label Studio)',
@@ -741,14 +783,23 @@ const pageTranslations = {
       'tb-done-4': 'Sortie Parquet avec GPS EXIF, polygones normalisés et score de confiance SAM3, directement queryable via DuckDB ou PyArrow',
       'tb-done-5': 'Conversion Parquet → JSON Label Studio et intégration pré-annotations via API REST',
       'tb-done-6': 'Stack d\'observabilité complète : DCGM Exporter, Prometheus, Grafana Alloy, Loki, dashboards Grafana GPU + logs',
-      'tb-done-7': 'Tests validés sur données réelles : 40 images (dataset Samples) et 2\'000 images (dataset HSN)',
+      'tb-done-7': 'Run de production complet sur 21\'819 images réelles (dataset Vevey), jusqu\'à 34h17 pour la configuration à 6 labels (≈ 637 images/heure)',
+      'tb-done-8': 'Service de segmentation interactive à la demande (prompt visuel, scale-to-zero) pour la validation humaine ponctuelle',
+      'tb-done-9': 'Gestion des secrets versionnée et chiffrée (SOPS + age), sans composant à l\'échelle du cluster',
+      'tb-results-title': 'Résultats',
+      'tb-results-1': '<strong>Scalabilité :</strong> le passage de 1 à 3 workers GPU multiplie le débit par ≈ 2,5× (778 → 1\'920 images/heure à tuile 1008 px)',
+      'tb-results-2': '<strong>L40S vs A40 :</strong> gain mesuré de 1,45× en faveur du L40S, contre 2,42× de gain théorique en calcul BF16 — les transferts mémoire pèsent autant que la puissance brute',
+      'tb-results-3': '<strong>Run de production Vevey :</strong> 21\'819 images, de 18h30 (2 labels, ≈ 1\'179 img/h) à 34h17 (6 labels, ≈ 637 img/h)',
+      'tb-results-4': '<strong>Goulot d\'étranglement :</strong> GPU saturé à 90–100 % en régime de production, stockage MinIO quasi inactif (≈ 2 Mo/s), largement sous sa capacité',
       'tb-skills-title': 'Compétences développées',
       'tb-skill-1': 'Calcul distribué GPU (Ray / KubeRay)',
       'tb-skill-2': 'Inférence IA à grande échelle (SAM3)',
       'tb-skill-3': 'Kubernetes Operators',
       'tb-skill-4': 'Object Storage S3 / MinIO',
       'tb-skill-5': 'Parquet / PyArrow',
-      'tb-skill-6': 'Observabilité (Prometheus · Grafana · Loki)'
+      'tb-skill-6': 'Observabilité (Prometheus · Grafana · Loki)',
+      'tb-skill-7': 'Analyse de goulots d\'étranglement',
+      'tb-skill-8': 'Gestion des secrets (SOPS / age)'
     },
     en: {
       'tb-title': 'Distributed Pipeline for Automatic Geospatial Image Annotation',
@@ -757,16 +808,16 @@ const pageTranslations = {
       'tb-context-title': 'Context',
       'tb-context-text': 'The IICT institute at HEIG-VD runs the <strong>NearAI</strong> project, whose goal is to build a geospatial database of road elements from mobile acquisitions. Images are captured by vehicles equipped with a Trimble MX50 or a GoPro Max, producing equirectangular panoramas up to 8\'192 × 4\'096 pixels with GPS coordinates stored in the EXIF. The target corpus exceeds <strong>300,000 images</strong>. Manual annotation would require over 2,500 hours. Automated annotation is the only viable approach.',
       'tb-problem-title': 'Problem',
-      'tb-problem-text': 'Two object classes are targeted: <strong>road signs</strong> (<code>sign</code>) and <strong>ground markings</strong> (<code>road_marking</code>). Each 8\'192 × 4\'096 px image exceeds the input window of any current segmentation model. The image must be tiled before inference. Processing 300,000 images in a reasonable time requires distributing computation across multiple GPUs in parallel.',
+      'tb-problem-text': 'Several object classes are targeted: road signs, ground markings and manhole covers, with configurable granularity from 2 to 6 labels depending on the run. Each 8\'192 × 4\'096 px image exceeds the input window of any current segmentation model. The image must be tiled before inference. Processing tens of thousands of images in a reasonable time requires distributing computation across multiple GPUs in parallel.',
       'tb-pipeline-title': 'Pipeline in 5 Steps',
       'tb-pipeline-1': '<strong>Read:</strong> the driver lists objects from the S3 input prefix and distributes image keys to Ray workers.',
       'tb-pipeline-2': '<strong>Download:</strong> each worker downloads the image from MinIO and extracts GPS coordinates from the EXIF.',
-      'tb-pipeline-3': '<strong>Inference:</strong> the image is split into 512 × 512 px tiles (with optional 50% downsampling), each tile is passed to SAM3 in <em>everything</em> mode.',
+      'tb-pipeline-3': '<strong>Inference:</strong> the image is split into tiles (504 or 1008 px depending on configuration), each tile is resized to 1008×1008 (SAM3\'s fixed resolution) then passed to the model in <em>everything</em> mode.',
       'tb-pipeline-4': '<strong>Aggregation:</strong> produced masks are converted to polygons, normalized as a percentage of image dimensions, filtered by confidence score.',
       'tb-pipeline-5': '<strong>Write:</strong> polygons are serialized into a Parquet file (Snappy compression) and sent to MinIO.',
       'tb-arch-title': 'Technical Architecture',
       'tb-arch-label-cluster': 'GPU Cluster',
-      'tb-arch-cluster': 'iict-rad · K8s 1.33.9 · 9 GPUs (L40S × 3, A40 × 2 active)',
+      'tb-arch-cluster': 'iict-rad · K8s 1.33.9 · 9 GPUs total (L40S × 3, A40 × 2, L4 × 4), 3 schedulable in parallel depending on shared cluster load',
       'tb-arch-label-compute': 'Distributed Computing',
       'tb-arch-compute': 'Ray 2.54.0 + KubeRay (RayCluster, GPU Actors)',
       'tb-arch-label-model': 'AI Model',
@@ -781,6 +832,12 @@ const pageTranslations = {
       'tb-arch-obs': 'Prometheus · Grafana · Loki · Alloy · DCGM (GPU metrics)',
       'tb-arch-label-runtime': 'Runtime',
       'tb-arch-runtime': 'Python 3.12 · PyTorch 2.7.0 · CUDA 12.6 · boto3 · PyArrow',
+      'tb-arch-label-interactive': 'Interactive segmentation',
+      'tb-arch-interactive': 'Hot-model service, scale-to-zero driven by the API (/segment/up, /segment/down), visual prompt via Ultralytics',
+      'tb-arch-label-secrets': 'Secrets & security',
+      'tb-arch-secrets': 'SOPS + age (encrypted secrets versioned in Git), non-root containers, private GHCR registry',
+      'tb-arch-label-cicd': 'CI/CD',
+      'tb-arch-cicd': 'GitHub Actions: tests, build and automatic Docker image publishing to GHCR on every push',
       'tb-done-title': 'Achievements',
       'tb-done-1': 'Docker image published on GHCR (<code>ghcr.io/nearai-interreg/ray-sam3:latest</code>) based on <code>nvidia/cuda:12.6.3</code>',
       'tb-done-2': 'Python pipeline (<code>sam3_minio_pipeline.py</code>) in <strong>batch</strong> (Parquet) and <strong>solo</strong> (JSON Label Studio) modes',
@@ -788,14 +845,23 @@ const pageTranslations = {
       'tb-done-4': 'Parquet output with EXIF GPS, normalized polygons and SAM3 confidence scores, directly queryable via DuckDB or PyArrow',
       'tb-done-5': 'Parquet → JSON Label Studio conversion and pre-annotation integration via REST API',
       'tb-done-6': 'Full observability stack: DCGM Exporter, Prometheus, Grafana Alloy, Loki, Grafana dashboards for GPU metrics + logs',
-      'tb-done-7': 'Validated on real data: 40 images (Samples dataset) and 2,000 images (HSN dataset)',
+      'tb-done-7': 'Full production run on 21,819 real images (Vevey dataset), up to 34h17 for the 6-label configuration (≈ 637 images/hour)',
+      'tb-done-8': 'On-demand interactive segmentation service (visual prompt, scale-to-zero) for one-off human validation',
+      'tb-done-9': 'Versioned, encrypted secrets management (SOPS + age), no cluster-wide component required',
+      'tb-results-title': 'Results',
+      'tb-results-1': '<strong>Scalability:</strong> going from 1 to 3 GPU workers multiplies throughput by ≈ 2.5× (778 → 1,920 images/hour at 1008 px tiles)',
+      'tb-results-2': '<strong>L40S vs A40:</strong> measured gain of 1.45× in favor of the L40S, against a 2.42× theoretical gain in BF16 compute — memory transfers weigh as much as raw compute power',
+      'tb-results-3': '<strong>Vevey production run:</strong> 21,819 images, from 18h30 (2 labels, ≈ 1,179 img/h) to 34h17 (6 labels, ≈ 637 img/h)',
+      'tb-results-4': '<strong>Bottleneck:</strong> GPU saturated at 90–100% in production, MinIO storage nearly idle (≈ 2 MB/s), well under its capacity',
       'tb-skills-title': 'Skills Developed',
       'tb-skill-1': 'Distributed GPU computing (Ray / KubeRay)',
       'tb-skill-2': 'Large-scale AI inference (SAM3)',
       'tb-skill-3': 'Kubernetes Operators',
       'tb-skill-4': 'Object Storage S3 / MinIO',
       'tb-skill-5': 'Parquet / PyArrow',
-      'tb-skill-6': 'Observability (Prometheus · Grafana · Loki)'
+      'tb-skill-6': 'Observability (Prometheus · Grafana · Loki)',
+      'tb-skill-7': 'Bottleneck analysis',
+      'tb-skill-8': 'Secrets management (SOPS / age)'
     }
   },
   'project-backup-rclone': {
@@ -1266,7 +1332,7 @@ const educationTranslations = {
     maturityDetail: 'CEPV - Architecture et sciences de la vie',
     cfc: 'CFC Informaticien',
     tbTitle: 'TB : Pipeline Distribuée d\'Annotation Automatique d\'Images Géospatiales',
-    tbDesc: 'Pipeline GPU distribuée (KubeRay / SAM3) pour annotation automatique de 300 000 images panoramiques, gain de traitement de 300%, sorties Parquet sur MinIO',
+    tbDesc: 'Pipeline GPU distribuée (Ray/KubeRay, SAM3) pour l\'annotation automatique d\'images géospatiales, run de production sur 21\'819 images réelles, sorties Parquet sur MinIO',
     heigMonitoring: 'Observabilité GPU : Grafana · Grafana Alloy · Loki · Prometheus · DCGM, supervision en temps réel des workloads GPU distribués',
     heigCrunchtime: 'CrunchTime Innovation 2026 : infrastructure Kubernetes sur site pour la classification automatique de courriels par IA (Ligue Pulmonaire Vaudoise)',
     heigDts: 'Prix du public 2023, DTS en partenariat avec Romande Énergie (projet d\'innovation)',
@@ -1287,7 +1353,7 @@ const educationTranslations = {
     maturityDetail: 'CEPV - Architecture and Life Sciences',
     cfc: 'IT Apprenticeship (CFC)',
     tbTitle: 'Thesis: Distributed GPU Pipeline for Automatic Geospatial Image Annotation',
-    tbDesc: 'Distributed GPU pipeline (KubeRay / SAM3) for automatic annotation of 300,000 panoramic road images, 300% processing gain, Parquet output on MinIO',
+    tbDesc: 'Distributed GPU pipeline (Ray/KubeRay, SAM3) for automatic geospatial image annotation, production run on 21,819 real images, Parquet output on MinIO',
     heigMonitoring: 'GPU observability stack: Grafana · Grafana Alloy · Loki · Prometheus · DCGM, real-time monitoring of distributed GPU workloads',
     heigCrunchtime: 'CrunchTime Innovation 2026: on-premise Kubernetes infrastructure for AI-based email classification (Ligue Pulmonaire Vaudoise)',
     heigDts: '2023 Audience Award, DTS innovation project with Romande Énergie',
@@ -1532,6 +1598,14 @@ function applyTranslations(lang, pageName) {
   Object.entries(commonTranslations[lang]).forEach(([key, value]) => {
     document.querySelectorAll(`[data-i18n="${key}"]`).forEach(el => {
       el.textContent = value;
+    });
+  });
+
+  // Common translations applied to aria-label / tooltip attributes
+  Object.entries(commonTranslations[lang]).forEach(([key, value]) => {
+    document.querySelectorAll(`[data-i18n-aria="${key}"]`).forEach(el => {
+      el.setAttribute('aria-label', value);
+      el.setAttribute('data-tooltip', value);
     });
   });
 
