@@ -201,7 +201,7 @@
       <p class="project-subtitle">2 août 2024</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>On lit partout qu'il faut durcir ses pods : <code>runAsNonRoot</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities: drop: [&quot;ALL&quot;]</code>. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique, ou pire, aucun message du tout.</p>
 <p>Cet article est un catalogue de pièges <strong>vécus</strong> sur mon homelab. À chaque fois : un durcissement trop zélé, un service cassé, une subtilité qui explique pourquoi. Le but n'est pas de tout durcir. C'est de durcir <em>juste ce qu'il faut</em>.</p>
 <h2>Prérequis</h2>

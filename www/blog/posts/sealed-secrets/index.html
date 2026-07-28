@@ -201,7 +201,7 @@
       <p class="project-subtitle">6 octobre 2024</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>Le GitOps a une exigence gênante : <em>tout</em> doit être dans Git, y compris les secrets. Sauf qu'un <code>Secret</code> Kubernetes, c'est juste du base64, pas du chiffrement. Le committer, c'est publier ses mots de passe en clair. Alors on les garde à part, et on casse le principe « tout est dans Git ».</p>
 <p><strong>Sealed Secrets</strong> (Bitnami) résout ça proprement : on chiffre le secret avec une clé publique, et seul le contrôleur dans le cluster (qui détient la clé privée) peut le déchiffrer. Le fichier chiffré est <strong>committable sans risque</strong>.</p>
 <p>Dans ce post :</p>

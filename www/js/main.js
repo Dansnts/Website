@@ -118,10 +118,7 @@ function initSectionSpy() {
 function initScrollReveal() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in-view');
-        observer.unobserve(entry.target);
-      }
+      entry.target.classList.toggle('in-view', entry.isIntersecting);
     });
   }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('[data-anim]').forEach(el => observer.observe(el));

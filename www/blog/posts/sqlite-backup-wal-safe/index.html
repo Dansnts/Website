@@ -201,7 +201,7 @@
       <p class="project-subtitle">8 janvier 2025</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>Voici une erreur qu'on fait tous une fois : sauvegarder un fichier de base de données SQLite en le copiant bêtement (<code>cp</code>, <code>rsync</code>, ou en l'incluant dans un backup Restic) pendant que l'application écrit dedans. Le résultat peut être une base <strong>corrompue</strong>, inutilisable au moment précis où on en a le plus besoin.</p>
 <p>Le problème et sa solution sont subtils. Dans ce post, on sauvegarde proprement la base SQLite de Vaultwarden depuis un CronJob Kubernetes :</p>
 <ol>

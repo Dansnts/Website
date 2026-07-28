@@ -201,7 +201,7 @@
       <p class="project-subtitle">24 juillet 2025</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>Un cluster single-node a un problème de stockage : les volumes <code>local-path</code> vivent sur le disque du node. Mes données volumineuses (photos, médias, sauvegardes), elles, sont sur un NAS TrueNAS séparé, exposé en SMB. Comment faire consommer ce stockage réseau par des pods Kubernetes ?</p>
 <p>La réponse : le <strong>CSI driver SMB</strong>. Il permet à Kubernetes de monter des partages SMB comme des volumes, exactement comme n'importe quel PVC. Dans ce post :</p>
 <ol>

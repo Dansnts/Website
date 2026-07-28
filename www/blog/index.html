@@ -196,175 +196,175 @@
   </div>
 
   <ul class="post-list">
-    <li>
+    <li data-anim="up">
       <div class="post-date">7 juillet 2026</div>
       <a href="/blog/posts/golang-introduction/">Introduction à Go</a>
       
       <p class="post-desc">Les bases du langage : types, variables, fonctions, structs, interfaces, gestion d&#39;erreurs et goroutines.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">4 juillet 2026</div>
       <a href="/blog/posts/health-checker/">Construire un service de health check en Python avec asyncio</a>
       
       <p class="post-desc">Un petit service qui poll une liste d&#39;URLs en parallèle, stocke les résultats en mémoire et les expose via une API FastAPI.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">20 juin 2026</div>
       <a href="/blog/posts/loki-alloy-elk/">Centraliser ses logs avec Loki, Alloy et ELK</a>
       
       <p class="post-desc">Comparaison de deux stacks de logs pour un homelab : Loki + Alloy (index sur labels) et ELK (full-text), testées toutes les deux en conditions réelles.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">13 avril 2026</div>
       <a href="/blog/posts/argocd-gitops/">GitOps avec ArgoCD</a>
       
       <p class="post-desc">Arrêter de faire kubectl apply à la main et laisser un contrôleur synchroniser le cluster sur le repo Git.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">10 avril 2026</div>
       <a href="/blog/posts/keycloak-iam/">Keycloak, l&#39;IAM central de mon homelab</a>
       
       <p class="post-desc">Un seul annuaire d&#39;identités pour tout le lab : realm homelab, SSO OIDC pour Grafana, et un client freeradius qui sert de pont vers l&#39;auth réseau 802.1X.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">20 février 2026</div>
       <a href="/blog/posts/mikrotik-segmentation/">Segmenter son homelab derrière un MikroTik</a>
       
       <p class="post-desc">Un LAN isolé en 10.0.0.0/24, du NAT, des port forwards et un firewall qui empêche le lab de parler au réseau de la maison.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">19 décembre 2025</div>
       <a href="/blog/posts/dns-coredns-pihole/">DNS à deux niveaux avec CoreDNS et Pi-hole</a>
       
       <p class="post-desc">Garder Pi-hole hors du chemin critique du cluster, et pourquoi le node K3s ne doit surtout pas l&#39;utiliser comme résolveur.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">4 décembre 2025</div>
       <a href="/blog/posts/vaultwarden/">Héberger son gestionnaire de mots de passe : Vaultwarden</a>
       
       <p class="post-desc">Un coffre-fort Bitwarden chez soi, en un seul conteneur Rust. DOMAIN, ADMIN_TOKEN en Argon2id, et un backup SQLite cohérent même à chaud.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">17 novembre 2025</div>
       <a href="/blog/posts/cert-manager-dns01/">Certificat wildcard automatique avec cert-manager et DNS-01</a>
       
       <p class="post-desc">Un *.mondomaine.com signé par Let&#39;s Encrypt, renouvelé tout seul, via un challenge DNS, et le cas des services hors cluster.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">10 septembre 2025</div>
       <a href="/blog/posts/restic-backup-zero-knowledge/">Backup zero-knowledge avec Restic</a>
       
       <p class="post-desc">Chiffrement côté client, déduplication, et un repo S3 où même l&#39;hébergeur ne peut rien lire. Le tout piloté par un CronJob Kubernetes.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">20 août 2025</div>
       <a href="/blog/posts/8021x-radius-keycloak/">Sécuriser ses ports Ethernet avec 802.1X, FreeRADIUS et Keycloak</a>
       
       <p class="post-desc">Brancher un câble ne devrait pas suffire à entrer sur le réseau. EAP-TTLS, MAB, et une auth qui remonte jusqu&#39;à Keycloak via ROPC.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">1 août 2025</div>
       <a href="/blog/posts/proxmox-terraform/">Provisionner ses VMs Proxmox avec Terraform</a>
       
       <p class="post-desc">Cloner un template, injecter la config via cloud-init, et le piège du passthrough disque que le provider ne sait pas gérer.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">24 juillet 2025</div>
       <a href="/blog/posts/smb-csi-truenas/">Monter des partages TrueNAS SMB dans Kubernetes</a>
       
       <p class="post-desc">Brancher le stockage d&#39;un NAS sur ses pods via le CSI driver SMB : StorageClass, PVC statiques, et le piège de la version canary.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">9 juillet 2025</div>
       <a href="/blog/posts/ansible-idempotent/">Configurer ses hôtes avec Ansible de façon idempotente</a>
       
       <p class="post-desc">Des rôles réutilisables, du netplan qui remplace cloud-init, et pourquoi rejouer un playbook dix fois ne casse rien.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">1 juin 2025</div>
       <a href="/blog/posts/k3s-single-node/">Monter un cluster K3s single-node</a>
       
       <p class="post-desc">Pourquoi K3s plutôt que Kubernetes complet, le Traefik intégré, et la chaîne Packer → Terraform → Ansible qui mène au cluster.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">21 mai 2025</div>
       <a href="/blog/posts/packer-golden-image/">Construire une golden image Debian 12 avec Packer</a>
       
       <p class="post-desc">Un template versionné, installé automatiquement au preseed et nettoyé pour être cloné à l&#39;infini.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">3 mai 2025</div>
       <a href="/blog/posts/cicd-github-actions/">Mettre en place une CI/CD avec GitHub Actions</a>
       
       <p class="post-desc">De zéro à un pipeline qui teste, build et déploie automatiquement à chaque push.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">2 mai 2025</div>
       <a href="/blog/posts/metallb-loadbalancer/">LoadBalancer bare-metal avec MetalLB</a>
       
       <p class="post-desc">Donner de vraies IP à ses services Kubernetes sur du matériel maison, et exposer autre chose que du HTTP.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">21 avril 2025</div>
       <a href="/blog/posts/backup-smb-galeres/">Problèmes de backup sur montage SMB</a>
       
       <p class="post-desc">Inodes qui changent, caractères spéciaux dans les noms de fichiers, node_modules trop profonds : les problèmes rencontrés en sauvegardant un montage SMB, et comment les résoudre.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">21 mars 2025</div>
       <a href="/blog/posts/radius-dependance-circulaire/">Dépendance circulaire entre RADIUS et 802.1X</a>
       
       <p class="post-desc">Retour d&#39;expérience : mettre son serveur RADIUS derrière son propre 802.1X crée un deadlock dont on ne sort pas tout seul.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">8 janvier 2025</div>
       <a href="/blog/posts/sqlite-backup-wal-safe/">Sauvegarder une base SQLite live proprement</a>
       
       <p class="post-desc">Copier un fichier .sqlite3 pendant que l&#39;app écrit dedans, c&#39;est risquer une base corrompue. La solution : un initContainer et sqlite3 .backup.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">4 décembre 2024</div>
       <a href="/blog/posts/prometheus-grafana/">Monitoring maison : Prometheus, Grafana et node_exporter</a>
       
       <p class="post-desc">Du scrape au dashboard. Deux node_exporter (hôtes en Ansible, pods en DaemonSet), un Prometheus qui agrège tout, et Grafana branché en SSO Keycloak.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">6 octobre 2024</div>
       <a href="/blog/posts/sealed-secrets/">Chiffrer ses secrets Kubernetes avec Sealed Secrets</a>
       
       <p class="post-desc">Chiffrer ses secrets K8s en RSA-4096 pour les versionner dans Git, et le point critique que tout le monde oublie : sauvegarder la master key.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">10 septembre 2024</div>
       <a href="/blog/posts/wireguard-wg-easy/">WireGuard self-hosted avec wg-easy</a>
       
       <p class="post-desc">Un VPN pour rentrer chez soi de n&#39;importe où : port forward en cascade, modules kernel, et la migration douloureuse v14 → v15.</p>
       
     </li>
-    <li>
+    <li data-anim="up">
       <div class="post-date">2 août 2024</div>
       <a href="/blog/posts/securitycontext-pieges/">Pièges des securityContext Kubernetes</a>
       

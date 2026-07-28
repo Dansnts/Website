@@ -60,7 +60,11 @@ const pageTranslations = {
       'qa-q5': 'Travailles-tu mieux sur site ou à distance ?',
       'qa-a5': 'Les deux fonctionnent pour moi. Je travaille aussi bien en autonomie complète, sans supervision directe, qu\'en équipe.',
       'qa-q6': 'Pourquoi un site plutôt qu\'un CV classique ?',
-      'qa-a6': 'Parce que je voulais un CV que je contrôle de bout en bout, hébergé sur mon infrastructure, sans dépendre d\'un outil tiers.'
+      'qa-a6': 'Parce que je voulais un CV que je contrôle de bout en bout, hébergé sur mon infrastructure, sans dépendre d\'un outil tiers.',
+      'qa-q7': 'Quel a été ton plus gros problème ?',
+      'qa-a7': 'Monter un département IT de zéro, seul, chez eeproperty, avec un budget strict et une infrastructure qui devait rester en production sans interruption.',
+      'qa-q8': 'Quel est ton projet dont tu es le plus fier ?',
+      'qa-a8': 'Mon travail de Bachelor : une pipeline GPU distribuée pour l\'annotation d\'images géospatiales, avec un run de production réel sur 21\'819 images et une vraie analyse de performance derrière.'
     },
     en: {
       'hero-subtitle': 'Infrastructure & Security Engineer',
@@ -90,7 +94,11 @@ const pageTranslations = {
       'qa-q5': 'Do you work better on-site or remote?',
       'qa-a5': 'Both work for me. I work just as well in full autonomy, without direct supervision, as I do in a team.',
       'qa-q6': 'Why a website instead of a standard resume?',
-      'qa-a6': 'Because I wanted a resume I control end to end, hosted on my own infrastructure, without depending on a third-party tool.'
+      'qa-a6': 'Because I wanted a resume I control end to end, hosted on my own infrastructure, without depending on a third-party tool.',
+      'qa-q7': 'What was your biggest challenge?',
+      'qa-a7': 'Building an IT department from zero, alone, at eeproperty, with a strict budget and infrastructure that had to stay in production without interruption.',
+      'qa-q8': 'What project are you most proud of?',
+      'qa-a8': 'My Bachelor\'s thesis: a distributed GPU pipeline for geospatial image annotation, with a real production run on 21,819 images and genuine performance analysis behind it.'
     }
   },
   // Projects listing page
@@ -129,6 +137,7 @@ const pageTranslations = {
       'proj-turbodex-desc': 'Application mobile de collection automobile avec reconnaissance IA - Projet PDG 2025.',
       'proj-tb': 'Travail de Bachelor',
       'proj-tb-desc': 'Pipeline GPU distribuée d\'annotation automatique d\'images géospatiales avec SAM3 et Ray sur Kubernetes, projet NearAI de l\'IICT HEIG-VD. Run de production sur 21\'819 images réelles.',
+      'proj-tb-status': 'Terminé',
       'proj-picamera': 'PiCamera',
       'proj-picamera-desc': 'Appareil photo DIY avec Raspberry Pi, écran tactile Adafruit et coque imprimée en 3D.',
       'proj-root': 'ROOT',
@@ -168,6 +177,7 @@ const pageTranslations = {
       'proj-turbodex-desc': 'Mobile car collection app with AI recognition - PDG 2025 group project.',
       'proj-tb': 'Bachelor Thesis',
       'proj-tb-desc': 'Distributed GPU pipeline for automatic geospatial image annotation with SAM3 and Ray on Kubernetes, NearAI project at IICT HEIG-VD. Production run on 21,819 real images.',
+      'proj-tb-status': 'Completed',
       'proj-picamera': 'PiCamera',
       'proj-picamera-desc': 'DIY camera with Raspberry Pi, Adafruit touchscreen and 3D printed case.',
       'proj-root': 'ROOT',
@@ -184,12 +194,11 @@ const pageTranslations = {
       'title': 'Curriculum Vitae',
       'intro': 'Mon parcours professionnel et académique.',
       'export-pdf': 'Exporter PDF',
-      'about-text': 'Ingénieur système et réseau. Passionné par les technologies open source, le basketball, la photographie et les JRPGs classiques.',
-      'about-study': 'Actuellement en Bachelor Réseaux & Systèmes à la HEIG-VD.',
+      'about-text': "Ingénieur DevOps, Cloud & Fiabilité (SRE). Diplômé d'un Bachelor en Réseaux & Systèmes (HEIG-VD) et CFC d'informaticien d'entreprise ICT, je conçois, automatise et sécurise des environnements de production de bout en bout, de l'infrastructure as code (IaC) aux architectures cloud-native. Passionné par les technologies open-source et l'automatisation, je cherche à bâtir des systèmes robustes là où le logiciel rencontre le terrain. En dehors du code : basketball, photographie et JRPGs classiques.",
+      'about-study': '',
       'experience': 'Expérience professionnelle',
       'education': 'Formation',
       'skills': 'Compétences',
-      'skills-intro': "Mise en place de clusters <strong>Kubernetes</strong> (K3s, AKS) on-premise avec <strong>ArgoCD</strong> (GitOps), Traefik, MetalLB et cert-manager. Gestion de workloads conteneurisés avec <strong>Docker</strong>. Virtualisation sur <strong>Proxmox</strong> et stockage NAS avec <strong>TrueNAS/ZFS</strong>. Administration de bases de données <strong>PostgreSQL</strong> en production (schémas, sauvegardes WAL-safe, restauration testée). Déploiement d'infrastructure as code avec <strong>Terraform</strong> et Ansible. Administration de serveurs <strong>Windows Server</strong> (AD, GPO, Exchange) et de parcs <strong>Linux</strong> (Fedora, Ubuntu, Debian). Gestion des identités et des accès (<strong>IAM</strong>) : Active Directory, Azure AD, <strong>Keycloak</strong> (OIDC/OAuth2/SSO), <strong>HashiCorp Vault</strong>, RBAC. Configuration et segmentation réseau (VLANs, Cisco, Aruba, Arista, <strong>MikroTik</strong>, UniFi, FreeRADIUS). VPN <strong>WireGuard</strong>. Déploiement de stacks de monitoring (<strong>Prometheus, Grafana, ELK</strong>). Automatisation de pipelines <strong>CI/CD avec GitLab</strong> et scripting Go/Python/Bash/PowerShell. Gestion MDM (Intune, Apple Business Manager). Certification cybersécurité Cyber-Safe, mise en conformité RGPD.",
       'languages': 'Langues',
       'observability': 'Observabilité',
       'security': 'Sécurité',
@@ -209,10 +218,28 @@ const pageTranslations = {
       'trainee-soft3': 'Environnement corporate',
       'trainee-soft4': 'Multi-projets',
       'section-projects': 'Projets',
-      'homelab-task-1': 'Cluster K3s deux nœuds sur matériel dédié, ~20 services en production depuis 2 ans : stack ELK complète (Elasticsearch, Kibana, Logstash, Filebeat), Immich, Jellyfin, Prometheus / Grafana / Node Exporter',
-      'homelab-task-2': 'Infrastructure GitOps via ArgoCD, provisionnement entièrement en IaC (Terraform + Ansible), certificats TLS wildcard automatisés via cert-manager / Let\'s Encrypt',
-      'homelab-task-3': 'Administration DNS : domaines propres, wildcards, DDNS Infomaniak, résolution interne Pi-hole, accès distant via WireGuard VPN (3 tunnels)',
-      'homelab-task-4': 'NAS 12 To avec sauvegarde automatisée vers Google Drive'
+      'homelab-task-1': 'Cluster <strong>K3s</strong> deux nœuds sur matériel dédié, ~20 services en production depuis 2 ans : stack <strong>ELK</strong> complète (Elasticsearch, Kibana, Logstash, Filebeat), Immich, Jellyfin, Prometheus / Grafana / Node Exporter',
+      'homelab-task-2': 'Infrastructure GitOps via <strong>ArgoCD</strong>, provisionnement entièrement en IaC (<strong>Terraform</strong> + Ansible), certificats TLS wildcard automatisés via cert-manager / Let\'s Encrypt',
+      'homelab-task-3': 'Administration DNS : domaines propres, wildcards, DDNS Infomaniak, résolution interne Pi-hole, accès distant via <strong>WireGuard VPN</strong> (3 tunnels)',
+      'homelab-task-4': 'NAS <strong>12 To</strong> avec sauvegarde automatisée vers Google Drive',
+      'skdet-obs-1': '<strong>Métriques :</strong> Prometheus, Grafana, Grafana Alloy',
+      'skdet-obs-2': '<strong>Logs :</strong> ELK Stack (Elasticsearch, Kibana, Logstash, Filebeat), Loki',
+      'skdet-obs-3': '<strong>GPU :</strong> DCGM, supervision temps réel de workloads distribués',
+      'skdet-virt-1': '<strong>Containers:</strong> Docker / Compose, Kubernetes / K3s / AKS',
+      'skdet-virt-2': '<strong>GitOps &amp; réseau applicatif :</strong> ArgoCD, Traefik, MetalLB',
+      'skdet-virt-3': '<strong>Hyperviseurs :</strong> Proxmox, VMware vSphere / ESXi, Vagrant',
+      'skdet-virt-4': '<strong>Sécurité conteneurs :</strong> durcissement (capabilities, AppArmor, seccomp, namespaces)',
+      'skdet-infra-1': '<strong>Systèmes :</strong> Windows Server / AD (GPO), Linux, macOS (ABM)',
+      'skdet-infra-2': '<strong>Réseau :</strong> Cisco, Aruba, Arista, MikroTik, Ubiquiti UniFi, FreeRADIUS (802.1X), WireGuard (VPN)',
+      'skdet-infra-3': '<strong>Stockage &amp; données :</strong> TrueNAS / ZFS, PostgreSQL',
+      'skdet-infra-4': '<strong>Cloud :</strong> AWS (EC2, EKS, S3, IAM), Azure AD / Intune',
+      'skdet-infra-5': '<strong>Identités &amp; secrets :</strong> Active Directory, RBAC, Keycloak (OIDC/OAuth2/SSO), HashiCorp Vault, External Secrets Operator',
+      'skdet-infra-6': '<strong>Parc mobile :</strong> MDM (Intune / ABM)',
+      'skdet-auto-1': '<strong>Infrastructure as Code :</strong> Terraform / OpenTofu, Ansible',
+      'skdet-auto-2': '<strong>CI/CD :</strong> Git, GitLab CI',
+      'skdet-auto-3': '<strong>Scripting :</strong> Go, Python, Bash, PowerShell',
+      'skdet-auto-4': '<strong>Sécurité applicative :</strong> DevSecOps, cert-manager',
+      'skdet-auto-5': '<strong>Conformité :</strong> Cyber-Safe (ISO 27001), RGPD'
     },
     en: {
       'age-unit': 'years old',
@@ -227,7 +254,6 @@ const pageTranslations = {
       'experience': 'Professional Experience',
       'education': 'Education',
       'skills': 'Skills',
-      'skills-intro': 'Deployment and administration of on-premise <strong>Kubernetes</strong> clusters (K3s, AKS) with <strong>ArgoCD</strong> (GitOps), Traefik, MetalLB and cert-manager. Containerized workload management with <strong>Docker</strong>. Virtualization on <strong>Proxmox</strong> and NAS storage with <strong>TrueNAS/ZFS</strong>. Production <strong>PostgreSQL</strong> database administration (schemas, WAL-safe backups, tested restores). Infrastructure as code with <strong>Terraform</strong> and Ansible. <strong>Windows Server</strong> administration (AD, GPO, Exchange) and <strong>Linux</strong> fleet management (Fedora, Ubuntu, Debian). Identity and access management (<strong>IAM</strong>): Active Directory, Azure AD, <strong>Keycloak</strong> (OIDC/OAuth2/SSO), <strong>HashiCorp Vault</strong>, RBAC. Network configuration and segmentation (VLANs, Cisco, Aruba, Arista, <strong>MikroTik</strong>, UniFi, FreeRADIUS). <strong>WireGuard</strong> VPN. Monitoring stack deployment (<strong>Prometheus, Grafana, ELK</strong>). <strong>CI/CD pipeline automation with GitLab</strong> and Go/Python/Bash/PowerShell scripting. MDM management (Intune, Apple Business Manager). Cyber-Safe security certification, GDPR compliance.',
       'languages': 'Languages',
       'observability': 'Observability',
       'security': 'Security',
@@ -247,10 +273,28 @@ const pageTranslations = {
       'trainee-soft3': 'Corporate environment',
       'trainee-soft4': 'Multi-project',
       'section-projects': 'Projects',
-      'homelab-task-1': 'Two-node K3s cluster on dedicated hardware, 20+ services in production for 2+ years: full ELK stack (Elasticsearch, Kibana, Logstash, Filebeat), Immich, Jellyfin, Prometheus / Grafana / Node Exporter',
-      'homelab-task-2': 'GitOps via ArgoCD, full IaC (Terraform + Ansible), automated TLS wildcard certificates via cert-manager / Let\'s Encrypt, own domains + Infomaniak DDNS',
-      'homelab-task-3': 'DNS administration: own domains, wildcards, Infomaniak DDNS, internal Pi-hole resolution, remote access via WireGuard VPN (3 tunnels)',
-      'homelab-task-4': '12 TB NAS with automated Google Drive backup'
+      'homelab-task-1': 'Two-node <strong>K3s</strong> cluster on dedicated hardware, 20+ services in production for 2+ years: full <strong>ELK</strong> stack (Elasticsearch, Kibana, Logstash, Filebeat), Immich, Jellyfin, Prometheus / Grafana / Node Exporter',
+      'homelab-task-2': 'GitOps via <strong>ArgoCD</strong>, full IaC (<strong>Terraform</strong> + Ansible), automated TLS wildcard certificates via cert-manager / Let\'s Encrypt, own domains + Infomaniak DDNS',
+      'homelab-task-3': 'DNS administration: own domains, wildcards, Infomaniak DDNS, internal Pi-hole resolution, remote access via <strong>WireGuard VPN</strong> (3 tunnels)',
+      'homelab-task-4': '<strong>12 TB</strong> NAS with automated Google Drive backup',
+      'skdet-obs-1': '<strong>Metrics:</strong> Prometheus, Grafana, Grafana Alloy',
+      'skdet-obs-2': '<strong>Logs:</strong> ELK Stack (Elasticsearch, Kibana, Logstash, Filebeat), Loki',
+      'skdet-obs-3': '<strong>GPU:</strong> DCGM, real-time monitoring of distributed workloads',
+      'skdet-virt-1': '<strong>Containers:</strong> Docker / Compose, Kubernetes / K3s',
+      'skdet-virt-2': '<strong>GitOps &amp; application networking:</strong> ArgoCD, Traefik, MetalLB',
+      'skdet-virt-3': '<strong>Hypervisors:</strong> Proxmox, VMware vSphere / ESXi, Vagrant',
+      'skdet-virt-4': '<strong>Container security:</strong> hardening (capabilities, AppArmor, seccomp, namespaces)',
+      'skdet-infra-1': '<strong>Systems:</strong> Windows Server / AD (GPO), Linux, macOS (ABM)',
+      'skdet-infra-2': '<strong>Network:</strong> Cisco, MikroTik, Ubiquiti UniFi, FreeRADIUS (802.1X), WireGuard (VPN)',
+      'skdet-infra-3': '<strong>Storage &amp; data:</strong> TrueNAS / ZFS, PostgreSQL',
+      'skdet-infra-4': '<strong>Cloud:</strong> AWS (EC2, EKS, S3, IAM), Azure AD / Intune',
+      'skdet-infra-5': '<strong>Identity &amp; secrets:</strong> Active Directory, RBAC, HashiCorp Vault, External Secrets Operator',
+      'skdet-infra-6': '<strong>Device fleet:</strong> MDM (Intune / ABM)',
+      'skdet-auto-1': '<strong>Infrastructure as Code:</strong> Terraform / OpenTofu, Ansible',
+      'skdet-auto-2': '<strong>CI/CD:</strong> Git, GitLab CI',
+      'skdet-auto-3': '<strong>Scripting:</strong> Go, Python, Bash, PowerShell',
+      'skdet-auto-4': '<strong>Application security:</strong> DevSecOps, cert-manager',
+      'skdet-auto-5': '<strong>Compliance:</strong> Cyber-Safe (ISO 27001), GDPR'
     }
   },
   // ===== Project detail pages =====
@@ -742,7 +786,7 @@ const pageTranslations = {
     fr: {
       'tb-title': 'Pipeline Distribuée d\'Annotation Automatique d\'Images Géospatiales',
       'tb-subtitle': 'Travail de Bachelor · HEIG-VD 2025-26 · Superviseur : Prof. Bertil Chapuis',
-      'tb-status': 'En cours',
+      'tb-status': 'Terminé',
       'tb-context-title': 'Contexte',
       'tb-context-text': 'L\'Institut IICT de la HEIG-VD conduit le projet <strong>NearAI</strong>, dont l\'objectif est de construire une base de données géospatiale d\'éléments routiers à partir d\'acquisitions mobiles. Les images sont capturées par des véhicules équipés d\'un Trimble MX50 ou d\'une GoPro Max et produisent des panoramas équirectangulaires allant jusqu\'aux 8\'192 × 4\'096 pixels, accompagnés de coordonnées GPS enregistrées dans l\'EXIF. Le corpus cible dépasse <strong>300\'000 images</strong>. Annoter manuellement ce volume représenterait plus de 2\'500 heures de travail. L\'annotation automatisée est la seule voie viable.',
       'tb-problem-title': 'Problème',
@@ -788,7 +832,7 @@ const pageTranslations = {
       'tb-done-9': 'Gestion des secrets versionnée et chiffrée (SOPS + age), sans composant à l\'échelle du cluster',
       'tb-results-title': 'Résultats',
       'tb-results-1': '<strong>Scalabilité :</strong> le passage de 1 à 3 workers GPU multiplie le débit par ≈ 2,5× (778 → 1\'920 images/heure à tuile 1008 px)',
-      'tb-results-2': '<strong>L40S vs A40 :</strong> gain mesuré de 1,45× en faveur du L40S, contre 2,42× de gain théorique en calcul BF16 — les transferts mémoire pèsent autant que la puissance brute',
+      'tb-results-2': '<strong>L40S vs A40 :</strong> gain mesuré de 1,45× en faveur du L40S, contre 2,42× de gain théorique en calcul BF16, les transferts mémoire pèsent autant que la puissance brute',
       'tb-results-3': '<strong>Run de production Vevey :</strong> 21\'819 images, de 18h30 (2 labels, ≈ 1\'179 img/h) à 34h17 (6 labels, ≈ 637 img/h)',
       'tb-results-4': '<strong>Goulot d\'étranglement :</strong> GPU saturé à 90–100 % en régime de production, stockage MinIO quasi inactif (≈ 2 Mo/s), largement sous sa capacité',
       'tb-skills-title': 'Compétences développées',
@@ -804,7 +848,7 @@ const pageTranslations = {
     en: {
       'tb-title': 'Distributed Pipeline for Automatic Geospatial Image Annotation',
       'tb-subtitle': 'Bachelor Thesis · HEIG-VD 2025-26 · Supervisor: Prof. Bertil Chapuis',
-      'tb-status': 'In progress',
+      'tb-status': 'Completed',
       'tb-context-title': 'Context',
       'tb-context-text': 'The IICT institute at HEIG-VD runs the <strong>NearAI</strong> project, whose goal is to build a geospatial database of road elements from mobile acquisitions. Images are captured by vehicles equipped with a Trimble MX50 or a GoPro Max, producing equirectangular panoramas up to 8\'192 × 4\'096 pixels with GPS coordinates stored in the EXIF. The target corpus exceeds <strong>300,000 images</strong>. Manual annotation would require over 2,500 hours. Automated annotation is the only viable approach.',
       'tb-problem-title': 'Problem',
@@ -850,7 +894,7 @@ const pageTranslations = {
       'tb-done-9': 'Versioned, encrypted secrets management (SOPS + age), no cluster-wide component required',
       'tb-results-title': 'Results',
       'tb-results-1': '<strong>Scalability:</strong> going from 1 to 3 GPU workers multiplies throughput by ≈ 2.5× (778 → 1,920 images/hour at 1008 px tiles)',
-      'tb-results-2': '<strong>L40S vs A40:</strong> measured gain of 1.45× in favor of the L40S, against a 2.42× theoretical gain in BF16 compute — memory transfers weigh as much as raw compute power',
+      'tb-results-2': '<strong>L40S vs A40:</strong> measured gain of 1.45× in favor of the L40S, against a 2.42× theoretical gain in BF16 compute, memory transfers weigh as much as raw compute power',
       'tb-results-3': '<strong>Vevey production run:</strong> 21,819 images, from 18h30 (2 labels, ≈ 1,179 img/h) to 34h17 (6 labels, ≈ 637 img/h)',
       'tb-results-4': '<strong>Bottleneck:</strong> GPU saturated at 90–100% in production, MinIO storage nearly idle (≈ 2 MB/s), well under its capacity',
       'tb-skills-title': 'Skills Developed',
@@ -1275,50 +1319,68 @@ const pageTranslations = {
 // Job translations (CV specific)
 const jobTranslations = {
   fr: {
+    mlops: {
+      title: 'MLOps Engineer',
+      tasks: [
+        'Conception et déploiement d\'une <strong>pipeline GPU distribuée</strong> (Ray / KubeRay, SAM3) pour l\'annotation automatique d\'images géospatiales à grande échelle',
+        'Run de production sur <strong>21\'819 images réelles</strong>, jusqu\'à 34h17 de traitement continu, analyse de performance et de goulots d\'étranglement',
+        'Stack d\'<strong>observabilité complète</strong> (Prometheus, Grafana, Loki, DCGM) pour le suivi temps réel des workloads GPU',
+        '<strong>Hardening des pods</strong> (conteneurs non-root) et gestion des secrets et identités versionnée et chiffrée (SOPS + age)'
+      ]
+    },
     sysadmin: {
       title: 'Responsable IT Unique, Infrastructure & Sécurité',
       tasks: [
-        'Création du département IT de A à Z, en autonomie totale, sous contrainte budgétaire sévère (100 CHF/mois), infrastructure toujours en production, budget porté à 30 000 CHF/an',
-        'Certification Cyber-Safe (ISO 27001) en 6 mois : production de preuves d\'audit, première pour l\'entreprise',
-        'Gestion des identités et des droits : modélisation de rôles RBAC, Active Directory (30 utilisateurs, GPO), 40 appareils MDM (Intune / ABM), 3CX VoIP sous Debian',
-        'Architecture réseau segmentée : DMZ, 5 VLANs isolés, virtualisation Proxmox sur site et cloud hybride Hidora',
-        'Segmentation réseau (VLANs Office, VoIP, Services, DMZ), déploiement WiFi d\'entreprise Ubiquiti UniFi',
-        'Administration Active Directory, migration Exchange, sauvegardes immuables conformes RGPD',
-        'Gestion du parc macOS via Apple Business Manager, formation et sensibilisation à la cybersécurité'
+        'Création du <strong>département IT de A à Z</strong>, en autonomie totale, sous contrainte budgétaire sévère (100 CHF/mois), infrastructure toujours en production, budget porté à 30 000 CHF/an',
+        'Certification <strong>Cyber-Safe (ISO 27001)</strong> en 6 mois : production de preuves d\'audit, première pour l\'entreprise',
+        'Gestion des identités et des droits : modélisation de rôles RBAC, <strong>Active Directory</strong> (30 utilisateurs, GPO), 40 appareils MDM (Intune / ABM), 3CX VoIP sous Debian',
+        'Architecture réseau segmentée : DMZ, 5 VLANs isolés, virtualisation <strong>Proxmox</strong> sur site et cloud hybride Hidora',
+        'Segmentation réseau (VLANs Office, VoIP, Services, DMZ), déploiement WiFi d\'entreprise <strong>Ubiquiti UniFi</strong>',
+        'Administration Active Directory, migration <strong>Exchange</strong>, sauvegardes immuables conformes RGPD',
+        'Gestion du parc macOS via <strong>Apple Business Manager</strong>, formation et sensibilisation à la cybersécurité'
       ]
     },
     trainee: {
       title: 'Analyste Systèmes & Automatisation',
       tasks: [
-        'Mission de 12 mois en environnement corporate international : support informatique, diffusion d\'événements en direct (100+ participants), déploiement et support des solutions de travail à distance à grande échelle',
-        'Automatisation de ~30 processus métier (Power Automate) et développement de tableaux de bord Power BI à fort impact opérationnel',
-        'Infrastructure de diffusion complète pour InGenius, programme d\'innovation interne Nestlé (OBS, multi-sources)',
-        'Déploiement de la solution de travail à distance pour Maison Cailler (Teams, Zoom, stockage cloud)',
-        'Développement du site web ASLN et de ses applications (PowerApps, HTML, PHP)'
+        'Mission de 12 mois en environnement corporate international : support informatique, diffusion d\'événements en direct (<strong>100+ participants</strong>), déploiement et support des solutions de travail à distance à grande échelle',
+        'Automatisation de ~30 processus métier (<strong>Power Automate</strong>) et développement de tableaux de bord Power BI à fort impact opérationnel',
+        'Infrastructure de diffusion complète pour <strong>InGenius</strong>, programme d\'innovation interne Nestlé (OBS, multi-sources)',
+        'Déploiement de la solution de travail à distance pour <strong>Maison Cailler</strong> (Teams, Zoom, stockage cloud)',
+        'Développement du site web ASLN et de ses applications (<strong>PowerApps</strong>, HTML, PHP)'
       ]
     }
   },
   en: {
+    mlops: {
+      title: 'MLOps Engineer',
+      tasks: [
+        'Designed and deployed a <strong>distributed GPU pipeline</strong> (Ray / KubeRay, SAM3) for large-scale automatic geospatial image annotation',
+        'Production run on <strong>21,819 real images</strong>, up to 34h17 of continuous processing, performance and bottleneck analysis',
+        'Full <strong>observability stack</strong> (Prometheus, Grafana, Loki, DCGM) for real-time GPU workload monitoring',
+        '<strong>Pod hardening</strong> (non-root containers) and secrets &amp; identity management, versioned and encrypted (SOPS + age)'
+      ]
+    },
     sysadmin: {
       title: 'Sole IT Manager, Infrastructure & Security',
       tasks: [
-        'Identity and access management: RBAC role modelling, Active Directory (30 users, GPO, lifecycle), 40 MDM devices (Intune/ABM), 3CX VoIP on Debian',
-        'Network architecture from scratch: DMZ + 5 VLANs, on-premise Proxmox virtualization + hybrid Hidora cloud',
-        'Obtained Cyber-Safe certification (ISO 27001) in 6 months: audit evidence production, as sole IT owner, first time achieved by the company',
-        'Managed severe budget constraints with open source and MikroTik solutions, negotiated increased IT budget with financial management, impact recognized after my departure',
-        'Network architecture: segmented VLANs (Office, VoIP, Services, DMZ), enterprise WiFi deployment with Ubiquiti UniFi',
-        'Azure AD & Intune in production, identity management and MDM for 40 devices across platforms',
-        'macOS fleet management with Apple Business Manager, cybersecurity awareness'
+        'Identity and access management: RBAC role modelling, <strong>Active Directory</strong> (30 users, GPO, lifecycle), 40 MDM devices (Intune/ABM), 3CX VoIP on Debian',
+        'Network architecture from scratch: DMZ + 5 VLANs, on-premise <strong>Proxmox</strong> virtualization + hybrid Hidora cloud',
+        'Obtained <strong>Cyber-Safe certification (ISO 27001)</strong> in 6 months: audit evidence production, as sole IT owner, first time achieved by the company',
+        'Managed severe budget constraints with open source and <strong>MikroTik</strong> solutions, negotiated increased IT budget with financial management, impact recognized after my departure',
+        'Network architecture: segmented VLANs (Office, VoIP, Services, DMZ), enterprise WiFi deployment with <strong>Ubiquiti UniFi</strong>',
+        '<strong>Azure AD &amp; Intune</strong> in production, identity management and MDM for 40 devices across platforms',
+        'macOS fleet management with <strong>Apple Business Manager</strong>, cybersecurity awareness'
       ]
     },
     trainee: {
       title: 'Systems & Automation Analyst',
       tasks: [
-        '12-month mission in a global corporate environment: IT support, live streaming events (100+ participants), deployment and support of large-scale remote work solutions',
-        'Automated 30+ business workflows (Power Automate) and built high-impact Power BI dashboards, adopted broadly across business teams',
-        'Complete streaming setup for InGenius (internal Shark Tank) with OBS',
-        'COVID remote solution for Maison Cailler (Teams, Zoom, cloud storage)',
-        'ASLN website development and PowerApps, HTML, PHP applications'
+        '12-month mission in a global corporate environment: IT support, live streaming events (<strong>100+ participants</strong>), deployment and support of large-scale remote work solutions',
+        'Automated 30+ business workflows (<strong>Power Automate</strong>) and built high-impact Power BI dashboards, adopted broadly across business teams',
+        'Complete streaming setup for <strong>InGenius</strong> (internal Shark Tank) with OBS',
+        'COVID remote solution for <strong>Maison Cailler</strong> (Teams, Zoom, cloud storage)',
+        'ASLN website development and <strong>PowerApps</strong>, HTML, PHP applications'
       ]
     }
   }
@@ -1332,17 +1394,20 @@ const educationTranslations = {
     maturityDetail: 'CEPV - Architecture et sciences de la vie',
     cfc: 'CFC Informaticien',
     tbTitle: 'TB : Pipeline Distribuée d\'Annotation Automatique d\'Images Géospatiales',
-    tbDesc: 'Pipeline GPU distribuée (Ray/KubeRay, SAM3) pour l\'annotation automatique d\'images géospatiales, run de production sur 21\'819 images réelles, sorties Parquet sur MinIO',
-    heigMonitoring: 'Observabilité GPU : Grafana · Grafana Alloy · Loki · Prometheus · DCGM, supervision en temps réel des workloads GPU distribués',
-    heigCrunchtime: 'CrunchTime Innovation 2026 : infrastructure Kubernetes sur site pour la classification automatique de courriels par IA (Ligue Pulmonaire Vaudoise)',
-    heigDts: 'Prix du public 2023, DTS en partenariat avec Romande Énergie (projet d\'innovation)',
-    heigDevsecops: 'Sécurisation de containers (Linux capabilities, AppArmor, cgroups, namespaces, seccomp) et gestion d\'identités et de secrets (Vault, External Secrets Operator, Keycloak)',
-    heigBgpHa: 'Réseau avancé : BGP (routage inter-AS), haute disponibilité (VRRP / HSRP), spanning tree, routage dynamique (OSPF)',
-    heigAws: 'AWS (compte personnel, facturation en conditions réelles) : EC2, ELB, Auto Scaling, EKS, S3, Lambda, IAM, déploiements Terraform + Ansible, applications multi-tiers, tests de charge',
+    tbDesc: 'Pipeline GPU distribuée (Ray/KubeRay, <strong>SAM3</strong>) pour l\'annotation automatique d\'images géospatiales, run de production sur <strong>21\'819 images réelles</strong>, sorties Parquet sur MinIO',
+    heigMonitoring: '<strong>Observabilité GPU</strong> : Grafana · Grafana Alloy · Loki · Prometheus · DCGM, supervision en temps réel des workloads GPU distribués',
+    heigCrunchtime: '<strong>CrunchTime Innovation 2026</strong> : infrastructure Kubernetes sur site pour la classification automatique de courriels par IA (Ligue Pulmonaire Vaudoise)',
+    heigDts: '<strong>Prix du public 2023</strong>, DTS en partenariat avec Romande Énergie (projet d\'innovation)',
+    heigDevsecops: 'Sécurisation de containers (Linux capabilities, AppArmor, cgroups, namespaces, seccomp) et gestion d\'identités et de secrets (<strong>Vault</strong>, External Secrets Operator, Keycloak)',
+    heigBgpHa: 'Réseau avancé : <strong>BGP</strong> (routage inter-AS), haute disponibilité (VRRP / HSRP), spanning tree, routage dynamique (OSPF)',
+    heigAws: '<strong>AWS</strong> (compte personnel, facturation en conditions réelles) : EC2, ELB, Auto Scaling, EKS, S3, Lambda, IAM, déploiements Terraform + Ansible, applications multi-tiers, tests de charge',
     heigGcp: 'GCP : App Engine, GKE, Google Datastore',
     etmlPrize: 'Prix de l\'école pour excellence académique',
     etmlVoip: 'Infrastructure VoIP multi-site avec Asterisk',
     etmlAzure: 'TPI : Évaluation et déploiement d\'infrastructure Azure',
+    etmlPhp: 'Développement web PHP : plateforme de lecture d\'e-books (PDF) avec authentification et base de données MySQL',
+    etmlCsharp: 'Programmation orientée objet en C# : applications console, modélisation de classes et structures de données',
+    etmlDb: 'Modélisation de bases de données : conception SQL (relationnel) et NoSQL selon le cas d\'usage',
     preapp: 'Pré-apprentissage',
     preappPicamera: 'Projet : PiCamera, conception d\'une caméra photo avec écran tactile et stockage Dropbox',
     preappPrize: 'Prix de l\'école pour excellence académique'
@@ -1353,17 +1418,20 @@ const educationTranslations = {
     maturityDetail: 'CEPV - Architecture and Life Sciences',
     cfc: 'IT Apprenticeship (CFC)',
     tbTitle: 'Thesis: Distributed GPU Pipeline for Automatic Geospatial Image Annotation',
-    tbDesc: 'Distributed GPU pipeline (Ray/KubeRay, SAM3) for automatic geospatial image annotation, production run on 21,819 real images, Parquet output on MinIO',
-    heigMonitoring: 'GPU observability stack: Grafana · Grafana Alloy · Loki · Prometheus · DCGM, real-time monitoring of distributed GPU workloads',
-    heigCrunchtime: 'CrunchTime Innovation 2026: on-premise Kubernetes infrastructure for AI-based email classification (Ligue Pulmonaire Vaudoise)',
-    heigDts: '2023 Audience Award, DTS innovation project with Romande Énergie',
-    heigDevsecops: 'Container hardening (Linux capabilities, AppArmor, cgroups, namespaces, seccomp) and identity & secrets management (Vault, External Secrets Operator, Keycloak)',
-    heigBgpHa: 'Advanced networking: BGP (inter-AS routing), high availability (VRRP / HSRP), spanning tree, dynamic routing (OSPF)',
-    heigAws: 'AWS (personal account, live billing): EC2, ELB, Auto Scaling, EKS, S3, Lambda, IAM, Terraform + Ansible deployments, multi-tier applications, load testing',
+    tbDesc: 'Distributed GPU pipeline (Ray/KubeRay, <strong>SAM3</strong>) for automatic geospatial image annotation, production run on <strong>21,819 real images</strong>, Parquet output on MinIO',
+    heigMonitoring: '<strong>GPU observability stack</strong>: Grafana · Grafana Alloy · Loki · Prometheus · DCGM, real-time monitoring of distributed GPU workloads',
+    heigCrunchtime: '<strong>CrunchTime Innovation 2026</strong>: on-premise Kubernetes infrastructure for AI-based email classification (Ligue Pulmonaire Vaudoise)',
+    heigDts: '<strong>2023 Audience Award</strong>, DTS innovation project with Romande Énergie',
+    heigDevsecops: 'Container hardening (Linux capabilities, AppArmor, cgroups, namespaces, seccomp) and identity & secrets management (<strong>Vault</strong>, External Secrets Operator, Keycloak)',
+    heigBgpHa: 'Advanced networking: <strong>BGP</strong> (inter-AS routing), high availability (VRRP / HSRP), spanning tree, dynamic routing (OSPF)',
+    heigAws: '<strong>AWS</strong> (personal account, live billing): EC2, ELB, Auto Scaling, EKS, S3, Lambda, IAM, Terraform + Ansible deployments, multi-tier applications, load testing',
     heigGcp: 'GCP: App Engine, GKE, Google Datastore',
     etmlPrize: 'School award for academic excellence',
     etmlVoip: 'Multi-site VoIP infrastructure with Asterisk',
     etmlAzure: 'Final project: Azure infrastructure evaluation and deployment',
+    etmlPhp: 'PHP web development: e-book (PDF) reading platform with authentication and a MySQL database',
+    etmlCsharp: 'Object-oriented programming in C#: console applications, class modeling and data structures',
+    etmlDb: 'Database modeling: SQL (relational) and NoSQL design depending on use case',
     preapp: 'Pre-apprenticeship',
     preappPicamera: 'Project: PiCamera, photo camera with touchscreen and Dropbox storage',
     preappPrize: 'School award for academic excellence'
@@ -1631,13 +1699,23 @@ function applyTranslations(lang, pageName) {
   // CV-specific translations
   if (pageName === 'cv' || pageName === 'index') {
     // Jobs
+    const mlopsTitle = document.querySelector('[data-i18n="job-mlops"]');
+    if (mlopsTitle) mlopsTitle.textContent = jobTranslations[lang].mlops.title;
+
+    const mlopsTasks = document.querySelectorAll('[data-i18n="mlops-task"]');
+    mlopsTasks.forEach((el, i) => {
+      if (jobTranslations[lang].mlops.tasks[i]) {
+        el.innerHTML = jobTranslations[lang].mlops.tasks[i];
+      }
+    });
+
     const sysadminTitle = document.querySelector('[data-i18n="job-sysadmin"]');
     if (sysadminTitle) sysadminTitle.textContent = jobTranslations[lang].sysadmin.title;
 
     const sysadminTasks = document.querySelectorAll('[data-i18n="sysadmin-task"]');
     sysadminTasks.forEach((el, i) => {
       if (jobTranslations[lang].sysadmin.tasks[i]) {
-        el.textContent = jobTranslations[lang].sysadmin.tasks[i];
+        el.innerHTML = jobTranslations[lang].sysadmin.tasks[i];
       }
     });
 
@@ -1647,7 +1725,7 @@ function applyTranslations(lang, pageName) {
     const traineeTasks = document.querySelectorAll('[data-i18n="trainee-task"]');
     traineeTasks.forEach((el, i) => {
       if (jobTranslations[lang].trainee.tasks[i]) {
-        el.textContent = jobTranslations[lang].trainee.tasks[i];
+        el.innerHTML = jobTranslations[lang].trainee.tasks[i];
       }
     });
 
@@ -1678,26 +1756,26 @@ function applyTranslations(lang, pageName) {
     if (tbTitle) tbTitle.innerHTML = educationTranslations[lang].tbTitle;
 
     const tbDesc = document.querySelector('[data-i18n="tb-desc"]');
-    if (tbDesc) tbDesc.textContent = educationTranslations[lang].tbDesc;
+    if (tbDesc) tbDesc.innerHTML = educationTranslations[lang].tbDesc;
 
     // HEIG-VD DTS
     const heigCrunchtime = document.querySelector('[data-i18n="heig-crunchtime"]');
-    if (heigCrunchtime) heigCrunchtime.textContent = educationTranslations[lang].heigCrunchtime;
+    if (heigCrunchtime) heigCrunchtime.innerHTML = educationTranslations[lang].heigCrunchtime;
 
     const heigDts = document.querySelector('[data-i18n="heig-dts"]');
-    if (heigDts) heigDts.textContent = educationTranslations[lang].heigDts;
+    if (heigDts) heigDts.innerHTML = educationTranslations[lang].heigDts;
 
     const heigMonitoring = document.querySelector('[data-i18n="heig-monitoring"]');
-    if (heigMonitoring) heigMonitoring.textContent = educationTranslations[lang].heigMonitoring;
+    if (heigMonitoring) heigMonitoring.innerHTML = educationTranslations[lang].heigMonitoring;
 
     const heigDevsecops = document.querySelector('[data-i18n="heig-devsecops"]');
-    if (heigDevsecops) heigDevsecops.textContent = educationTranslations[lang].heigDevsecops;
+    if (heigDevsecops) heigDevsecops.innerHTML = educationTranslations[lang].heigDevsecops;
 
     const heigBgpHa = document.querySelector('[data-i18n="heig-bgp-ha"]');
-    if (heigBgpHa) heigBgpHa.textContent = educationTranslations[lang].heigBgpHa;
+    if (heigBgpHa) heigBgpHa.innerHTML = educationTranslations[lang].heigBgpHa;
 
     const heigAws = document.querySelector('[data-i18n="heig-aws"]');
-    if (heigAws) heigAws.textContent = educationTranslations[lang].heigAws;
+    if (heigAws) heigAws.innerHTML = educationTranslations[lang].heigAws;
 
     const heigGcp = document.querySelector('[data-i18n="heig-gcp"]');
     if (heigGcp) heigGcp.textContent = educationTranslations[lang].heigGcp;
@@ -1711,6 +1789,15 @@ function applyTranslations(lang, pageName) {
 
     const etmlAzure = document.querySelector('[data-i18n="etml-azure"]');
     if (etmlAzure) etmlAzure.textContent = educationTranslations[lang].etmlAzure;
+
+    const etmlPhp = document.querySelector('[data-i18n="etml-php"]');
+    if (etmlPhp) etmlPhp.textContent = educationTranslations[lang].etmlPhp;
+
+    const etmlCsharp = document.querySelector('[data-i18n="etml-csharp"]');
+    if (etmlCsharp) etmlCsharp.textContent = educationTranslations[lang].etmlCsharp;
+
+    const etmlDb = document.querySelector('[data-i18n="etml-db"]');
+    if (etmlDb) etmlDb.textContent = educationTranslations[lang].etmlDb;
 
     // Pré-apprentissage
     const preapp = document.querySelector('[data-i18n="degree-preapp"]');

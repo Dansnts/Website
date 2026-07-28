@@ -201,7 +201,7 @@
       <p class="project-subtitle">10 septembre 2025</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>Sauvegarder ses données hors site, c'est indispensable. Confier ses fichiers à un hébergeur cloud, c'est aussi lui confier leur contenu, sauf si on chiffre <strong>avant</strong> l'envoi. C'est le principe du <em>zero-knowledge</em> : l'hébergeur stocke des blobs opaques qu'il ne peut pas lire. Même sous contrainte légale, il n'a rien à donner.</p>
 <p><strong>Restic</strong> fait exactement ça : chunking, déduplication, compression et chiffrement AES-256, le tout côté client. On monte un backup Restic vers du S3, piloté par un CronJob Kubernetes :</p>
 <ol>

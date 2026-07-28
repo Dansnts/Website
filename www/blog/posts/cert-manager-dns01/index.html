@@ -201,7 +201,7 @@
       <p class="project-subtitle">17 novembre 2025</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>Avec une dizaine de services en HTTPS, gérer les certificats à la main devient vite ingérable : un cert par sous-domaine, chacun à renouveler tous les 90 jours. La solution élégante, c'est un <strong>certificat wildcard</strong> <code>*.mondomaine.com</code>, un seul cert pour tous les services, signé par Let's Encrypt et renouvelé automatiquement.</p>
 <p>Le hic : un wildcard ne peut PAS être validé par le challenge HTTP classique. Il faut passer par un <strong>challenge DNS-01</strong>, ce qui demande de piloter sa zone DNS par API. Au menu :</p>
 <ol>

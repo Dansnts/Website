@@ -201,7 +201,7 @@
       <p class="project-subtitle">9 juillet 2025</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>Terraform crée la VM, Packer fournit le template. Mais une fois la machine debout, il reste à la <strong>configurer</strong> : installer des outils, poser un DNS, déployer un exporter de métriques. On pourrait s'y connecter en SSH et taper les commandes. Sauf qu'au bout de trois machines, on ne sait plus laquelle a reçu quoi.</p>
 <p>Ansible résout ça avec deux idées : la configuration est <strong>décrite</strong> (pas exécutée à la main) et elle est <strong>idempotente</strong>, la rejouer dix fois donne toujours le même résultat, sans rien casser.</p>
 <p>Dans ce post, on configure deux hôtes du homelab (Proxmox et un node K3s) avec Ansible. On va voir :</p>

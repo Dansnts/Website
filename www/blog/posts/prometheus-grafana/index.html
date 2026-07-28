@@ -201,7 +201,7 @@
       <p class="project-subtitle">4 décembre 2024</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>Sans monitoring, un homelab marche « jusqu'à ce qu'il ne marche plus », et on l'apprend toujours au pire moment. On veut savoir si un disque se remplit, si la RAM sature, si un node chauffe, avant que ça casse, pas après. La stack de référence pour ça, c'est <strong>Prometheus + Grafana</strong>, alimentée par des <strong>exporters</strong>.</p>
 <p>Le principe tient en une phrase : des exporters exposent des métriques en HTTP, Prometheus va les <strong>scraper</strong> à intervalle régulier et les stocke, Grafana lit Prometheus et dessine les courbes. Simple, robuste, et le standard de fait du monde cloud-native.</p>
 <p>Dans ce post, on va voir :</p>

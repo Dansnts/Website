@@ -201,7 +201,7 @@
       <p class="project-subtitle">19 décembre 2025</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>Le DNS, personne n'y pense, jusqu'à ce qu'il tombe et que <em>tout</em> casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel qui guette : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne <em>dans</em> ce cluster. Un cluster qui a besoin de lui-même pour démarrer.</p>
 <p>La solution : une architecture DNS à <strong>deux niveaux</strong>, où chaque résolveur a un rôle clair et où Pi-hole n'est jamais dans le chemin critique. Dans ce post :</p>
 <ol>

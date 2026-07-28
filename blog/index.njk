@@ -12,7 +12,7 @@ title: Blog
 
   <ul class="post-list">
     {%- for post in collections.post | reverse %}
-    <li>
+    <li data-anim="up">
       <div class="post-date">{{ post.date | dateStr }}</div>
       <a href="/blog{{ post.url }}">{{ post.data.title }}</a>
       {% if post.data.description %}

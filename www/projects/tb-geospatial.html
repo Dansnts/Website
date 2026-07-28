@@ -34,17 +34,17 @@
           <span class="tag" style="background: var(--accent); color: white; margin-top: 1rem;" data-i18n="tb-status">En cours</span>
         </header>
 
-        <section class="project-section">
+        <section class="project-section" data-anim="up">
           <h2 data-i18n="tb-context-title">Contexte</h2>
           <p data-i18n="tb-context-text">L'Institut IICT de la HEIG-VD conduit le projet <strong>NearAI</strong>, dont l'objectif est de construire une base de données géospatiale d'éléments routiers à partir d'acquisitions mobiles. Les images sont capturées par des véhicules équipés d'un Trimble MX50 ou d'une GoPro Max et produisent des panoramas équirectangulaires allant jusqu'à 8'192 × 4'096 pixels, accompagnés de coordonnées GPS enregistrées dans l'EXIF. Le corpus cible dépasse <strong>300'000 images</strong>. Annoter manuellement ce volume représenterait plus de 2'500 heures de travail : l'annotation automatisée est la seule voie viable.</p>
         </section>
 
-        <section class="project-section">
+        <section class="project-section" data-anim="up">
           <h2 data-i18n="tb-problem-title">Problème</h2>
           <p data-i18n="tb-problem-text">Plusieurs classes d'objets sont ciblées : <strong>panneaux de signalisation</strong>, <strong>marquages au sol</strong> et <strong>plaques d'égout</strong>, avec une granularité configurable de 2 à 6 labels selon le run. Chaque image à 8'192 × 4'096 pixels dépasse la fenêtre d'entrée de tout modèle de segmentation courant. Il faut découper en tuiles avant l'inférence. Traiter des dizaines de milliers d'images en un délai raisonnable impose de distribuer le calcul sur plusieurs GPUs en parallèle.</p>
         </section>
 
-        <section class="project-section">
+        <section class="project-section" data-anim="up">
           <h2 data-i18n="tb-pipeline-title">Pipeline en 5 étapes</h2>
           <ul class="benefits-list">
             <li data-i18n="tb-pipeline-1"><strong>Lecture</strong> : le driver liste les objets du préfixe S3 d'entrée et distribue les clés d'image aux workers Ray.</li>
@@ -55,7 +55,7 @@
           </ul>
         </section>
 
-        <section class="project-section">
+        <section class="project-section" data-anim="up">
           <h2 data-i18n="tb-arch-title">Architecture technique</h2>
           <div class="tech-grid">
             <div class="tech-item">
@@ -105,7 +105,7 @@
           </div>
         </section>
 
-        <section class="project-section">
+        <section class="project-section" data-anim="up">
           <h2 data-i18n="tb-done-title">Réalisations</h2>
           <ul class="benefits-list">
             <li data-i18n="tb-done-1">Image Docker publiée sur GHCR (<code>ghcr.io/nearai-interreg/ray-sam3:latest</code>) basée sur <code>nvidia/cuda:12.6.3</code></li>
@@ -120,17 +120,17 @@
           </ul>
         </section>
 
-        <section class="project-section">
+        <section class="project-section" data-anim="up">
           <h2 data-i18n="tb-results-title">Résultats</h2>
           <ul class="benefits-list">
             <li data-i18n="tb-results-1"><strong>Scalabilité :</strong> le passage de 1 à 3 workers GPU multiplie le débit par ≈ 2,5× (778 → 1'920 images/heure à tuile 1008 px)</li>
-            <li data-i18n="tb-results-2"><strong>L40S vs A40 :</strong> gain mesuré de 1,45× en faveur du L40S, contre 2,42× de gain théorique en calcul BF16 — les transferts mémoire pèsent autant que la puissance brute</li>
+            <li data-i18n="tb-results-2"><strong>L40S vs A40 :</strong> gain mesuré de 1,45× en faveur du L40S, contre 2,42× de gain théorique en calcul BF16, les transferts mémoire pèsent autant que la puissance brute</li>
             <li data-i18n="tb-results-3"><strong>Run de production Vevey :</strong> 21'819 images, de 18h30 (2 labels, ≈ 1'179 img/h) à 34h17 (6 labels, ≈ 637 img/h)</li>
             <li data-i18n="tb-results-4"><strong>Goulot d'étranglement :</strong> GPU saturé à 90–100&nbsp;% en régime de production, stockage MinIO quasi inactif (≈ 2 Mo/s), largement sous sa capacité</li>
           </ul>
         </section>
 
-        <section class="project-section">
+        <section class="project-section" data-anim="up">
           <h2 data-i18n="tb-skills-title">Compétences développées</h2>
           <div class="bento-tags" style="gap: 0.5rem;">
             <span class="tag" data-i18n="tb-skill-1">Calcul distribué GPU (Ray / KubeRay)</span>

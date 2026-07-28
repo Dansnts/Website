@@ -201,7 +201,7 @@
       <p class="project-subtitle">21 mai 2025</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner : un <strong>template</strong>. On peut le fabriquer à la main : installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.</p>
 <p>C'est le principe de la <em>golden image</em> : une image de base, propre, réutilisable, versionnée dans Git. Dans ce post, on construit une image Debian 12 pour Proxmox avec Packer. On va voir :</p>
 <ol>

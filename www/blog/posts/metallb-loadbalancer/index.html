@@ -201,7 +201,7 @@
       <p class="project-subtitle">2 mai 2025</p>
     </header>
 
-    <div class="blog-body">
+    <div class="blog-body" data-anim="up">
       <p>Sur un cloud public, déclarer un <code>Service type: LoadBalancer</code> provoque la création d'un vrai load-balancer avec une IP publique. Sur du bare-metal, un serveur chez soi, il ne se passe rien. Le service reste bloqué en <code>&lt;pending&gt;</code>, éternellement, faute de quelqu'un pour lui attribuer une IP.</p>
 <p><strong>MetalLB</strong> comble ce trou. Il donne à Kubernetes la capacité de distribuer des IP du réseau local aux services <code>LoadBalancer</code>. Dans ce post :</p>
 <ol>
