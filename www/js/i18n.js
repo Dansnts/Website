@@ -9,7 +9,8 @@ const commonTranslations = {
     'back-projects': 'Retour aux projets',
     'tooltip-theme': 'Changer de thème',
     'tooltip-lang': 'Changer de langue',
-    'tooltip-menu': 'Menu'
+    'tooltip-menu': 'Menu',
+    'fig-placeholder-label': 'Image à venir',
   },
   en: {
     'nav-home': 'Home',
@@ -20,7 +21,8 @@ const commonTranslations = {
     'back-projects': 'Back to projects',
     'tooltip-theme': 'Toggle theme',
     'tooltip-lang': 'Toggle language',
-    'tooltip-menu': 'Menu'
+    'tooltip-menu': 'Menu',
+    'fig-placeholder-label': 'Image coming soon',
   }
 };
 
@@ -147,7 +149,6 @@ const pageTranslations = {
       'proj-turbodex-desc': 'Application mobile de collection automobile avec reconnaissance IA - Projet PDG 2025.',
       'proj-tb': 'Travail de Bachelor',
       'proj-tb-desc': 'Pipeline GPU distribuée d\'annotation automatique d\'images géospatiales avec SAM3 et Ray sur Kubernetes, projet NearAI de l\'IICT HEIG-VD. Run de production sur 21\'819 images réelles.',
-      'proj-tb-status': 'Terminé',
       'proj-picamera': 'PiCamera',
       'proj-picamera-desc': 'Appareil photo DIY avec Raspberry Pi, écran tactile Adafruit et coque imprimée en 3D.',
       'proj-root': 'ROOT',
@@ -187,7 +188,6 @@ const pageTranslations = {
       'proj-turbodex-desc': 'Mobile car collection app with AI recognition - PDG 2025 group project.',
       'proj-tb': 'Bachelor Thesis',
       'proj-tb-desc': 'Distributed GPU pipeline for automatic geospatial image annotation with SAM3 and Ray on Kubernetes, NearAI project at IICT HEIG-VD. Production run on 21,819 real images.',
-      'proj-tb-status': 'Completed',
       'proj-picamera': 'PiCamera',
       'proj-picamera-desc': 'DIY camera with Raspberry Pi, Adafruit touchscreen and 3D printed case.',
       'proj-root': 'ROOT',
@@ -648,13 +648,15 @@ const pageTranslations = {
       'azure-sc2-title': '100% Cloud (RBAC)',
       'azure-sc2-text': 'VM Windows 10 déployée sur Azure dans un VNet (4 sous-réseaux), jointure Azure AD avec RBAC. Accès initialement prévu via Azure Bastion, finalement via RDP direct.',
       'azure-challenges-title': 'Problèmes rencontrés & solutions',
-      'azure-challenges-intro': 'Trois obstacles techniques majeurs ont nécessité des adaptations en cours de projet :',
+      'azure-challenges-intro': 'Quatre obstacles techniques majeurs ont nécessité des adaptations en cours de projet :',
       'azure-ch1-title': 'Crédits liés au tenant par défaut',
       'azure-ch1-text': 'Les 100 $ de crédits étudiant sont liés au répertoire par défaut et ne peuvent pas être transférés vers un autre tenant. La VM Azure et l\'Azure AD doivent donc coexister dans le <em>même</em> tenant.',
       'azure-ch2-title': 'Azure Bastion ≠ Azure AD auth',
       'azure-ch2-text': 'Azure Bastion ne supporte pas l\'authentification Azure AD (AADLoginForWindows), seul RDP direct est pris en charge. Solution : passer à RDP direct, en utilisant le partage de connexion du téléphone pour contourner le blocage du port 3389 par le réseau de l\'école.',
       'azure-ch3-title': 'NLA bloque la connexion AAD via RDP',
       'azure-ch3-text': 'La connexion RDP avec un compte Azure AD échoue si NLA (Network Level Authentication) est actif. Il faut désactiver NLA sur la VM et injecter des paramètres spécifiques dans le fichier .rdp pour contourner la pop-up de credentials.',
+      'azure-ch4-title': 'Azure for Students masque les coûts réels',
+      'azure-ch4-text': 'Testé en pré-TPI, le compte « Azure Free Trial » affichait un tableau de bord Cost Management détaillé (coût par service, prévision, historique). Le compte « Azure for Students » utilisé pour le TPI n\'offre aucune visibilité de ce type : il faut passer par le portail externe Microsoft Azure Sponsorships, qui n\'affiche que le crédit restant, sans détail de consommation par ressource.',
       'azure-infra-title': 'Infrastructure déployée',
       'azure-infra-rg': 'Resource Groups',
       'azure-infra-rg-text': 'Scenario_N1 et Scenario_N2 dans la région Suisse Nord, isolation des ressources et suivi des coûts par scénario.',
@@ -663,7 +665,7 @@ const pageTranslations = {
       'azure-infra-vnet': 'Azure VNet',
       'azure-infra-vnet-text': 'Réseau virtuel avec 4 sous-réseaux pour le scénario 2. Sous-réseau AzureBastionSubnet dédié. NSG pour contrôle du trafic entrant/sortant.',
       'azure-infra-vm': 'Azure VM Windows 10',
-      'azure-infra-vm-text': 'Plan minimal (1 vCPU, 0.5 GB RAM, environ 4.48 CHF/mois) suffisant pour les tests d\'authentification. Connexion via RDP 3389 depuis hotspot mobile (réseau école bloque 3389).',
+      'azure-infra-vm-text': 'Plan minimal (1 vCPU, 0.5 GB RAM, tarif catalogue 4.48 CHF/mois) mais couverte à 0.- par le quota Azure for Students (750h/mois de B1s incluses). Connexion via RDP 3389 depuis hotspot mobile (réseau école bloque 3389).',
       'azure-infra-rbac': 'RBAC sur la VM',
       'azure-infra-rbac-text': 'Rôles Virtual Machine User Login et Virtual Machine Administrator Login assignés aux utilisateurs/administrateurs de l\'Azure AD pour contrôle d\'accès fin.',
       'azure-infra-backup': 'Power Automate backup',
@@ -675,15 +677,17 @@ const pageTranslations = {
       'azure-results-li1': 'Azure AD scénario 1 (hybride) : tenant opérationnel, ajout/suppression d\'utilisateurs et groupes fonctionnel',
       'azure-results-li2': 'VMs VirtualBox jointes au domaine Azure AD, connexion avec 3 comptes utilisateurs différents validée',
       'azure-results-li3': 'Azure AD scénario 2 (RBAC) : VM Azure jointe au tenant, connexion RDP avec compte Azure AD confirmée',
-      'azure-results-li4': 'Accès réseau inter-VMs via ICMP validé, accès internet confirmé depuis les VMs Azure',
-      'azure-results-li5': 'Scénario 1 : coût total 0 CHF. Crédits $100 intacts après le TPI',
+      'azure-results-li4': 'Test ICMP inter-VMs jugé redondant : le DNS automatique Azure garantit déjà la connectivité entre machines du même réseau',
+      'azure-results-li5': 'Les deux scénarios : coût total 0 CHF grâce aux quotas Azure for Students (750h de VM, disques, réseau virtuel et Bastion (moins de 5 Go) inclus). Crédits $100 intacts après le TPI',
       'azure-stack-title': 'Stack technique',
       'azure-stack-aad': 'Tenant Free, gestion utilisateurs, groupes, RBAC, AADLoginForWindows',
       'azure-stack-vnet': 'Réseau virtuel 4 sous-réseaux, Suisse Nord, AzureBastionSubnet, pare-feu NSG',
       'azure-stack-vm': 'Windows 10 Pro, Intel Xeon Platinum 8272CL, plan minimum, IP publique fixe',
       'azure-stack-vbox': 'Hyperviseur type 2, VMs Windows 10 pour scénario hybride, réseau bleu ETML',
       'azure-stack-rdp': 'Accès distant, NLA désactivé pour compatibilité AAD, fichier .rdp personnalisé',
-      'azure-stack-automate': 'Flux LCDP, backup journalier automatique vers OneDrive + Google Drive (nommage par date)'
+      'azure-stack-automate': 'Flux LCDP, backup journalier automatique vers OneDrive + Google Drive (nommage par date)',
+      'azure-retro-title': 'Bilan personnel',
+      'azure-retro-text': 'Premier vrai contact avec le cloud computing avant même de le voir en cours, après en avoir aperçu l\'utilité pendant mon stage chez Nestlé. Le scénario hybride s\'est mis en place sans accroc ; le scénario RBAC a été le plus formateur à cause des blocages Azure Bastion / NLA. Seul vrai regret : la différence de visibilité des coûts entre compte de test et compte étudiant, qui a rendu l\'analyse financière moins précise que prévu. Sur les deux scénarios réunis : <strong>0 CHF dépensé</strong>, crédits intacts en fin de projet.'
     },
     en: {
       'azure-title': 'Azure AD Infrastructure',
@@ -702,13 +706,15 @@ const pageTranslations = {
       'azure-sc2-title': '100% Cloud (RBAC)',
       'azure-sc2-text': 'Windows 10 VM deployed on Azure in a VNet (4 subnets), joined to Azure AD with RBAC. Access initially planned via Azure Bastion, ultimately via direct RDP.',
       'azure-challenges-title': 'Challenges & solutions',
-      'azure-challenges-intro': 'Three major technical obstacles required mid-project adaptations:',
+      'azure-challenges-intro': 'Four major technical obstacles required mid-project adaptations:',
       'azure-ch1-title': 'Credits tied to default tenant',
       'azure-ch1-text': 'The $100 student credits are locked to the default directory and cannot be transferred to another tenant. The Azure VM and Azure AD must therefore coexist in the <em>same</em> tenant.',
       'azure-ch2-title': 'Azure Bastion ≠ Azure AD auth',
       'azure-ch2-text': 'Azure Bastion does not support Azure AD authentication (AADLoginForWindows), only direct RDP is supported. Solution: fall back to direct RDP, using phone hotspot to bypass the school network\'s port 3389 block.',
       'azure-ch3-title': 'NLA blocks AAD login via RDP',
       'azure-ch3-text': 'RDP connection with an Azure AD account fails when NLA (Network Level Authentication) is active. NLA must be disabled on the VM and specific parameters injected into the .rdp file to bypass the credentials pop-up.',
+      'azure-ch4-title': 'Azure for Students hides real costs',
+      'azure-ch4-text': 'Tested during the pre-TPI phase, the "Azure Free Trial" account showed a detailed Cost Management dashboard (cost per service, forecast, history). The "Azure for Students" account used for the actual TPI offers no such visibility: it requires going through the external Microsoft Azure Sponsorships portal, which only shows remaining credit, with no per-resource consumption detail.',
       'azure-infra-title': 'Deployed infrastructure',
       'azure-infra-rg': 'Resource Groups',
       'azure-infra-rg-text': 'Scenario_N1 and Scenario_N2 in Switzerland North region, resource isolation and per-scenario cost tracking.',
@@ -717,7 +723,7 @@ const pageTranslations = {
       'azure-infra-vnet': 'Azure VNet',
       'azure-infra-vnet-text': 'Virtual network with 4 subnets for scenario 2. Dedicated AzureBastionSubnet. NSG for inbound/outbound traffic control.',
       'azure-infra-vm': 'Azure VM Windows 10',
-      'azure-infra-vm-text': 'Minimum plan (1 vCPU, 0.5 GB RAM, environ 4.48 CHF/month) sufficient for authentication tests. Connected via RDP 3389 from mobile hotspot (school network blocks 3389).',
+      'azure-infra-vm-text': 'Minimum plan (1 vCPU, 0.5 GB RAM, catalog price 4.48 CHF/month) but covered at 0.- by the Azure for Students quota (750h/month of B1s included). Connected via RDP 3389 from mobile hotspot (school network blocks 3389).',
       'azure-infra-rbac': 'RBAC on the VM',
       'azure-infra-rbac-text': 'Virtual Machine User Login and Virtual Machine Administrator Login roles assigned to users/admins from Azure AD for fine-grained access control.',
       'azure-infra-backup': 'Power Automate backup',
@@ -729,15 +735,17 @@ const pageTranslations = {
       'azure-results-li1': 'Azure AD scenario 1 (hybrid): tenant operational, user/group add/delete working',
       'azure-results-li2': 'VirtualBox VMs joined to Azure AD domain, login with 3 different user accounts validated',
       'azure-results-li3': 'Azure AD scenario 2 (RBAC): Azure VM joined to tenant, RDP login with Azure AD account confirmed',
-      'azure-results-li4': 'Inter-VM ICMP connectivity validated, internet access from Azure VMs confirmed',
-      'azure-results-li5': 'Scenario 1: total cost 0 CHF. $100 credits intact after TPI completion',
+      'azure-results-li4': 'Inter-VM ICMP test deemed redundant: Azure\'s automatic DNS already guarantees connectivity between machines on the same network',
+      'azure-results-li5': 'Both scenarios: total cost 0 CHF thanks to Azure for Students quotas (750h of VM, disks, virtual network and Bastion (under 5 GB) included). $100 credits intact after TPI completion',
       'azure-stack-title': 'Tech stack',
       'azure-stack-aad': 'Free tier tenant, user/group management, RBAC, AADLoginForWindows',
       'azure-stack-vnet': 'Virtual network 4 subnets, Switzerland North, AzureBastionSubnet, NSG firewall',
       'azure-stack-vm': 'Windows 10 Pro, Intel Xeon Platinum 8272CL, minimum plan, fixed public IP',
       'azure-stack-vbox': 'Type 2 hypervisor, Windows 10 VMs for hybrid scenario, ETML blue network',
       'azure-stack-rdp': 'Remote access, NLA disabled for AAD compatibility, custom .rdp file',
-      'azure-stack-automate': 'LCDP flow, automated daily backup to OneDrive + Google Drive (date-based naming)'
+      'azure-stack-automate': 'LCDP flow, automated daily backup to OneDrive + Google Drive (date-based naming)',
+      'azure-retro-title': 'Personal takeaway',
+      'azure-retro-text': 'First real hands-on contact with cloud computing before even covering it in class, after seeing its value during my internship at Nestlé. The hybrid scenario went smoothly; the RBAC scenario was the most instructive because of the Azure Bastion / NLA roadblocks. The one real regret: the gap in cost visibility between the test account and the student account, which made the financial analysis less precise than planned. Across both scenarios combined: <strong>0 CHF spent</strong>, credits untouched at the end of the project.'
     }
   },
   'project-picamera': {
@@ -800,7 +808,6 @@ const pageTranslations = {
     fr: {
       'tb-title': 'Pipeline Distribuée d\'Annotation Automatique d\'Images Géospatiales',
       'tb-subtitle': 'Travail de Bachelor · HEIG-VD 2025-26 · Superviseur : Prof. Bertil Chapuis',
-      'tb-status': 'Terminé',
       'tb-context-title': 'Contexte',
       'tb-context-text': 'L\'Institut IICT de la HEIG-VD conduit le projet <strong>NearAI</strong>, dont l\'objectif est de construire une base de données géospatiale d\'éléments routiers à partir d\'acquisitions mobiles. Les images sont capturées par des véhicules équipés d\'un Trimble MX50 ou d\'une GoPro Max et produisent des panoramas équirectangulaires allant jusqu\'aux 8\'192 × 4\'096 pixels, accompagnés de coordonnées GPS enregistrées dans l\'EXIF. Le corpus cible dépasse <strong>300\'000 images</strong>. Annoter manuellement ce volume représenterait plus de 2\'500 heures de travail. L\'annotation automatisée est la seule voie viable.',
       'tb-problem-title': 'Problème',
@@ -857,12 +864,19 @@ const pageTranslations = {
       'tb-skill-5': 'Parquet / PyArrow',
       'tb-skill-6': 'Observabilité (Prometheus · Grafana · Loki)',
       'tb-skill-7': 'Analyse de goulots d\'étranglement',
-      'tb-skill-8': 'Gestion des secrets (SOPS / age)'
+      'tb-skill-8': 'Gestion des secrets (SOPS / age)',
+      'tb-fig-source-caption': 'Panorama source, brut, capturé par le Trimble MX50.',
+      'tb-fig-annotated-caption': 'Le même panorama après passage dans la pipeline : panneaux, marquages et plaques d\'égout détectés et importés dans Label Studio.',
+      'tb-fig-tiling-caption': 'Découpage en tuiles avant inférence : chaque worker traite une tuile de 1008 px avec un recouvrement de 240 px entre tuiles adjacentes.',
+      'tb-fig-arch-caption': 'Vue d\'ensemble : calcul distribué GPU, observabilité et stockage.',
+      'tb-fig-webui-caption': 'Console de pilotage de la pipeline : lancement de runs batch ou solo, suivi en temps réel.',
+      'tb-fig-k9s-caption': 'Le cluster en conditions réelles : RayCluster, service SAM3, jobs batch et solo dans k9s.',
+      'tb-fig-throughput-caption': 'Grafana : utilisation GPU quasi saturée (90-100 %) en régime de production.',
+      'tb-fig-precision-caption': 'Comparaison masque SAM3 (gauche) et annotation humaine (droite) sur une plaque d\'égout.'
     },
     en: {
       'tb-title': 'Distributed Pipeline for Automatic Geospatial Image Annotation',
       'tb-subtitle': 'Bachelor Thesis · HEIG-VD 2025-26 · Supervisor: Prof. Bertil Chapuis',
-      'tb-status': 'Completed',
       'tb-context-title': 'Context',
       'tb-context-text': 'The IICT institute at HEIG-VD runs the <strong>NearAI</strong> project, whose goal is to build a geospatial database of road elements from mobile acquisitions. Images are captured by vehicles equipped with a Trimble MX50 or a GoPro Max, producing equirectangular panoramas up to 8\'192 × 4\'096 pixels with GPS coordinates stored in the EXIF. The target corpus exceeds <strong>300,000 images</strong>. Manual annotation would require over 2,500 hours. Automated annotation is the only viable approach.',
       'tb-problem-title': 'Problem',
@@ -919,7 +933,15 @@ const pageTranslations = {
       'tb-skill-5': 'Parquet / PyArrow',
       'tb-skill-6': 'Observability (Prometheus · Grafana · Loki)',
       'tb-skill-7': 'Bottleneck analysis',
-      'tb-skill-8': 'Secrets management (SOPS / age)'
+      'tb-skill-8': 'Secrets management (SOPS / age)',
+      'tb-fig-source-caption': 'Raw source panorama, captured by the Trimble MX50.',
+      'tb-fig-annotated-caption': 'The same panorama after going through the pipeline: signs, markings and manhole covers detected and imported into Label Studio.',
+      'tb-fig-tiling-caption': 'Tiling before inference: each worker processes a 1008 px tile with a 240 px overlap between adjacent tiles.',
+      'tb-fig-arch-caption': 'Overview: distributed GPU compute, observability and storage.',
+      'tb-fig-webui-caption': 'Pipeline control console: launching batch or solo runs, live progress tracking.',
+      'tb-fig-k9s-caption': 'The cluster in production: RayCluster, SAM3 service, batch and solo jobs in k9s.',
+      'tb-fig-throughput-caption': 'Grafana: GPU utilization near saturation (90-100%) under production load.',
+      'tb-fig-precision-caption': 'SAM3 mask (left) vs. human annotation (right) on a manhole cover.'
     }
   },
   'project-backup-rclone': {
@@ -1131,7 +1153,10 @@ const pageTranslations = {
       'homelab-notes-title': 'Notes opérationnelles',
       'homelab-notes-mgmt-title': 'Gestion des services',
       'homelab-notes-kibana-title': 'Kibana / Elasticsearch (xpack.security)',
-      'homelab-notes-iac-title': 'IaC'
+      'homelab-notes-iac-title': 'IaC',
+      'homelab-fig-rack-caption': 'Le setup physique : MikroTik, Proxmox, TrueNAS et le node K3s dans la baie.',
+      'homelab-fig-grafana-caption': 'Dashboard Grafana : vue d\'ensemble des ressources du cluster.',
+      'homelab-fig-argocd-caption': 'Interface ArgoCD : état de synchronisation des applications déployées.'
     },
     en: {
       'homelab-title': 'Homelab Infrastructure',
@@ -1203,7 +1228,10 @@ const pageTranslations = {
       'homelab-notes-title': 'Operational notes',
       'homelab-notes-mgmt-title': 'Service management',
       'homelab-notes-kibana-title': 'Kibana / Elasticsearch (xpack.security)',
-      'homelab-notes-iac-title': 'IaC'
+      'homelab-notes-iac-title': 'IaC',
+      'homelab-fig-rack-caption': 'The physical setup: MikroTik, Proxmox, TrueNAS and the K3s node in the rack.',
+      'homelab-fig-grafana-caption': 'Grafana dashboard: overview of cluster resources.',
+      'homelab-fig-argocd-caption': 'ArgoCD interface: sync status of deployed applications.'
     }
   },
   'project-network-automation': {
@@ -1250,7 +1278,7 @@ const pageTranslations = {
   },
   'project-sdn-p2v': {
     fr: {
-      'sdn-subtitle': 'Physical to Virtual - Automatisation de la migration réseau',
+      'sdn-subtitle': 'Physical to Virtual : automatisation de la migration réseau Aruba AOS-CX et Arista EOS vers EVE-NG. Projet SDN HEIG-VD, encadré par Fabien Bruchez.',
       'sdn-problem-title': 'Problématique',
       'sdn-problem-text': 'Tester des modifications sur un réseau de production est risqué et coûteux. Les erreurs de configuration peuvent entraîner des interruptions de service. Comment valider des changements sans impacter l\'infrastructure existante ?',
       'sdn-solution-title': 'Solution',
@@ -1267,12 +1295,14 @@ const pageTranslations = {
       'sdn-benefit1': 'Réduction des risques : tester avant de déployer en production',
       'sdn-benefit2': 'Gains financiers : pas besoin d\'équipements de test physiques',
       'sdn-benefit3': 'Formation : environnement de lab pour les équipes',
-      'sdn-benefit4': 'Documentation : topologie réseau toujours à jour',
+      'sdn-benefit4': 'Supporte Aruba AOS-CX et Arista EOS, plus un client API pour piloter les labs EVE-NG directement (start/stop des nodes, export de config)',
       'sdn-stack-title': 'Stack technique',
       'sdn-tech-ansible': 'Orchestration et collecte des configs',
       'sdn-tech-python': 'Parsing et génération des fichiers',
       'sdn-tech-eveng': 'Plateforme de virtualisation réseau',
       'sdn-tech-lldp': 'Découverte de la topologie',
+      'sdn-tech-arista': 'Nettoyage vEOS, remapping interfaces, zerotouch disable',
+      'sdn-tech-sops': 'Chiffrement des identifiants de l\'API EVE-NG',
       'sdn-topo-title': 'Topologie : Physique vers Virtuel',
       'sdn-topo-text': 'Le pipeline reconstruit fidèlement la topologie physique Aruba dans EVE-NG. Les ports uplink sont remappés (1/1/47-49 vers 1/1/7-9) pour respecter la limite des images virtuelles. La topologie découverte via LLDP est automatiquement reproduite dans le fichier UNL.',
       'sdn-input-title': 'Input : Table LLDP Aruba AOS-CX',
@@ -1282,10 +1312,15 @@ const pageTranslations = {
       'sdn-parsing-title': 'LLDPToUNL.py : Parsing topologique',
       'sdn-parsing-text': 'Le script reconstruit la topologie complète depuis les fichiers LLDP collectés : déduplique les liens bidirectionnels, génère un fichier XML/UNL avec les configs encodées en base64, directement embarquées dedans.',
       'sdn-orchestration-title': 'P2V.py : Orchestration du workflow',
-      'sdn-orchestration-text': 'Script principal. Il enchaîne les 4 étapes, gère les dossiers temporaires, et sort un ZIP prêt à l\'import EVE-NG. Rien d\'exotique, juste un chef d\'orchestre.'
+      'sdn-orchestration-text': 'Script principal. Il enchaîne les 4 étapes, gère les dossiers temporaires, et sort un ZIP prêt à l\'import EVE-NG. Rien d\'exotique, juste un chef d\'orchestre.',
+      'sdn-arista-title': 'AristaConfigCleaner.py : Nettoyage Arista EOS',
+      'sdn-arista-text': 'Même logique que pour Aruba, adaptée à vEOS : suppression des blocs AAA/RADIUS/TACACS et des mots de passe, injection de <code style="font-family:var(--mono);font-size:0.85em;color:var(--accent)">zerotouch disable</code> pour éviter un reset de la config au boot, et remapping des interfaces physiques vers les 8 ports Ethernet disponibles en virtuel.',
+      'sdn-api-title': 'Client API EVE-NG',
+      'sdn-api-text': 'En parallèle du pipeline P2V, un petit client REST pour l\'API d\'EVE-NG : lister les labs, démarrer/arrêter des nodes, exporter la configuration d\'un lab en YAML. Authentification par session, identifiants chiffrés avec SOPS/age plutôt que stockés en clair.',
+      'sdn-repo-title': 'Dépôt'
     },
     en: {
-      'sdn-subtitle': 'Physical to Virtual - Network migration automation',
+      'sdn-subtitle': 'Physical to Virtual: Aruba AOS-CX and Arista EOS network automation pipeline for EVE-NG. HEIG-VD SDN project, supervised by Fabien Bruchez.',
       'sdn-problem-title': 'Problem statement',
       'sdn-problem-text': 'Testing changes on a production network is risky and costly. Configuration errors can cause service outages. How can changes be validated without impacting the existing infrastructure?',
       'sdn-solution-title': 'Solution',
@@ -1302,12 +1337,14 @@ const pageTranslations = {
       'sdn-benefit1': 'Risk reduction: test before deploying to production',
       'sdn-benefit2': 'Cost savings: no need for physical test equipment',
       'sdn-benefit3': 'Training: lab environment for teams',
-      'sdn-benefit4': 'Documentation: network topology always up to date',
+      'sdn-benefit4': 'Supports Aruba AOS-CX and Arista EOS, plus an API client to drive EVE-NG labs directly (start/stop nodes, export config)',
       'sdn-stack-title': 'Technical stack',
       'sdn-tech-ansible': 'Orchestration and configuration collection',
       'sdn-tech-python': 'Parsing and file generation',
       'sdn-tech-eveng': 'Network virtualization platform',
       'sdn-tech-lldp': 'Topology discovery',
+      'sdn-tech-arista': 'vEOS cleanup, interface remapping, zerotouch disable',
+      'sdn-tech-sops': 'Encryption of EVE-NG API credentials',
       'sdn-topo-title': 'Topology: Physical to Virtual',
       'sdn-topo-text': 'The pipeline faithfully reconstructs the physical Aruba topology in EVE-NG. Uplink ports are remapped (1/1/47-49 to 1/1/7-9) to comply with virtual image port limits. The topology discovered via LLDP is automatically reproduced in the UNL file.',
       'sdn-input-title': 'Input: Aruba AOS-CX LLDP Table',
@@ -1317,7 +1354,12 @@ const pageTranslations = {
       'sdn-parsing-title': 'LLDPToUNL.py: Topology parsing',
       'sdn-parsing-text': 'The script rebuilds the full topology from the collected LLDP files: deduplicates bidirectional links, generates an XML/UNL file with the configs base64-encoded and embedded directly inside.',
       'sdn-orchestration-title': 'P2V.py: Workflow orchestration',
-      'sdn-orchestration-text': 'Main script. It chains the 4 steps, manages temporary folders, and outputs a ZIP ready for EVE-NG import. Nothing exotic, just a conductor.'
+      'sdn-orchestration-text': 'Main script. It chains the 4 steps, manages temporary folders, and outputs a ZIP ready for EVE-NG import. Nothing exotic, just a conductor.',
+      'sdn-arista-title': 'AristaConfigCleaner.py: Arista EOS cleanup',
+      'sdn-arista-text': 'Same logic as for Aruba, adapted to vEOS: strips AAA/RADIUS/TACACS blocks and passwords, injects <code style="font-family:var(--mono);font-size:0.85em;color:var(--accent)">zerotouch disable</code> to prevent a config reset on boot, and remaps physical interfaces to the 8 Ethernet ports available in virtual.',
+      'sdn-api-title': 'EVE-NG API Client',
+      'sdn-api-text': 'Alongside the P2V pipeline, a small REST client for the EVE-NG API: list labs, start/stop nodes, export a lab\'s configuration to YAML. Session-based authentication, credentials encrypted with SOPS/age rather than stored in plain text.',
+      'sdn-repo-title': 'Repository'
     }
   },
   'project-monitoring': {

@@ -20,14 +20,8 @@
 
       <article class="project-detail">
         <header class="project-hero">
-          <div class="project-tags">
-            <span class="tag tag-teal">Ansible</span>
-            <span class="tag tag-green">Python</span>
-            <span class="tag tag-orange">EVE-NG</span>
-            <span class="tag tag-blue">Aruba AOS-CX</span>
-          </div>
           <h1>SDN P2V Automation</h1>
-          <p class="project-subtitle" data-i18n="sdn-subtitle">Physical to Virtual : Pipeline d'automatisation réseau Aruba AOS-CX vers EVE-NG</p>
+          <p class="project-subtitle" data-i18n="sdn-subtitle">Physical to Virtual : automatisation de la migration réseau Aruba AOS-CX et Arista EOS vers EVE-NG. Projet SDN HEIG-VD, encadré par Fabien Bruchez.</p>
         </header>
 
         <section class="project-section" data-anim="up">
@@ -263,6 +257,76 @@ TTL                            : 120</code></pre>
           </div>
         </section>
 
+        <!-- ── AristaConfigCleaner ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="sdn-arista-title">AristaConfigCleaner.py : Nettoyage Arista EOS</h2>
+          <p data-i18n="sdn-arista-text">Même logique que pour Aruba, adaptée à vEOS : suppression des blocs AAA/RADIUS/TACACS et des mots de passe, injection de <code style="font-family:var(--mono);font-size:0.85em;color:var(--accent)">zerotouch disable</code> pour éviter un reset de la config au boot, et remapping des interfaces physiques vers les 8 ports Ethernet disponibles en virtuel.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">AristaConfigCleaner.py</span>
+              <span class="code-lang">Python</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-comment"># Remapping ports physiques → virtuels</span>
+<span class="tok-variable">DEFAULT_PORT_MAPPING</span> <span class="tok-operator">=</span> {
+    <span class="tok-string">'Ethernet31/1'</span><span class="tok-operator">:</span> <span class="tok-string">'Ethernet7'</span>,
+    <span class="tok-string">'Ethernet32/1'</span><span class="tok-operator">:</span> <span class="tok-string">'Ethernet8'</span>,
+    <span class="tok-string">'Ethernet33'</span><span class="tok-operator">:</span> <span class="tok-string">'Ethernet7'</span>,
+    <span class="tok-string">'Ethernet34'</span><span class="tok-operator">:</span> <span class="tok-string">'Ethernet8'</span>
+}
+
+<span class="tok-comment"># Blocs entiers à supprimer (non supportés vEOS)</span>
+<span class="tok-variable">SKIP_BLOCS</span> <span class="tok-operator">=</span> [
+    <span class="tok-string">'aaa group server'</span>,
+    <span class="tok-string">'aaa authentication'</span>,
+    <span class="tok-string">'aaa authorization'</span>,
+    <span class="tok-string">'radius-server host'</span>,
+    <span class="tok-string">'tacacs-server host'</span>,
+    <span class="tok-string">'system l1'</span>
+]
+
+<span class="tok-comment"># Lignes à toujours préserver</span>
+<span class="tok-variable">PRESERVE</span> <span class="tok-operator">=</span> [
+    <span class="tok-string">'hostname '</span>,
+    <span class="tok-string">'boot system'</span>,
+    <span class="tok-string">'banner motd'</span>,
+    <span class="tok-string">'banner login'</span>
+]</code></pre>
+          </div>
+        </section>
+
+        <!-- ── Client API EVE-NG ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="sdn-api-title">Client API EVE-NG</h2>
+          <p data-i18n="sdn-api-text">En parallèle du pipeline P2V, un petit client REST pour l'API d'EVE-NG : lister les labs, démarrer/arrêter des nodes, exporter la configuration d'un lab en YAML. Authentification par session, identifiants chiffrés avec SOPS/age plutôt que stockés en clair.</p>
+
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-filename">eve_ng_api.py</span>
+              <span class="code-lang">Python</span>
+              <button class="code-copy" onclick="copyCode(this)">Copier</button>
+            </div>
+            <pre><code><span class="tok-keyword">class</span> <span class="tok-fn">EveNgAPI</span>:
+    <span class="tok-keyword">def</span> <span class="tok-fn">login</span>(self):
+        <span class="tok-string">"""Authenticate user and store session cookies."""</span>
+        url <span class="tok-operator">=</span> <span class="tok-string">f"{self.base_url}/api/auth/login"</span>
+        payload <span class="tok-operator">=</span> {<span class="tok-string">"username"</span>: self.username, <span class="tok-string">"password"</span>: self.password, <span class="tok-string">"html5"</span>: <span class="tok-string">"0"</span>}
+        resp <span class="tok-operator">=</span> self.session.<span class="tok-fn">post</span>(url, json<span class="tok-operator">=</span>payload, verify<span class="tok-operator">=</span>self.verify_ssl)
+        resp.<span class="tok-fn">raise_for_status</span>()
+        self.<span class="tok-fn">_check_response</span>(resp)
+        self.logged_in <span class="tok-operator">=</span> <span class="tok-variable">True</span>
+
+    <span class="tok-keyword">def</span> <span class="tok-fn">export_config</span>(self, lab_path, output_file<span class="tok-operator">=</span><span class="tok-string">"config.yaml"</span>):
+        <span class="tok-string">"""Export lab configuration (nodes + links) to a YAML file."""</span>
+        lab_data <span class="tok-operator">=</span> self.<span class="tok-fn">get_lab</span>(lab_path)
+        nodes <span class="tok-operator">=</span> self.<span class="tok-fn">get_lab_nodes</span>(lab_path)
+        config <span class="tok-operator">=</span> {<span class="tok-string">"lab"</span>: lab_data, <span class="tok-string">"nodes"</span>: nodes}
+        <span class="tok-keyword">with</span> <span class="tok-fn">open</span>(output_file, <span class="tok-string">"w"</span>, encoding<span class="tok-operator">=</span><span class="tok-string">"utf-8"</span>) <span class="tok-keyword">as</span> f:
+            yaml.<span class="tok-fn">dump</span>(config, f, sort_keys<span class="tok-operator">=</span><span class="tok-variable">False</span>, allow_unicode<span class="tok-operator">=</span><span class="tok-variable">True</span>)</code></pre>
+          </div>
+        </section>
+
         <!-- ── P2V topology migration diagram ── -->
         <section class="project-section" data-anim="up">
           <h2 data-i18n="sdn-topo-title">Topologie : Physique vers Virtuel</h2>
@@ -314,7 +378,7 @@ graph TD
             <li data-i18n="sdn-benefit1">Réduction des risques : tester avant de déployer en production</li>
             <li data-i18n="sdn-benefit2">Gains financiers : pas besoin d'équipements de test physiques</li>
             <li data-i18n="sdn-benefit3">Formation : environnement de lab pour les équipes réseau</li>
-            <li data-i18n="sdn-benefit4">Supporte Aruba AOS-CX, support Arista EOS en cours</li>
+            <li data-i18n="sdn-benefit4">Supporte Aruba AOS-CX et Arista EOS, plus un client API pour piloter les labs EVE-NG directement (start/stop des nodes, export de config)</li>
           </ul>
         </section>
 
@@ -337,7 +401,24 @@ graph TD
               <strong>Aruba AOS-CX</strong>
               <span data-i18n="sdn-tech-lldp">LLDP, VXLAN, EVPN, VSF</span>
             </div>
+            <div class="tech-item">
+              <strong>Arista EOS</strong>
+              <span data-i18n="sdn-tech-arista">Nettoyage vEOS, remapping interfaces, zerotouch disable</span>
+            </div>
+            <div class="tech-item">
+              <strong>SOPS + age</strong>
+              <span data-i18n="sdn-tech-sops">Chiffrement des identifiants de l'API EVE-NG</span>
+            </div>
           </div>
+        </section>
+
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="sdn-repo-title">Dépôt</h2>
+          <a href="https://github.com/Dansnts/NetMirror" target="_blank" rel="noopener" class="project-repo-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+            <span>github.com/Dansnts/NetMirror</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
         </section>
 
       </article>

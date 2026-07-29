@@ -20,14 +20,6 @@
 
       <article class="project-detail">
         <header class="project-hero">
-          <div class="project-tags">
-            <span class="tag tag-blue">Azure AD</span>
-            <span class="tag tag-blue">Azure VNet</span>
-            <span class="tag tag-blue">Azure VM</span>
-            <span class="tag tag-teal">RDP / Bastion</span>
-            <span class="tag tag-green">Windows 10</span>
-            <span class="tag tag-purple">VirtualBox</span>
-          </div>
           <h1 data-i18n="azure-title">Infrastructure Azure AD</h1>
           <p class="project-subtitle" data-i18n="azure-subtitle">TPI ETML 2021 : Évaluation et comparaison de deux architectures Azure AD (hybride vs cloud) pour l'enseignement. 5 semaines, 90 heures.</p>
         </header>
@@ -85,7 +77,7 @@
         <section class="project-section" data-anim="up">
           <h2 data-i18n="azure-challenges-title">Problèmes rencontrés &amp; solutions</h2>
 
-          <p data-i18n="azure-challenges-intro">Trois obstacles techniques majeurs ont nécessité des adaptations en cours de projet :</p>
+          <p data-i18n="azure-challenges-intro">Quatre obstacles techniques majeurs ont nécessité des adaptations en cours de projet :</p>
 
           <div class="tech-grid">
             <div class="tech-item">
@@ -99,6 +91,10 @@
             <div class="tech-item">
               <strong data-i18n="azure-ch3-title">NLA bloque la connexion AAD via RDP</strong>
               <span data-i18n="azure-ch3-text">La connexion RDP avec un compte Azure AD échoue si NLA (Network Level Authentication) est actif. Il faut désactiver NLA sur la VM et injecter des paramètres spécifiques dans le fichier <code style="font-family:var(--mono);font-size:0.85em;color:var(--accent)">.rdp</code> pour contourner la pop-up de credentials.</span>
+            </div>
+            <div class="tech-item">
+              <strong data-i18n="azure-ch4-title">Azure for Students masque les coûts réels</strong>
+              <span data-i18n="azure-ch4-text">Testé en pré-TPI, le compte « Azure Free Trial » affichait un tableau de bord Cost Management détaillé (coût par service, prévision, historique). Le compte « Azure for Students » utilisé pour le TPI n'offre aucune visibilité de ce type : il faut passer par le portail externe Microsoft Azure Sponsorships, qui n'affiche que le crédit restant, sans détail de consommation par ressource.</span>
             </div>
           </div>
 
@@ -174,15 +170,17 @@
               <span class="code-filename">Scénario N°2 : 100% Cloud (Azure VM + Azure AD)</span>
               <span class="code-lang">Coût</span>
             </div>
-            <pre><code><span class="tok-comment"># Scénario 2 : solution cloud RBAC</span>
-<span class="tok-property">Azure VM Windows 10</span>              <span class="tok-number">4.48</span> CHF/mois  <span class="tok-comment"># plan min. : 1 vCPU, 0.5 GB RAM</span>
+            <pre><code><span class="tok-comment"># Scénario 2 : solution cloud RBAC (Azure for Students)</span>
+<span class="tok-property">Machine Virtuelle Azure – B1s</span>    <span class="tok-number">0.00</span> CHF/mois  <span class="tok-comment"># 750h/mois incluses (quota étudiant)</span>
+<span class="tok-property">Disques managés (2× 64 Go)</span>       <span class="tok-number">0.00</span> CHF/mois  <span class="tok-comment"># inclus dans le quota étudiant</span>
 <span class="tok-property">Azure Active Directory – Free</span>    <span class="tok-number">0.00</span> CHF/mois  <span class="tok-comment"># même tier, suffit pour les tests</span>
-<span class="tok-property">Azure VNet</span>                       <span class="tok-number">0.00</span> CHF/mois  <span class="tok-comment"># VNet gratuit en lui-même</span>
-<span class="tok-property">Azure Bastion</span>            <span class="tok-keyword">non retenu</span>            <span class="tok-comment"># coût additionnel + pas d'AAD auth</span>
+<span class="tok-property">Azure VNet</span>                       <span class="tok-number">0.00</span> CHF/mois  <span class="tok-comment"># gratuit jusqu'à 50 réseaux virtuels</span>
+<span class="tok-property">Azure Bastion</span>                    <span class="tok-number">0.00</span> CHF/mois  <span class="tok-comment"># gratuit sous 5 Go de sortie/mois</span>
+<span class="tok-property">Adresse IP publique dynamique</span>    <span class="tok-number">0.00</span> CHF/mois  <span class="tok-comment"># gratuite tant qu'une seule IP active</span>
                                   <span class="tok-operator">──────────────────────</span>
-<span class="tok-keyword">TOTAL mensuel (min.)</span>             <span class="tok-number">≥ 4.48</span> CHF/mois par VM
+<span class="tok-keyword">TOTAL mensuel</span>                    <span class="tok-number">0.00</span> CHF
 
-<span class="tok-comment"># 100 $ crédits étudiant = ~90 CHF → ~20 mois de VM plan min.</span></code></pre>
+<span class="tok-comment"># 100 $ crédits étudiant intacts après le TPI</span></code></pre>
           </div>
         </section>
 
@@ -194,8 +192,8 @@
             <li data-i18n="azure-results-li1">Azure AD scénario 1 (hybride) : tenant opérationnel, ajout/suppression d'utilisateurs et groupes fonctionnel</li>
             <li data-i18n="azure-results-li2">VMs VirtualBox jointes au domaine Azure AD, connexion avec 3 comptes utilisateurs différents validée</li>
             <li data-i18n="azure-results-li3">Azure AD scénario 2 (RBAC) : VM Azure jointe au tenant, connexion RDP avec compte Azure AD confirmée</li>
-            <li data-i18n="azure-results-li4">Accès réseau inter-VMs via ICMP validé, accès internet confirmé depuis les VMs Azure</li>
-            <li data-i18n="azure-results-li5">Scénario 1 : coût total 0 CHF. Crédits $100 intacts après le TPI</li>
+            <li data-i18n="azure-results-li4">Test ICMP inter-VMs jugé redondant : le DNS automatique Azure garantit déjà la connectivité entre machines du même réseau</li>
+            <li data-i18n="azure-results-li5">Les deux scénarios : coût total 0 CHF grâce aux quotas Azure for Students (750h de VM, disques, réseau virtuel et Bastion (moins de 5 Go) inclus). Crédits $100 intacts après le TPI</li>
           </ul>
         </section>
 
@@ -228,6 +226,12 @@
               <span data-i18n="azure-stack-automate">Flux LCDP, backup journalier automatique vers OneDrive + Google Drive (nommage par date)</span>
             </div>
           </div>
+        </section>
+
+        <!-- ── Bilan personnel ── -->
+        <section class="project-section" data-anim="up">
+          <h2 data-i18n="azure-retro-title">Bilan personnel</h2>
+          <p data-i18n="azure-retro-text">Premier vrai contact avec le cloud computing avant même de le voir en cours, après en avoir aperçu l'utilité pendant mon stage chez Nestlé. Le scénario hybride s'est mis en place sans accroc ; le scénario RBAC a été le plus formateur à cause des blocages Azure Bastion / NLA. Seul vrai regret : la différence de visibilité des coûts entre compte de test et compte étudiant, qui a rendu l'analyse financière moins précise que prévu. Sur les deux scénarios réunis : <strong>0 CHF dépensé</strong>, crédits intacts en fin de projet.</p>
         </section>
 
       </article>

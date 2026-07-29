@@ -20,18 +20,6 @@
 
       <article class="project-detail">
         <header class="project-hero">
-          <div class="project-tags">
-            <span class="tag tag-blue">Kubernetes / K3s</span>
-            <span class="tag tag-blue">Proxmox</span>
-            <span class="tag tag-teal">ELK Stack</span>
-            <span class="tag tag-green">Prometheus / Grafana</span>
-            <span class="tag tag-purple">ArgoCD</span>
-            <span class="tag tag-orange">Terraform / Ansible</span>
-            <span class="tag">TrueNAS / ZFS</span>
-            <span class="tag">WireGuard</span>
-            <span class="tag">MikroTik</span>
-            <span class="tag">cert-manager</span>
-          </div>
           <h1 data-i18n="homelab-title">Homelab Infrastructure</h1>
           <p class="project-subtitle" data-i18n="homelab-subtitle">Infrastructure Kubernetes sur Proxmox, GitOps, IaC, monitoring, media, VPN, backups</p>
         </header>
@@ -71,6 +59,15 @@ MikroTik RB750Gr3 (WAN: 192.168.1.2 / LAN: 10.0.0.1/24)
               <tr><td>ArgoCD (MetalLB)</td><td><code>10.0.0.100</code></td><td data-i18n="homelab-arch-role-gitops">GitOps controller</td></tr>
             </tbody>
           </table>
+
+          <figure class="project-figure" style="margin-top:1.5rem">
+            <!-- ↓ Remplacer par : <img src="/img/projects/homelab/rack.png" alt="Setup physique du homelab"> -->
+            <div class="fig-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span data-i18n="fig-placeholder-label">Image à venir</span>
+            </div>
+            <figcaption data-i18n="homelab-fig-rack-caption">Le setup physique : MikroTik, Proxmox, TrueNAS et le node K3s dans la baie.</figcaption>
+          </figure>
         </section>
 
         <!-- Services -->
@@ -367,6 +364,23 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
         <section class="project-section" data-anim="up">
           <h2 data-i18n="homelab-gitops-title">GitOps avec ArgoCD</h2>
           <p data-i18n="homelab-gitops-text">Tout changement infra passe par Git. ArgoCD synchronise automatiquement l'état du cluster sur l'état déclaré dans le repo, pas de <code>kubectl apply</code> manuel en production.</p>
+
+          <figure class="project-figure">
+            <!-- ↓ Remplacer par : <img src="/img/projects/homelab/grafana.png" alt="Dashboard Grafana du cluster"> -->
+            <div class="fig-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span data-i18n="fig-placeholder-label">Image à venir</span>
+            </div>
+            <figcaption data-i18n="homelab-fig-grafana-caption">Dashboard Grafana : vue d'ensemble des ressources du cluster.</figcaption>
+          </figure>
+          <figure class="project-figure">
+            <!-- ↓ Remplacer par : <img src="/img/projects/homelab/argocd.png" alt="Interface ArgoCD"> -->
+            <div class="fig-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span data-i18n="fig-placeholder-label">Image à venir</span>
+            </div>
+            <figcaption data-i18n="homelab-fig-argocd-caption">Interface ArgoCD : état de synchronisation des applications déployées.</figcaption>
+          </figure>
 
           <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem" data-i18n="homelab-gitops-sc-title">1. Résolution du conflit de sync sur StorageClass</h3>
           <p data-i18n="homelab-gitops-sc-text1">ArgoCD utilisait la stratégie <code>Apply</code> par défaut. Les StorageClass ont des champs immuables : ArgoCD retournait une erreur de réconciliation en tentant de patcher des paramètres qu'il ne peut pas modifier.</p>
