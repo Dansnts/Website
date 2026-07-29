@@ -66,8 +66,8 @@
 
         <!-- ── Input LLDP ── -->
         <section class="project-section" data-anim="up">
-          <h2>Input : Table LLDP Aruba AOS-CX</h2>
-          <p>Format brut collecté par Ansible via <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">show lldp neighbor-info detail</code>. Chaque bloc décrit un voisin découvert sur un port local, rien de plus.</p>
+          <h2 data-i18n="sdn-input-title">Input : Table LLDP Aruba AOS-CX</h2>
+          <p data-i18n="sdn-input-text">Format brut collecté par Ansible via <code style="font-family:var(--mono);font-size:0.8em;color:var(--accent)">show lldp neighbor-info detail</code>. Chaque bloc décrit un voisin découvert sur un port local, rien de plus.</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -103,8 +103,8 @@ TTL                            : 120</code></pre>
 
         <!-- ── ArubaConfigCleaner ── -->
         <section class="project-section" data-anim="up">
-          <h2>ArubaConfigCleaner.py : Pipeline de nettoyage</h2>
-          <p>Les switches physiques Aruba tournent des fonctionnalités que les images virtuelles ne connaissent pas : VSF (stacking), UBT, PoE, plus des ports uplink numérotés 1/1/47-49 qui n'existent nulle part en virtuel. Le cleaner réécrit chaque config automatiquement, sans y toucher à la main.</p>
+          <h2 data-i18n="sdn-cleaner-title">ArubaConfigCleaner.py : Pipeline de nettoyage</h2>
+          <p data-i18n="sdn-cleaner-text">Les switches physiques Aruba tournent des fonctionnalités que les images virtuelles ne connaissent pas : VSF (stacking), UBT, PoE, plus des ports uplink numérotés 1/1/47-49 qui n'existent nulle part en virtuel. Le cleaner réécrit chaque config automatiquement, sans y toucher à la main.</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -167,8 +167,8 @@ TTL                            : 120</code></pre>
 
         <!-- ── LLDPToUNL ── -->
         <section class="project-section" data-anim="up">
-          <h2>LLDPToUNL.py : Parsing topologique</h2>
-          <p>Le script reconstruit la topologie complète depuis les fichiers LLDP collectés : déduplique les liens bidirectionnels, génère un fichier XML/UNL avec les configs encodées en base64, directement embarquées dedans.</p>
+          <h2 data-i18n="sdn-parsing-title">LLDPToUNL.py : Parsing topologique</h2>
+          <p data-i18n="sdn-parsing-text">Le script reconstruit la topologie complète depuis les fichiers LLDP collectés : déduplique les liens bidirectionnels, génère un fichier XML/UNL avec les configs encodées en base64, directement embarquées dedans.</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -227,8 +227,8 @@ TTL                            : 120</code></pre>
 
         <!-- ── P2V orchestration ── -->
         <section class="project-section" data-anim="up">
-          <h2>P2V.py : Orchestration du workflow</h2>
-          <p>Script principal. Il enchaîne les 4 étapes, gère les dossiers temporaires, et sort un ZIP prêt à l'import EVE-NG. Rien d'exotique, juste un chef d'orchestre.</p>
+          <h2 data-i18n="sdn-orchestration-title">P2V.py : Orchestration du workflow</h2>
+          <p data-i18n="sdn-orchestration-text">Script principal. Il enchaîne les 4 étapes, gère les dossiers temporaires, et sort un ZIP prêt à l'import EVE-NG. Rien d'exotique, juste un chef d'orchestre.</p>
 
           <div class="code-block">
             <div class="code-header">

@@ -38,7 +38,7 @@
 
         <!-- Architecture -->
         <section class="project-section" data-anim="up">
-          <h2>Architecture réseau</h2>
+          <h2 data-i18n="homelab-arch-title">Architecture réseau</h2>
 
           <div class="code-block">
             <div class="code-header">
@@ -58,27 +58,27 @@ MikroTik RB750Gr3 (WAN: 192.168.1.2 / LAN: 10.0.0.1/24)
           </div>
 
           <table class="project-table" style="margin-top:1.5rem">
-            <thead><tr><th>Composant</th><th>IP</th><th>Rôle</th></tr></thead>
+            <thead><tr><th data-i18n="homelab-arch-th-component">Composant</th><th data-i18n="homelab-arch-th-ip">IP</th><th data-i18n="homelab-arch-th-role">Rôle</th></tr></thead>
             <tbody>
-              <tr><td>MikroTik RB750Gr3</td><td><code>10.0.0.1</code></td><td>Routeur réseau isolé homelab</td></tr>
-              <tr><td>Proxmox</td><td><code>10.0.0.10</code></td><td>Hyperviseur (VM host)</td></tr>
-              <tr><td>TrueNAS Scale</td><td><code>10.0.0.11</code></td><td>Stockage NAS (ZFS + SMB)</td></tr>
-              <tr><td>K3s (Ubuntu 24.04)</td><td><code>10.0.0.20</code></td><td>Cluster Kubernetes</td></tr>
-              <tr><td>Traefik (MetalLB)</td><td><code>10.0.0.100</code></td><td>Ingress controller (HTTP/HTTPS)</td></tr>
-              <tr><td>Pi-hole (MetalLB)</td><td><code>10.0.0.101</code></td><td>DNS + ad-blocking</td></tr>
-              <tr><td>WireGuard (MetalLB)</td><td><code>10.0.0.102</code></td><td>VPN</td></tr>
-              <tr><td>TeamSpeak (MetalLB)</td><td><code>10.0.0.103</code></td><td>Serveur vocal</td></tr>
-              <tr><td>ArgoCD (MetalLB)</td><td><code>10.0.0.100</code></td><td>GitOps controller</td></tr>
+              <tr><td>MikroTik RB750Gr3</td><td><code>10.0.0.1</code></td><td data-i18n="homelab-arch-role-router">Routeur réseau isolé homelab</td></tr>
+              <tr><td>Proxmox</td><td><code>10.0.0.10</code></td><td data-i18n="homelab-arch-role-hypervisor">Hyperviseur (VM host)</td></tr>
+              <tr><td>TrueNAS Scale</td><td><code>10.0.0.11</code></td><td data-i18n="homelab-arch-role-nas">Stockage NAS (ZFS + SMB)</td></tr>
+              <tr><td>K3s (Ubuntu 24.04)</td><td><code>10.0.0.20</code></td><td data-i18n="homelab-arch-role-k3s">Cluster Kubernetes</td></tr>
+              <tr><td>Traefik (MetalLB)</td><td><code>10.0.0.100</code></td><td data-i18n="homelab-arch-role-ingress">Ingress controller (HTTP/HTTPS)</td></tr>
+              <tr><td>Pi-hole (MetalLB)</td><td><code>10.0.0.101</code></td><td data-i18n="homelab-arch-role-dns">DNS + ad-blocking</td></tr>
+              <tr><td>WireGuard (MetalLB)</td><td><code>10.0.0.102</code></td><td data-i18n="homelab-arch-role-vpn">VPN</td></tr>
+              <tr><td>TeamSpeak (MetalLB)</td><td><code>10.0.0.103</code></td><td data-i18n="homelab-arch-role-voice">Serveur vocal</td></tr>
+              <tr><td>ArgoCD (MetalLB)</td><td><code>10.0.0.100</code></td><td data-i18n="homelab-arch-role-gitops">GitOps controller</td></tr>
             </tbody>
           </table>
         </section>
 
         <!-- Services -->
         <section class="project-section" data-anim="up">
-          <h2>Services hébergés</h2>
+          <h2 data-i18n="homelab-services-title">Services hébergés</h2>
 
           <table class="project-table">
-            <thead><tr><th>Service</th><th>URL</th><th>Port interne</th></tr></thead>
+            <thead><tr><th data-i18n="homelab-services-th-service">Service</th><th data-i18n="homelab-services-th-url">URL</th><th data-i18n="homelab-services-th-port">Port interne</th></tr></thead>
             <tbody>
               <tr><td>Root</td><td><code>root.&lt;domain&gt;</code></td><td>80</td></tr>
               <tr><td>Jellyfin</td><td><code>jellyfin.&lt;domain&gt;</code></td><td>8096</td></tr>
@@ -99,50 +99,50 @@ MikroTik RB750Gr3 (WAN: 192.168.1.2 / LAN: 10.0.0.1/24)
 
         <!-- Stack technique -->
         <section class="project-section" data-anim="up">
-          <h2>Stack technique</h2>
+          <h2 data-i18n="homelab-stack-title">Stack technique</h2>
           <div class="tech-grid">
             <div class="tech-item">
               <strong>K3s</strong>
-              <span>Kubernetes léger avec Traefik intégré, Ubuntu 24.04</span>
+              <span data-i18n="homelab-stack-k3s">Kubernetes léger avec Traefik intégré, Ubuntu 24.04</span>
             </div>
             <div class="tech-item">
               <strong>Proxmox</strong>
-              <span>Hyperviseur. VMs provisionnées via Terraform (bpg/proxmox ~0.73)</span>
+              <span data-i18n="homelab-stack-proxmox">Hyperviseur. VMs provisionnées via Terraform (bpg/proxmox ~0.73)</span>
             </div>
             <div class="tech-item">
               <strong>TrueNAS Scale</strong>
-              <span>ZFS + SMB, 3 pools (NAS SSD 1TB, Media HDD 6TB, Logs HDD 1TB)</span>
+              <span data-i18n="homelab-stack-truenas">ZFS + SMB, 3 pools (NAS SSD 1TB, Media HDD 6TB, Logs HDD 1TB)</span>
             </div>
             <div class="tech-item">
               <strong>Ansible</strong>
-              <span>Configuration idempotente : Proxmox, K3s node, node_exporter</span>
+              <span data-i18n="homelab-stack-ansible">Configuration idempotente : Proxmox, K3s node, node_exporter</span>
             </div>
             <div class="tech-item">
               <strong>cert-manager + Infomaniak</strong>
-              <span>Wildcard <code style="font-size:0.8em">*.&lt;domain&gt;</code> via Let's Encrypt DNS-01</span>
+              <span data-i18n="homelab-stack-certmanager">Wildcard <code style="font-size:0.8em">*.&lt;domain&gt;</code> via Let's Encrypt DNS-01</span>
             </div>
             <div class="tech-item">
               <strong>MetalLB</strong>
-              <span>LoadBalancer bare-metal, pool <code style="font-size:0.8em">10.0.0.100–110</code></span>
+              <span data-i18n="homelab-stack-metallb">LoadBalancer bare-metal, pool <code style="font-size:0.8em">10.0.0.100–110</code></span>
             </div>
             <div class="tech-item">
               <strong>SMB CSI driver</strong>
-              <span>PVC Kubernetes montés sur les partages TrueNAS</span>
+              <span data-i18n="homelab-stack-smbcsi">PVC Kubernetes montés sur les partages TrueNAS</span>
             </div>
             <div class="tech-item">
               <strong>ELK 8.x</strong>
-              <span>Elasticsearch StatefulSet + Logstash + Kibana + Filebeat DaemonSet</span>
+              <span data-i18n="homelab-stack-elk">Elasticsearch StatefulSet + Logstash + Kibana + Filebeat DaemonSet</span>
             </div>
             <div class="tech-item">
               <strong>rclone CronJob</strong>
-              <span>Backup quotidien 2h, NAS → Google Drive</span>
+              <span data-i18n="homelab-stack-rclone">Backup quotidien 2h, NAS → Google Drive</span>
             </div>
           </div>
         </section>
 
         <!-- Structure -->
         <section class="project-section" data-anim="up">
-          <h2>Structure du dépôt</h2>
+          <h2 data-i18n="homelab-structure-title">Structure du dépôt</h2>
           <div class="code-block">
             <div class="code-header">
               <span class="code-filename">tree</span>
@@ -178,8 +178,8 @@ MikroTik RB750Gr3 (WAN: 192.168.1.2 / LAN: 10.0.0.1/24)
 
         <!-- Déploiement -->
         <section class="project-section" data-anim="up">
-          <h2>Déploiement</h2>
-          <p>Un script installe tout dans l'ordre correct : CSI driver SMB, cert-manager + webhook Infomaniak, namespace, certificat wildcard (attend Ready), MetalLB, puis tous les services.</p>
+          <h2 data-i18n="homelab-deploy-title">Déploiement</h2>
+          <p data-i18n="homelab-deploy-text">Un script installe tout dans l'ordre correct : CSI driver SMB, cert-manager + webhook Infomaniak, namespace, certificat wildcard (attend Ready), MetalLB, puis tous les services.</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -222,13 +222,13 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
 
         <!-- Réseau -->
         <section class="project-section" data-anim="up">
-          <h2>Réseau</h2>
+          <h2 data-i18n="homelab-network-title">Réseau</h2>
 
-          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">DNS (Pi-hole v6)</h3>
-          <p>Pi-hole tourne sur <code>10.0.0.101</code>. Depuis le réseau maison (192.168.1.x), MikroTik forwarde le port 53 vers Pi-hole. Le node K3s utilise <code>1.1.1.1</code> directement (pas Pi-hole : chicken-and-egg au boot).</p>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem" data-i18n="homelab-dns-title">DNS (Pi-hole v6)</h3>
+          <p data-i18n="homelab-dns-text">Pi-hole tourne sur <code>10.0.0.101</code>. Depuis le réseau maison (192.168.1.x), MikroTik forwarde le port 53 vers Pi-hole. Le node K3s utilise <code>1.1.1.1</code> directement (pas Pi-hole : chicken-and-egg au boot).</p>
 
-          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">Certificats TLS</h3>
-          <p>Wildcard <code>*.&lt;domain&gt;</code> via cert-manager (Let's Encrypt DNS-01, webhook Infomaniak). Renouvellement automatique tous les ~60 jours. TrueNAS et Proxmox utilisent le wildcard importé manuellement (~90 jours).</p>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem" data-i18n="homelab-tls-title">Certificats TLS</h3>
+          <p data-i18n="homelab-tls-text">Wildcard <code>*.&lt;domain&gt;</code> via cert-manager (Let's Encrypt DNS-01, webhook Infomaniak). Renouvellement automatique tous les ~60 jours. TrueNAS et Proxmox utilisent le wildcard importé manuellement (~90 jours).</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -247,21 +247,21 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
 <span class="tok-comment"># Proxmox : Node → System → Certificates → Upload Custom Certificate</span></code></pre>
           </div>
 
-          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">WireGuard VPN</h3>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem" data-i18n="homelab-vpn-title">WireGuard VPN</h3>
           <ul class="benefits-list">
-            <li>Endpoint public : <code>vpn.&lt;domain&gt;:51820</code> (UDP)</li>
-            <li>UI : <code>wg.&lt;domain&gt;</code></li>
-            <li>Réseau clients VPN : <code>10.8.0.0/24</code>, DNS : <code>10.0.0.101</code> (Pi-hole)</li>
-            <li>Port forward : box → MikroTik <code>192.168.1.2</code> → WireGuard <code>10.0.0.102:51820</code></li>
+            <li data-i18n="homelab-vpn-1">Endpoint public : <code>vpn.&lt;domain&gt;:51820</code> (UDP)</li>
+            <li data-i18n="homelab-vpn-2">UI : <code>wg.&lt;domain&gt;</code></li>
+            <li data-i18n="homelab-vpn-3">Réseau clients VPN : <code>10.8.0.0/24</code>, DNS : <code>10.0.0.101</code> (Pi-hole)</li>
+            <li data-i18n="homelab-vpn-4">Port forward : box → MikroTik <code>192.168.1.2</code> → WireGuard <code>10.0.0.102:51820</code></li>
           </ul>
         </section>
 
         <!-- Stockage -->
         <section class="project-section" data-anim="up">
-          <h2>Stockage (TrueNAS Scale)</h2>
+          <h2 data-i18n="homelab-storage-title">Stockage (TrueNAS Scale)</h2>
 
           <table class="project-table">
-            <thead><tr><th>Pool</th><th>Disque</th><th>Partage SMB</th><th>Utilisateur K8s</th></tr></thead>
+            <thead><tr><th data-i18n="homelab-storage-th-pool">Pool</th><th data-i18n="homelab-storage-th-disk">Disque</th><th data-i18n="homelab-storage-th-share">Partage SMB</th><th data-i18n="homelab-storage-th-user">Utilisateur K8s</th></tr></thead>
             <tbody>
               <tr><td>nas</td><td>SSD 1 TB</td><td>NAS</td><td><code>k8s-nas</code></td></tr>
               <tr><td>media</td><td>HDD 6 TB</td><td>Media</td><td><code>k8s-media</code></td></tr>
@@ -272,25 +272,25 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
 
         <!-- Backup -->
         <section class="project-section" data-anim="up">
-          <h2>Backup NAS → Infomaniak Swiss Backup (Restic)</h2>
-          <p>Restic est un outil de backup incrémental avec déduplication et chiffrement <strong>zero-knowledge côté client</strong> (AES-256). Le stockage S3 est hébergé en Suisse chez Infomaniak. Les blobs uploadés sont entièrement opaques, la clé ne quitte jamais le cluster.</p>
+          <h2 data-i18n="homelab-backup-title">Backup NAS → Infomaniak Swiss Backup (Restic)</h2>
+          <p data-i18n="homelab-backup-text">Restic est un outil de backup incrémental avec déduplication et chiffrement <strong>zero-knowledge côté client</strong> (AES-256). Le stockage S3 est hébergé en Suisse chez Infomaniak. Les blobs uploadés sont entièrement opaques, la clé ne quitte jamais le cluster.</p>
 
           <div class="tech-grid" style="margin:1.25rem 0">
             <div class="tech-item">
-              <strong>Chiffrement</strong>
-              <span>AES-256 côté client avant envoi, Infomaniak ne voit que des blobs opaques</span>
+              <strong data-i18n="homelab-backup-label-encryption">Chiffrement</strong>
+              <span data-i18n="homelab-backup-val-encryption">AES-256 côté client avant envoi, Infomaniak ne voit que des blobs opaques</span>
             </div>
             <div class="tech-item">
-              <strong>Rétention</strong>
-              <span>7 jours / 4 semaines / 6 mois / 2 ans, <code>restic forget --prune</code> automatique</span>
+              <strong data-i18n="homelab-backup-label-retention">Rétention</strong>
+              <span data-i18n="homelab-backup-val-retention">7 jours / 4 semaines / 6 mois / 2 ans, <code>restic forget --prune</code> automatique</span>
             </div>
             <div class="tech-item">
-              <strong>Source</strong>
-              <span>PVC <code>backup-source</code> monté en lecture seule depuis TrueNAS via SMB</span>
+              <strong data-i18n="homelab-backup-label-source">Source</strong>
+              <span data-i18n="homelab-backup-val-source">PVC <code>backup-source</code> monté en lecture seule depuis TrueNAS via SMB</span>
             </div>
             <div class="tech-item">
-              <strong>Planification</strong>
-              <span>CronJob chaque nuit à 02h00 (Europe/Zurich), <code>concurrencyPolicy: Forbid</code></span>
+              <strong data-i18n="homelab-backup-label-schedule">Planification</strong>
+              <span data-i18n="homelab-backup-val-schedule">CronJob chaque nuit à 02h00 (Europe/Zurich), <code>concurrencyPolicy: Forbid</code></span>
             </div>
           </div>
 
@@ -365,12 +365,12 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
 
         <!-- GitOps / ArgoCD -->
         <section class="project-section" data-anim="up">
-          <h2>GitOps avec ArgoCD</h2>
-          <p>Tout changement infra passe par Git. ArgoCD synchronise automatiquement l'état du cluster sur l'état déclaré dans le repo, pas de <code>kubectl apply</code> manuel en production.</p>
+          <h2 data-i18n="homelab-gitops-title">GitOps avec ArgoCD</h2>
+          <p data-i18n="homelab-gitops-text">Tout changement infra passe par Git. ArgoCD synchronise automatiquement l'état du cluster sur l'état déclaré dans le repo, pas de <code>kubectl apply</code> manuel en production.</p>
 
-          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">1. Résolution du conflit de sync sur StorageClass</h3>
-          <p>ArgoCD utilisait la stratégie <code>Apply</code> par défaut. Les StorageClass ont des champs immuables : ArgoCD retournait une erreur de réconciliation en tentant de patcher des paramètres qu'il ne peut pas modifier.</p>
-          <p style="margin-top:0.75rem"><strong>Fix :</strong> annotation <code>Replace=true</code>. ArgoCD supprime et recrée la ressource au lieu de patcher, ce qui contourne la contrainte d'immutabilité de l'API Kubernetes.</p>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem" data-i18n="homelab-gitops-sc-title">1. Résolution du conflit de sync sur StorageClass</h3>
+          <p data-i18n="homelab-gitops-sc-text1">ArgoCD utilisait la stratégie <code>Apply</code> par défaut. Les StorageClass ont des champs immuables : ArgoCD retournait une erreur de réconciliation en tentant de patcher des paramètres qu'il ne peut pas modifier.</p>
+          <p style="margin-top:0.75rem" data-i18n="homelab-gitops-sc-text2"><strong>Fix :</strong> annotation <code>Replace=true</code>. ArgoCD supprime et recrée la ressource au lieu de patcher, ce qui contourne la contrainte d'immutabilité de l'API Kubernetes.</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -393,8 +393,8 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
 <span class="tok-keyword">volumeBindingMode</span><span class="tok-operator">:</span> <span class="tok-string">Immediate</span></code></pre>
           </div>
 
-          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">2. Exposition de l'UI ArgoCD via Ingress Traefik + TLS</h3>
-          <p>ArgoCD server exposé en HTTPS sur <code>argocd.&lt;domain&gt;</code> via Traefik (entrypoint <code>websecure</code>, port 443). TLS assuré par le wildcard <code>*.&lt;domain&gt;</code> géré par cert-manager. DNS résolu localement par Pi-hole (enregistrement A → <code>10.0.0.100</code>).</p>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem" data-i18n="homelab-gitops-ingress-title">2. Exposition de l'UI ArgoCD via Ingress Traefik + TLS</h3>
+          <p data-i18n="homelab-gitops-ingress-text">ArgoCD server exposé en HTTPS sur <code>argocd.&lt;domain&gt;</code> via Traefik (entrypoint <code>websecure</code>, port 443). TLS assuré par le wildcard <code>*.&lt;domain&gt;</code> géré par cert-manager. DNS résolu localement par Pi-hole (enregistrement A → <code>10.0.0.100</code>).</p>
 
           <div class="code-block">
             <div class="code-header">
@@ -427,15 +427,15 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
                 <span class="tok-keyword">port</span><span class="tok-operator">:</span> { <span class="tok-keyword">number</span><span class="tok-operator">:</span> <span class="tok-number">80</span> }</code></pre>
           </div>
 
-          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">3. Nettoyage : suppression de l'Ingress obsolète</h3>
-          <p>Suppression de <code>k8s/dashboard-ingress.yaml</code> : ancienne configuration Ingress nginx pour <code>kubernetes-dashboard</code>, incompatible avec Traefik et plus utilisée.</p>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem" data-i18n="homelab-gitops-cleanup-title">3. Nettoyage : suppression de l'Ingress obsolète</h3>
+          <p data-i18n="homelab-gitops-cleanup-text">Suppression de <code>k8s/dashboard-ingress.yaml</code> : ancienne configuration Ingress nginx pour <code>kubernetes-dashboard</code>, incompatible avec Traefik et plus utilisée.</p>
         </section>
 
         <!-- Notes -->
         <section class="project-section" data-anim="up">
-          <h2>Notes opérationnelles</h2>
+          <h2 data-i18n="homelab-notes-title">Notes opérationnelles</h2>
 
-          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">Gestion des services</h3>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem" data-i18n="homelab-notes-mgmt-title">Gestion des services</h3>
           <div class="code-block">
             <div class="code-header">
               <span class="code-filename">kubectl</span>
@@ -453,7 +453,7 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
 <span class="tok-fn">kubectl</span> scale statefulset elasticsearch -n homelab --replicas=0</code></pre>
           </div>
 
-          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">Kibana / Elasticsearch (xpack.security)</h3>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem" data-i18n="homelab-notes-kibana-title">Kibana / Elasticsearch (xpack.security)</h3>
           <div class="code-block">
             <div class="code-header">
               <span class="code-filename">kibana_system password</span>
@@ -466,7 +466,7 @@ curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/v1.16
   -d <span class="tok-string">'{"password":"&lt;NEW_PASS&gt;"}'</span></code></pre>
           </div>
 
-          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem">IaC</h3>
+          <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.5rem" data-i18n="homelab-notes-iac-title">IaC</h3>
           <div class="code-block">
             <div class="code-header">
               <span class="code-filename">terraform + ansible</span>
