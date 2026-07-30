@@ -17,6 +17,14 @@ jobs:
       - name: Deploy www/ via FTP
         run: |
           sudo apt-get install -y lftp
+          # Two passes: FTP quota is tight, and lftp mirror uploads new files before
+          # deleting obsolete ones, so old+new can briefly coexist and blow the quota.
+          # Pass 1 (--only-existing): delete remote-only files and update files that
+          # already exist, without uploading anything new yet -> frees up space first.
+          # Pass 2: normal mirror, now with room for genuinely new files.
           lftp -u "${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }}" \
                ftp://${{ secrets.FTP_HOST }} \
-               -e "set ftp:ssl-allow no; mirror -R --delete --exclude '^\.' --verbose www/ ${{ secrets.FTP_REMOTE_PATH }}; quit"
+               -e "set ftp:ssl-allow no; \
+                   mirror -R --delete --only-existing --exclude '^\.' --verbose www/ ${{ secrets.FTP_REMOTE_PATH }}; \
+                   mirror -R --delete --exclude '^\.' --verbose www/ ${{ secrets.FTP_REMOTE_PATH }}; \
+                   quit"
