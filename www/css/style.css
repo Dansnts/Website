@@ -600,7 +600,7 @@ main { padding-top: var(--sp-6); }
 .timeline-item {
   position: relative;
   display: grid;
-  grid-template-columns: 100px 1fr;
+  grid-template-columns: 190px 1fr;
   gap: var(--sp-4);
   padding: 0 0 var(--sp-5);
 }
@@ -617,7 +617,7 @@ main { padding-top: var(--sp-6); }
   display: block;
   height: 64px;
   width: auto;
-  max-width: 140px;
+  max-width: 180px;
   margin-top: var(--sp-2);
   object-fit: contain;
 }
@@ -1552,7 +1552,7 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
   .section-pro, .section-infra, .section-academic { padding: 3rem 0; }
   .page-section-header { padding: 2.5rem 0 0; }
   .cv-section-top { padding: 2.5rem 0 0; }
-  .timeline-item { grid-template-columns: 80px 1fr; gap: var(--sp-2-5); }
+  .timeline-item { grid-template-columns: 150px 1fr; gap: var(--sp-2-5); }
   .skill-detail-row { grid-template-columns: 100px 1fr; gap: 0.4rem var(--sp-2-5); }
   .cards-grid { grid-template-columns: 1fr; }
   .project-flow { flex-direction: column; }
@@ -1623,7 +1623,7 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
 
   .timeline-item { grid-template-columns: 1fr; gap: 0.1rem; }
   .timeline-date  { padding-bottom: 0.25rem; }
-  .timeline-logo  { height: 40px; width: auto; max-width: 90px; margin-top: 0.4rem; margin-bottom: 0.4rem; }
+  .timeline-logo  { height: 40px; width: auto; max-width: 130px; margin-top: 0.4rem; margin-bottom: 0.4rem; }
 
   .figure-grid { grid-template-columns: 1fr; }
   footer { margin-top: 2.5rem; }
