@@ -1765,7 +1765,10 @@ pageTranslations['project-root'] = {
     'root-tech-calendar': 'UI calendrier + sync CalDAV',
     'root-tech-zustand': "Gestion d'état légère",
     'root-tech-docker': 'Déploiement local, proxy CalDAV',
-    'root-repo-title': 'Dépôt'
+    'root-repo-title': 'Dépôt',
+    'root-fig-theme-caption': 'Thème clair et sombre, sur les trois modules.',
+    'root-fig-notes-caption': "L'éditeur de notes (TipTap) : titres, listes, tâches, citations et blocs de code.",
+    'root-fig-calendar-caption': "Création d'un événement, synchronisé via CalDAV vers l'agenda choisi."
   },
   en: {
     'root-title': 'ROOT',
@@ -1794,7 +1797,10 @@ pageTranslations['project-root'] = {
     'root-tech-calendar': 'Calendar UI + CalDAV sync',
     'root-tech-zustand': 'Lightweight state management',
     'root-tech-docker': 'Local deployment, CalDAV proxy',
-    'root-repo-title': 'Repository'
+    'root-repo-title': 'Repository',
+    'root-fig-theme-caption': 'Light and dark theme, across all three modules.',
+    'root-fig-notes-caption': 'The notes editor (TipTap): headings, lists, tasks, quotes and code blocks.',
+    'root-fig-calendar-caption': 'Creating an event, synced via CalDAV to the chosen calendar.'
   },
 };
 
