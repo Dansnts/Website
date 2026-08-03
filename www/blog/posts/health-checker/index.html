@@ -93,12 +93,12 @@
     .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
     .blog-body th {
       font-family: var(--mono);
-      font-size: 0.6rem;
+      font-size: 0.7rem;
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--muted);
-      padding: 0.55rem 1rem;
+      color: #3f55b8;
+      padding: 0 1rem;
       text-align: left;
     }
     .blog-body td {
@@ -145,7 +145,7 @@
     }
     .code-filename {
       font-family: var(--mono);
-      font-size: 0.62rem;
+      font-size: 0.78rem;
       color: var(--muted);
       letter-spacing: 0.04em;
       display: flex;
@@ -159,13 +159,6 @@
       height: 6px;
       border-radius: 50%;
       background: var(--border-hi);
-    }
-    .code-lang {
-      font-family: var(--mono);
-      font-size: 0.56rem;
-      color: var(--border-hi);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
     .code-copy {
       font-family: var(--mono);
@@ -463,7 +456,7 @@ CMD [&quot;python&quot;, &quot;api.py&quot;]
       wrap.className = 'code-wrap';
       const header = document.createElement('div');
       header.className = 'code-header';
-      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><button class="code-copy">Copier</button>`;
       pre.parentNode.insertBefore(wrap, pre);
       wrap.appendChild(header);
       wrap.appendChild(pre);

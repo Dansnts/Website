@@ -93,12 +93,12 @@
     .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
     .blog-body th {
       font-family: var(--mono);
-      font-size: 0.6rem;
+      font-size: 0.7rem;
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--muted);
-      padding: 0.55rem 1rem;
+      color: #3f55b8;
+      padding: 0 1rem;
       text-align: left;
     }
     .blog-body td {
@@ -145,7 +145,7 @@
     }
     .code-filename {
       font-family: var(--mono);
-      font-size: 0.62rem;
+      font-size: 0.78rem;
       color: var(--muted);
       letter-spacing: 0.04em;
       display: flex;
@@ -159,13 +159,6 @@
       height: 6px;
       border-radius: 50%;
       background: var(--border-hi);
-    }
-    .code-lang {
-      font-family: var(--mono);
-      font-size: 0.56rem;
-      color: var(--border-hi);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
     .code-copy {
       font-family: var(--mono);
@@ -239,7 +232,7 @@
 </table>
 <p>Cette distinction numérique a une conséquence pratique directe sur le placement de l'ACL, un classique des questions CCNA : <strong>standard près de la destination, extended près de la source</strong>.</p>
 <pre><code>192.168.10.0/24 ── R1 ──── R2 ──── R3 ── 192.168.30.0/24
-   (hôtes)                              └── Serveur fichiers .30.100
+(subnet hôtes)                                 └── Serveur fichiers .30 et .100
 </code></pre>
 <p>Prenons <code>192.168.10.5</code>, un hôte du réseau de gauche, et le besoin de lui interdire l'accès au serveur de fichiers <code>192.168.30.100</code>, sans toucher au reste de ses accès (internet, autres serveurs).</p>
 <p><strong>Standard placée trop tôt (sur R1, près de la source) : le piège.</strong> Une ACL standard ne voit que la source, jamais la destination. La seule règle possible est « bloquer <code>192.168.10.5</code> », point. Appliquée sur R1, elle coupe cet hôte de <strong>tout</strong>, pas seulement du serveur de fichiers.</p>
@@ -371,7 +364,7 @@ R1(config-line)# exit
       wrap.className = 'code-wrap';
       const header = document.createElement('div');
       header.className = 'code-header';
-      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><span class="code-lang">${lang}</span><button class="code-copy">Copier</button>`;
+      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><button class="code-copy">Copier</button>`;
       pre.parentNode.insertBefore(wrap, pre);
       wrap.appendChild(header);
       wrap.appendChild(pre);

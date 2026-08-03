@@ -44,7 +44,7 @@ Cette distinction numérique a une conséquence pratique directe sur le placemen
 
 ```
 192.168.10.0/24 ── R1 ──── R2 ──── R3 ── 192.168.30.0/24
-   (hôtes)                              └── Serveur fichiers .30.100
+(subnet hôtes)                                 └── Serveur fichiers .30 et .100
 ```
 
 Prenons `192.168.10.5`, un hôte du réseau de gauche, et le besoin de lui interdire l'accès au serveur de fichiers `192.168.30.100`, sans toucher au reste de ses accès (internet, autres serveurs).
