@@ -17,6 +17,8 @@
   --muted:       #8c886f;
   --subtle:      #a6a288;
   --accent:      #dede37;
+  --accent-deep: #8a7f1f;
+  --hero-shadow: var(--accent-deep);
   --border:      #211f15;
   --border-mid:  #322f20;
   --border-hi:   #4a4630;
@@ -54,16 +56,18 @@
 }
 
 [data-theme="light"] {
-  --bg:          #f4f5fb;
-  --surface:     #ffffff;
-  --raised:      #eceef8;
-  --text:        #0c0d15;
-  --muted:       #656c8a;
-  --subtle:      #525878;
-  --accent:      #2563eb;
-  --border:      #dde0f0;
-  --border-mid:  #c5cae0;
-  --border-hi:   #adb3ce;
+  --bg:          #fff2f2;
+  --surface:     #fffbfb;
+  --raised:      #e5e0ff;
+  --text:        #2b3568;
+  --muted:       #8ea7e9;
+  --subtle:      #4f5fa3;
+  --accent:      #7286d3;
+  --accent-deep: #4a5aa8;
+  --hero-shadow: #4a5aa8;
+  --border:      #ece7ff;
+  --border-mid:  #d5ddf7;
+  --border-hi:   #8ea7e9;
 }
 
 /* ─── Base ────────────────────────────────── */
@@ -87,7 +91,11 @@ body {
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
-  overflow-x: hidden;
+  /* Web fonts finishing ~1s in reflow the page height slightly;
+     without this the browser's scroll-anchoring nudges the scroll
+     position to compensate, which is enough to engage the sticky nav
+     and make it look like the margin around it just vanished. */
+  overflow-anchor: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 300;
@@ -109,40 +117,29 @@ a:hover { opacity: 0.65; }
 
 /* ─── Home Frame (index.html only) ──────────
    body.framed + .frame wrap <main> + footer in a
-   floating card, leaving --accent as a border
-   around it. nav is inset by the same margin so
-   it reads as floating inside the frame instead
-   of stuck to the browser edge. */
-body.framed { background: var(--accent); }
+   card, leaving --accent as a border around it.
+   Nav sits right above it with the same inset,
+   in normal flow (not fixed) - the whole page,
+   nav included, scrolls together as one piece,
+   instead of nav floating pinned over a bar that
+   stays put while everything scrolls under it. */
+/* padding, not margin: nav is body's first child, so a margin-top on
+   it would collapse through onto body itself instead of creating a
+   visible gap - padding never collapses. */
+body.framed { background: var(--accent); padding-top: 32px; }
 .frame {
   background: var(--bg);
-  margin: 32px;
+  margin: 0 32px 32px;
   border-radius: 28px;
   min-height: calc(100vh - 64px);
 }
-/* nav carries its own solid, rounded background at all times here
-   (instead of the usual transparent-until-scrolled look) so it alone
-   plugs the gap above it and covers the frame's rounded corner,
-   correctly, at any scroll position - no guessing what's behind it. */
 body.framed nav {
-  top: 32px; left: 32px; right: 32px;
+  position: sticky;
+  top: 0;
+  margin: 0 32px 12px;
   border-radius: 28px;
   background: var(--bg);
   border-bottom-color: var(--border);
-}
-
-/* Plain accent strip behind the gap above nav (0 to 32px). Flat, no
-   radius: nav already has its own matching rounded corners and sits
-   on top of it (z-index), so it alone reads as "the" rounded corner.
-   This just needs to be blue back there, nothing fancier. */
-body.framed::before {
-  content: '';
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 32px;
-  background: var(--accent);
-  z-index: 90;
-  pointer-events: none;
 }
 
 /* ─── Navigation ──────────────────────────── */
@@ -165,31 +162,20 @@ nav.nav-scrolled {
 nav .nav-inner {
   max-width: var(--max-w);
   margin: 0 auto;
-  padding: var(--sp-2) var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
-nav .logo {
-  font-family: var(--mono);
-  font-weight: 500;
-  font-size: var(--fs-small);
-  color: var(--text);
-  letter-spacing: 0.04em;
-  opacity: 1;
-  transition: opacity var(--t);
-}
-nav .logo em { color: var(--accent); font-style: normal; }
-nav .logo:hover { opacity: 0.55; }
 
 nav .nav-links { display: flex; gap: var(--sp-4-5); position: relative; }
 
 nav .nav-links a {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: var(--fs-micro);
-  font-weight: 400;
+  font-size: 0.8rem;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   transition: color var(--t);
@@ -265,6 +251,10 @@ nav .lang-toggle[data-lang="en"] .lang-slider { transform: translateX(32px); }
 
 /* ─── Main ────────────────────────────────── */
 main { padding-top: var(--sp-6); }
+/* Nav no longer floats fixed over the content here, so main doesn't
+   need clearance for it anymore - just a bit of breathing room under
+   .frame's rounded top edge. */
+body.framed main { padding-top: 2rem; }
 
 /* ─── Scroll Reveal ───────────────────────── */
 [data-anim] {
@@ -374,7 +364,7 @@ main { padding-top: var(--sp-6); }
   display: block;
   font-family: var(--mono);
   font-size: var(--fs-small);
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--subtle);
@@ -396,7 +386,36 @@ main { padding-top: var(--sp-6); }
   line-height: 0.94;
   color: var(--accent);
 }
-[data-theme="light"] .hero-name-first { color: var(--text); }
+[data-theme="light"] .hero-name-first { color: var(--accent); }
+/* Solid stacked-layer extrusion instead of a blurred drop shadow -
+   reads as a block of letters with depth, not a generic card shadow.
+   em-based offsets so it scales with the clamp()'d font-size.
+   --accent-deep is a darker shade of --accent per theme (blue in
+   light, yellow in dark) - same bright-face/dark-shadow contrast
+   either way, so this needs no theme-scoping itself. */
+.hero-name-first {
+  text-shadow:
+    0.005em 0.005em 0 var(--hero-shadow),
+    0.01em 0.01em 0 var(--hero-shadow),
+    0.015em 0.015em 0 var(--hero-shadow),
+    0.02em 0.02em 0 var(--hero-shadow),
+    0.025em 0.025em 0 var(--hero-shadow),
+    0.03em 0.03em 0 var(--hero-shadow),
+    0.035em 0.035em 0 var(--hero-shadow),
+    0.04em 0.04em 0 var(--hero-shadow),
+    0.045em 0.045em 0 var(--hero-shadow),
+    0.05em 0.05em 0 var(--hero-shadow),
+    0.055em 0.055em 0 var(--hero-shadow),
+    0.06em 0.06em 0 var(--hero-shadow),
+    0.065em 0.065em 0 var(--hero-shadow),
+    0.07em 0.07em 0 var(--hero-shadow),
+    0.075em 0.075em 0 var(--hero-shadow),
+    0.08em 0.08em 0 var(--hero-shadow),
+    0.085em 0.085em 0 var(--hero-shadow),
+    0.09em 0.09em 0 var(--hero-shadow),
+    0.095em 0.095em 0 var(--hero-shadow),
+    0.1em 0.1em 0 var(--hero-shadow);
+}
 .hero-name-last {
   font-size: clamp(2.4rem, 6vw, 5rem);
   font-weight: 300;
@@ -513,6 +532,12 @@ main { padding-top: var(--sp-6); }
 [data-theme="dark"] .terminal-prompt-line { color: #928374; }
 [data-theme="dark"] .terminal-cursor { background: #fabd2f; }
 [data-theme="dark"] .terminal-title { color: #a89984; }
+
+/* Light theme gets the site's own new accent instead of gruvbox -
+   terminal body stays dark either way (it's meant to look like a
+   real terminal, not follow the page theme). */
+[data-theme="light"] .terminal .skill-key { color: #7286d3; }
+[data-theme="light"] .terminal-cursor { background: #7286d3; }
 .skill-val.is-typing::after {
   content: '';
   display: inline-block;
@@ -1836,9 +1861,9 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
 }
 
 @media (max-width: 580px) {
-  .frame { margin: 16px; border-radius: 20px; min-height: calc(100vh - 32px); }
-  body.framed nav { top: 16px; left: 16px; right: 16px; border-radius: 20px; }
-  body.framed::before { height: 16px; }
+  .frame { margin: 0 16px 16px; border-radius: 20px; min-height: calc(100vh - 32px); }
+  body.framed { padding-top: 16px; }
+  body.framed nav { top: 0; margin: 0 16px 8px; border-radius: 20px; }
 
   .wrapper { padding: 0 1rem; }
   .section { padding: 1.75rem 0; }

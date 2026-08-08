@@ -4,6 +4,14 @@
   document.documentElement.setAttribute('data-theme', saved);
 })();
 
+// Browsers restore the previous scroll position on reload by default -
+// with a sticky nav, that means a refresh can land already "stuck" at
+// the top instead of starting at its normal, inset position. Anchor
+// links (#qa etc.) still scroll on purpose via initHashScrollFix.
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
 function toggleTheme() {
   const html = document.documentElement;
   const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -145,10 +153,49 @@ function initHashScrollFix() {
 }
 
 // ─── Section spy (single-page nav) ───────────
+// Project detail pages and blog pages aren't part of the single-page
+// scroll spy below (no #home to scroll through) - just mark PROJECTS
+// or BLOG active from the URL instead.
+function initStaticActiveNav() {
+  const path = location.pathname;
+  const href = path.startsWith('/projects/') ? '/#projects'
+             : path.startsWith('/blog/') ? '/blog/'
+             : null;
+  if (!href) return;
+
+  const link = document.querySelector(`.nav-links a[href="${href}"]`);
+  if (!link) return;
+  link.classList.add('active');
+
+  const indicator = document.querySelector('.nav-indicator');
+  if (!indicator) return;
+
+  const place = () => {
+    indicator.style.transform = `translateX(${link.offsetLeft}px)`;
+    indicator.style.width = `${link.offsetWidth}px`;
+    indicator.classList.add('is-visible');
+  };
+  place();
+  // Two things can still reflow the nav after this first measurement:
+  // the custom font finishing (fallback-font metrics until then), and
+  // the FR/EN swap, which is dispatched *after* this runs and can
+  // change label widths ("Blog" vs "Blog" is the same, but the other
+  // links aren't). On a fresh load fonts.ready is slow enough that the
+  // language swap always wins the race by the time it resolves; once
+  // the font is cached (e.g. navigating from another page on the
+  // site) fonts.ready resolves first instead, so both need to be
+  // covered explicitly.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(place);
+  }
+  window.addEventListener('langChange', place);
+  window.addEventListener('resize', place);
+}
+
 function initSectionSpy() {
   const sectionIds = ['home', 'projects', 'cv', 'qa'];
   // Only run on root page where the sections exist
-  if (!document.getElementById('home')) return;
+  if (!document.getElementById('home')) { initStaticActiveNav(); return; }
 
   const update = () => {
     const navLinks = document.querySelectorAll('.nav-links a[href^="/#"]');
