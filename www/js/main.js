@@ -14,7 +14,14 @@ function toggleTheme() {
   // Crossfades the whole page between the two theme snapshots instead of
   // an instant snap. No-op (instant apply) on browsers without support.
   if (document.startViewTransition) {
-    document.startViewTransition(apply);
+    // Nav (and a few other elements) have their own color/icon
+    // transitions running at different durations than the view
+    // transition's crossfade - both firing at once is what made nav
+    // look out of sync with the rest of the page. Freeze them for the
+    // duration of the fade so only the single uniform crossfade shows.
+    html.classList.add('theme-transitioning');
+    const transition = document.startViewTransition(apply);
+    transition.finished.finally(() => html.classList.remove('theme-transitioning'));
   } else {
     apply();
   }
@@ -112,7 +119,8 @@ function scrollToHash(hash, behavior) {
   const nav = document.querySelector('nav');
   const clearance = nav ? nav.getBoundingClientRect().bottom + 24 : 0;
   const top = target.getBoundingClientRect().top + window.scrollY - clearance;
-  window.scrollTo({ top: Math.max(top, 0), behavior });
+  const y = Math.max(top, 0);
+  window.scrollTo({ top: y, behavior });
 }
 
 function initHashScrollFix() {
@@ -199,11 +207,20 @@ function initNavScroll() {
 
 // ─── Accordion (Q&A) ──────────────────────────
 function initAccordion() {
-  document.querySelectorAll('.qa-question').forEach(btn => {
+  const items = document.querySelectorAll('.qa-item');
+  items.forEach(item => {
+    const btn = item.querySelector('.qa-question');
+    if (!btn) return;
     btn.addEventListener('click', () => {
-      const item = btn.closest('.qa-item');
-      const open = item.classList.toggle('is-open');
-      btn.setAttribute('aria-expanded', open);
+      const wasOpen = item.classList.contains('is-open');
+      items.forEach(other => {
+        other.classList.remove('is-open');
+        other.querySelector('.qa-question')?.setAttribute('aria-expanded', false);
+      });
+      if (!wasOpen) {
+        item.classList.add('is-open');
+        btn.setAttribute('aria-expanded', true);
+      }
     });
   });
 }
