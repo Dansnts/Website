@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=47" />
+  <link rel="stylesheet" href="/css/style.css?v=65" />
   <link rel="icon" href="/favicon.ico" />
   <style>
     /* ── Blog listing ── */
@@ -150,16 +150,13 @@
       letter-spacing: 0.04em;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.55rem;
     }
-    .code-filename::before {
-      content: '';
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--border-hi);
-    }
+    .code-dots { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .code-dots span { width: 9px; height: 9px; border-radius: 50%; }
+    .code-dots span:nth-child(1) { background: #ff5f57; }
+    .code-dots span:nth-child(2) { background: #febc2e; }
+    .code-dots span:nth-child(3) { background: #28c840; }
     .code-copy {
       font-family: var(--mono);
       font-size: 0.58rem;
@@ -173,6 +170,14 @@
       letter-spacing: 0.04em;
     }
     .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
+
+    /* Same gruvbox-leaning warm palette as the skills terminal on the
+       home page, applied here too, dark theme only. */
+    [data-theme="dark"] .blog-body pre { background: #282828; border-color: #3c3836; color: #ebdbb2; }
+    [data-theme="dark"] .code-header { background: #3c3836; border-color: #3c3836; }
+    [data-theme="dark"] .code-filename { color: #a89984; }
+    [data-theme="dark"] .code-copy { color: #928374; border-color: #504945; }
+    [data-theme="dark"] .code-copy:hover { color: #ebdbb2; border-color: #7c6f64; }
   </style>
 </head>
 <body class="framed">
@@ -183,8 +188,8 @@
   </main>
   <div id="site-footer"></div>
   </div>
-  <script src="/js/i18n.js"></script>
-  <script src="/js/main.js?v=7"></script>
+  <script src="/js/i18n.js?v=2"></script>
+  <script src="/js/main.js?v=12"></script>
   <script>
     document.querySelectorAll('.blog-body pre').forEach(pre => {
       const code = pre.querySelector('code');
@@ -193,7 +198,7 @@
       wrap.className = 'code-wrap';
       const header = document.createElement('div');
       header.className = 'code-header';
-      header.innerHTML = `<span class="code-filename">${lang || 'code'}</span><button class="code-copy">Copier</button>`;
+      header.innerHTML = `<span class="code-filename"><span class="code-dots"><span></span><span></span><span></span></span>${lang || 'code'}</span><button class="code-copy">Copier</button>`;
       pre.parentNode.insertBefore(wrap, pre);
       wrap.appendChild(header);
       wrap.appendChild(pre);

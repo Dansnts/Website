@@ -10,9 +10,9 @@
             href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&family=IBM+Plex+Sans:wght@300;700&display=swap"
             rel="stylesheet"
         />
-        <link rel="stylesheet" href="/css/style.css?v=47" />
+        <link rel="stylesheet" href="/css/style.css?v=65" />
         <link rel="icon" href="/favicon.ico" />
-        <script src="/js/main.js?v=7"></script>
+        <script src="/js/main.js?v=12"></script>
     </head>
     <body class="framed">
         <div id="site-header"></div>
@@ -59,69 +59,71 @@
                     </div>
 
                     <div class="section">
+                        <div class="terminal" data-anim="up">
+                            <div class="terminal-bar">
+                                <span class="terminal-dot terminal-dot-r"></span>
+                                <span class="terminal-dot terminal-dot-y"></span>
+                                <span class="terminal-dot terminal-dot-g"></span>
+                                <span class="terminal-title">dani@homelab: ~/skills</span>
+                            </div>
                         <div class="skills-table">
-                            <div class="skill-row" data-anim="up">
+                            <div class="skill-row">
                                 <span
                                     class="skill-key"
                                     data-i18n="observability"
                                     >Observabilité</span
                                 >
                                 <span class="skill-val" data-i18n="skillval-observability"
-                                    >Grafana · Prometheus · Grafana Alloy · Loki ·
-                                    ELK Stack · DCGM · Grafana Tempo</span
+                                    >Grafana, Prometheus, Grafana Alloy, Loki, ELK Stack, DCGM, Grafana Tempo</span
                                 >
                             </div>
-                            <div class="skill-row" data-anim="up">
+                            <div class="skill-row">
                                 <span
                                     class="skill-key"
                                     data-i18n="card-infra-title"
                                     >Infrastructure</span
                                 >
                                 <span class="skill-val" data-i18n="skillval-infra"
-                                    >Network (Cisco, Aruba, Arista, MikroTik,
-                                    FreeRADIUS) · Proxmox · TrueNAS / ZFS ·
-                                    PostgreSQL · Docker · Kubernetes · Vagrant
-                                    · Azure · Windows Server/AD · Linux ·
-                                    macOS/ABM · MDM (Intune)</span
+                                    >Network (Cisco, Aruba, Arista, MikroTik, FreeRADIUS), Proxmox, TrueNAS / ZFS, PostgreSQL, Docker, Kubernetes, Vagrant, Azure, Windows Server/AD, Linux, macOS/ABM, MDM (Intune)</span
                                 >
                             </div>
-                            <div class="skill-row" data-anim="up">
+                            <div class="skill-row">
                                 <span
                                     class="skill-key"
                                     data-i18n="card-auto-title"
                                     >Automatisation</span
                                 >
                                 <span class="skill-val" data-i18n="skillval-auto"
-                                    >Ansible · Terraform/OpenTofu · Jinja2 ·
-                                    CI/CD (Git, GitLab CI) · ArgoCD (GitOps) ·
-                                    Traefik · cert-manager</span
+                                    >Ansible, Terraform/OpenTofu, Jinja2, CI/CD (Git, GitLab CI), ArgoCD (GitOps), Traefik, cert-manager</span
                                 >
                             </div>
-                            <div class="skill-row" data-anim="up">
+                            <div class="skill-row">
                                 <span
                                     class="skill-key"
                                     data-i18n="card-dev-title"
                                     >Développement</span
                                 >
                                 <span class="skill-val" data-i18n="skillval-dev"
-                                    >Go · Python · Bash · PowerShell · HTML /
-                                    CSS / JavaScript · APIs</span
+                                    >Go, Python, Bash, PowerShell, HTML /
+                                    CSS / JavaScript, APIs</span
                                 >
                             </div>
-                            <div class="skill-row" data-anim="up">
+                            <div class="skill-row">
                                 <span
                                     class="skill-key"
                                     data-i18n="card-sec-title"
                                     >Sécurité</span
                                 >
                                 <span class="skill-val" data-i18n="skillval-sec"
-                                    >WireGuard (VPN) · Hardening (SELinux,
-                                    AppArmor, GPO) · Audit · Cyber-Safe ·
-                                    Coffre-fort K8s (Vault, External Secrets
-                                    Operator, Bitwarden) · IAM / OIDC (Keycloak,
-                                    AD, OAuth2)</span
+                                    >WireGuard (VPN), Hardening (SELinux, AppArmor, GPO), Audit, Cyber-Safe, Coffre-fort K8s (Vault, External Secrets
+                                    Operator, Bitwarden), IAM / OIDC (Keycloak, AD, OAuth2)</span
                                 >
                             </div>
+                        </div>
+                        <div class="terminal-prompt-line" aria-hidden="true">
+                            <span>$</span>
+                            <span class="terminal-cursor"></span>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -1901,6 +1903,6 @@
         <div id="site-footer"></div>
         </div>
 
-        <script src="/js/i18n.js"></script>
+        <script src="/js/i18n.js?v=2"></script>
     </body>
 </html>

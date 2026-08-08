@@ -92,8 +92,8 @@ async function loadComponents() {
   const footerEl = document.getElementById('site-footer');
 
   const [headerRes, footerRes] = await Promise.all([
-    headerEl ? fetch('/includes/header.html') : null,
-    footerEl ? fetch('/includes/footer.html') : null
+    headerEl ? fetch('/includes/header.html', { cache: 'no-store' }) : null,
+    footerEl ? fetch('/includes/footer.html', { cache: 'no-store' }) : null
   ]);
 
   if (headerEl && headerRes) {
@@ -282,6 +282,68 @@ function initAge() {
   el.textContent = age;
 }
 
+// ─── Skills terminal (type-on-scroll) ────────
+// Reads the current (already-translated) text at the moment each row
+// scrolls into view rather than at page load, so a language switch
+// before that point doesn't leave it typing out stale text.
+function initTerminalType() {
+  const terminal = document.querySelector('.terminal');
+  const rows = document.querySelectorAll('.terminal .skill-row');
+  if (!terminal || !rows.length) return;
+
+  // Whole rows (prompt label + value) are CSS-hidden by default so
+  // there's no flash of content before JS reveals them one at a time -
+  // see .terminal .skill-row in style.css. reduced-motion (or if this
+  // never got the chance to run) just reveals everything straight away.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    rows.forEach(row => row.classList.add('is-revealed'));
+    return;
+  }
+
+  const speed = 9; // ms per character
+
+  function typeRow(row) {
+    return new Promise(resolve => {
+      row.classList.add('is-revealed');
+      const el = row.querySelector('.skill-val');
+      const text = el.textContent;
+      el.textContent = '';
+      el.classList.add('is-typing');
+      let i = 0;
+      (function tick() {
+        el.textContent = text.slice(0, i);
+        i++;
+        if (i <= text.length) {
+          setTimeout(tick, speed);
+        } else {
+          el.classList.remove('is-typing');
+          resolve();
+        }
+      })();
+    });
+  }
+
+  async function typeAll() {
+    for (const row of rows) {
+      await typeRow(row);
+    }
+    // Idle CLI prompt with a blinking cursor once everything's typed.
+    terminal.classList.add('is-done');
+  }
+
+  // One trigger on the whole terminal (not per row) so lines type out
+  // one after another instead of all at once.
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      obs.unobserve(entry.target);
+      typeAll();
+    });
+  }, { threshold: 0.3 });
+
+  observer.observe(terminal);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await loadComponents();
   updateLangButton();
@@ -289,6 +351,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.dispatchEvent(new CustomEvent('langChange', { detail: currentLang }));
   initScrollReveal();
   initNavScroll();
+  initTerminalType();
   initAge();
   initAccordion();
   initLightbox();

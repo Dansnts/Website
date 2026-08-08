@@ -366,7 +366,7 @@ main { padding-top: var(--sp-6); }
 
 /* ─── Hero ────────────────────────────────── */
 .hero {
-  padding: var(--sp-7) 0 var(--sp-4);
+  padding: var(--sp-7) 0 var(--sp-2-5);
   position: relative;
 }
 
@@ -432,6 +432,34 @@ main { padding-top: var(--sp-6); }
 .hero-links a.hero-cv-link:hover { color: var(--text); border-color: var(--subtle); }
 
 /* ─── Skills Table (Home) ─────────────────── */
+/* ─── Skills Terminal ─────────────────────── */
+.terminal {
+  background: #0c0e18;
+  border: 1px solid #1e2030;
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.9rem;
+  background: #141625;
+  border-bottom: 1px solid #1e2030;
+}
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.terminal-dot-r { background: #ff5f57; }
+.terminal-dot-y { background: #febc2e; }
+.terminal-dot-g { background: #28c840; }
+.terminal-title {
+  margin-left: 0.5rem;
+  font-family: var(--code);
+  font-size: var(--fs-tiny);
+  color: #757aa0;
+  letter-spacing: 0.02em;
+}
+.terminal .skills-table { border-top: none; padding: 0.4rem 1.25rem 0.8rem; }
+
 .skills-table { border-top: 1px solid var(--border); }
 
 .skill-row {
@@ -461,6 +489,62 @@ main { padding-top: var(--sp-6); }
   line-height: 1.7;
 }
 
+.terminal .skill-row { border-bottom: none; display: none; }
+.terminal .skill-row.is-revealed { display: grid; }
+/* The separator belongs to the row that just showed up, not the one
+   before it - so it only appears once the next section actually starts. */
+.terminal .skill-row.is-revealed + .skill-row.is-revealed { border-top: 1px solid #1e2030; }
+.terminal .skill-key {
+  font-family: var(--code);
+  color: #67e8f9;
+}
+.terminal .skill-key::before { content: '$ '; color: #3e4260; }
+.terminal .skill-val { font-family: var(--code); color: #dce0f0; }
+
+/* Gruvbox-leaning warm palette for the terminal, dark theme only:
+   bg0/bg1/fg1/yellow from gruvbox-dark instead of the site's usual
+   cool navy + cyan. Light theme keeps the navy/cyan version above. */
+[data-theme="dark"] .terminal { background: #282828; border-color: #3c3836; }
+[data-theme="dark"] .terminal-bar { background: #3c3836; border-bottom-color: #504945; }
+[data-theme="dark"] .terminal .skill-row.is-revealed + .skill-row.is-revealed { border-top-color: #3c3836; }
+[data-theme="dark"] .terminal .skill-key { color: #fabd2f; }
+[data-theme="dark"] .terminal .skill-key::before { color: #928374; }
+[data-theme="dark"] .terminal .skill-val { color: #ebdbb2; }
+[data-theme="dark"] .terminal-prompt-line { color: #928374; }
+[data-theme="dark"] .terminal-cursor { background: #fabd2f; }
+[data-theme="dark"] .terminal-title { color: #a89984; }
+.skill-val.is-typing::after {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  margin-left: 2px;
+  background: currentColor;
+  vertical-align: text-bottom;
+  animation: cursor-blink 1s step-end infinite;
+}
+@keyframes cursor-blink { 50% { opacity: 0; } }
+
+/* Idle CLI prompt once every line has finished typing */
+.terminal-prompt-line {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  padding: 0.3rem 1.25rem 0.9rem;
+  font-family: var(--code);
+  font-size: var(--fs-body);
+  color: #3e4260;
+}
+.terminal.is-done .terminal-prompt-line { display: flex; }
+.terminal-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  margin-left: 4px;
+  background: #dce0f0;
+  animation: cursor-blink 1s step-end infinite;
+}
+
 .skills-cta { margin-top: var(--sp-4-5); }
 
 .skills-cta a {
@@ -475,6 +559,7 @@ main { padding-top: var(--sp-6); }
 
 /* ─── Sections ────────────────────────────── */
 .section { padding: var(--sp-4-5) 0; }
+.hero + .section { padding-top: var(--sp-2-5); }
 
 .section-title {
   font-family: var(--mono);
@@ -914,22 +999,26 @@ footer p {
   position: fixed;
   bottom: 3.25rem; right: 4.75rem;
   width: 36px; height: 36px;
+  padding: 0;
+  margin: 0;
   border-radius: 50%;
   background: var(--surface);
   border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: transform var(--t);
   z-index: 99;
 }
 .theme-toggle:hover { transform: scale(1.1); }
 
+/* Absolute + translate(-50%,-50%) instead of flex centering: immune
+   to any browser default button padding/line-height quirks that kept
+   throwing the icon off-center. */
 .theme-toggle .icon-theme {
+  position: absolute;
+  top: 50%; left: 50%;
   width: 19px;
   height: 19px;
-  transition: transform 0.5s var(--ease);
+  transform: translate(-50%, -50%);
 }
 /* .body is the disc itself: blue "sun" in light, yellow "moon" in dark,
    for free, since --accent already flips with the theme. .mask is a
@@ -945,8 +1034,8 @@ footer p {
   cy: 6px;
   transition: cx 0.5s var(--ease), cy 0.5s var(--ease), fill 0.4s var(--ease);
 }
-[data-theme="dark"] .theme-toggle .icon-theme { transform: rotate(-24deg); }
 [data-theme="dark"] .theme-toggle .icon-theme .mask { cx: 15.4px; cy: 8.6px; }
+[data-theme="dark"] .theme-toggle .icon-theme { transform: translate(-50%, -50%) scale(1.5); }
 
 /* Rays only make sense on the full "sun" disc; they fade out with
    the disc's light as it gets eaten into a crescent. */
@@ -974,7 +1063,6 @@ footer p {
 }
 .back-link:hover { color: var(--subtle); opacity: 1; }
 
-.project-detail { max-width: 720px; }
 .project-hero   { margin-bottom: 2.5rem; }
 .project-hero .project-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
 
@@ -1469,11 +1557,15 @@ footer p {
 
 .code-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0.5rem 1rem; background: #141520; border-bottom: 1px solid #1e2030; gap: 1rem;
+  padding: 0.5rem 1rem; background: #141625; border-bottom: 1px solid #1e2030; gap: 1rem;
 }
 
-.code-filename { font-family: var(--mono); font-size: var(--fs-micro); color: var(--muted); letter-spacing: 0.04em; display: flex; align-items: center; gap: 0.4rem; }
-.code-filename::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--border-hi); }
+.code-filename { font-family: var(--mono); font-size: var(--fs-micro); color: var(--muted); letter-spacing: 0.04em; display: flex; align-items: center; gap: 0.55rem; }
+.code-dots { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.code-dots span { width: 9px; height: 9px; border-radius: 50%; }
+.code-dots span:nth-child(1) { background: #ff5f57; }
+.code-dots span:nth-child(2) { background: #febc2e; }
+.code-dots span:nth-child(3) { background: #28c840; }
 .code-lang { font-family: var(--mono); font-size: var(--fs-tiny); color: var(--border-hi); letter-spacing: 0.08em; text-transform: uppercase; }
 .code-copy { font-family: var(--mono); font-size: var(--fs-tiny); color: var(--muted); background: transparent; border: 1px solid var(--border-mid); border-radius: 3px; padding: 0.18rem 0.5rem; cursor: pointer; transition: all var(--t); letter-spacing: 0.04em; }
 .code-copy:hover   { color: var(--subtle); border-color: var(--border-hi); }
@@ -1492,6 +1584,27 @@ footer p {
 .tok-fn       { color: #67e8f9; }
 .tok-tag      { color: #7aa3f8; }
 .tok-attr     { color: #c4b5fd; }
+
+/* Same gruvbox-leaning warm palette as the skills terminal, applied
+   to actual code blocks too, dark theme only. */
+[data-theme="dark"] .code-block { border-color: #3c3836; }
+[data-theme="dark"] .code-header { background: #3c3836; border-bottom-color: #504945; }
+[data-theme="dark"] .code-filename { color: #a89984; }
+[data-theme="dark"] .code-lang { color: #928374; }
+[data-theme="dark"] .code-copy { color: #928374; border-color: #504945; }
+[data-theme="dark"] .code-copy:hover,
+[data-theme="dark"] .code-copy.copied { color: #ebdbb2; border-color: #7c6f64; }
+[data-theme="dark"] .code-block pre { background: #282828; color: #ebdbb2; }
+[data-theme="dark"] .tok-comment  { color: #928374; }
+[data-theme="dark"] .tok-keyword  { color: #fb4934; }
+[data-theme="dark"] .tok-string   { color: #b8bb26; }
+[data-theme="dark"] .tok-number   { color: #fe8019; }
+[data-theme="dark"] .tok-variable { color: #ebdbb2; }
+[data-theme="dark"] .tok-property { color: #8ec07c; }
+[data-theme="dark"] .tok-operator { color: #928374; }
+[data-theme="dark"] .tok-fn       { color: #83a598; }
+[data-theme="dark"] .tok-tag      { color: #fb4934; }
+[data-theme="dark"] .tok-attr     { color: #8ec07c; }
 
 /* Project figure */
 .project-figure { margin: var(--sp-2-5) 0; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; background: var(--surface); }
@@ -1734,7 +1847,10 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
   .cv-section-top { padding: 1.75rem 0 0; }
 
   .hero { padding: 5rem 0 3rem; }
-  .hero h1 { font-size: clamp(3.25rem, 13vw, 6rem); line-height: 0.96; }
+  .hero-name-first { font-size: clamp(3.25rem, 15vw, 5rem); line-height: 0.96; }
+  .hero-name-last { font-size: clamp(2rem, 9vw, 3rem); }
+
+  .theme-toggle { bottom: 1.25rem; right: 1.25rem; }
 
   .skill-row { grid-template-columns: 1fr; gap: 0.2rem; padding: 0.75rem 0; }
   .skill-key { font-size: var(--fs-tiny); }

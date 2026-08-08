@@ -7,9 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=47">
+  <link rel="stylesheet" href="/css/style.css?v=65">
   <link rel="icon" href="/favicon.ico">
-  <script src="/js/main.js?v=7"></script>
+  <script src="/js/main.js?v=12"></script>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -47,7 +47,7 @@
           <p data-i18n="backup-config-text">Fichier de configuration rclone definissant le remote Google Drive. Le token OAuth est stocke de maniere securisee (secret Kubernetes ou fichier protege).</p>
           <div class="code-block">
             <div class="code-header">
-              <span class="code-filename">rclone.conf</span>
+              <span class="code-filename"><span class="code-dots"><span></span><span></span><span></span></span>rclone.conf</span>
               <span class="code-lang">INI</span>
               <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
@@ -67,7 +67,7 @@ domain = WORKGROUP</code></pre>
 
           <div class="code-block">
             <div class="code-header">
-              <span class="code-filename">backup.sh</span>
+              <span class="code-filename"><span class="code-dots"><span></span><span></span><span></span></span>backup.sh</span>
               <span class="code-lang">Bash</span>
               <button class="code-copy" onclick="copyCode(this)">Copier</button>
             </div>
@@ -181,7 +181,7 @@ echo "$(date): Backup termine" >> "$LOG"</code></pre>
   <div id="site-footer"></div>
   </div>
 
-  <script src="/js/i18n.js"></script>
+  <script src="/js/i18n.js?v=2"></script>
   <script>
     function copyCode(btn) {
       const pre = btn.closest('.code-block').querySelector('pre');
