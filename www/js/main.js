@@ -7,8 +7,17 @@
 function toggleTheme() {
   const html = document.documentElement;
   const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
+  const apply = () => {
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  };
+  // Crossfades the whole page between the two theme snapshots instead of
+  // an instant snap. No-op (instant apply) on browsers without support.
+  if (document.startViewTransition) {
+    document.startViewTransition(apply);
+  } else {
+    apply();
+  }
 }
 
 function exportPdf() {
@@ -69,6 +78,7 @@ function initMobileNav() {
   });
 }
 
+
 // Load shared header and footer
 async function loadComponents() {
   const headerEl = document.getElementById('site-header');
@@ -83,11 +93,47 @@ async function loadComponents() {
     headerEl.outerHTML = await headerRes.text();
     initSectionSpy();
     initMobileNav();
+    initHashScrollFix();
   }
 
   if (footerEl && footerRes) {
     footerEl.outerHTML = await footerRes.text();
   }
+}
+
+// ─── Anchor scroll clearance ──────────────
+// scroll-margin-top alone was unreliable once nav became a fixed,
+// inset floating bar (its real screen position isn't just "nav's own
+// height" anymore). Measure nav's actual bottom edge at scroll time
+// instead of guessing a fixed offset in CSS.
+function scrollToHash(hash, behavior) {
+  const target = document.querySelector(hash);
+  if (!target) return;
+  const nav = document.querySelector('nav');
+  const clearance = nav ? nav.getBoundingClientRect().bottom + 24 : 0;
+  const top = target.getBoundingClientRect().top + window.scrollY - clearance;
+  window.scrollTo({ top: Math.max(top, 0), behavior });
+}
+
+function initHashScrollFix() {
+  // Landed here with a hash already in the URL (e.g. clicked "FAQ" from
+  // another page). Correct it once nav exists, then again after full
+  // load in case web fonts reflowed the layout in between.
+  if (location.hash) {
+    scrollToHash(location.hash, 'auto');
+    window.addEventListener('load', () => scrollToHash(location.hash, 'auto'), { once: true });
+  }
+  // Same-page nav clicks: take over from the browser's native jump so
+  // both cases go through the same, correctly-measured offset.
+  document.querySelectorAll('a[href^="/#"], a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const hash = link.getAttribute('href').split('#')[1];
+      if (!hash || !document.getElementById(hash)) return;
+      e.preventDefault();
+      history.pushState(null, '', '#' + hash);
+      scrollToHash('#' + hash, 'smooth');
+    });
+  });
 }
 
 // ─── Section spy (single-page nav) ───────────
@@ -105,12 +151,29 @@ function initSectionSpy() {
       const el = document.getElementById(id);
       if (el && el.offsetTop <= scrollY) current = id;
     }
+    let activeLink = null;
     navLinks.forEach(link => {
-      link.classList.toggle('active', link.getAttribute('href') === '/#' + current);
+      const isActive = link.getAttribute('href') === '/#' + current;
+      link.classList.toggle('active', isActive);
+      if (isActive) activeLink = link;
     });
+
+    const indicator = document.querySelector('.nav-indicator');
+    if (indicator && activeLink) {
+      indicator.style.transform = `translateX(${activeLink.offsetLeft}px)`;
+      indicator.style.width = `${activeLink.offsetWidth}px`;
+      indicator.classList.add('is-visible');
+    }
   };
 
   window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  // FR/EN swaps link text (e.g. "Accueil" <-> "Home"), which changes
+  // each link's width - the indicator needs to re-measure or it's left
+  // sized for the old word. i18n.js's own 'langChange' listener runs
+  // first (registered before this one), so the text is already
+  // swapped by the time update() reads offsetWidth here.
+  window.addEventListener('langChange', update);
   update();
 }
 

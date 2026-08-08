@@ -7,8 +7,8 @@
   <meta name="description" content="Donner de vraies IP à ses services Kubernetes sur du matériel maison, et exposer autre chose que du HTTP." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=45" />
   <link rel="icon" href="/favicon.ico" />
   <style>
     /* ── Blog listing ── */
@@ -65,7 +65,7 @@
     .blog-body strong { color: var(--text); font-weight: 600; }
     .blog-body em { color: var(--subtle); font-style: italic; }
     .blog-body code {
-      font-family: var(--mono);
+      font-family: var(--code);
       font-size: 0.8em;
       background: var(--surface);
       border: 1px solid var(--border);
@@ -125,7 +125,7 @@
       color: #dce0f0;
     }
     .blog-body pre code {
-      font-family: var(--mono);
+      font-family: var(--code);
       font-size: inherit;
       background: transparent;
       border: none;
@@ -175,8 +175,9 @@
     .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
   </style>
 </head>
-<body>
+<body class="framed">
   <div id="site-header"></div>
+  <div class="frame">
   <main>
     <div class="wrapper">
   <a href="/blog/" class="back-link">&larr; Blog</a>
@@ -192,7 +193,7 @@
       <p class="project-subtitle">2 mai 2025</p>
     </header>
 
-    <div class="blog-body" data-anim="up">
+    <div class="blog-body">
       <p>Sur un cloud public, déclarer un <code>Service type: LoadBalancer</code> provoque la création d'un vrai load-balancer avec une IP publique. Sur du bare-metal, un serveur chez soi, il ne se passe rien. Le service reste bloqué en <code>&lt;pending&gt;</code>, éternellement, faute de quelqu'un pour lui attribuer une IP.</p>
 <p><strong>MetalLB</strong> comble ce trou. Il donne à Kubernetes la capacité de distribuer des IP du réseau local aux services <code>LoadBalancer</code>. Dans ce post :</p>
 <ol>
@@ -316,8 +317,9 @@ spec:
 
   </main>
   <div id="site-footer"></div>
+  </div>
   <script src="/js/i18n.js"></script>
-  <script src="/js/main.js"></script>
+  <script src="/js/main.js?v=3"></script>
   <script>
     document.querySelectorAll('.blog-body pre').forEach(pre => {
       const code = pre.querySelector('code');

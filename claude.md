@@ -10,9 +10,9 @@ L'objectif est de créer un site au design clean, professionnel et sur-mesure.
 ## 2. Système de Design (Design System)
 
 ### Typographie
-- **Police principale (Titres) :** DM Sans (var `--sans`), avec Instrument Serif (var `--display`) pour certains accents éditoriaux.
-- **Police secondaire (Texte / labels) :** JetBrains Mono (var `--mono`) pour les labels, dates, meta-infos.
-- **Règles :** Titres en `font-weight: 600-700` avec `letter-spacing` négatif (`-0.02em` à `-0.03em`). Labels mono en `letter-spacing` positif (`0.04em` à `0.16em`). Texte courant en `line-height: 1.6` à `1.9`.
+- **Police unique du site :** Geomini, pour tous les rôles (var `--display`, `--sans`, `--mono` pointent toutes vers Geomini, poids 200-800 disponibles).
+- **Police de code :** Cascadia Code (var `--code`), réservée aux blocs de code réels (`.code-block code`, `.blog-body pre code`, `.blog-body code`, `.project-table code`). Les labels/dates/meta-infos (ex-usage de `--mono`) restent en Geomini, pas en Cascadia Code.
+- **Règles :** Titres en `font-weight: 600-700` avec `letter-spacing` négatif (`-0.02em` à `-0.03em`). Labels en `letter-spacing` positif (`0.04em` à `0.16em`). Texte courant en `line-height: 1.6` à `1.9`.
 
 ### Palette de Couleurs (Valeurs Hex)
 Le site a un thème clair et un thème sombre (toggle géré en JS, variables CSS dans `www/css/style.css`).

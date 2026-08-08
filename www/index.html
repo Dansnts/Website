@@ -7,23 +7,25 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&family=IBM+Plex+Sans:wght@300;700&display=swap"
             rel="stylesheet"
         />
-        <link rel="stylesheet" href="/css/style.css?v=15" />
+        <link rel="stylesheet" href="/css/style.css?v=45" />
         <link rel="icon" href="/favicon.ico" />
-        <script src="/js/main.js"></script>
+        <script src="/js/main.js?v=3"></script>
     </head>
-    <body>
+    <body class="framed">
         <div id="site-header"></div>
 
+        <div class="frame">
         <main>
             <!-- ═══════════════════ HOME ═══════════════════ -->
             <section id="home">
                 <div class="wrapper">
                     <div class="hero">
                         <h1 data-anim="up">
-                            Dani <span>Faria dos Santos</span>
+                            <span class="hero-name-first">Dani</span
+                            ><span class="hero-name-last">Faria dos Santos</span>
                         </h1>
                         <span
                             class="hero-eyebrow"
@@ -36,16 +38,16 @@
                                 href="https://github.com/Dansnts"
                                 target="_blank"
                                 rel="noopener"
-                                >GitHub ↗</a
+                                ><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>GitHub ↗</a
                             >
                             <a
                                 href="https://www.linkedin.com/in/dani-faria/"
                                 target="_blank"
                                 rel="noopener"
-                                >LinkedIn ↗</a
+                                ><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>LinkedIn ↗</a
                             >
                             <a href="mailto:danitiago@fariadossantos.com"
-                                >Email ↗</a
+                                ><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>Email ↗</a
                             >
                             <a
                                 href="#cv"
@@ -1897,6 +1899,7 @@
         </main>
 
         <div id="site-footer"></div>
+        </div>
 
         <script src="/js/i18n.js"></script>
     </body>

@@ -7,8 +7,8 @@
   <meta name="description" content="Un petit service qui poll une liste d&#39;URLs en parallèle, stocke les résultats en mémoire et les expose via une API FastAPI." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=45" />
   <link rel="icon" href="/favicon.ico" />
   <style>
     /* ── Blog listing ── */
@@ -65,7 +65,7 @@
     .blog-body strong { color: var(--text); font-weight: 600; }
     .blog-body em { color: var(--subtle); font-style: italic; }
     .blog-body code {
-      font-family: var(--mono);
+      font-family: var(--code);
       font-size: 0.8em;
       background: var(--surface);
       border: 1px solid var(--border);
@@ -125,7 +125,7 @@
       color: #dce0f0;
     }
     .blog-body pre code {
-      font-family: var(--mono);
+      font-family: var(--code);
       font-size: inherit;
       background: transparent;
       border: none;
@@ -175,8 +175,9 @@
     .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
   </style>
 </head>
-<body>
+<body class="framed">
   <div id="site-header"></div>
+  <div class="frame">
   <main>
     <div class="wrapper">
   <a href="/blog/" class="back-link">&larr; Blog</a>
@@ -192,7 +193,7 @@
       <p class="project-subtitle">4 juillet 2026</p>
     </header>
 
-    <div class="blog-body" data-anim="up">
+    <div class="blog-body">
       <p>Un <em>health check</em> est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif : savoir qu'un service est tombé avant que les utilisateurs ne s'en chargent à notre place.</p>
 <p>On construit un petit service en Python qui :</p>
 <ol>
@@ -446,8 +447,9 @@ CMD [&quot;python&quot;, &quot;api.py&quot;]
 
   </main>
   <div id="site-footer"></div>
+  </div>
   <script src="/js/i18n.js"></script>
-  <script src="/js/main.js"></script>
+  <script src="/js/main.js?v=3"></script>
   <script>
     document.querySelectorAll('.blog-body pre').forEach(pre => {
       const code = pre.querySelector('code');

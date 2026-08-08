@@ -7,8 +7,8 @@
   <meta name="description" content="Brancher un câble ne devrait pas suffire à entrer sur le réseau. EAP-TTLS, MAB, et une auth qui remonte jusqu&#39;à Keycloak via ROPC." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=14" />
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=45" />
   <link rel="icon" href="/favicon.ico" />
   <style>
     /* ── Blog listing ── */
@@ -65,7 +65,7 @@
     .blog-body strong { color: var(--text); font-weight: 600; }
     .blog-body em { color: var(--subtle); font-style: italic; }
     .blog-body code {
-      font-family: var(--mono);
+      font-family: var(--code);
       font-size: 0.8em;
       background: var(--surface);
       border: 1px solid var(--border);
@@ -125,7 +125,7 @@
       color: #dce0f0;
     }
     .blog-body pre code {
-      font-family: var(--mono);
+      font-family: var(--code);
       font-size: inherit;
       background: transparent;
       border: none;
@@ -175,8 +175,9 @@
     .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
   </style>
 </head>
-<body>
+<body class="framed">
   <div id="site-header"></div>
+  <div class="frame">
   <main>
     <div class="wrapper">
   <a href="/blog/" class="back-link">&larr; Blog</a>
@@ -192,7 +193,7 @@
       <p class="project-subtitle">20 août 2025</p>
     </header>
 
-    <div class="blog-body" data-anim="up">
+    <div class="blog-body">
       <p>Le firewall protège le lab depuis internet. Mais à l'intérieur, brancher un câble sur un port du switch suffit à obtenir une IP et l'accès réseau. Pour un lab sérieux, c'est une faille : n'importe qui avec un accès physique entre.</p>
 <p>La réponse, c'est <strong>802.1X</strong>, l'authentification au niveau du port. Le switch ne laisse rien passer tant que la machine (ou l'utilisateur) ne s'est pas authentifiée. C'est le standard en entreprise, et on peut le faire chez soi.</p>
 <p>C'est l'article le plus dense du blog, parce que le sujet est peu documenté hors contexte pro. On va monter la chaîne complète :</p>
@@ -383,8 +384,9 @@ fc9d0563b3bf   Auth-Type := Accept
 
   </main>
   <div id="site-footer"></div>
+  </div>
   <script src="/js/i18n.js"></script>
-  <script src="/js/main.js"></script>
+  <script src="/js/main.js?v=3"></script>
   <script>
     document.querySelectorAll('.blog-body pre').forEach(pre => {
       const code = pre.querySelector('code');
