@@ -316,6 +316,21 @@ function initAccordion() {
   });
 }
 
+// ─── Code block copy button ───────────────────
+// Single source of truth for every .code-block's copy button, whether
+// it's hand-authored (project pages, onclick="copyCode(this)") or
+// built by the blog's markdown-to-code-block script (see base.njk).
+function copyCode(btn) {
+  const pre = btn.closest('.code-block')?.querySelector('pre');
+  if (!pre) return;
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+window.copyCode = copyCode;
+
 // ─── Lightbox (project figures) ──────────────
 function initLightbox() {
   const images = document.querySelectorAll('.project-figure img');

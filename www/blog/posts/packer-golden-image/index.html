@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=124" />
+  <link rel="stylesheet" href="/css/style.css?v=128" />
   <link rel="icon" href="/favicon.ico" />
   <style>
     /* ── Blog listing ── */
@@ -64,7 +64,10 @@
     .blog-body a:hover { opacity: 0.75; }
     .blog-body strong { color: var(--text); font-weight: 600; }
     .blog-body em { color: var(--subtle); font-style: italic; }
-    .blog-body code {
+    /* Inline code only - scoped to prose contexts so it never matches
+       the <code> inside a <pre> (that one is a .code-block, styled by
+       style.css, and must stay plain text with no pill background). */
+    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
       font-family: var(--code);
       font-size: 0.8em;
       background: var(--surface);
@@ -97,7 +100,7 @@
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: #3f55b8;
+      color: var(--accent);
       padding: 0 1rem;
       text-align: left;
     }
@@ -111,74 +114,12 @@
     .blog-body tr:last-child td { border-bottom: none; }
     .blog-body tbody tr:hover td { background: var(--surface); }
 
-    /* ── Code blocks ── */
-    .blog-body pre {
-      background: #0c0e18;
-      border: 1px solid #1e2030;
-      border-radius: 0 0 8px 8px;
-      border-top: none;
-      padding: 1.25rem 1.5rem;
-      overflow-x: auto;
-      margin-bottom: 1.4rem;
-      font-size: 0.8rem;
-      line-height: 1.7;
-      color: #dce0f0;
-    }
-    .blog-body pre code {
-      font-family: var(--code);
-      font-size: inherit;
-      background: transparent;
-      border: none;
-      padding: 0;
-      color: inherit;
-    }
-    .code-wrap { margin-bottom: 1.4rem; }
-    .code-wrap pre { margin-bottom: 0; }
-    .code-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #141625;
-      border: 1px solid #1e2030;
-      border-radius: 8px 8px 0 0;
-      padding: 0.45rem 1rem;
-    }
-    .code-filename {
-      font-family: var(--mono);
-      font-size: 0.78rem;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-    }
-    .code-dots { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
-    .code-dots span { width: 9px; height: 9px; border-radius: 50%; }
-    .code-dots span:nth-child(1) { background: #ff5f57; }
-    .code-dots span:nth-child(2) { background: #febc2e; }
-    .code-dots span:nth-child(3) { background: #28c840; }
-    .code-copy {
-      font-family: var(--mono);
-      font-size: 0.58rem;
-      color: var(--muted);
-      background: transparent;
-      border: 1px solid var(--border-mid);
-      border-radius: 3px;
-      padding: 0.18rem 0.5rem;
-      cursor: pointer;
-      transition: all var(--t);
-      letter-spacing: 0.04em;
-    }
-    .code-copy:hover { color: var(--subtle); border-color: var(--border-hi); }
-
-    /* Same gruvbox-leaning warm palette as the skills terminal on the
-       home page, applied here too, dark theme only. */
-    [data-theme="dark"] .blog-body pre { background: #282828; border-color: #3c3836; color: #ebdbb2; }
-    [data-theme="dark"] .code-header { background: #3c3836; border-color: #3c3836; }
-    [data-theme="dark"] .code-filename { color: #a89984; }
-    [data-theme="dark"] .code-copy { color: #928374; border-color: #504945; }
-    [data-theme="dark"] .code-copy:hover { color: #ebdbb2; border-color: #7c6f64; }
-    [data-theme="dark"] .blog-body th { color: #fabd2f !important; }
+    /* ── Code blocks ──
+       Markdown code fences get wrapped in .code-block by the script
+       below, at which point .code-block/.code-header/.code-filename/
+       .code-dots/.code-copy and their dark-theme variants all come
+       from style.css - the same terminal-style chrome the rest of the
+       site's hand-authored code blocks use, not redeclared here. */
   </style>
 </head>
 <body class="framed">
@@ -401,24 +342,22 @@ packer build -var-file=&quot;variables.pkrvars.hcl&quot; .
   <div id="site-footer"></div>
   </div>
   <script src="/js/i18n.js?v=7"></script>
-  <script src="/js/main.js?v=24"></script>
+  <script src="/js/main.js?v=25"></script>
   <script>
+    // Wraps each markdown-generated <pre> in the same .code-block
+    // chrome the hand-authored project pages use (see copyCode in
+    // main.js, loaded above, for the shared copy-button behavior).
     document.querySelectorAll('.blog-body pre').forEach(pre => {
       const code = pre.querySelector('code');
       const lang = (code && code.className.match(/language-(\w+)/)?.[1]) || '';
       const wrap = document.createElement('div');
-      wrap.className = 'code-wrap';
+      wrap.className = 'code-block';
       const header = document.createElement('div');
       header.className = 'code-header';
-      header.innerHTML = `<span class="code-filename"><span class="code-dots"><span></span><span></span><span></span></span>${lang || 'code'}</span><button class="code-copy">Copier</button>`;
+      header.innerHTML = `<span class="code-filename"><span class="code-dots"><span></span><span></span><span></span></span>${lang || 'code'}</span><button class="code-copy" onclick="copyCode(this)">Copier</button>`;
       pre.parentNode.insertBefore(wrap, pre);
       wrap.appendChild(header);
       wrap.appendChild(pre);
-      header.querySelector('.code-copy').addEventListener('click', function() {
-        navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
-        this.textContent = 'Copié !';
-        setTimeout(() => this.textContent = 'Copier', 2000);
-      });
     });
   </script>
 </body>
