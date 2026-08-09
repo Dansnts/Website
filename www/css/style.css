@@ -56,18 +56,18 @@
 }
 
 [data-theme="light"] {
-  --bg:          #fffbfb;
-  --surface:     #fff2f2;
-  --raised:      #e5e0ff;
-  --text:        #2b3568;
-  --muted:       #8ea7e9;
-  --subtle:      #4f5fa3;
-  --accent:      #7286d3;
-  --accent-deep: #4a5aa8;
-  --hero-shadow: #4a5aa8;
-  --border:      #ece7ff;
-  --border-mid:  #d5ddf7;
-  --border-hi:   #8ea7e9;
+  --bg:          #fffdf1;
+  --surface:     #fff6e4;
+  --raised:      #ffce99;
+  --text:        #562f00;
+  --muted:       #917754;
+  --subtle:      #785830;
+  --accent:      #ff9644;
+  --accent-deep: #bb6d29;
+  --hero-shadow: #bb6d29;
+  --border:      #eee8d9;
+  --border-mid:  #ddd4c1;
+  --border-hi:   #ffce99;
 }
 
 /* ─── Base ────────────────────────────────── */
@@ -126,7 +126,7 @@ a:hover { opacity: 0.65; }
 /* padding, not margin: nav is body's first child, so a margin-top on
    it would collapse through onto body itself instead of creating a
    visible gap - padding never collapses. */
-body.framed { background: var(--accent); padding-top: 32px; }
+body.framed { }
 .frame {
   background: var(--bg);
   margin: 0 32px 32px;
@@ -137,7 +137,6 @@ body.framed nav {
   position: sticky;
   top: 0;
   margin: 0 32px 12px;
-  border-radius: 28px;
   background: var(--bg);
   border-bottom-color: var(--border);
 }
@@ -186,7 +185,6 @@ nav .nav-logo-first {
 }
 nav .nav-logo-last {
   font-size: 1.05rem;
-  font-weight: 400;
   color: var(--muted);
 }
 
@@ -195,7 +193,7 @@ nav .nav-links { display: flex; gap: var(--sp-4-5); position: relative; }
 nav .nav-links a {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.8rem;
+  font-size: 0.8rem !important;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -318,8 +316,50 @@ body.framed main { padding-top: 2rem; }
   transition-delay: 0.35s;
 }
 
+/* ─── Contact ─────────────────────────────── */
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2-5);
+  margin-top: var(--sp-4);
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2-5) var(--sp-3);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--r);
+  color: var(--text);
+  transition: border-color var(--t), background var(--t);
+}
+.contact-link:hover { border-color: var(--border-hi); background: var(--surface); }
+.contact-link svg { flex-shrink: 0; color: var(--accent); }
+
+.contact-link-text { display: flex; flex-direction: column; gap: 0.15rem; }
+
+.contact-link-label {
+  font-family: var(--mono);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.contact-link-value {
+  font-family: var(--sans);
+  font-size: var(--fs-small);
+  color: var(--subtle);
+}
+
+/* Q&A nested as a subsection of Contact */
+.qa-subsection { margin-top: var(--sp-6); }
+.qa-subsection .section-title { font-size: 1.4rem; }
+
 /* ─── Accordion (Q&A) ─────────────────────── */
-.qa-list { border-top: 1px solid var(--border); }
+.qa-list { border-top: 1px solid var(--border); margin-top: var(--sp-3); }
 .qa-item { border-bottom: 1px solid var(--border); }
 
 .qa-question {
@@ -377,7 +417,7 @@ body.framed main { padding-top: 2rem; }
 
 /* ─── Hero ────────────────────────────────── */
 .hero {
-  padding: var(--sp-4) 0 var(--sp-2-5);
+  padding: var(--sp-2) 0 var(--sp-1);
   position: relative;
 }
 
@@ -557,8 +597,8 @@ body.framed main { padding-top: 2rem; }
 /* Light theme gets the site's own new accent instead of gruvbox -
    terminal body stays dark either way (it's meant to look like a
    real terminal, not follow the page theme). */
-[data-theme="light"] .terminal .skill-key { color: #7286d3; }
-[data-theme="light"] .terminal-cursor { background: #7286d3; }
+[data-theme="light"] .terminal .skill-key { color: #ff9644; }
+[data-theme="light"] .terminal-cursor { background: #ff9644; }
 .skill-val.is-typing::after {
   content: '';
   display: inline-block;
@@ -605,7 +645,7 @@ body.framed main { padding-top: 2rem; }
 
 /* ─── Sections ────────────────────────────── */
 .section { padding: var(--sp-4-5) 0; }
-.hero + .section { padding-top: var(--sp-2-5); }
+.hero + .section { padding-top: var(--sp-1); }
 
 .section-title {
   font-family: var(--mono);
@@ -728,22 +768,23 @@ body.framed main { padding-top: 2rem; }
 .section-academic { padding: var(--sp-6) 0; }
 
 /* ─── Single-page sections ────────────────── */
-#home, #projects, #cv, #qa { scroll-margin-top: var(--sp-6); }
+#home, #projects, #cv, #contact { scroll-margin-top: var(--sp-6); }
 /* nav floats 32px lower here than on a normal page, so the usual
    clearance isn't enough: anchored sections end up tucked right
-   behind it (see the FAQ heading touching nav on jump). */
-body.framed #home, body.framed #projects, body.framed #cv, body.framed #qa {
+   behind it (see the Contact heading touching nav on jump). */
+body.framed #home, body.framed #projects, body.framed #cv, body.framed #contact {
   scroll-margin-top: 7rem;
 }
-#projects, #cv, #qa { border-top: 1px solid var(--border-mid); }
-#projects, #qa { background: var(--surface); }
+#projects, #cv, #contact { border-top: 1px solid var(--border-mid); }
+#projects, #contact { background: var(--surface); }
+#contact { padding-bottom: var(--sp-6); }
 
 /* ─── Page section header ─────────────────── */
 .page-section-header { padding: 4rem 0 0; }
 
 .page-section-title {
   font-family: var(--sans);
-  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text);
@@ -773,6 +814,7 @@ body.framed #home, body.framed #projects, body.framed #cv, body.framed #qa {
 .cv-section-sub {
   font-family: var(--mono);
   font-size: var(--fs-micro);
+  font-weight: 600;
   color: var(--muted);
   letter-spacing: 0.08em;
   margin-top: 0.4rem;
@@ -1031,7 +1073,13 @@ footer {
   border-top: 1px solid var(--border);
   padding: var(--sp-4) 0;
   margin-top: var(--sp-7);
-  text-align: center;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
 }
 
 footer p {
@@ -1039,12 +1087,26 @@ footer p {
   font-size: var(--fs-micro);
   color: var(--muted);
   letter-spacing: 0.07em;
+  margin: 0;
 }
+
+.footer-social { display: flex; gap: 0.5rem; }
+
+.footer-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--muted);
+  transition: color var(--t);
+}
+.footer-social a:hover { color: var(--text); }
 
 /* ─── Theme Toggle ────────────────────────── */
 .theme-toggle {
   position: fixed;
-  bottom: 3.25rem; right: 4.75rem;
+  bottom: 3.875rem; right: 4.75rem;
   width: 36px; height: 36px;
   padding: 0;
   margin: 0;
@@ -1732,7 +1794,7 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
 
   @page { size: A4; margin: 0.45cm 0.9cm 0.4cm; }
 
-  #home, #projects, #blog, #qa,
+  #home, #projects, #blog, #contact,
   #cv > .wrapper > .cv-section-top,
   nav, footer, .theme-toggle,
   .about-joke { display: none !important; }
@@ -1885,8 +1947,7 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
 
 @media (max-width: 580px) {
   .frame { margin: 0 16px 16px; border-radius: 20px; min-height: calc(100vh - 32px); }
-  body.framed { padding-top: 16px; }
-  body.framed nav { top: 0; margin: 0 16px 8px; border-radius: 20px; }
+  body.framed nav { top: 0; margin: 0 16px 8px; }
 
   .wrapper { padding: 0 1rem; }
   .section { padding: 1.75rem 0; }
@@ -1897,8 +1958,6 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
   .hero { padding: 5rem 0 3rem; }
   .hero-name-first { font-size: clamp(3.25rem, 15vw, 5rem); line-height: 0.96; }
   .hero-name-last { font-size: clamp(2rem, 9vw, 3rem); }
-
-  .theme-toggle { bottom: 1.25rem; right: 1.25rem; }
 
   .skill-row { grid-template-columns: 1fr; gap: 0.2rem; padding: 0.75rem 0; }
   .skill-key { font-size: var(--fs-tiny); }

@@ -1,13 +1,13 @@
 // Apply theme immediately to avoid flash
 (function() {
-  const saved = localStorage.getItem('theme') || 'light';
+  const saved = localStorage.getItem('theme') || 'dark';
   document.documentElement.setAttribute('data-theme', saved);
 })();
 
 // Browsers restore the previous scroll position on reload by default -
 // with a sticky nav, that means a refresh can land already "stuck" at
 // the top instead of starting at its normal, inset position. Anchor
-// links (#qa etc.) still scroll on purpose via initHashScrollFix.
+// links (#contact etc.) still scroll on purpose via initHashScrollFix.
 if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
 }
@@ -193,7 +193,7 @@ function initStaticActiveNav() {
 }
 
 function initSectionSpy() {
-  const sectionIds = ['home', 'projects', 'cv', 'qa'];
+  const sectionIds = ['home', 'projects', 'cv', 'contact'];
   // Only run on root page where the sections exist
   if (!document.getElementById('home')) { initStaticActiveNav(); return; }
 
@@ -223,6 +223,14 @@ function initSectionSpy() {
 
   window.addEventListener('scroll', update, { passive: true });
   window.addEventListener('resize', update);
+  // Same fallback-font race as initStaticActiveNav: the very first
+  // update() below runs before the Geomini webfont swaps in, so the
+  // indicator's initial offsetLeft/width come from fallback-font
+  // metrics. Re-measuring after fonts.ready fixes the first paint
+  // instead of leaving it wrong until the first scroll event.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(update);
+  }
   // FR/EN swaps link text (e.g. "Accueil" <-> "Home"), which changes
   // each link's width - the indicator needs to re-measure or it's left
   // sized for the old word. i18n.js's own 'langChange' listener runs
