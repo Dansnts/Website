@@ -125,7 +125,7 @@ function scrollToHash(hash, behavior) {
   const target = document.querySelector(hash);
   if (!target) return;
   const nav = document.querySelector('nav');
-  const clearance = nav ? nav.getBoundingClientRect().bottom + 24 : 0;
+  const clearance = nav ? nav.getBoundingClientRect().bottom : 0;
   const top = target.getBoundingClientRect().top + window.scrollY - clearance;
   const y = Math.max(top, 0);
   window.scrollTo({ top: y, behavior });
@@ -260,6 +260,42 @@ function initNavScroll() {
   update();
 }
 
+// ─── Timeline scroll rail ─────────────────────
+// Each .timeline gets a rail that fills as you scroll through it, and
+// its items light up their dot once scrolled past - both driven off
+// the same reference line (35% down the viewport) so the fill height
+// and the "passed" dots always agree with each other.
+function initTimelineScroll() {
+  const timelines = Array.from(document.querySelectorAll('.timeline'));
+  if (!timelines.length) return;
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const refY = window.innerHeight * 0.35;
+    timelines.forEach(timeline => {
+      const fill = timeline.querySelector('.timeline-rail-fill');
+      const items = timeline.querySelectorAll('.timeline-item');
+      if (!fill || !items.length) return;
+      const rect = timeline.getBoundingClientRect();
+      const progress = Math.min(1, Math.max(0, (refY - rect.top) / rect.height));
+      fill.style.height = (progress * 100) + '%';
+      items.forEach(item => {
+        item.classList.toggle('is-passed', item.getBoundingClientRect().top <= refY);
+      });
+    });
+  };
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+}
+
 // ─── Accordion (Q&A) ──────────────────────────
 function initAccordion() {
   const items = document.querySelectorAll('.qa-item');
@@ -344,7 +380,22 @@ function initAge() {
 function initTerminalType() {
   const terminal = document.querySelector('.terminal');
   const rows = document.querySelectorAll('.terminal .skill-row');
+  const section = terminal ? terminal.closest('.section') : null;
   if (!terminal || !rows.length) return;
+
+  // The terminal itself is meant to visibly grow row by row - that's
+  // the point. What shouldn't move is everything BELOW it: reserve the
+  // section's fully-typed height up front (reveal every row for a
+  // moment to measure it, then hide them again) so the terminal grows
+  // into space that's already there instead of pushing the rest of the
+  // page down as it goes.
+  if (section) {
+    rows.forEach(row => row.classList.add('is-revealed'));
+    terminal.classList.add('is-done'); // also reserve room for the idle cursor line below the rows
+    section.style.minHeight = section.getBoundingClientRect().height + 'px';
+    terminal.classList.remove('is-done');
+    rows.forEach(row => row.classList.remove('is-revealed'));
+  }
 
   // Whole rows (prompt label + value) are CSS-hidden by default so
   // there's no flash of content before JS reveals them one at a time -
@@ -352,6 +403,7 @@ function initTerminalType() {
   // never got the chance to run) just reveals everything straight away.
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     rows.forEach(row => row.classList.add('is-revealed'));
+    if (section) section.style.minHeight = '';
     return;
   }
 
@@ -384,6 +436,7 @@ function initTerminalType() {
     }
     // Idle CLI prompt with a blinking cursor once everything's typed.
     terminal.classList.add('is-done');
+    if (section) section.style.minHeight = '';
   }
 
   // One trigger on the whole terminal (not per row) so lines type out
@@ -407,6 +460,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initScrollReveal();
   initNavScroll();
   initTerminalType();
+  initTimelineScroll();
   initAge();
   initAccordion();
   initLightbox();

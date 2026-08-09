@@ -647,7 +647,19 @@ body.framed main { padding-top: 2rem; }
 .section { padding: var(--sp-4-5) 0; }
 .hero + .section { padding-top: var(--sp-1); }
 
+/* Projects subsections stack tightly - the cards already carry their
+   own visual weight, they don't need the section's full padding on
+   top of the sticky title's own spacing. */
+.section-highlight, .section-infra, .section-other { padding: var(--sp-2) 0; }
+.section-highlight .section-title,
+.section-infra .section-title,
+.section-other .section-title { margin-bottom: var(--sp-2); }
+
 .section-title {
+  position: sticky;
+  top: 4.5rem;
+  z-index: 2;
+  background: var(--bg);
   font-family: var(--mono);
   font-size: var(--fs-body);
   font-weight: 600;
@@ -655,9 +667,30 @@ body.framed main { padding-top: 2rem; }
   letter-spacing: 0.14em;
   color: var(--muted);
   margin-bottom: var(--sp-4);
+  padding: 0.85rem 0;
   display: flex;
   align-items: center;
   gap: var(--sp-2-5);
+}
+
+/* Langues/Divers are short, single-screen sections - a sticky label
+   there just flickers in and out with nothing to track, so they stay
+   in normal flow instead of following the scroll logic. */
+#cv-languages .section-title,
+.misc-section .section-title {
+  position: static;
+  background: none;
+  padding: 0;
+  font-size: calc(var(--fs-body) * 1.5);
+}
+
+/* Skills/Experience/Education/Projects - the sticky ones - read as a
+   bigger running header while they're pinned under the nav. */
+#cv [data-i18n="skills"],
+#cv [data-i18n="experience"],
+#cv [data-i18n="education"],
+#cv [data-i18n="section-projects"] {
+  font-size: calc(var(--fs-body) * 1.33);
 }
 .section-title::after {
   content: '';
@@ -769,14 +802,12 @@ body.framed main { padding-top: 2rem; }
 
 /* ─── Single-page sections ────────────────── */
 #home, #projects, #cv, #contact { scroll-margin-top: var(--sp-6); }
-/* nav floats 32px lower here than on a normal page, so the usual
-   clearance isn't enough: anchored sections end up tucked right
-   behind it (see the Contact heading touching nav on jump). */
 body.framed #home, body.framed #projects, body.framed #cv, body.framed #contact {
-  scroll-margin-top: 7rem;
+  scroll-margin-top: 4.7rem;
 }
 #projects, #cv, #contact { border-top: 1px solid var(--border-mid); }
 #projects, #contact { background: var(--surface); }
+#projects .section-title, #contact .section-title { background: var(--surface); }
 #contact { padding-bottom: var(--sp-6); }
 
 /* ─── Page section header ─────────────────── */
@@ -861,6 +892,31 @@ body.framed #home, body.framed #projects, body.framed #cv, body.framed #contact 
 /* ─── Timeline ────────────────────────────── */
 .timeline { position: relative; }
 
+/* Scroll-driven rail: the track is a static line, the fill grows to
+   match how far you've scrolled through the timeline (see
+   initTimelineScroll in main.js). Sits centered in the gap between
+   the date and body columns. */
+.timeline-rail {
+  position: absolute;
+  top: 0.4rem;
+  bottom: 0;
+  left: 206px;
+  width: 2px;
+  background: var(--border);
+}
+.timeline-rail-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: var(--accent);
+  transition: height 0.1s linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .timeline-rail-fill { transition: none; }
+}
+
 .timeline-item {
   position: relative;
   display: grid;
@@ -873,6 +929,32 @@ body.framed #home, body.framed #projects, body.framed #cv, body.framed #contact 
 .timeline-item + .timeline-item {
   border-top: 1px solid var(--border);
   padding-top: var(--sp-5);
+}
+
+/* Year marker on the rail, one per entry. Lights up once scrolled
+   past (see .is-passed, toggled by the same scroll handler). */
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  top: 0.44rem;
+  left: 207px;
+  transform: translateX(-50%);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--border-hi);
+  transition: background var(--t), border-color var(--t);
+  z-index: 1;
+}
+/* Items after the first get extra padding-top (the border separator
+   above), the dot needs the same offset or it floats above the date
+   it's meant to mark. */
+.timeline-item + .timeline-item::before { top: calc(var(--sp-5) + 0.44rem); }
+
+.timeline-item.is-passed::before {
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .timeline-body { flex: 1; min-width: 0; }
@@ -1023,6 +1105,13 @@ body.framed #home, body.framed #projects, body.framed #cv, body.framed #contact 
 .skill-detail-item strong {
   font-weight: 600;
   color: var(--text);
+  background-image: linear-gradient(to top, color-mix(in srgb, var(--accent) 45%, transparent) 68%, transparent 68%);
+  background-repeat: no-repeat;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0.05em 0.2em;
+  margin: 0 -0.2em;
+  border-radius: 2px;
 }
 
 /* ─── Languages ───────────────────────────── */
@@ -1106,7 +1195,7 @@ footer p {
 /* ─── Theme Toggle ────────────────────────── */
 .theme-toggle {
   position: fixed;
-  bottom: 3.875rem; right: 4.75rem;
+  bottom: 3.875rem; right: 3.875rem;
   width: 36px; height: 36px;
   padding: 0;
   margin: 0;
@@ -1848,8 +1937,9 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
   .section-title::after { display: none !important; }
 
   .timeline { position: static !important; }
+  .timeline-rail, .timeline-item::before { display: none !important; }
   .timeline-item { display: grid !important; grid-template-columns: 72px 1fr !important; gap: 0 0.4cm !important; padding: 0.12cm 0 !important; border-top: 0.5pt solid #ebebeb !important; break-inside: avoid; }
-  .timeline-item:first-child { border-top: none !important; }
+  .timeline-item:first-of-type { border-top: none !important; }
   .timeline-body { min-width: 0; }
   .timeline-date   { font-family: 'Geomini', sans-serif !important; font-size: 7pt !important; color: #888 !important; padding-top: 0.03cm; line-height: 1.3; }
   .timeline-logo   { display: none !important; }
@@ -1891,6 +1981,8 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
   .page-section-header { padding: 2.5rem 0 0; }
   .cv-section-top { padding: 2.5rem 0 0; }
   .timeline-item { grid-template-columns: 150px 1fr; gap: var(--sp-2-5); }
+  .timeline-item::before { left: 161px; }
+  .timeline-rail { left: 160px; }
   .skill-detail-row { grid-template-columns: 100px 1fr; gap: 0.4rem var(--sp-2-5); }
   .cards-grid { grid-template-columns: 1fr; }
   .project-flow { flex-direction: column; }
@@ -1965,6 +2057,8 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
   .skill-detail-row { grid-template-columns: 1fr; gap: 0.4rem; padding: var(--sp-2-5) 0; }
 
   .timeline-item { grid-template-columns: 1fr; gap: 0.1rem; }
+  .timeline-item::before { display: none; }
+  .timeline-rail { display: none; }
   .timeline-date  { padding-bottom: 0.25rem; }
   .timeline-logo  { height: 40px; width: auto; max-width: 130px; margin-top: 0.4rem; margin-bottom: 0.4rem; }
 
