@@ -136,5 +136,3 @@ Ce pattern se généralise : toute base « fichier » live (SQLite, mais aussi l
 - **Vérifier le dump** : ajouter un `PRAGMA integrity_check` après le `.backup` pour valider le fichier avant de le sauvegarder.
 - **Le backup principal** : ce dump n'est qu'une brique du CronJob Restic, voir l'article sur le backup zero-knowledge pour la partie chiffrement/rétention.
 - **Hooks applicatifs** : certaines apps offrent un endpoint de backup natif, à préférer quand il existe.
-
-*Une base de données, c'est déjà un fichier qui ment un peu sur son propre état pendant qu'on écrit dedans. Autant lui demander poliment un instantané plutôt que de la surprendre en plein travail.*

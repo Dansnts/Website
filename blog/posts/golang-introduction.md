@@ -1,7 +1,7 @@
 ---
 layout: post.njk
 title: "Introduction à Go"
-description: "Les bases du langage : types, variables, fonctions, structs, interfaces, gestion d'erreurs et goroutines."
+description: "Tour des bases du langage Go, des types aux goroutines, en passant par les structs et la gestion d'erreurs."
 date: 2026-07-07
 tags: [go, golang, programmation]
 ---
@@ -9,7 +9,7 @@ tags: [go, golang, programmation]
 ## Introduction à Go
 
 Go est un langage compilé, statiquement typé, conçu par Google pour être simple et rapide. Pas de classes, pas d'héritage, pas d'exceptions.
-Un programme Go minimal :
+Un programme Go minimal.
 
 ```go
 package main
@@ -62,7 +62,7 @@ En dehors d'une fonction, il faut obligatoirement utiliser `var`.
 
 ## Boucles
 
-Go n'a qu'un mot-clé de boucle : `for`.
+Go n'a qu'un seul mot-clé de boucle, `for`.
 
 `while`? Y'A PAS.
 
@@ -189,7 +189,7 @@ if err != nil {
 fmt.Println(result)
 ```
 
-Le pattern `if err != nil` revient partout. C'est verbeux mais explicite ON sais comme ça exactement où ça peut échouer.
+Le pattern `if err != nil` revient partout. C'est verbeux, mais explicite. On sait exactement où ça peut échouer.
 
 ## Goroutines et channels
 
@@ -226,5 +226,3 @@ func Add(a, b int) int {
 ```
 
 C'est la convention utilisée par `godoc` pour générer la documentation automatiquement.
-
-*Un jour je ferais un opérateur pour K8s avec ça...*

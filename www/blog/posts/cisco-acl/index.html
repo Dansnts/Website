@@ -3,124 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Les ACL Cisco : filtrer du trafic sans routeur dédié — Dani Faria dos Santos</title>
-  <meta name="description" content="Standard vs extended, wildcard mask, deny implicite en fin de liste : les bases des ACL Cisco, avec un exemple concret de restriction d&#39;accès SSH." />
+  <title>Filtrer du trafic avec les ACL Cisco, sans routeur dédié — Dani Faria dos Santos</title>
+  <meta name="description" content="Les bases des ACL Cisco, standard contre extended, wildcard mask, deny implicite en fin de liste, avec un exemple concret de restriction d&#39;accès SSH." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -136,30 +25,30 @@
         <span class="tag">post</span><span class="tag">réseau</span><span class="tag">cisco</span><span class="tag">ccna</span><span class="tag">acl</span><span class="tag">sécurité</span>
       </div>
       
-      <h1>Les ACL Cisco : filtrer du trafic sans routeur dédié</h1>
+      <h1>Filtrer du trafic avec les ACL Cisco, sans routeur dédié</h1>
       <p class="project-subtitle">1 août 2026</p>
     </header>
 
     <div class="blog-body">
-      <p>En révisant mes ACL pour la CCNA, un truc m'a frappé : c'est simple sur le papier (une liste de règles qui autorisent ou bloquent du trafic) mais plein de détails qui piègent tout le monde une fois en pratique. L'ordre des règles, le placement de l'ACL sur la bonne interface, le deny implicite qu'on ne voit jamais dans la config. Ce post reprend les bases, avec un exemple concret; restreindre l'accès SSH d'un routeur à une seule machine de management.</p>
-<p>On va voir :</p>
+      <p>En révisant mes ACL pour la CCNA, un truc m'a frappé. C'est simple sur le papier (une liste de règles qui autorisent ou bloquent du trafic) mais plein de détails qui piègent tout le monde une fois en pratique. L'ordre des règles, le placement de l'ACL sur la bonne interface, le deny implicite qu'on ne voit jamais dans la config. Ce post reprend les bases, avec un exemple concret de restriction de l'accès SSH d'un routeur à une seule machine de management.</p>
+<p>On va voir.</p>
 <ol>
 <li>La différence entre ACL <strong>standard</strong> et <strong>extended</strong></li>
 <li>Le mot-clé <code>established</code>, pour faire du pseudo-stateful avec une ACL</li>
 <li>Le fonctionnement du <strong>wildcard mask</strong> (l'inverse d'un masque de sous-réseau)</li>
 <li>Où appliquer une ACL, sur une interface ou sur les lignes VTY</li>
 <li>Le piège du <strong>deny implicite</strong> en fin de liste</li>
-<li>Un exemple concret : filtrer l'accès SSH avec <code>access-class</code></li>
+<li>Un exemple concret de filtrage de l'accès SSH avec <code>access-class</code></li>
 </ol>
 <hr>
 <h2>Standard vs Extended</h2>
-<p>Une ACL standard ne filtre que sur l'<strong>adresse source</strong>. Rien d'autre : pas de destination, pas de protocole, pas de port.</p>
+<p>Une ACL standard ne filtre que sur l'<strong>adresse source</strong>. Rien d'autre, pas de destination, pas de protocole, pas de port.</p>
 <pre><code class="language-ios">Router(config)# access-list access-list-number {deny | permit | remark text} source [source-wildcard] [log]
 </code></pre>
-<p>Une ACL extended filtre sur beaucoup plus : protocole, source, destination, et même le port.</p>
+<p>Une ACL extended filtre sur beaucoup plus, protocole, source, destination, et même le port.</p>
 <pre><code class="language-ios">Router(config)# access-list access-list-number {deny | permit} protocol source [source-wildcard] [operator port] destination [destination-wildcard] [operator port] [established] [log]
 </code></pre>
-<p>La plage de numéros distingue les deux types :</p>
+<p>La plage de numéros distingue les deux types.</p>
 <table>
 <thead>
 <tr>
@@ -178,41 +67,41 @@
 </tr>
 </tbody>
 </table>
-<p>Cette distinction numérique a une conséquence pratique directe sur le placement de l'ACL, un classique des questions CCNA : <strong>standard près de la destination, extended près de la source</strong>.</p>
+<p>Cette distinction numérique a une conséquence pratique directe sur le placement de l'ACL, un classique des questions CCNA, <strong>standard près de la destination, extended près de la source</strong>.</p>
 <pre><code>192.168.10.0/24 ── R1 ──── R2 ──── R3 ── 192.168.30.0/24
 (subnet hôtes)                                 └── Serveur fichiers .30 et .100
 </code></pre>
 <p>Prenons <code>192.168.10.5</code>, un hôte du réseau de gauche, et le besoin de lui interdire l'accès au serveur de fichiers <code>192.168.30.100</code>, sans toucher au reste de ses accès (internet, autres serveurs).</p>
-<p><strong>Standard placée trop tôt (sur R1, près de la source) : le piège.</strong> Une ACL standard ne voit que la source, jamais la destination. La seule règle possible est « bloquer <code>192.168.10.5</code> », point. Appliquée sur R1, elle coupe cet hôte de <strong>tout</strong>, pas seulement du serveur de fichiers.</p>
+<p><strong>Le piège, une standard placée trop tôt sur R1, près de la source.</strong> Une ACL standard ne voit que la source, jamais la destination. La seule règle possible est « bloquer <code>192.168.10.5</code> », point. Appliquée sur R1, elle coupe cet hôte de <strong>tout</strong>, pas seulement du serveur de fichiers.</p>
 <pre><code class="language-ios">R1(config)# access-list 10 deny host 192.168.10.5
 R1(config)# access-list 10 permit any
 R1(config)# interface GigabitEthernet0/1
 R1(config-if)# ip access-group 10 out
 </code></pre>
-<p><strong>Standard bien placée (sur R3, près de la destination) : ça marche.</strong> Même ACL, même règle, mais appliquée sur l'interface de R3 qui donne sur le réseau du serveur. Le filtrage ne s'applique qu'à ce dernier saut, donc seul l'accès au serveur de fichiers est coupé. Le reste du trafic de <code>192.168.10.5</code> ne passe jamais par cette interface, il continue sa route normalement.</p>
+<p><strong>Standard bien placée sur R3, près de la destination, ça marche.</strong> Même ACL, même règle, mais appliquée sur l'interface de R3 qui donne sur le réseau du serveur. Le filtrage ne s'applique qu'à ce dernier saut, donc seul l'accès au serveur de fichiers est coupé. Le reste du trafic de <code>192.168.10.5</code> ne passe jamais par cette interface, il continue sa route normalement.</p>
 <pre><code class="language-ios">R3(config)# access-list 10 deny host 192.168.10.5
 R3(config)# access-list 10 permit any
 R3(config)# interface GigabitEthernet0/1
 R3(config-if)# ip access-group 10 out
 </code></pre>
-<p><strong>Extended, elle, se place près de la source.</strong> Comme elle peut préciser la destination (ici, uniquement <code>192.168.30.100</code>), pas besoin d'attendre d'être arrivé près du serveur pour filtrer correctement :</p>
+<p><strong>Extended, elle, se place près de la source.</strong> Comme elle peut préciser la destination (ici, uniquement <code>192.168.30.100</code>), pas besoin d'attendre d'être arrivé près du serveur pour filtrer correctement.</p>
 <pre><code class="language-ios">R1(config)# access-list 110 deny ip host 192.168.10.5 host 192.168.30.100
 R1(config)# access-list 110 permit ip any any
 R1(config)# interface GigabitEthernet0/1
 R1(config-if)# ip access-group 110 in
 </code></pre>
-<p>Le paquet indésirable est jeté dès R1, sans traverser R2 puis R3 pour rien. Sur un lien WAN payant ou saturé, c'est loin d'être un détail : autant jeter le trafic inutile le plus tôt possible plutôt que de lui faire consommer de la bande passante sur tout le trajet pour finalement être bloqué à la toute fin.</p>
+<p>Le paquet indésirable est jeté dès R1, sans traverser R2 puis R3 pour rien. Sur un lien WAN payant ou saturé, c'est loin d'être un détail, autant jeter le trafic inutile le plus tôt possible plutôt que de lui faire consommer de la bande passante sur tout le trajet pour finalement être bloqué à la toute fin.</p>
 <hr>
 <h2>Le mot-clé established</h2>
-<p>Réservé aux ACL extended en TCP, <code>established</code> sert à faire du pseudo-stateful avec un outil qui, à la base, ne l'est pas du tout : une ACL évalue chaque paquet indépendamment, sans mémoriser l'état d'une connexion.</p>
+<p>Réservé aux ACL extended en TCP, <code>established</code> sert à faire du pseudo-stateful avec un outil qui, à la base, ne l'est pas du tout. Une ACL évalue chaque paquet indépendamment, sans mémoriser l'état d'une connexion.</p>
 <pre><code class="language-ios">Router(config)# access-list 110 permit tcp any 192.168.1.0 0.0.0.255 established
 Router(config)# access-list 110 deny ip any any
 </code></pre>
-<p>Avec <code>established</code>, la règle ne matche que les segments TCP qui ont le flag <strong>ACK</strong> ou <strong>RST</strong> activé. Un paquet qui initie une connexion (un <code>SYN</code> tout seul, sans <code>ACK</code>) ne matche jamais cette règle. Résultat : le trafic retour d'une connexion lancée depuis l'intérieur passe (les <code>ACK</code> de la session), mais une tentative de connexion initiée depuis l'extérieur est bloquée, puisque son premier paquet <code>SYN</code> ne correspond à aucune ligne <code>permit</code>.</p>
+<p>Avec <code>established</code>, la règle ne matche que les segments TCP qui ont le flag <strong>ACK</strong> ou <strong>RST</strong> activé. Un paquet qui initie une connexion (un <code>SYN</code> tout seul, sans <code>ACK</code>) ne matche jamais cette règle. Le trafic retour d'une connexion lancée depuis l'intérieur passe donc (les <code>ACK</code> de la session), mais une tentative de connexion initiée depuis l'extérieur est bloquée, puisque son premier paquet <code>SYN</code> ne correspond à aucune ligne <code>permit</code>.</p>
 <p>C'est une astuce pratique, pas une vraie inspection stateful. Le routeur ne sait pas si une session TCP existe réellement, il regarde juste si un flag est positionné sur le paquet. Rien n'empêche un paquet forgé avec <code>ACK</code> activé mais sans connexion existante derrière de passer la règle. Pour du vrai suivi de session, il faut un firewall zone-based (ZBF) ou un firewall stateful classique, pas une ACL.</p>
 <hr>
 <h2>Le wildcard mask</h2>
-<p>C'est le point qui piège le plus de monde en CCNA : le wildcard mask n'est <strong>pas</strong> un masque de sous-réseau, c'est son inverse bit à bit.</p>
+<p>C'est le point qui piège le plus de monde en CCNA, le wildcard mask n'est <strong>pas</strong> un masque de sous-réseau, c'est son inverse bit à bit.</p>
 <table>
 <thead>
 <tr>
@@ -236,19 +125,19 @@ Router(config)# access-list 110 deny ip any any
 </tbody>
 </table>
 <p>Un bit à <code>0</code> dans le wildcard veut dire « ce bit doit correspondre exactement ». Un bit à <code>1</code> veut dire « peu importe sa valeur ». Donc <code>192.168.1.0 0.0.0.255</code> matche toute adresse dont les trois premiers octets sont <code>192.168.1.x</code>, peu importe le dernier octet.</p>
-<p>Deux raccourcis à connaître (bonne practice Cisco):</p>
+<p>Deux raccourcis à connaître (bonne pratique Cisco).</p>
 <pre><code class="language-ios">Router(config)# access-list 10 permit host 192.168.1.10
 Router(config)# access-list 10 permit 192.168.1.10 0.0.0.0
 </code></pre>
-<p>Les deux lignes sont strictement identiques : <code>host</code> est juste le raccourci pour un wildcard <code>0.0.0.0</code>, une correspondance exacte sur une seule adresse. Idem dans l'autre sens, <code>any</code> est le raccourci pour <code>0.0.0.0 255.255.255.255</code>, n'importe quelle adresse.</p>
+<p>Les deux lignes sont strictement identiques, <code>host</code> est juste le raccourci pour un wildcard <code>0.0.0.0</code>, une correspondance exacte sur une seule adresse. Idem dans l'autre sens, <code>any</code> est le raccourci pour <code>0.0.0.0 255.255.255.255</code>, n'importe quelle adresse.</p>
 <hr>
 <h2>Numbered vs Named</h2>
-<p>Une ACL numérotée est rapide à taper, mais impossible à éditer proprement : sur les anciens IOS, il faut la supprimer entièrement (<code>no access-list 10</code>) pour corriger une seule ligne, ce qui coupe le trafic filtré pendant la manipulation. Une ACL nommée règle ce problème.</p>
+<p>Une ACL numérotée est rapide à taper, mais impossible à éditer proprement. Sur les anciens IOS, il faut la supprimer entièrement (<code>no access-list 10</code>) pour corriger une seule ligne, ce qui coupe le trafic filtré pendant la manipulation. Une ACL nommée règle ce problème.</p>
 <pre><code class="language-ios">Router(config)# ip access-list standard MGMT-ACCESS
 Router(config-std-nacl)# permit host 192.168.1.10
 Router(config-std-nacl)# deny any log
 </code></pre>
-<p>Avec les numéros de séquence (visibles via <code>show access-lists</code>), on peut insérer une ligne au milieu d'une ACL nommée sans tout recréer :</p>
+<p>Avec les numéros de séquence (visibles via <code>show access-lists</code>), on peut insérer une ligne au milieu d'une ACL nommée sans tout recréer.</p>
 <pre><code class="language-ios">Router(config-std-nacl)# 15 permit host 192.168.1.20
 </code></pre>
 <p>Cette ligne s'insère entre les séquences 10 et 20 existantes, sans toucher au reste.</p>
@@ -261,13 +150,13 @@ Router(config-if)# ip access-group MGMT-ACCESS in
 </code></pre>
 <p><code>in</code> filtre le trafic qui <strong>entre</strong> sur l'interface, <code>out</code> celui qui en <strong>sort</strong>. Une ACL en <code>in</code> est évaluée avant la décision de routage, une ACL en <code>out</code> après. Le sens se choisit en fonction d'où on veut arrêter le trafic, pas juste par habitude.</p>
 <h3>Sur les lignes VTY (Telnet/SSH)</h3>
-<p>C'est le cas le plus utile en pratique : restreindre qui a le droit de se connecter en administration sur l'équipement.</p>
+<p>C'est le cas le plus utile en pratique, restreindre qui a le droit de se connecter en administration sur l'équipement.</p>
 <pre><code class="language-ios">R1(config-line)# access-class {access-list-number | access-list-name} { in | out }
 </code></pre>
-<p>Contrairement à <code>ip access-group</code>, <code>access-class</code> ne s'applique pas à une interface physique mais aux lignes <code>vty</code> (les sessions Telnet/SSH entrantes). Une ACL extended n'a d'ailleurs pas grand intérêt ici : sur les VTY, on filtre déjà implicitement sur le protocole de management, inutile de préciser un port. Une ACL standard suffit.</p>
+<p>Contrairement à <code>ip access-group</code>, <code>access-class</code> ne s'applique pas à une interface physique mais aux lignes <code>vty</code> (les sessions Telnet/SSH entrantes). Une ACL extended n'a d'ailleurs pas grand intérêt ici. Sur les VTY, on filtre déjà implicitement sur le protocole de management, inutile de préciser un port. Une ACL standard suffit.</p>
 <hr>
-<h2>Exemple concret : restreindre l'accès SSH</h2>
-<p>Testé en lab EVE-NG plutôt qu'en prod (par prudence, se couper l'accès management à distance sur un routeur physique est une excellente façon de finir en salle serveur un dimanche). Objectif : seule la station de management <code>192.168.1.10</code> a le droit de se connecter en SSH sur <code>R1</code>, tout le reste est bloqué.</p>
+<h2>Exemple concret, restreindre l'accès SSH</h2>
+<p>Testé en lab EVE-NG plutôt qu'en prod (par prudence, se couper l'accès management à distance sur un routeur physique est une excellente façon de finir en salle serveur un dimanche). Seule la station de management <code>192.168.1.10</code> doit pouvoir se connecter en SSH sur <code>R1</code>, tout le reste bloqué.</p>
 <pre><code class="language-ios">R1(config)# ip access-list standard MGMT-ACCESS
 R1(config-std-nacl)# permit host 192.168.1.10
 R1(config-std-nacl)# deny any log
@@ -285,16 +174,15 @@ R1(config-line)# exit
 <p>Chaque ACL Cisco se termine par un <code>deny any</code> invisible, qui n'apparaît <strong>jamais</strong> dans <code>show running-config</code>. Si aucune règle explicite ne matche le paquet, il est jeté.</p>
 <pre><code class="language-ios">R1(config)# access-list 20 deny 192.168.1.50
 </code></pre>
-<p>Cette ACL, à elle seule, bloque <strong>tout le trafic</strong>, pas seulement <code>192.168.1.50</code>. La seule règle explicite est un <code>deny</code>, donc rien d'autre ne matche jamais un <code>permit</code>, et le deny implicite en fin de liste rattrape tout le reste. C'est l'erreur CCNA classique : écrire une liste de <code>deny</code> en pensant que ce qui n'est pas explicitement refusé reste autorisé par défaut. C'est l'inverse.</p>
-<p>L'ordre compte tout autant que le contenu. Une ACL est évaluée séquentiellement, ligne par ligne, et la <strong>première règle qui matche gagne</strong> : le reste de la liste n'est même pas regardé. Une règle trop large placée en haut peut rendre inutile tout ce qui suit.</p>
+<p>Cette ACL, à elle seule, bloque <strong>tout le trafic</strong>, pas seulement <code>192.168.1.50</code>. La seule règle explicite est un <code>deny</code>, donc rien d'autre ne matche jamais un <code>permit</code>, et le deny implicite en fin de liste rattrape tout le reste. C'est l'erreur CCNA classique, écrire une liste de <code>deny</code> en pensant que ce qui n'est pas explicitement refusé reste autorisé par défaut. C'est l'inverse.</p>
+<p>L'ordre compte tout autant que le contenu. Une ACL est évaluée séquentiellement, ligne par ligne, et la <strong>première règle qui matche gagne</strong>, le reste de la liste n'est même pas regardé. Une règle trop large placée en haut peut rendre inutile tout ce qui suit.</p>
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Vérifier une ACL en place</strong> : <code>show ip interface GigabitEthernet0/1</code> liste les ACL appliquées par sens (in/out), <code>show access-lists</code> affiche le compteur de matchs par ligne, précieux pour savoir si une règle sert vraiment.</li>
-<li><strong>Le même principe ailleurs</strong> : RouterOS (MikroTik) applique la même logique de règles évaluées dans l'ordre, premier match gagnant, comme dans <a href="/blog/posts/mikrotik-segmentation/">la segmentation de mon homelab</a>. Le vocabulaire change, la logique reste.</li>
-<li><strong>Aller plus loin que l'ACL</strong> : pour du filtrage plus fin que source/destination/port, il faut sortir du monde des ACL et passer à un firewall stateful ou une solution basée sur l'identité (802.1X, sujet d'un <a href="/blog/posts/8021x-radius-keycloak/">article dédié</a>).</li>
+<li><strong>Vérifier une ACL en place.</strong> <code>show ip interface GigabitEthernet0/1</code> liste les ACL appliquées par sens (in/out), <code>show access-lists</code> affiche le compteur de matchs par ligne, précieux pour savoir si une règle sert vraiment.</li>
+<li><strong>Le même principe ailleurs.</strong> RouterOS (MikroTik) applique la même logique de règles évaluées dans l'ordre, premier match gagnant, comme dans <a href="/blog/posts/mikrotik-segmentation/">la segmentation de mon homelab</a>. Le vocabulaire change, la logique reste.</li>
+<li><strong>Aller plus loin que l'ACL.</strong> Pour du filtrage plus fin que source/destination/port, il faut sortir du monde des ACL et passer à un firewall stateful ou une solution basée sur l'identité (802.1X, sujet d'un <a href="/blog/posts/8021x-radius-keycloak/">article dédié</a>).</li>
 </ul>
-<p><em>Rien de compliqué dans une ACL prise isolément. Ce qui piège, c'est de les empiler sans garder en tête l'ordre d'évaluation et ce deny implicite qui ne s'affiche jamais.</em></p>
 
     </div>
   </article>

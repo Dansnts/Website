@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -141,8 +30,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Sauvegarder ses données hors site, c'est indispensable. Confier ses fichiers à un hébergeur cloud, c'est aussi lui confier leur contenu, sauf si on chiffre <strong>avant</strong> l'envoi. C'est le principe du <em>zero-knowledge</em> : l'hébergeur stocke des blobs opaques qu'il ne peut pas lire. Même sous contrainte légale, il n'a rien à donner.</p>
-<p><strong>Restic</strong> fait exactement ça : chunking, déduplication, compression et chiffrement AES-256, le tout côté client. On monte un backup Restic vers du S3, piloté par un CronJob Kubernetes :</p>
+      <p>Sauvegarder ses données hors site, c'est indispensable. Confier ses fichiers à un hébergeur cloud, c'est aussi lui confier leur contenu, sauf si on chiffre <strong>avant</strong> l'envoi. C'est le principe du <em>zero-knowledge</em>, l'hébergeur stocke des blobs opaques qu'il ne peut pas lire. Même sous contrainte légale, il n'a rien à donner.</p>
+<p><strong>Restic</strong> fait exactement ça, chunking, déduplication, compression et chiffrement AES-256, le tout côté client. On monte un backup Restic vers du S3, piloté par un CronJob Kubernetes.</p>
 <ol>
 <li>Le fonctionnement zero-knowledge de Restic</li>
 <li>Le CronJob et son cycle backup / forget / check</li>
@@ -157,7 +46,7 @@
 </ul>
 <hr>
 <h2>Le zero-knowledge, concrètement</h2>
-<p>Restic ne se contente pas de « chiffrer un tar ». Il découpe intelligemment les fichiers :</p>
+<p>Restic ne se contente pas de « chiffrer un tar ». Il découpe intelligemment les fichiers.</p>
 <pre><code>Fichiers ──&gt; découpage en blobs (content-defined chunking)
                      │
                      ├─&gt; déduplication (blobs identiques stockés une fois)
@@ -168,14 +57,14 @@
                      S3 : que des blobs opaques identifiés par hash
 </code></pre>
 <ul>
-<li><strong>Chunking à taille variable</strong> : un fichier est découpé en morceaux selon son contenu. Modifier 1 Ko dans un gros fichier ne réécrit que le chunk concerné.</li>
-<li><strong>Déduplication</strong> : deux fichiers identiques (ou deux versions proches) partagent leurs blobs. Énorme gain d'espace.</li>
-<li><strong>Chiffrement local</strong> : tout est chiffré <strong>avant</strong> l'upload avec un mot de passe qui ne quitte jamais la machine. Le S3 ne contient que du hash illisible.</li>
+<li><strong>Chunking à taille variable.</strong> Un fichier est découpé en morceaux selon son contenu. Modifier 1 Ko dans un gros fichier ne réécrit que le chunk concerné.</li>
+<li><strong>Déduplication.</strong> Deux fichiers identiques (ou deux versions proches) partagent leurs blobs. Énorme gain d'espace.</li>
+<li><strong>Chiffrement local.</strong> Tout est chiffré <strong>avant</strong> l'upload avec un mot de passe qui ne quitte jamais la machine. Le S3 ne contient que du hash illisible.</li>
 </ul>
-<p>Résultat : Infomaniak (l'hébergeur) ne voit rien. Du vrai zero-knowledge, pas du marketing.</p>
+<p>Résultat, Infomaniak (l'hébergeur) ne voit rien. Du vrai zero-knowledge, pas du marketing.</p>
 <hr>
-<h2>Le CronJob : backup, forget, check</h2>
-<p>Le backup tourne chaque nuit à 2h. Le conteneur Restic enchaîne trois opérations dans un ordre précis :</p>
+<h2>Le CronJob, backup, forget, check</h2>
+<p>Le backup tourne chaque nuit à 2h. Le conteneur Restic enchaîne trois opérations dans un ordre précis.</p>
 <pre><code class="language-yaml">apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -219,16 +108,16 @@ spec:
                 - secretRef:
                     name: restic-credentials
 </code></pre>
-<p>Les trois étapes, et pourquoi cet ordre :</p>
-<p><code>restic backup</code> : crée un <strong>snapshot incrémental</strong>. Grâce à la déduplication, seuls les blobs nouveaux sont uploadés, un backup quotidien ne transfère que le delta.</p>
-<p><code>restic forget --prune</code> : applique la politique de rétention <strong>puis</strong> libère réellement l'espace S3 (<code>--prune</code> supprime les blobs qui ne sont plus référencés par aucun snapshot).</p>
-<p><code>restic check</code> : vérifie l'intégrité structurelle du repo (index + packs). Un backup qu'on ne vérifie jamais, c'est un backup qu'on <em>espère</em> avoir.</p>
-<p><code>concurrencyPolicy: Forbid</code> : si un backup dure plus de 24h (peu probable mais possible au premier run), on n'en lance pas un deuxième par-dessus.</p>
-<p><code>restic snapshots || restic init</code> : idempotence : on n'initialise le repo que la première fois, sans erreur les fois suivantes.</p>
-<p><code>envFrom secretRef</code> : toutes les variables sensibles (<code>RESTIC_REPOSITORY</code>, <code>RESTIC_PASSWORD</code>, clés S3) viennent d'un Secret scellé.</p>
+<p>Les trois étapes, et pourquoi cet ordre.</p>
+<p><code>restic backup</code> crée un <strong>snapshot incrémental</strong>. Grâce à la déduplication, seuls les blobs nouveaux sont uploadés, un backup quotidien ne transfère que le delta.</p>
+<p><code>restic forget --prune</code> applique la politique de rétention <strong>puis</strong> libère réellement l'espace S3 (<code>--prune</code> supprime les blobs qui ne sont plus référencés par aucun snapshot).</p>
+<p><code>restic check</code> vérifie l'intégrité structurelle du repo (index + packs). Un backup qu'on ne vérifie jamais, c'est un backup qu'on <em>espère</em> avoir.</p>
+<p><code>concurrencyPolicy: Forbid</code> fait que si un backup dure plus de 24h (peu probable mais possible au premier run), on n'en lance pas un deuxième par-dessus.</p>
+<p><code>restic snapshots || restic init</code> assure l'idempotence, on n'initialise le repo que la première fois, sans erreur les fois suivantes.</p>
+<p><code>envFrom secretRef</code> fait que toutes les variables sensibles (<code>RESTIC_REPOSITORY</code>, <code>RESTIC_PASSWORD</code>, clés S3) viennent d'un Secret scellé.</p>
 <hr>
 <h2>La politique de rétention</h2>
-<p>C'est le cœur d'une stratégie de backup : garder assez d'historique sans exploser le stockage.</p>
+<p>C'est le cœur d'une stratégie de backup, garder assez d'historique sans exploser le stockage.</p>
 <pre><code>--keep-daily   7    → 7 sauvegardes quotidiennes  (la dernière semaine)
 --keep-weekly  4    → 4 sauvegardes hebdomadaires (le dernier mois)
 --keep-monthly 6    → 6 sauvegardes mensuelles    (le dernier semestre)
@@ -240,11 +129,11 @@ spec:
 </blockquote>
 <hr>
 <h2>L'avertissement à graver</h2>
-<p>Une seule chose peut rendre tout ce système inutile :</p>
+<p>Une seule chose peut rendre tout ce système inutile.</p>
 <blockquote>
-<p><strong>Sans le <code>RESTIC_PASSWORD</code>, les données sont définitivement inaccessibles.</strong> C'est la contrepartie du zero-knowledge : personne, pas même le propriétaire des données, ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé <strong>hors de la machine</strong> (gestionnaire de mots de passe, coffre physique). Le perdre égale perdre le backup.</p>
+<p><strong>Sans le <code>RESTIC_PASSWORD</code>, les données sont définitivement inaccessibles.</strong> C'est la contrepartie du zero-knowledge, personne, pas même le propriétaire des données, ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé <strong>hors de la machine</strong> (gestionnaire de mots de passe, coffre physique). Le perdre égale perdre le backup.</p>
 </blockquote>
-<p>C'est le paradoxe du chiffrement fort : la sécurité qui protège les données de l'hébergeur les protège aussi de leur propriétaire en cas de perte de la clé.</p>
+<p>C'est le paradoxe du chiffrement fort, la sécurité qui protège les données de l'hébergeur les protège aussi de leur propriétaire en cas de perte de la clé.</p>
 <hr>
 <h2>Restaurer (parce qu'un backup se teste)</h2>
 <pre><code class="language-bash"># Lister les snapshots
@@ -266,12 +155,11 @@ restic mount /mnt/restic-restore
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Backup d'une base live</strong> : sauvegarder un fichier SQLite pendant que l'app écrit dedans demande une précaution (un dump WAL-safe). Sujet d'un article dédié.</li>
-<li><strong>Les inodes SMB</strong> : le <code>--ignore-inode</code> de la commande cache un vrai piège des montages réseau, j'en parle dans l'article sur les galères de backup SMB.</li>
-<li><strong>Monitoring</strong> : exporter le résultat des runs (durée, taille, succès) vers Prometheus pour être alerté si un backup échoue plutôt que de le découvrir six mois plus tard.</li>
-<li><strong>Règle 3-2-1</strong> : Restic couvre l'off-site chiffré ; à compléter avec une copie locale (snapshots ZFS) pour respecter le 3-2-1 en entier.</li>
+<li><strong>Backup d'une base live.</strong> Sauvegarder un fichier SQLite pendant que l'app écrit dedans demande une précaution (un dump WAL-safe). Sujet d'un article dédié.</li>
+<li><strong>Les inodes SMB.</strong> Le <code>--ignore-inode</code> de la commande cache un vrai piège des montages réseau, j'en parle dans l'article sur les galères de backup SMB.</li>
+<li><strong>Monitoring.</strong> Exporter le résultat des runs (durée, taille, succès) vers Prometheus pour être alerté si un backup échoue plutôt que de le découvrir six mois plus tard.</li>
+<li><strong>Règle 3-2-1.</strong> Restic couvre l'off-site chiffré ; à compléter avec une copie locale (snapshots ZFS) pour respecter le 3-2-1 en entier.</li>
 </ul>
-<p><em>Le mot de passe Restic vit dans un coffre séparé de tout le reste. Le jour où je le perds, je perds aussi le droit de me plaindre.</em></p>
 
     </div>
   </article>

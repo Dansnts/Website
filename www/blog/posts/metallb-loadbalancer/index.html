@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -142,7 +31,7 @@
 
     <div class="blog-body">
       <p>Sur un cloud public, déclarer un <code>Service type: LoadBalancer</code> provoque la création d'un vrai load-balancer avec une IP publique. Sur du bare-metal, un serveur chez soi, il ne se passe rien. Le service reste bloqué en <code>&lt;pending&gt;</code>, éternellement, faute de quelqu'un pour lui attribuer une IP.</p>
-<p><strong>MetalLB</strong> comble ce trou. Il donne à Kubernetes la capacité de distribuer des IP du réseau local aux services <code>LoadBalancer</code>. Dans ce post :</p>
+<p><strong>MetalLB</strong> comble ce trou. Il donne à Kubernetes la capacité de distribuer des IP du réseau local aux services <code>LoadBalancer</code>. Dans ce post.</p>
 <ol>
 <li>Le problème du <code>type: LoadBalancer</code> en bare-metal</li>
 <li>Le pool d'adresses et le mode L2</li>
@@ -156,13 +45,13 @@
 <li>MetalLB installé</li>
 </ul>
 <h2>Le problème à résoudre</h2>
-<p>Traefik gère très bien le HTTP/HTTPS via les Ingress. Mais tout n'est pas du HTTP : un serveur WireGuard écoute en UDP, un serveur vocal aussi. Ces services ont besoin de <strong>leur propre IP</strong>, pas d'un routage par nom d'hôte.</p>
+<p>Traefik gère très bien le HTTP/HTTPS via les Ingress. Mais tout n'est pas du HTTP, un serveur WireGuard écoute en UDP, un serveur vocal aussi. Ces services ont besoin de <strong>leur propre IP</strong>, pas d'un routage par nom d'hôte.</p>
 <pre><code>Service type: LoadBalancer  ──sans MetalLB──&gt; &lt;pending&gt; (jamais d'IP)
 Service type: LoadBalancer  ──avec MetalLB──&gt; 10.0.0.102 (IP du LAN)
 </code></pre>
 <p>MetalLB pioche dans un pool d'IP qu'on lui réserve et les attribue aux services. Simple sur le papier, mais ça change tout pour exposer proprement.</p>
 <h2>Le pool d'adresses et le mode L2</h2>
-<p>La config MetalLB tient en deux ressources. D'abord, le <strong>pool</strong> d'IP disponibles :</p>
+<p>La config MetalLB tient en deux ressources. D'abord, le <strong>pool</strong> d'IP disponibles.</p>
 <pre><code class="language-yaml">apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
@@ -172,7 +61,7 @@ spec:
   addresses:
     - 10.0.0.100-10.0.0.110
 </code></pre>
-<p>Puis le mode d'annonce, ici <strong>L2 (layer 2)</strong> :</p>
+<p>Puis le mode d'annonce, ici <strong>L2 (layer 2)</strong>.</p>
 <pre><code class="language-yaml">apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
@@ -182,11 +71,11 @@ spec:
   ipAddressPools:
     - homelab-pool
 </code></pre>
-<p><code>addresses: 10.0.0.100-10.0.0.110</code> : la plage réservée. <strong>Crucial</strong> : ces IP doivent être <em>hors</em> de la plage DHCP du routeur. Chez moi, le DHCP du MikroTik distribue <code>10.0.0.200-250</code>, donc <code>100-110</code> est libre. Aucun conflit possible, et c'est le genre de conflit qui, sinon, se découvre un dimanche soir.</p>
-<p><code>L2Advertisement</code> : le mode L2 fait que le node répond aux requêtes ARP pour les IP du pool. Du point de vue du réseau, c'est comme si le node « possédait » ces IP. Pas de config routeur, pas de BGP, ça marche tel quel sur un LAN simple.</p>
-<p>Le mode L2 a une limite : tout le trafic d'une IP passe par <strong>un seul</strong> node, pas de vraie répartition de charge. Sur un cluster single-node comme le mien, aucune importance, vu qu'il n'y a qu'un node de toute façon. Sur du multi-node, on regarderait plutôt le mode BGP pour une vraie distribution.</p>
+<p><code>addresses: 10.0.0.100-10.0.0.110</code>, la plage réservée. <strong>Crucial</strong>, ces IP doivent être <em>hors</em> de la plage DHCP du routeur. Chez moi, le DHCP du MikroTik distribue <code>10.0.0.200-250</code>, donc <code>100-110</code> est libre. Aucun conflit possible, et c'est le genre de conflit qui, sinon, se découvre un dimanche soir.</p>
+<p>Avec <code>L2Advertisement</code>, le node répond aux requêtes ARP pour les IP du pool. Du point de vue du réseau, c'est comme si le node « possédait » ces IP. Pas de config routeur, pas de BGP, ça marche tel quel sur un LAN simple.</p>
+<p>Le mode L2 a une limite, tout le trafic d'une IP passe par <strong>un seul</strong> node, pas de vraie répartition de charge. Sur un cluster single-node comme le mien, aucune importance, vu qu'il n'y a qu'un node de toute façon. Sur du multi-node, on regarderait plutôt le mode BGP pour une vraie distribution.</p>
 <h2>Assigner une IP fixe à un service</h2>
-<p>Par défaut MetalLB pioche une IP au hasard dans le pool. Mais pour un service exposé (dont on fait un port-forward depuis la box), on veut une IP <strong>stable</strong>. Ça se fait avec une annotation :</p>
+<p>Par défaut MetalLB pioche une IP au hasard dans le pool. Mais pour un service exposé (dont on fait un port-forward depuis la box), on veut une IP <strong>stable</strong>. Ça se fait avec une annotation.</p>
 <pre><code class="language-yaml">apiVersion: v1
 kind: Service
 metadata:
@@ -207,10 +96,10 @@ spec:
       targetPort: 51821
       name: web-ui
 </code></pre>
-<p><code>metallb.universe.tf/loadBalancerIPs: 10.0.0.102</code> : force cette IP précise. WireGuard sera toujours sur <code>10.0.0.102</code>, ce qui me permet de configurer un port-forward fixe <code>51820/UDP</code> depuis la box vers cette adresse, sans y repenser après un redéploiement.</p>
-<h2>Là où MetalLB devient indispensable : le non-HTTP</h2>
+<p><code>metallb.universe.tf/loadBalancerIPs: 10.0.0.102</code> force cette IP précise. WireGuard sera toujours sur <code>10.0.0.102</code>, ce qui me permet de configurer un port-forward fixe <code>51820/UDP</code> depuis la box vers cette adresse, sans y repenser après un redéploiement.</p>
+<h2>Là où MetalLB devient indispensable, le non-HTTP</h2>
 <p>C'est le vrai intérêt par rapport à Traefik seul. Un Ingress route du HTTP par nom de domaine. Mais WireGuard (UDP) ou TeamSpeak (UDP voix + TCP) ne sont pas du HTTP, Traefik ne peut pas les router par hostname. Il leur faut une IP dédiée, et c'est exactement ce que MetalLB fournit.</p>
-<p>Chez moi, le pool sert à :</p>
+<p>Chez moi, le pool sert à ceci.</p>
 <table>
 <thead>
 <tr>
@@ -247,16 +136,15 @@ spec:
 </tr>
 </tbody>
 </table>
-<p>Traefik lui-même est un service MetalLB (<code>10.0.0.100</code>) : c'est par cette IP que tout le trafic HTTP entre. Le DNS interne (CoreDNS, Pi-hole) pointe les noms de services vers cette adresse.</p>
-<p>Le pattern à retenir : HTTP passe par un Ingress derrière Traefik (<code>10.0.0.100</code>), non-HTTP passe par un Service LoadBalancer avec sa propre IP MetalLB. Chaque protocole trouve sa route, personne ne se marche dessus.</p>
+<p>Traefik lui-même est un service MetalLB (<code>10.0.0.100</code>), c'est par cette IP que tout le trafic HTTP entre. Le DNS interne (CoreDNS, Pi-hole) pointe les noms de services vers cette adresse.</p>
+<p>Le pattern à retenir, HTTP passe par un Ingress derrière Traefik (<code>10.0.0.100</code>), non-HTTP passe par un Service LoadBalancer avec sa propre IP MetalLB. Chaque protocole trouve sa route, personne ne se marche dessus.</p>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Mode BGP</strong> : sur du multi-node, remplacer le L2 par du BGP pour une vraie répartition de charge (nécessite un routeur qui parle BGP).</li>
-<li><strong>IP partagées</strong> : plusieurs services peuvent partager une IP via l'annotation <code>allow-shared-ip</code> si les ports ne se chevauchent pas.</li>
-<li><strong>Pools multiples</strong> : séparer un pool « interne » et un pool « exposé » pour clarifier ce qui est joignable depuis l'extérieur.</li>
-<li><strong>Le lien avec le port-forward</strong> : l'IP MetalLB n'est que la moitié du chemin, voir l'article MikroTik pour le DNAT qui expose ces services vers internet.</li>
+<li><strong>Mode BGP.</strong> Sur du multi-node, remplacer le L2 par du BGP pour une vraie répartition de charge (nécessite un routeur qui parle BGP).</li>
+<li><strong>IP partagées.</strong> Plusieurs services peuvent partager une IP via l'annotation <code>allow-shared-ip</code> si les ports ne se chevauchent pas.</li>
+<li><strong>Pools multiples.</strong> Séparer un pool « interne » et un pool « exposé » pour clarifier ce qui est joignable depuis l'extérieur.</li>
+<li><strong>Le lien avec le port-forward.</strong> L'IP MetalLB n'est que la moitié du chemin, voir l'article MikroTik pour le DNAT qui expose ces services vers internet.</li>
 </ul>
-<p><em>Un seul node, donc un seul point de défaillance sur le mode L2. Je sais, j'assume, l'électricité aussi n'a qu'un seul fournisseur chez moi.</em></p>
 
     </div>
   </article>

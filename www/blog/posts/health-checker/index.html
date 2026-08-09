@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -141,8 +30,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Un <em>health check</em> est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif : savoir qu'un service est tombé avant que les utilisateurs ne s'en chargent à notre place.</p>
-<p>On construit un petit service en Python qui :</p>
+      <p>Un <em>health check</em> est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif, savoir qu'un service est tombé avant que les utilisateurs ne s'en chargent à notre place.</p>
+<p>On construit un petit service en Python. Il fait quatre choses.</p>
 <ol>
 <li>Poll une liste d'URLs configurables à intervalle régulier</li>
 <li>Le fait <strong>en parallèle</strong> pour qu'une URL lente n'en bloque pas d'autres</li>
@@ -159,7 +48,7 @@
 </ul>
 <hr>
 <h2>L'architecture en un coup d'œil</h2>
-<p>Avant de coder, il faut séparer les responsabilités. Quatre modules, chacun avec un seul rôle :</p>
+<p>Avant de coder, il faut séparer les responsabilités. Quatre modules, chacun avec un seul rôle.</p>
 <pre><code>python/
 └── app/
     ├── config.py   # charge et valide le YAML
@@ -167,9 +56,9 @@
     ├── worker.py   # le worker async qui poll
     └── api.py      # l'API FastAPI + le lifespan
 </code></pre>
-<p>L'idée directrice : le <strong>worker</strong> écrit dans le <strong>store</strong>, l'<strong>API</strong> lit dans le <strong>store</strong>. Les deux ne se parlent jamais directement, ils passent par la donnée. Découplé, testable, rien à débattre.</p>
+<p>L'idée directrice, le <strong>worker</strong> écrit dans le <strong>store</strong>, l'<strong>API</strong> lit dans le <strong>store</strong>. Les deux ne se parlent jamais directement, ils passent par la donnée. Découplé, testable, rien à débattre.</p>
 <hr>
-<h2>Étape 1 : Charger la configuration</h2>
+<h2>Étape 1, charger la configuration</h2>
 <p>On veut pouvoir éditer la liste des URLs sans retoucher au code. Un simple YAML fait l'affaire.</p>
 <pre><code class="language-yaml">urls:
   - https://httpbin.org/status/200
@@ -179,7 +68,7 @@
 pollInterval: 60   # secondes entre chaque poll
 timeout: 10        # secondes avant de marquer TIMEOUT
 </code></pre>
-<p>Et le loader qui va avec :</p>
+<p>Et le loader qui va avec.</p>
 <pre><code class="language-python">class Config:
     def __init__(self, path: str = &quot;config.yaml&quot;):
         with open(path) as stream:
@@ -192,9 +81,9 @@ timeout: 10        # secondes avant de marquer TIMEOUT
         self.polling_interval = data.get(&quot;pollInterval&quot;, 60)
         self.timeout = data.get(&quot;timeout&quot;, 10)
 </code></pre>
-<p>Deux détails qui comptent :</p>
-<p><code>yaml.safe_load(stream) or {}</code> : si le fichier est vide, <code>safe_load</code> renvoie <code>None</code>. Le <code>or {}</code> évite un crash sur un <code>.get()</code> derrière.</p>
-<p><code>_validate_urls</code> : on ne fait pas confiance au YAML. On filtre tout ce qui n'est pas une URL http(s) valide, et on log un warning plutôt que de planter.</p>
+<p>Deux détails qui comptent.</p>
+<p><code>yaml.safe_load(stream) or {}</code>, si le fichier est vide, <code>safe_load</code> renvoie <code>None</code>. Le <code>or {}</code> évite un crash sur un <code>.get()</code> derrière.</p>
+<p><code>_validate_urls</code> ne fait pas confiance au YAML. On filtre tout ce qui n'est pas une URL http(s) valide, et on log un warning plutôt que de planter.</p>
 <pre><code class="language-python">@staticmethod
 def _validate_urls(urls: list) -&gt; list[str]:
     valid = []
@@ -213,7 +102,7 @@ def _validate_urls(urls: list) -&gt; list[str]:
 <p>Valider la config au démarrage, c'est le meilleur endroit pour échouer. Mieux vaut un crash clair au lancement qu'une URL bancale qui pollue les logs à chaque cycle.</p>
 </blockquote>
 <hr>
-<h2>Étape 2 : Le store en mémoire</h2>
+<h2>Étape 2, le store en mémoire</h2>
 <p>Pas de base de données ici, on reste simple. Un <code>dict</code> d'URLs vers une <code>deque</code> bornée.</p>
 <pre><code class="language-python">from collections import deque
 
@@ -236,12 +125,12 @@ def add_result(url: str, timestamp: str, response_time: float, status_code: str)
 def get_result() -&gt; dict:
     return {url: list(results) for url, results in store.items()}
 </code></pre>
-<p><code>deque(maxlen=100)</code> : la structure parfaite ici. Quand elle atteint 100 éléments, elle <strong>évince automatiquement le plus ancien</strong>. Pas de logique de nettoyage à écrire, on garde toujours les 100 derniers checks par URL, et la stdlib fait tout le travail.</p>
+<p><code>deque(maxlen=100)</code>, la structure parfaite ici. Quand elle atteint 100 éléments, elle <strong>évince automatiquement le plus ancien</strong>. Pas de logique de nettoyage à écrire, on garde toujours les 100 derniers checks par URL, et la stdlib fait tout le travail.</p>
 <blockquote>
-<p>Trade-off assumé : tout est perdu au redémarrage, et ça ne scale pas sur plusieurs instances. Pour de la prod, on brancherait une TimeSeries DB (InfluxDB) et un dashboard Grafana. Pour un service qui tient dans un seul fichier, c'est overkill. Chaque chose en son temps.</p>
+<p>Trade-off assumé, tout est perdu au redémarrage, et ça ne scale pas sur plusieurs instances. Pour de la prod, on brancherait une TimeSeries DB (InfluxDB) et un dashboard Grafana. Pour un service qui tient dans un seul fichier, c'est overkill. Chaque chose en son temps.</p>
 </blockquote>
 <hr>
-<h2>Étape 3 : Le worker async</h2>
+<h2>Étape 3, le worker async</h2>
 <p>C'est le cœur du service. On veut poll toutes les URLs <strong>en parallèle</strong>, sinon une URL qui timeout à 10s ralentirait toutes les autres.</p>
 <pre><code class="language-python">async def check_urls(client: httpx.AsyncClient, config: Config, url: str):
     current_time = datetime.now(timezone.utc).isoformat()
@@ -261,10 +150,10 @@ def get_result() -&gt; dict:
     elapsed_ms = (time.perf_counter() - start) * 1000
     add_result(url, current_time, elapsed_ms, status_code)
 </code></pre>
-<p>Deux points importants ici :</p>
-<p><code>client.stream(&quot;GET&quot;, ...)</code> : on <strong>ne télécharge pas le body</strong>. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP compte, rapatrier 2 Mo de HTML pour vérifier un <code>200</code>, non merci.</p>
-<p><code>time.perf_counter()</code> : c'est l'horloge monotone, faite pour mesurer des durées. On ne la mélange pas avec <code>datetime.now()</code> (qui elle sert au timestamp affiché).</p>
-<p>Et la boucle qui orchestre tout ça :</p>
+<p>Deux points importants ici.</p>
+<p><code>client.stream(&quot;GET&quot;, ...)</code> ne télécharge pas le body. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP compte, rapatrier 2 Mo de HTML pour vérifier un <code>200</code>, non merci.</p>
+<p><code>time.perf_counter()</code> est l'horloge monotone, faite pour mesurer des durées. On ne la mélange pas avec <code>datetime.now()</code> (qui elle sert au timestamp affiché).</p>
+<p>Et la boucle qui orchestre tout ça.</p>
 <pre><code class="language-python">async def poll_urls(config: Config):
     async with httpx.AsyncClient() as client:
         while True:
@@ -276,15 +165,15 @@ def get_result() -&gt; dict:
             elapsed = asyncio.get_event_loop().time() - cycle_start
             await asyncio.sleep(max(0, config.polling_interval - elapsed))
 </code></pre>
-<p><code>asyncio.gather(...)</code> : lance tous les checks d'un coup et attend qu'ils finissent tous. C'est là que la parallélisation opère.</p>
-<p><code>httpx.AsyncClient()</code> partagé : un seul client pour tous les checks. Il réutilise le pool de connexions au lieu d'en ouvrir une nouvelle à chaque appel.</p>
-<p>Le calcul du sleep mérite qu'on s'y arrête :</p>
+<p><code>asyncio.gather(...)</code> lance tous les checks d'un coup et attend qu'ils finissent tous. C'est là que la parallélisation opère.</p>
+<p><code>httpx.AsyncClient()</code> partagé, un seul client pour tous les checks. Il réutilise le pool de connexions au lieu d'en ouvrir une nouvelle à chaque appel.</p>
+<p>Le calcul du sleep mérite qu'on s'y arrête.</p>
 <pre><code class="language-python">elapsed = ... - cycle_start
 await asyncio.sleep(max(0, config.polling_interval - elapsed))
 </code></pre>
 <p>Un <code>sleep(60)</code> bête et méchant donnerait un intervalle réel de <code>60s + temps de polling</code>, et ça <strong>dériverait</strong> dans le temps, cycle après cycle. En retranchant le temps déjà passé, on garde un intervalle effectif proche des 60s demandées. Le <code>max(0, ...)</code> couvre le cas où un cycle prend plus longtemps que l'intervalle lui-même. Sans lui, <code>sleep</code> recevrait un nombre négatif et <code>asyncio</code> ne serait pas content.</p>
 <hr>
-<h2>Étape 4 : L'API et le cycle de vie</h2>
+<h2>Étape 4, l'API et le cycle de vie</h2>
 <p>FastAPI expose le store, et surtout démarre le worker en tâche de fond via le <code>lifespan</code>.</p>
 <pre><code class="language-python">@asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -308,9 +197,9 @@ app = FastAPI(lifespan=lifespan)
 async def get_status():
     return get_result()
 </code></pre>
-<p>Le <code>lifespan</code> est le bon endroit pour lancer un worker : la tâche démarre <strong>avec</strong> l'app, dans la même boucle asyncio, un seul container suffit. Pas de process séparé à gérer, pas de supervisord.</p>
-<p>Le <code>add_done_callback</code> sert de garde-fou : si le worker crash sans qu'on l'ait annulé, on log l'erreur au lieu de la voir disparaître silencieusement dans le néant d'une tâche asyncio morte.</p>
-<p>Un appel <code>GET /status</code> renvoie :</p>
+<p>Le <code>lifespan</code> est le bon endroit pour lancer un worker, la tâche démarre <strong>avec</strong> l'app, dans la même boucle asyncio, un seul container suffit. Pas de process séparé à gérer, pas de supervisord.</p>
+<p>Le <code>add_done_callback</code> sert de garde-fou, si le worker crash sans qu'on l'ait annulé, on log l'erreur au lieu de la voir disparaître silencieusement dans le néant d'une tâche asyncio morte.</p>
+<p>Un appel <code>GET /status</code> renvoie.</p>
 <pre><code class="language-json">{
   &quot;https://example.com&quot;: [
     {
@@ -359,7 +248,7 @@ USER user
 EXPOSE 8080
 CMD [&quot;python&quot;, &quot;api.py&quot;]
 </code></pre>
-<p>Et le <code>docker-compose.yml</code> qui le durcit encore :</p>
+<p>Et le <code>docker-compose.yml</code> qui le durcit encore.</p>
 <pre><code class="language-yaml">services:
   health-checker:
     build: .
@@ -376,14 +265,14 @@ CMD [&quot;python&quot;, &quot;api.py&quot;]
     tmpfs:
       - /tmp
 </code></pre>
-<p>Le <code>config.yaml</code> est monté en volume read-only : on édite la liste des URLs <strong>sans rebuild l'image</strong>. Et <code>read_only</code>, <code>cap_drop: ALL</code>, <code>no-new-privileges</code> réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le <code>/tmp</code> en tmpfs. Même compromis, il n'a nulle part où poser quoi que ce soit.</p>
+<p>Le <code>config.yaml</code> est monté en volume read-only, on édite la liste des URLs <strong>sans rebuild l'image</strong>. Et <code>read_only</code>, <code>cap_drop: ALL</code>, <code>no-new-privileges</code> réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le <code>/tmp</code> en tmpfs. Même compromis, il n'a nulle part où poser quoi que ce soit.</p>
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Persistance</strong> : brancher une TimeSeries DB (InfluxDB, Prometheus) pour garder l'historique au-delà du redémarrage et le visualiser dans Grafana.</li>
-<li><strong>Auth sur <code>/status</code></strong> : acceptable en interne, mais en prod on protégerait l'endpoint avec une API key ou un token JWT.</li>
-<li><strong>Config à chaud</strong> : aujourd'hui la liste des URLs est lue une seule fois au démarrage. On pourrait la recharger sans restart.</li>
-<li><strong>Alerting</strong> : déclencher une notification (Slack, mail) quand une URL enchaîne plusieurs échecs.</li>
+<li><strong>Persistance.</strong> Brancher une TimeSeries DB (InfluxDB, Prometheus) pour garder l'historique au-delà du redémarrage et le visualiser dans Grafana.</li>
+<li><strong>Auth sur <code>/status</code>.</strong> Acceptable en interne, mais en prod on protégerait l'endpoint avec une API key ou un token JWT.</li>
+<li><strong>Config à chaud.</strong> Aujourd'hui la liste des URLs est lue une seule fois au démarrage. On pourrait la recharger sans restart.</li>
+<li><strong>Alerting.</strong> Déclencher une notification (Slack, mail) quand une URL enchaîne plusieurs échecs.</li>
 </ul>
 <p>Chacun de ces points mérite son propre article.</p>
 <p><em>Pour l'instant il tourne dans mon cluster et me dit quand quelque chose est mort avant que je m'en aperçoive tout seul. C'est déjà tout ce que je lui demandais.</em></p>

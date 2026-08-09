@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -141,8 +30,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Brancher son homelab directement sur la box du FAI, c'est simple. Jusqu'au jour où une VM compromise se retrouve sur le même réseau que le téléphone, la TV et l'ordi du salon. La bonne pratique, c'est d'<strong>isoler</strong> : le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.</p>
-<p>Chez moi, ce rôle est tenu par un <strong>MikroTik RB750Gr3</strong>, un petit routeur pas cher mais redoutablement complet (RouterOS). Dans ce post, on construit la segmentation complète. On va voir :</p>
+      <p>Brancher son homelab directement sur la box du FAI, c'est simple. Jusqu'au jour où une VM compromise se retrouve sur le même réseau que le téléphone, la TV et l'ordi du salon. La bonne pratique, c'est d'<strong>isoler</strong>, le lab dans son propre réseau, séparé de la maison par un routeur qui filtre ce qui passe.</p>
+<p>Chez moi, ce rôle est tenu par un <strong>MikroTik RB750Gr3</strong>, un petit routeur pas cher mais redoutablement complet (RouterOS). Dans ce post, on construit la segmentation complète. On va voir.</p>
 <ol>
 <li>Le WAN statique vers la box et le LAN isolé en <code>10.0.0.0/24</code></li>
 <li>Le bridge + DHCP pour les machines du lab</li>
@@ -171,9 +60,9 @@ MikroTik RB750Gr3
         ├── Pi-hole    10.0.0.101
         └── WireGuard  10.0.0.102
 </code></pre>
-<p>Deux réseaux distincts : <code>192.168.1.0/24</code> (la maison) et <code>10.0.0.0/24</code> (le lab). Le MikroTik est la frontière entre les deux. Toute la config qui suit vit dans un seul fichier <code>.rsc</code> qu'on applique d'un coup.</p>
+<p>Deux réseaux distincts, <code>192.168.1.0/24</code> (la maison) et <code>10.0.0.0/24</code> (le lab). Le MikroTik est la frontière entre les deux. Toute la config qui suit vit dans un seul fichier <code>.rsc</code> qu'on applique d'un coup.</p>
 <hr>
-<h2>Étape 1 : Le WAN statique</h2>
+<h2>Étape 1, le WAN statique</h2>
 <p>Le MikroTik reçoit une IP fixe côté box, plutôt que du DHCP. Ça garantit que son adresse ne change jamais, important car la box va lui faire des port forwards vers cette IP.</p>
 <pre><code class="language-rsc"># WAN : IP statique sur ether1
 /ip dhcp-client remove [find interface=ether1]
@@ -184,8 +73,8 @@ MikroTik RB750Gr3
 </code></pre>
 <p><code>ether1</code> reçoit <code>192.168.1.2</code>, et la route par défaut pointe vers la box (<code>192.168.1.1</code>). Tout le trafic sortant du lab part par là.</p>
 <hr>
-<h2>Étape 2 : le LAN, bridge et DHCP</h2>
-<p>Les ports <code>ether2</code> à <code>ether5</code> sont regroupés dans un <strong>bridge</strong> : ils forment un seul réseau logique, comme un switch. Le bridge porte l'IP de la gateway du lab.</p>
+<h2>Étape 2, le LAN, bridge et DHCP</h2>
+<p>Les ports <code>ether2</code> à <code>ether5</code> sont regroupés dans un <strong>bridge</strong>, ils forment un seul réseau logique, comme un switch. Le bridge porte l'IP de la gateway du lab.</p>
 <pre><code class="language-rsc"># LAN : bridge ether2-5
 /interface bridge add name=bridge
 /interface bridge port add interface=ether2 bridge=bridge
@@ -194,39 +83,39 @@ MikroTik RB750Gr3
 /interface bridge port add interface=ether5 bridge=bridge
 /ip address add address=10.0.0.1/24 interface=bridge comment=&quot;homelab-lan&quot;
 </code></pre>
-<p>Puis un serveur DHCP pour les machines branchées, avec une plage réservée en haut du subnet :</p>
+<p>Puis un serveur DHCP pour les machines branchées, avec une plage réservée en haut du subnet.</p>
 <pre><code class="language-rsc">/ip pool add name=homelab-dhcp ranges=10.0.0.200-10.0.0.250
 /ip dhcp-server add name=homelab interface=bridge address-pool=homelab-dhcp \
     disabled=no lease-time=1d
 /ip dhcp-server network add address=10.0.0.0/24 gateway=10.0.0.1 \
     dns-server=10.0.0.101 comment=&quot;homelab&quot;
 </code></pre>
-<p>Détail volontaire : le DHCP ne distribue que <code>10.0.0.200-250</code>. Le bas du subnet (<code>.10</code> à <code>.110</code>) est réservé aux <strong>IP fixes</strong> : serveurs, MetalLB, services. On ne veut pas que le DHCP pioche dedans par accident.</p>
-<p>Le <code>dns-server=10.0.0.101</code>, c'est Pi-hole : toute machine du lab utilise Pi-hole comme résolveur (DNS + blocage pub).</p>
+<p>Détail volontaire, le DHCP ne distribue que <code>10.0.0.200-250</code>. Le bas du subnet (<code>.10</code> à <code>.110</code>) est réservé aux <strong>IP fixes</strong>, serveurs, MetalLB, services. On ne veut pas que le DHCP pioche dedans par accident.</p>
+<p>Le <code>dns-server=10.0.0.101</code>, c'est Pi-hole, toute machine du lab utilise Pi-hole comme résolveur (DNS + blocage pub).</p>
 <hr>
-<h2>Étape 3 : NAT (sortir) et DNAT (entrer)</h2>
-<h3>Masquerade : le lab accède à internet</h3>
+<h2>Étape 3, NAT (sortir) et DNAT (entrer)</h2>
+<h3>Masquerade, le lab accède à internet</h3>
 <pre><code class="language-rsc">/ip firewall nat add chain=srcnat action=masquerade out-interface=ether1 \
     ipsec-policy=out,none comment=&quot;masquerade homelab -&gt; internet&quot;
 </code></pre>
 <p>Le <code>masquerade</code> réécrit l'adresse source des paquets sortants avec l'IP WAN du MikroTik. C'est ce qui permet à <code>10.0.0.x</code> (des IP privées) de joindre internet via la box.</p>
-<h3>DNAT : exposer des services vers l'extérieur</h3>
-<p>Pour qu'un service interne soit joignable depuis l'extérieur, on redirige un port du WAN vers l'IP interne. Exemple avec WireGuard :</p>
+<h3>DNAT, exposer des services vers l'extérieur</h3>
+<p>Pour qu'un service interne soit joignable depuis l'extérieur, on redirige un port du WAN vers l'IP interne. Exemple avec WireGuard.</p>
 <pre><code class="language-rsc">/ip firewall nat add chain=dstnat protocol=udp dst-port=51820 in-interface=ether1 \
     action=dst-nat to-addresses=10.0.0.102 to-ports=51820 comment=&quot;DNAT WireGuard&quot;
 </code></pre>
 <p>Tout paquet UDP arrivant sur le port 51820 du WAN est redirigé vers <code>10.0.0.102</code> (WireGuard). Même principe pour TeamSpeak (ports 9987/10011/30033).</p>
-<p>Un DNAT plus subtil : laisser le <strong>réseau maison</strong> utiliser Pi-hole comme DNS.</p>
+<p>Un DNAT plus subtil, laisser le <strong>réseau maison</strong> utiliser Pi-hole comme DNS.</p>
 <pre><code class="language-rsc">/ip firewall nat add chain=dstnat protocol=udp dst-port=53 \
     src-address=192.168.1.0/24 in-interface=ether1 \
     action=dst-nat to-addresses=10.0.0.101 to-ports=53 \
     comment=&quot;DNAT DNS home -&gt; Pi-hole&quot;
 </code></pre>
-<p>Le <code>src-address=192.168.1.0/24</code> restreint : seules les machines de la maison peuvent taper Pi-hole via le WAN. Ça permet à la maison de profiter du blocage de pub sans être <em>dans</em> le lab.</p>
+<p>Le <code>src-address=192.168.1.0/24</code> restreint, seules les machines de la maison peuvent taper Pi-hole via le WAN. Ça permet à la maison de profiter du blocage de pub sans être <em>dans</em> le lab.</p>
 <hr>
-<h2>Étape 4 : le firewall, le cœur de l'isolation</h2>
-<p>C'est ici que la segmentation prend tout son sens. Un firewall RouterOS se lit du haut vers le bas, première règle qui matche gagne. On sépare deux chaînes : <code>input</code> (trafic <strong>vers</strong> le MikroTik) et <code>forward</code> (trafic qui <strong>traverse</strong> le MikroTik).</p>
-<h3>La chaîne input : protéger le routeur</h3>
+<h2>Étape 4, le firewall, le cœur de l'isolation</h2>
+<p>C'est ici que la segmentation prend tout son sens. Un firewall RouterOS se lit du haut vers le bas, première règle qui matche gagne. On sépare deux chaînes, <code>input</code> (trafic <strong>vers</strong> le MikroTik) et <code>forward</code> (trafic qui <strong>traverse</strong> le MikroTik).</p>
+<h3>La chaîne input, protéger le routeur</h3>
 <pre><code class="language-rsc">/ip firewall filter add chain=input action=accept \
     connection-state=established,related,untracked
 /ip firewall filter add chain=input action=drop connection-state=invalid
@@ -238,15 +127,15 @@ MikroTik RB750Gr3
 /ip firewall filter add chain=input action=drop in-interface=ether1 \
     comment=&quot;drop tout le reste depuis WAN&quot;
 </code></pre>
-<p>Le schéma classique : on accepte les connexions déjà établies, on jette l'invalide, on autorise le LAN et WireGuard, puis <strong>on jette tout le reste venant du WAN</strong>. Le routeur est fermé depuis internet.</p>
-<h3>La chaîne forward : l'isolation lab et maison</h3>
-<p>La règle qui justifie tout ce montage :</p>
+<p>Le schéma classique, on accepte les connexions déjà établies, on jette l'invalide, on autorise le LAN et WireGuard, puis <strong>on jette tout le reste venant du WAN</strong>. Le routeur est fermé depuis internet.</p>
+<h3>La chaîne forward, l'isolation lab et maison</h3>
+<p>La règle qui justifie tout ce montage.</p>
 <pre><code class="language-rsc">/ip firewall filter add chain=forward action=drop \
     in-interface=bridge dst-address=192.168.1.0/24 \
     comment=&quot;isolation: homelab ne peut pas joindre reseau maison&quot;
 </code></pre>
 <p><strong>Le lab ne peut pas parler au réseau de la maison.</strong> Une VM compromise dans le lab ne verra jamais le NAS perso, la TV, le téléphone. C'est la règle centrale de la segmentation.</p>
-<p>Le reste de la chaîne autorise ce qui doit passer :</p>
+<p>Le reste de la chaîne autorise ce qui doit passer.</p>
 <pre><code class="language-rsc"># Fasttrack pour les perfs
 /ip firewall filter add chain=forward action=fasttrack-connection \
     connection-state=established,related
@@ -264,7 +153,7 @@ MikroTik RB750Gr3
 </code></pre>
 <p>L'ordre est <strong>crucial</strong>. La règle d'isolation vient <strong>avant</strong> la règle « homelab → internet ». Si on les inversait, le trafic vers <code>192.168.1.0/24</code> (qui sort aussi par <code>ether1</code>) serait autorisé avant d'être bloqué. En firewall, l'ordre fait la sécurité.</p>
 <blockquote>
-<p>Le <code>connection-nat-state=dstnat</code> est malin : plutôt que de lister chaque service exposé une deuxième fois dans le forward, on autorise d'un coup tout ce qui a été redirigé par un DNAT. Une règle pour WireGuard + TeamSpeak + DNS maison.</p>
+<p>Le <code>connection-nat-state=dstnat</code> est malin, plutôt que de lister chaque service exposé une deuxième fois dans le forward, on autorise d'un coup tout ce qui a été redirigé par un DNAT. Une règle pour WireGuard + TeamSpeak + DNS maison.</p>
 </blockquote>
 <p>Le <code>fasttrack-connection</code> en tête accélère les connexions déjà établies en les sortant du traitement complet du firewall, un gain de perf notable sur ce petit CPU.</p>
 <hr>
@@ -279,12 +168,11 @@ Internet             ──X──&gt; Lab (reste)  (drop tout depuis WAN)
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>802.1X sur les ports</strong> : le bridge accepte n'importe quelle machine branchée. On peut exiger une authentification par port (802.1X + RADIUS) pour que brancher un câble ne suffise pas à entrer sur le lab. Sujet d'un article dédié.</li>
-<li><strong>VLANs</strong> : pour aller plus loin dans la segmentation (séparer IoT, invités, serveurs), les VLANs découpent le LAN en sous-réseaux logiques sur les mêmes câbles.</li>
-<li><strong>Sauvegarder la config</strong> : <code>/export file=backup</code> génère un <code>.rsc</code> rejouable. À versionner dans Git comme le reste de l'infra.</li>
-<li><strong>Silent boot</strong> : <code>/system routerboard settings set silent-boot=yes</code> désactive les bips au démarrage, détail mais appréciable.</li>
+<li><strong>802.1X sur les ports.</strong> Le bridge accepte n'importe quelle machine branchée. On peut exiger une authentification par port (802.1X + RADIUS) pour que brancher un câble ne suffise pas à entrer sur le lab. Sujet d'un article dédié.</li>
+<li><strong>VLANs.</strong> Pour aller plus loin dans la segmentation (séparer IoT, invités, serveurs), les VLANs découpent le LAN en sous-réseaux logiques sur les mêmes câbles.</li>
+<li><strong>Sauvegarder la config.</strong> <code>/export file=backup</code> génère un <code>.rsc</code> rejouable. À versionner dans Git comme le reste de l'infra.</li>
+<li><strong>Silent boot.</strong> <code>/system routerboard settings set silent-boot=yes</code> désactive les bips au démarrage, détail mais appréciable.</li>
 </ul>
-<p><em>Un routeur à 60 balles qui fait tourner un firewall stateful plus rigoureux que certaines box &quot;pro&quot;. RouterOS mérite sa réputation.</em></p>
 
     </div>
   </article>

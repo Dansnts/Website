@@ -113,5 +113,3 @@ Règle générale : on ne sauvegarde jamais un fichier de base de données à ch
 - **Le 2FA/WebAuthn** : Vaultwarden gère les clés matérielles (YubiKey) et le TOTP, à activer une fois `DOMAIN` bien réglé.
 - **SSO via Keycloak** : les versions récentes de Vaultwarden expérimentent la connexion OIDC, un candidat naturel pour rejoindre le realm `homelab` (voir l'article sur Keycloak).
 - **Cercle vertueux des secrets** : ma clé maître SealedSecrets est elle-même stockée dans Vaultwarden. Pratique, mais attention à la dépendance de restauration : il faut pouvoir rouvrir le coffre sans le cluster.
-
-*Le jour où je perds l'accès aux deux en même temps, je retourne aux post-it sous le clavier.*

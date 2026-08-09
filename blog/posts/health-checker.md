@@ -6,9 +6,9 @@ date: 2026-07-04
 tags: [python, asyncio, fastapi, docker]
 ---
 
-Un *health check* est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif : savoir qu'un service est tombé avant que les utilisateurs ne s'en chargent à notre place.
+Un *health check* est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif, savoir qu'un service est tombé avant que les utilisateurs ne s'en chargent à notre place.
 
-On construit un petit service en Python qui :
+On construit un petit service en Python. Il fait quatre choses.
 
 1. Poll une liste d'URLs configurables à intervalle régulier
 2. Le fait **en parallèle** pour qu'une URL lente n'en bloque pas d'autres
@@ -28,7 +28,7 @@ Le tout packagé dans un container Docker durci, prêt à tourner.
 
 ## L'architecture en un coup d'œil
 
-Avant de coder, il faut séparer les responsabilités. Quatre modules, chacun avec un seul rôle :
+Avant de coder, il faut séparer les responsabilités. Quatre modules, chacun avec un seul rôle.
 
 ```
 python/
@@ -39,11 +39,11 @@ python/
     └── api.py      # l'API FastAPI + le lifespan
 ```
 
-L'idée directrice : le **worker** écrit dans le **store**, l'**API** lit dans le **store**. Les deux ne se parlent jamais directement, ils passent par la donnée. Découplé, testable, rien à débattre.
+L'idée directrice, le **worker** écrit dans le **store**, l'**API** lit dans le **store**. Les deux ne se parlent jamais directement, ils passent par la donnée. Découplé, testable, rien à débattre.
 
 ---
 
-## Étape 1 : Charger la configuration
+## Étape 1, charger la configuration
 
 On veut pouvoir éditer la liste des URLs sans retoucher au code. Un simple YAML fait l'affaire.
 
@@ -57,7 +57,7 @@ pollInterval: 60   # secondes entre chaque poll
 timeout: 10        # secondes avant de marquer TIMEOUT
 ```
 
-Et le loader qui va avec :
+Et le loader qui va avec.
 
 ```python
 class Config:
@@ -73,11 +73,11 @@ class Config:
         self.timeout = data.get("timeout", 10)
 ```
 
-Deux détails qui comptent :
+Deux détails qui comptent.
 
-`yaml.safe_load(stream) or {}` : si le fichier est vide, `safe_load` renvoie `None`. Le `or {}` évite un crash sur un `.get()` derrière.
+`yaml.safe_load(stream) or {}`, si le fichier est vide, `safe_load` renvoie `None`. Le `or {}` évite un crash sur un `.get()` derrière.
 
-`_validate_urls` : on ne fait pas confiance au YAML. On filtre tout ce qui n'est pas une URL http(s) valide, et on log un warning plutôt que de planter.
+`_validate_urls` ne fait pas confiance au YAML. On filtre tout ce qui n'est pas une URL http(s) valide, et on log un warning plutôt que de planter.
 
 ```python
 @staticmethod
@@ -99,7 +99,7 @@ def _validate_urls(urls: list) -> list[str]:
 
 ---
 
-## Étape 2 : Le store en mémoire
+## Étape 2, le store en mémoire
 
 Pas de base de données ici, on reste simple. Un `dict` d'URLs vers une `deque` bornée.
 
@@ -126,13 +126,13 @@ def get_result() -> dict:
     return {url: list(results) for url, results in store.items()}
 ```
 
-`deque(maxlen=100)` : la structure parfaite ici. Quand elle atteint 100 éléments, elle **évince automatiquement le plus ancien**. Pas de logique de nettoyage à écrire, on garde toujours les 100 derniers checks par URL, et la stdlib fait tout le travail.
+`deque(maxlen=100)`, la structure parfaite ici. Quand elle atteint 100 éléments, elle **évince automatiquement le plus ancien**. Pas de logique de nettoyage à écrire, on garde toujours les 100 derniers checks par URL, et la stdlib fait tout le travail.
 
-> Trade-off assumé : tout est perdu au redémarrage, et ça ne scale pas sur plusieurs instances. Pour de la prod, on brancherait une TimeSeries DB (InfluxDB) et un dashboard Grafana. Pour un service qui tient dans un seul fichier, c'est overkill. Chaque chose en son temps.
+> Trade-off assumé, tout est perdu au redémarrage, et ça ne scale pas sur plusieurs instances. Pour de la prod, on brancherait une TimeSeries DB (InfluxDB) et un dashboard Grafana. Pour un service qui tient dans un seul fichier, c'est overkill. Chaque chose en son temps.
 
 ---
 
-## Étape 3 : Le worker async
+## Étape 3, le worker async
 
 C'est le cœur du service. On veut poll toutes les URLs **en parallèle**, sinon une URL qui timeout à 10s ralentirait toutes les autres.
 
@@ -156,13 +156,13 @@ async def check_urls(client: httpx.AsyncClient, config: Config, url: str):
     add_result(url, current_time, elapsed_ms, status_code)
 ```
 
-Deux points importants ici :
+Deux points importants ici.
 
-`client.stream("GET", ...)` : on **ne télécharge pas le body**. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP compte, rapatrier 2 Mo de HTML pour vérifier un `200`, non merci.
+`client.stream("GET", ...)` ne télécharge pas le body. On ouvre le stream, on lit le status code, on ferme. Pour un health check, seul le code HTTP compte, rapatrier 2 Mo de HTML pour vérifier un `200`, non merci.
 
-`time.perf_counter()` : c'est l'horloge monotone, faite pour mesurer des durées. On ne la mélange pas avec `datetime.now()` (qui elle sert au timestamp affiché).
+`time.perf_counter()` est l'horloge monotone, faite pour mesurer des durées. On ne la mélange pas avec `datetime.now()` (qui elle sert au timestamp affiché).
 
-Et la boucle qui orchestre tout ça :
+Et la boucle qui orchestre tout ça.
 
 ```python
 async def poll_urls(config: Config):
@@ -177,11 +177,11 @@ async def poll_urls(config: Config):
             await asyncio.sleep(max(0, config.polling_interval - elapsed))
 ```
 
-`asyncio.gather(...)` : lance tous les checks d'un coup et attend qu'ils finissent tous. C'est là que la parallélisation opère.
+`asyncio.gather(...)` lance tous les checks d'un coup et attend qu'ils finissent tous. C'est là que la parallélisation opère.
 
-`httpx.AsyncClient()` partagé : un seul client pour tous les checks. Il réutilise le pool de connexions au lieu d'en ouvrir une nouvelle à chaque appel.
+`httpx.AsyncClient()` partagé, un seul client pour tous les checks. Il réutilise le pool de connexions au lieu d'en ouvrir une nouvelle à chaque appel.
 
-Le calcul du sleep mérite qu'on s'y arrête :
+Le calcul du sleep mérite qu'on s'y arrête.
 
 ```python
 elapsed = ... - cycle_start
@@ -192,7 +192,7 @@ Un `sleep(60)` bête et méchant donnerait un intervalle réel de `60s + temps d
 
 ---
 
-## Étape 4 : L'API et le cycle de vie
+## Étape 4, l'API et le cycle de vie
 
 FastAPI expose le store, et surtout démarre le worker en tâche de fond via le `lifespan`.
 
@@ -220,11 +220,11 @@ async def get_status():
     return get_result()
 ```
 
-Le `lifespan` est le bon endroit pour lancer un worker : la tâche démarre **avec** l'app, dans la même boucle asyncio, un seul container suffit. Pas de process séparé à gérer, pas de supervisord.
+Le `lifespan` est le bon endroit pour lancer un worker, la tâche démarre **avec** l'app, dans la même boucle asyncio, un seul container suffit. Pas de process séparé à gérer, pas de supervisord.
 
-Le `add_done_callback` sert de garde-fou : si le worker crash sans qu'on l'ait annulé, on log l'erreur au lieu de la voir disparaître silencieusement dans le néant d'une tâche asyncio morte.
+Le `add_done_callback` sert de garde-fou, si le worker crash sans qu'on l'ait annulé, on log l'erreur au lieu de la voir disparaître silencieusement dans le néant d'une tâche asyncio morte.
 
-Un appel `GET /status` renvoie :
+Un appel `GET /status` renvoie.
 
 ```json
 {
@@ -286,7 +286,7 @@ EXPOSE 8080
 CMD ["python", "api.py"]
 ```
 
-Et le `docker-compose.yml` qui le durcit encore :
+Et le `docker-compose.yml` qui le durcit encore.
 
 ```yaml
 services:
@@ -306,16 +306,16 @@ services:
       - /tmp
 ```
 
-Le `config.yaml` est monté en volume read-only : on édite la liste des URLs **sans rebuild l'image**. Et `read_only`, `cap_drop: ALL`, `no-new-privileges` réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le `/tmp` en tmpfs. Même compromis, il n'a nulle part où poser quoi que ce soit.
+Le `config.yaml` est monté en volume read-only, on édite la liste des URLs **sans rebuild l'image**. Et `read_only`, `cap_drop: ALL`, `no-new-privileges` réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le `/tmp` en tmpfs. Même compromis, il n'a nulle part où poser quoi que ce soit.
 
 ---
 
 ## Aller plus loin
 
-- **Persistance** : brancher une TimeSeries DB (InfluxDB, Prometheus) pour garder l'historique au-delà du redémarrage et le visualiser dans Grafana.
-- **Auth sur `/status`** : acceptable en interne, mais en prod on protégerait l'endpoint avec une API key ou un token JWT.
-- **Config à chaud** : aujourd'hui la liste des URLs est lue une seule fois au démarrage. On pourrait la recharger sans restart.
-- **Alerting** : déclencher une notification (Slack, mail) quand une URL enchaîne plusieurs échecs.
+- **Persistance.** Brancher une TimeSeries DB (InfluxDB, Prometheus) pour garder l'historique au-delà du redémarrage et le visualiser dans Grafana.
+- **Auth sur `/status`.** Acceptable en interne, mais en prod on protégerait l'endpoint avec une API key ou un token JWT.
+- **Config à chaud.** Aujourd'hui la liste des URLs est lue une seule fois au démarrage. On pourrait la recharger sans restart.
+- **Alerting.** Déclencher une notification (Slack, mail) quand une URL enchaîne plusieurs échecs.
 
 Chacun de ces points mérite son propre article.
 

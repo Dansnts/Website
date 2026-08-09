@@ -6,9 +6,9 @@ date: 2025-05-03
 tags: [devops, ci-cd, github-actions]
 ---
 
-Une CI/CD (Intégration Continue / Déploiement Continu) est un pipeline automatique qui se déclenche à chaque push. Le but : plus jamais déployer à la main, et un flux qui trace tout le processus.
+Une CI/CD (Intégration Continue / Déploiement Continu) est un pipeline automatique qui se déclenche à chaque push. Le but, plus jamais déployer à la main, et un flux qui trace tout le processus.
 
-On construit un pipeline *GitHub Actions* pour une application Node.js qui :
+On construit un pipeline *GitHub Actions* pour une application Node.js. Il fait quatre choses.
 
 1. Lance les tests automatiquement
 2. Build une image Docker
@@ -37,13 +37,13 @@ ton-projet/
 
 Chaque workflow contient des **jobs**, chaque job contient des **steps**.
 
-En gros : un container qui exécute des tâches en cascade. Ce qui sort en stdout détermine si le job passe ou casse.
+En gros, un container qui exécute des tâches en cascade. Ce qui sort en stdout détermine si le job passe ou casse.
 
 ---
 
-## Étape 1 : Lancer les tests à chaque push
+## Étape 1, lancer les tests à chaque push
 
-Le fichier ci.yml :
+Le fichier ci.yml.
 ```yaml
 name: CI/CD
 
@@ -68,17 +68,17 @@ jobs:
       - run: npm test
 ```
 
-`on: push: branches: [main]` : déclenche uniquement sur les pushs vers `main`.
+`on: push: branches: [main]` déclenche uniquement sur les pushs vers `main`.
 
-`actions/checkout@v4` : clone la branche dans le runner.
+`actions/checkout@v4` clone la branche dans le runner.
 
-`npm ci` : installe les dépendances depuis le lock file. Plus strict que `npm install`, il échoue si le lock file et le `package.json` ne correspondent pas.
+`npm ci` installe les dépendances depuis le lock file. Plus strict que `npm install`, il échoue si le lock file et le `package.json` ne correspondent pas.
 
 > Chaque push vers main lance les tests. Un test qui échoue, le job passe rouge, notification envoyée.
 
 ---
 
-## Étape 2 : Builder une image Docker
+## Étape 2, builder une image Docker
 
 On ajoute un job `build` qui dépend de `test` grâce à l'argument `needs`.
 
@@ -104,13 +104,13 @@ On ajoute un job `build` qui dépend de `test` grâce à l'argument `needs`.
           tags: ghcr.io/${{ github.repository }}:latest
 ```
 
-`ghcr.io` : registre Docker intégré à GitHub. Pas besoin de compte Docker Hub. `GITHUB_TOKEN` est disponible automatiquement dans chaque workflow, rien à configurer.
+`ghcr.io` est le registre Docker intégré à GitHub. Pas besoin de compte Docker Hub. `GITHUB_TOKEN` est disponible automatiquement dans chaque workflow, rien à configurer.
 
 > Le `Dockerfile` à la racine du projet est utilisé par défaut. Si le tien vit ailleurs, `context` et `file` existent pour ça.
 
 ---
 
-## Étape 3 : Déployer sur le serveur
+## Étape 3, déployer sur le serveur
 
 ```yaml
   deploy:
@@ -134,7 +134,7 @@ On ajoute un job `build` qui dépend de `test` grâce à l'argument `needs`.
 
 Le serveur pull la nouvelle image et relance le container.
 
-`|| true` sur `stop` et `rm` : évite que le job échoue si le container n'existe pas encore, typiquement au tout premier déploiement.
+`|| true` sur `stop` et `rm` évite que le job échoue si le container n'existe pas encore, typiquement au tout premier déploiement.
 
 ---
 
@@ -159,9 +159,7 @@ Une étape échoue, les suivantes ne tournent pas. Simple.
 
 ## Aller plus loin
 
-- **Environments** : GitHub permet de définir des environnements (`staging`, `production`) avec approbation manuelle avant la prod.
-- **Matrix builds** : tester plusieurs versions de Node/Python en parallèle avec `strategy: matrix`.
-- **Cache** : `actions/cache` pour mettre en cache `node_modules` et accélérer les builds.
-- **Gestion des secrets** : un sujet entier à lui tout seul, ça mérite son propre article.
-
-*Le jour où je remplace le SSH bricolé par un vrai GitOps (ArgoCD), je supprime ce `deploy` job avec un plaisir non dissimulé.*
+- **Environments.** GitHub permet de définir des environnements (`staging`, `production`) avec approbation manuelle avant la prod.
+- **Matrix builds.** Tester plusieurs versions de Node/Python en parallèle avec `strategy: matrix`.
+- **Cache.** `actions/cache` pour mettre en cache `node_modules` et accélérer les builds.
+- **Gestion des secrets.** Un sujet entier à lui tout seul, ça mérite son propre article.

@@ -165,5 +165,3 @@ Le récap des changements v14 → v15 :
 - **Le DDNS** : l'IP publique résidentielle change, un CronJob qui met à jour l'enregistrement DNS est indispensable (sujet connexe à creuser).
 - **Le double NAT** : cet article suppose la segmentation MikroTik déjà en place, voir l'article sur l'isolation du homelab derrière le MikroTik.
 - **Clients mobiles** : wg-easy génère des QR codes pour configurer WireGuard sur téléphone en un scan.
-
-*Deux niveaux de NAT, trois capabilities kernel et une migration v14→v15 plus tard, le VPN tient. Jusqu'à la prochaine réécriture majeure.*

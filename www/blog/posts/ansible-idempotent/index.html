@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -141,9 +30,9 @@
     </header>
 
     <div class="blog-body">
-      <p>Terraform crée la VM, Packer fournit le template. Mais une fois la machine debout, il reste à la <strong>configurer</strong> : installer des outils, poser un DNS, déployer un exporter de métriques. On pourrait s'y connecter en SSH et taper les commandes. Sauf qu'au bout de trois machines, on ne sait plus laquelle a reçu quoi.</p>
-<p>Ansible résout ça avec deux idées : la configuration est <strong>décrite</strong> (pas exécutée à la main) et elle est <strong>idempotente</strong>, la rejouer dix fois donne toujours le même résultat, sans rien casser.</p>
-<p>Dans ce post, on configure deux hôtes du homelab (Proxmox et un node K3s) avec Ansible. On va voir :</p>
+      <p>Terraform crée la VM, Packer fournit le template. Mais une fois la machine debout, il reste à la <strong>configurer</strong>, installer des outils, poser un DNS, déployer un exporter de métriques. On pourrait s'y connecter en SSH et taper les commandes. Sauf qu'au bout de trois machines, on ne sait plus laquelle a reçu quoi.</p>
+<p>Ansible résout ça avec deux idées, la configuration est <strong>décrite</strong> (pas exécutée à la main) et elle est <strong>idempotente</strong>, la rejouer dix fois donne toujours le même résultat, sans rien casser.</p>
+<p>Dans ce post, on configure deux hôtes du homelab (Proxmox et un node K3s) avec Ansible. On va voir.</p>
 <ol>
 <li>L'inventaire et les playbooks</li>
 <li>Découper la config en <strong>rôles</strong> réutilisables</li>
@@ -157,7 +46,7 @@
 <li>Des VMs déjà provisionnées (voir les articles Terraform / Packer)</li>
 </ul>
 <hr>
-<h2>L'inventaire : qui sont mes machines</h2>
+<h2>L'inventaire, qui sont mes machines</h2>
 <p>Tout part de l'inventaire, la liste des machines et comment s'y connecter.</p>
 <pre><code class="language-yaml">all:
   children:
@@ -173,11 +62,11 @@
           ansible_user: dani
           ansible_become: true
 </code></pre>
-<p>Deux groupes : <code>proxmox</code> et <code>k3s</code>. Chacun avec sa façon de se connecter : Proxmox en <code>root</code>, le node K3s en <code>dani</code> avec <code>ansible_become: true</code> (Ansible fera <code>sudo</code> pour les tâches qui le demandent).</p>
+<p>Deux groupes, <code>proxmox</code> et <code>k3s</code>. Chacun avec sa façon de se connecter, Proxmox en <code>root</code>, le node K3s en <code>dani</code> avec <code>ansible_become: true</code> (Ansible fera <code>sudo</code> pour les tâches qui le demandent).</p>
 <p>Regrouper les machines permet de leur appliquer des configs différentes. C'est ce que font les playbooks.</p>
 <hr>
-<h2>Les playbooks : quoi appliquer à qui</h2>
-<p>Un playbook associe un groupe de machines à des rôles. C'est volontairement minimaliste :</p>
+<h2>Les playbooks, quoi appliquer à qui</h2>
+<p>Un playbook associe un groupe de machines à des rôles. C'est volontairement minimaliste.</p>
 <pre><code class="language-yaml"># proxmox.yml
 - name: Configure Proxmox host
   hosts: proxmox
@@ -196,10 +85,10 @@
 ansible-playbook -i ansible/inventory.yml ansible/k3s.yml
 </code></pre>
 <hr>
-<h2>Les rôles : des briques réutilisables</h2>
-<p>Un rôle, c'est un dossier avec une structure conventionnelle : <code>tasks/</code> (quoi faire), <code>defaults/</code> (variables par défaut), <code>handlers/</code> (actions déclenchées), <code>templates/</code> (fichiers à générer). Ansible connaît ces noms, pas besoin de les câbler.</p>
+<h2>Les rôles, des briques réutilisables</h2>
+<p>Un rôle, c'est un dossier avec une structure conventionnelle, <code>tasks/</code> (quoi faire), <code>defaults/</code> (variables par défaut), <code>handlers/</code> (actions déclenchées), <code>templates/</code> (fichiers à générer). Ansible connaît ces noms, pas besoin de les câbler.</p>
 <h3>Le rôle <code>common</code></h3>
-<p>Les paquets et le DNS que toute machine doit avoir :</p>
+<p>Les paquets et le DNS que toute machine doit avoir.</p>
 <pre><code class="language-yaml">- name: Install common packages
   apt:
     name:
@@ -221,23 +110,23 @@ ansible-playbook -i ansible/inventory.yml ansible/k3s.yml
     group: root
     mode: &quot;0644&quot;
 </code></pre>
-<p><code>state: present</code> : c'est le mot-clé de l'idempotence. On ne dit pas « installe » (une action), on dit « je veux que ce paquet <strong>soit</strong> présent » (un état). Si le paquet est déjà là, Ansible ne fait rien. Sinon, il l'installe.</p>
+<p><code>state: present</code> est le mot-clé de l'idempotence. On ne dit pas « installe » (une action), on dit « je veux que ce paquet <strong>soit</strong> présent » (un état). Si le paquet est déjà là, Ansible ne fait rien. Sinon, il l'installe.</p>
 <hr>
-<h2>L'idempotence concrètement : le <code>creates</code></h2>
-<p>Regardons cette tâche du rôle <code>common</code> :</p>
+<h2>L'idempotence concrètement, le <code>creates</code></h2>
+<p>Regardons cette tâche du rôle <code>common</code>.</p>
 <pre><code class="language-yaml">- name: Run sensors-detect
   command: sensors-detect --auto
   args:
     creates: /etc/modules-load.d/lm_sensors.conf
 </code></pre>
-<p><code>sensors-detect</code> est une <strong>commande</strong>, Ansible ne sait pas si elle a déjà tourné. Sans garde, elle se relancerait à chaque exécution du playbook. Le <code>creates</code> dit : « si ce fichier existe déjà, la commande a déjà fait son travail, ne la relance pas ».</p>
+<p><code>sensors-detect</code> est une <strong>commande</strong>, Ansible ne sait pas si elle a déjà tourné. Sans garde, elle se relancerait à chaque exécution du playbook. Le <code>creates</code> dit « si ce fichier existe déjà, la commande a déjà fait son travail, ne la relance pas ».</p>
 <p>C'est ça, rendre une commande idempotente. La majorité des modules Ansible (<code>apt</code>, <code>copy</code>, <code>template</code>, <code>systemd</code>) sont idempotents par nature. Pour <code>command</code> et <code>shell</code>, qui ne le sont pas, on ajoute une garde comme <code>creates</code>.</p>
 <blockquote>
-<p>La règle mentale : après un premier <code>ansible-playbook</code>, un second doit afficher <strong><code>changed=0</code></strong>. Si quelque chose change à chaque run, c'est que cette tâche n'est pas idempotente, et c'est un bug à corriger.</p>
+<p>La règle mentale, après un premier <code>ansible-playbook</code>, un second doit afficher <strong><code>changed=0</code></strong>. Si quelque chose change à chaque run, c'est que cette tâche n'est pas idempotente, et c'est un bug à corriger.</p>
 </blockquote>
 <hr>
-<h2>Les handlers : n'agir que si ça change</h2>
-<p>Le rôle <code>node_exporter</code> illustre un autre pilier : les <em>handlers</em>, des actions qui ne se déclenchent que si une tâche a réellement changé quelque chose.</p>
+<h2>Les handlers, n'agir que si ça change</h2>
+<p>Le rôle <code>node_exporter</code> illustre un autre pilier, les <em>handlers</em>, des actions qui ne se déclenchent que si une tâche a réellement changé quelque chose.</p>
 <pre><code class="language-yaml"># tasks/main.yml (extrait)
 - name: Deploy systemd service
   template:
@@ -253,7 +142,7 @@ ansible-playbook -i ansible/inventory.yml ansible/k3s.yml
     daemon_reload: yes
 </code></pre>
 <p>Le <code>notify: restart node_exporter</code> ne redémarre le service <strong>que si</strong> le template a effectivement modifié le fichier. Si la config n'a pas bougé, pas de restart inutile. On ne casse pas un service qui tourne bien pour rien.</p>
-<p>Le service lui-même est généré depuis un template Jinja2, avec les collectors définis en variable :</p>
+<p>Le service lui-même est généré depuis un template Jinja2, avec les collectors définis en variable.</p>
 <pre><code class="language-yaml"># defaults/main.yml
 node_exporter_version: &quot;1.8.2&quot;
 node_exporter_collectors:
@@ -267,9 +156,9 @@ ExecStart=/usr/local/bin/node_exporter
 </code></pre>
 <p>Changer la liste des collectors dans <code>defaults/</code>, rejouer le playbook, et le service est mis à jour et redémarré, uniquement parce que le fichier a changé.</p>
 <hr>
-<h2>Netplan fixe vs cloud-init : reprendre la main sur le réseau</h2>
-<p>Le rôle <code>k3s_node</code> règle un problème précis. Souvenons-nous : cloud-init a configuré le réseau au premier boot (via Terraform). Mais <strong>cloud-init peut re-toucher au réseau</strong> à un reboot ultérieur, et on ne veut pas de ça sur un node K8s dont l'IP doit être gravée dans le marbre.</p>
-<p>La solution en deux temps : poser un netplan fixe, <strong>et</strong> dire à cloud-init de ne plus s'en mêler.</p>
+<h2>Netplan fixe contre cloud-init, reprendre la main sur le réseau</h2>
+<p>Le rôle <code>k3s_node</code> règle un problème précis. Souvenons-nous, cloud-init a configuré le réseau au premier boot (via Terraform). Mais <strong>cloud-init peut re-toucher au réseau</strong> à un reboot ultérieur, et on ne veut pas de ça sur un node K8s dont l'IP doit être gravée dans le marbre.</p>
+<p>La solution en deux temps, poser un netplan fixe, <strong>et</strong> dire à cloud-init de ne plus s'en mêler.</p>
 <pre><code class="language-yaml">- name: Deploy netplan config
   template:
     src: netplan.j2
@@ -282,7 +171,7 @@ ExecStart=/usr/local/bin/node_exporter
     dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
     content: &quot;network: {config: disabled}\n&quot;
 </code></pre>
-<p>La première tâche écrit un netplan qui épingle l'IP à une <strong>adresse MAC</strong> précise :</p>
+<p>La première tâche écrit un netplan qui épingle l'IP à une <strong>adresse MAC</strong> précise.</p>
 <pre><code class="language-jinja">network:
   version: 2
   ethernets:
@@ -301,14 +190,14 @@ ExecStart=/usr/local/bin/node_exporter
 </code></pre>
 <p>Le <code>match: macaddress</code> garantit que la config s'applique à la bonne carte réseau, quel que soit son nom d'interface. La seconde tâche (<code>network: {config: disabled}</code>) empêche cloud-init de régénérer un netplan concurrent au prochain boot.</p>
 <blockquote>
-<p>Le piège classique : sans désactiver cloud-init, on pose son netplan, tout marche, puis un reboot plus tard cloud-init réécrit par-dessus et l'IP saute. On coupe les deux sources de vérité pour n'en garder qu'une.</p>
+<p>Le piège classique, sans désactiver cloud-init, on pose son netplan, tout marche, puis un reboot plus tard cloud-init réécrit par-dessus et l'IP saute. On coupe les deux sources de vérité pour n'en garder qu'une.</p>
 </blockquote>
-<p>Une variable importante à surveiller : le DNS du node.</p>
+<p>Une variable importante à surveiller, le DNS du node.</p>
 <pre><code class="language-yaml"># defaults/main.yml
 k3s_dns: &quot;10.0.0.101&quot;   # Pi-hole
 </code></pre>
 <blockquote>
-<p><strong>Attention</strong> : <code>10.0.0.101</code> c'est Pi-hole, qui tourne <em>dans</em> le cluster K3s. Mettre Pi-hole comme DNS du node crée une dépendance circulaire au boot (le node a besoin de DNS pour démarrer K8s, mais le DNS est dans K8s). En pratique, le node doit pointer sur un DNS externe (<code>1.1.1.1</code>). À garder en tête selon l'ordre de démarrage.</p>
+<p><strong>Attention</strong>, <code>10.0.0.101</code> c'est Pi-hole, qui tourne <em>dans</em> le cluster K3s. Mettre Pi-hole comme DNS du node crée une dépendance circulaire au boot (le node a besoin de DNS pour démarrer K8s, mais le DNS est dans K8s). En pratique, le node doit pointer sur un DNS externe (<code>1.1.1.1</code>). À garder en tête selon l'ordre de démarrage.</p>
 </blockquote>
 <hr>
 <h2>Le flux Ansible</h2>
@@ -329,12 +218,11 @@ rejouable à l'infini → changed=0 au 2e run
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong><code>ansible-lint</code></strong> : passe les rôles au linter, il attrape les tâches non idempotentes et les mauvaises pratiques avant qu'elles ne mordent.</li>
-<li><strong>Ansible Vault</strong> : pour chiffrer les secrets (mots de passe, tokens) directement dans le repo, au lieu de les garder à part.</li>
-<li><strong><code>--check</code> (dry-run)</strong> : <code>ansible-playbook --check</code> montre ce qui <em>changerait</em> sans rien appliquer. Idéal pour vérifier avant de lancer pour de vrai.</li>
-<li><strong>Galaxy</strong> : beaucoup de rôles courants (node_exporter inclus) existent déjà sur Ansible Galaxy. Réinventer la roue est un bon exercice, mais en prod on réutilise.</li>
+<li><strong><code>ansible-lint</code>.</strong> Passe les rôles au linter, il attrape les tâches non idempotentes et les mauvaises pratiques avant qu'elles ne mordent.</li>
+<li><strong>Ansible Vault.</strong> Pour chiffrer les secrets (mots de passe, tokens) directement dans le repo, au lieu de les garder à part.</li>
+<li><strong><code>--check</code> (dry-run).</strong> <code>ansible-playbook --check</code> montre ce qui <em>changerait</em> sans rien appliquer. Idéal pour vérifier avant de lancer pour de vrai.</li>
+<li><strong>Galaxy.</strong> Beaucoup de rôles courants (node_exporter inclus) existent déjà sur Ansible Galaxy. Réinventer la roue est un bon exercice, mais en prod on réutilise.</li>
 </ul>
-<p><em>Le vrai test de confiance : rejouer le playbook un dimanche soir, sans lire le diff avant.</em></p>
 
     </div>
   </article>

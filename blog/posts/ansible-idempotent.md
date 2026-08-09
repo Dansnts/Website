@@ -6,11 +6,11 @@ date: 2025-07-09
 tags: [homelab, ansible, iac]
 ---
 
-Terraform crée la VM, Packer fournit le template. Mais une fois la machine debout, il reste à la **configurer** : installer des outils, poser un DNS, déployer un exporter de métriques. On pourrait s'y connecter en SSH et taper les commandes. Sauf qu'au bout de trois machines, on ne sait plus laquelle a reçu quoi.
+Terraform crée la VM, Packer fournit le template. Mais une fois la machine debout, il reste à la **configurer**, installer des outils, poser un DNS, déployer un exporter de métriques. On pourrait s'y connecter en SSH et taper les commandes. Sauf qu'au bout de trois machines, on ne sait plus laquelle a reçu quoi.
 
-Ansible résout ça avec deux idées : la configuration est **décrite** (pas exécutée à la main) et elle est **idempotente**, la rejouer dix fois donne toujours le même résultat, sans rien casser.
+Ansible résout ça avec deux idées, la configuration est **décrite** (pas exécutée à la main) et elle est **idempotente**, la rejouer dix fois donne toujours le même résultat, sans rien casser.
 
-Dans ce post, on configure deux hôtes du homelab (Proxmox et un node K3s) avec Ansible. On va voir :
+Dans ce post, on configure deux hôtes du homelab (Proxmox et un node K3s) avec Ansible. On va voir.
 
 1. L'inventaire et les playbooks
 2. Découper la config en **rôles** réutilisables
@@ -25,7 +25,7 @@ Dans ce post, on configure deux hôtes du homelab (Proxmox et un node K3s) avec 
 
 ---
 
-## L'inventaire : qui sont mes machines
+## L'inventaire, qui sont mes machines
 
 Tout part de l'inventaire, la liste des machines et comment s'y connecter.
 
@@ -45,15 +45,15 @@ all:
           ansible_become: true
 ```
 
-Deux groupes : `proxmox` et `k3s`. Chacun avec sa façon de se connecter : Proxmox en `root`, le node K3s en `dani` avec `ansible_become: true` (Ansible fera `sudo` pour les tâches qui le demandent).
+Deux groupes, `proxmox` et `k3s`. Chacun avec sa façon de se connecter, Proxmox en `root`, le node K3s en `dani` avec `ansible_become: true` (Ansible fera `sudo` pour les tâches qui le demandent).
 
 Regrouper les machines permet de leur appliquer des configs différentes. C'est ce que font les playbooks.
 
 ---
 
-## Les playbooks : quoi appliquer à qui
+## Les playbooks, quoi appliquer à qui
 
-Un playbook associe un groupe de machines à des rôles. C'est volontairement minimaliste :
+Un playbook associe un groupe de machines à des rôles. C'est volontairement minimaliste.
 
 ```yaml
 # proxmox.yml
@@ -81,13 +81,13 @@ ansible-playbook -i ansible/inventory.yml ansible/k3s.yml
 
 ---
 
-## Les rôles : des briques réutilisables
+## Les rôles, des briques réutilisables
 
-Un rôle, c'est un dossier avec une structure conventionnelle : `tasks/` (quoi faire), `defaults/` (variables par défaut), `handlers/` (actions déclenchées), `templates/` (fichiers à générer). Ansible connaît ces noms, pas besoin de les câbler.
+Un rôle, c'est un dossier avec une structure conventionnelle, `tasks/` (quoi faire), `defaults/` (variables par défaut), `handlers/` (actions déclenchées), `templates/` (fichiers à générer). Ansible connaît ces noms, pas besoin de les câbler.
 
 ### Le rôle `common`
 
-Les paquets et le DNS que toute machine doit avoir :
+Les paquets et le DNS que toute machine doit avoir.
 
 ```yaml
 - name: Install common packages
@@ -112,13 +112,13 @@ Les paquets et le DNS que toute machine doit avoir :
     mode: "0644"
 ```
 
-`state: present` : c'est le mot-clé de l'idempotence. On ne dit pas « installe » (une action), on dit « je veux que ce paquet **soit** présent » (un état). Si le paquet est déjà là, Ansible ne fait rien. Sinon, il l'installe.
+`state: present` est le mot-clé de l'idempotence. On ne dit pas « installe » (une action), on dit « je veux que ce paquet **soit** présent » (un état). Si le paquet est déjà là, Ansible ne fait rien. Sinon, il l'installe.
 
 ---
 
-## L'idempotence concrètement : le `creates`
+## L'idempotence concrètement, le `creates`
 
-Regardons cette tâche du rôle `common` :
+Regardons cette tâche du rôle `common`.
 
 ```yaml
 - name: Run sensors-detect
@@ -127,17 +127,17 @@ Regardons cette tâche du rôle `common` :
     creates: /etc/modules-load.d/lm_sensors.conf
 ```
 
-`sensors-detect` est une **commande**, Ansible ne sait pas si elle a déjà tourné. Sans garde, elle se relancerait à chaque exécution du playbook. Le `creates` dit : « si ce fichier existe déjà, la commande a déjà fait son travail, ne la relance pas ».
+`sensors-detect` est une **commande**, Ansible ne sait pas si elle a déjà tourné. Sans garde, elle se relancerait à chaque exécution du playbook. Le `creates` dit « si ce fichier existe déjà, la commande a déjà fait son travail, ne la relance pas ».
 
 C'est ça, rendre une commande idempotente. La majorité des modules Ansible (`apt`, `copy`, `template`, `systemd`) sont idempotents par nature. Pour `command` et `shell`, qui ne le sont pas, on ajoute une garde comme `creates`.
 
-> La règle mentale : après un premier `ansible-playbook`, un second doit afficher **`changed=0`**. Si quelque chose change à chaque run, c'est que cette tâche n'est pas idempotente, et c'est un bug à corriger.
+> La règle mentale, après un premier `ansible-playbook`, un second doit afficher **`changed=0`**. Si quelque chose change à chaque run, c'est que cette tâche n'est pas idempotente, et c'est un bug à corriger.
 
 ---
 
-## Les handlers : n'agir que si ça change
+## Les handlers, n'agir que si ça change
 
-Le rôle `node_exporter` illustre un autre pilier : les *handlers*, des actions qui ne se déclenchent que si une tâche a réellement changé quelque chose.
+Le rôle `node_exporter` illustre un autre pilier, les *handlers*, des actions qui ne se déclenchent que si une tâche a réellement changé quelque chose.
 
 ```yaml
 # tasks/main.yml (extrait)
@@ -159,7 +159,7 @@ Le rôle `node_exporter` illustre un autre pilier : les *handlers*, des actions 
 
 Le `notify: restart node_exporter` ne redémarre le service **que si** le template a effectivement modifié le fichier. Si la config n'a pas bougé, pas de restart inutile. On ne casse pas un service qui tourne bien pour rien.
 
-Le service lui-même est généré depuis un template Jinja2, avec les collectors définis en variable :
+Le service lui-même est généré depuis un template Jinja2, avec les collectors définis en variable.
 
 ```yaml
 # defaults/main.yml
@@ -180,11 +180,11 @@ Changer la liste des collectors dans `defaults/`, rejouer le playbook, et le ser
 
 ---
 
-## Netplan fixe vs cloud-init : reprendre la main sur le réseau
+## Netplan fixe contre cloud-init, reprendre la main sur le réseau
 
-Le rôle `k3s_node` règle un problème précis. Souvenons-nous : cloud-init a configuré le réseau au premier boot (via Terraform). Mais **cloud-init peut re-toucher au réseau** à un reboot ultérieur, et on ne veut pas de ça sur un node K8s dont l'IP doit être gravée dans le marbre.
+Le rôle `k3s_node` règle un problème précis. Souvenons-nous, cloud-init a configuré le réseau au premier boot (via Terraform). Mais **cloud-init peut re-toucher au réseau** à un reboot ultérieur, et on ne veut pas de ça sur un node K8s dont l'IP doit être gravée dans le marbre.
 
-La solution en deux temps : poser un netplan fixe, **et** dire à cloud-init de ne plus s'en mêler.
+La solution en deux temps, poser un netplan fixe, **et** dire à cloud-init de ne plus s'en mêler.
 
 ```yaml
 - name: Deploy netplan config
@@ -200,7 +200,7 @@ La solution en deux temps : poser un netplan fixe, **et** dire à cloud-init de 
     content: "network: {config: disabled}\n"
 ```
 
-La première tâche écrit un netplan qui épingle l'IP à une **adresse MAC** précise :
+La première tâche écrit un netplan qui épingle l'IP à une **adresse MAC** précise.
 
 ```jinja
 network:
@@ -222,16 +222,16 @@ network:
 
 Le `match: macaddress` garantit que la config s'applique à la bonne carte réseau, quel que soit son nom d'interface. La seconde tâche (`network: {config: disabled}`) empêche cloud-init de régénérer un netplan concurrent au prochain boot.
 
-> Le piège classique : sans désactiver cloud-init, on pose son netplan, tout marche, puis un reboot plus tard cloud-init réécrit par-dessus et l'IP saute. On coupe les deux sources de vérité pour n'en garder qu'une.
+> Le piège classique, sans désactiver cloud-init, on pose son netplan, tout marche, puis un reboot plus tard cloud-init réécrit par-dessus et l'IP saute. On coupe les deux sources de vérité pour n'en garder qu'une.
 
-Une variable importante à surveiller : le DNS du node.
+Une variable importante à surveiller, le DNS du node.
 
 ```yaml
 # defaults/main.yml
 k3s_dns: "10.0.0.101"   # Pi-hole
 ```
 
-> **Attention** : `10.0.0.101` c'est Pi-hole, qui tourne *dans* le cluster K3s. Mettre Pi-hole comme DNS du node crée une dépendance circulaire au boot (le node a besoin de DNS pour démarrer K8s, mais le DNS est dans K8s). En pratique, le node doit pointer sur un DNS externe (`1.1.1.1`). À garder en tête selon l'ordre de démarrage.
+> **Attention**, `10.0.0.101` c'est Pi-hole, qui tourne *dans* le cluster K3s. Mettre Pi-hole comme DNS du node crée une dépendance circulaire au boot (le node a besoin de DNS pour démarrer K8s, mais le DNS est dans K8s). En pratique, le node doit pointer sur un DNS externe (`1.1.1.1`). À garder en tête selon l'ordre de démarrage.
 
 ---
 
@@ -257,9 +257,7 @@ rejouable à l'infini → changed=0 au 2e run
 
 ## Aller plus loin
 
-- **`ansible-lint`** : passe les rôles au linter, il attrape les tâches non idempotentes et les mauvaises pratiques avant qu'elles ne mordent.
-- **Ansible Vault** : pour chiffrer les secrets (mots de passe, tokens) directement dans le repo, au lieu de les garder à part.
-- **`--check` (dry-run)** : `ansible-playbook --check` montre ce qui *changerait* sans rien appliquer. Idéal pour vérifier avant de lancer pour de vrai.
-- **Galaxy** : beaucoup de rôles courants (node_exporter inclus) existent déjà sur Ansible Galaxy. Réinventer la roue est un bon exercice, mais en prod on réutilise.
-
-*Le vrai test de confiance : rejouer le playbook un dimanche soir, sans lire le diff avant.*
+- **`ansible-lint`.** Passe les rôles au linter, il attrape les tâches non idempotentes et les mauvaises pratiques avant qu'elles ne mordent.
+- **Ansible Vault.** Pour chiffrer les secrets (mots de passe, tokens) directement dans le repo, au lieu de les garder à part.
+- **`--check` (dry-run).** `ansible-playbook --check` montre ce qui *changerait* sans rien appliquer. Idéal pour vérifier avant de lancer pour de vrai.
+- **Galaxy.** Beaucoup de rôles courants (node_exporter inclus) existent déjà sur Ansible Galaxy. Réinventer la roue est un bon exercice, mais en prod on réutilise.

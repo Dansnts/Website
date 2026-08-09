@@ -1,16 +1,16 @@
 ---
 layout: post.njk
 title: "Chiffrer ses secrets Kubernetes avec Sealed Secrets"
-description: "Chiffrer ses secrets K8s en RSA-4096 pour les versionner dans Git, et le point critique que tout le monde oublie : sauvegarder la master key."
+description: "Chiffrer ses secrets K8s en RSA-4096 pour les versionner dans Git, et le point critique que tout le monde oublie, sauvegarder la master key."
 date: 2024-10-06
 tags: [homelab, kubernetes, sécurité, gitops, sealed-secrets]
 ---
 
-Le GitOps a une exigence gênante : *tout* doit être dans Git, y compris les secrets. Sauf qu'un `Secret` Kubernetes, c'est juste du base64, pas du chiffrement. Le committer, c'est publier ses mots de passe en clair. Alors on les garde à part, et on casse le principe « tout est dans Git ».
+Le GitOps a une exigence gênante, *tout* doit être dans Git, y compris les secrets. Sauf qu'un `Secret` Kubernetes, c'est juste du base64, pas du chiffrement. Le committer, c'est publier ses mots de passe en clair. Alors on les garde à part, et on casse le principe « tout est dans Git ».
 
-**Sealed Secrets** (Bitnami) résout ça proprement : on chiffre le secret avec une clé publique, et seul le contrôleur dans le cluster (qui détient la clé privée) peut le déchiffrer. Le fichier chiffré est **committable sans risque**.
+**Sealed Secrets** (Bitnami) résout ça proprement, on chiffre le secret avec une clé publique, et seul le contrôleur dans le cluster (qui détient la clé privée) peut le déchiffrer. Le fichier chiffré est **committable sans risque**.
 
-Dans ce post :
+Dans ce post.
 
 1. Le principe du chiffrement asymétrique appliqué aux secrets
 2. Le workflow `kubeseal`
@@ -27,7 +27,7 @@ Dans ce post :
 
 ## Le principe
 
-Sealed Secrets repose sur du chiffrement asymétrique **RSA-4096** :
+Sealed Secrets repose sur du chiffrement asymétrique **RSA-4096**.
 
 ```
                   clé publique                 clé privée (master key)
@@ -155,5 +155,3 @@ keyrenewperiod: "720h"   # 30 jours
 - **External Secrets Operator** : l'alternative qui va chercher les secrets dans un backend externe (Vault, cloud) au lieu de les stocker chiffrés dans Git.
 - **Sauvegarde automatisée de la master key** : un CronJob qui exporte la clé vers un stockage chiffré hors cluster après chaque rotation.
 - **La dépendance circulaire** : master key dans Vaultwarden, secret Vaultwarden scellé par la master key, un thème récurrent du homelab que j'aborde ailleurs.
-
-*Un secret chiffré sans sa clé, c'est un coffre-fort jeté à la mer avec la combinaison dedans.*

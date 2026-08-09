@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -141,8 +30,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Avec une dizaine de services en HTTPS, gérer les certificats à la main devient vite ingérable : un cert par sous-domaine, chacun à renouveler tous les 90 jours. La solution élégante, c'est un <strong>certificat wildcard</strong> <code>*.mondomaine.com</code>, un seul cert pour tous les services, signé par Let's Encrypt et renouvelé automatiquement.</p>
-<p>Le hic : un wildcard ne peut PAS être validé par le challenge HTTP classique. Il faut passer par un <strong>challenge DNS-01</strong>, ce qui demande de piloter sa zone DNS par API. Au menu :</p>
+      <p>Avec une dizaine de services en HTTPS, gérer les certificats à la main devient vite ingérable, un cert par sous-domaine, chacun à renouveler tous les 90 jours. La solution élégante, c'est un <strong>certificat wildcard</strong> <code>*.mondomaine.com</code>, un seul cert pour tous les services, signé par Let's Encrypt et renouvelé automatiquement.</p>
+<p>Le hic, un wildcard ne peut PAS être validé par le challenge HTTP classique. Il faut passer par un <strong>challenge DNS-01</strong>, ce qui demande de piloter sa zone DNS par API. Au menu.</p>
 <ol>
 <li>Pourquoi DNS-01 est obligatoire pour un wildcard</li>
 <li>Le ClusterIssuer avec le webhook du registrar (Infomaniak)</li>
@@ -157,10 +46,10 @@
 </ul>
 <hr>
 <h2>Pourquoi DNS-01 et pas HTTP-01 ?</h2>
-<p>Let's Encrypt doit vérifier qu'on contrôle bien le domaine. Deux méthodes :</p>
+<p>Let's Encrypt doit vérifier qu'on contrôle bien le domaine. Deux méthodes.</p>
 <ul>
-<li><strong>HTTP-01</strong> : LE serveur pose un fichier sur <code>http://sous-domaine/.well-known/...</code>. Problème : pour un <strong>wildcard</strong> <code>*.domaine</code>, il n'existe pas de « sous-domaine » unique à valider. HTTP-01 ne sait pas faire.</li>
-<li><strong>DNS-01</strong> : on prouve le contrôle en créant un enregistrement TXT dans la zone DNS. Ça marche pour n'importe quel nom, <strong>y compris un wildcard</strong>. C'est la seule option ici.</li>
+<li><strong>HTTP-01.</strong> Le serveur pose un fichier sur <code>http://sous-domaine/.well-known/...</code>. Problème, pour un <strong>wildcard</strong> <code>*.domaine</code>, il n'existe pas de « sous-domaine » unique à valider. HTTP-01 ne sait pas faire.</li>
+<li><strong>DNS-01.</strong> On prouve le contrôle en créant un enregistrement TXT dans la zone DNS. Ça marche pour n'importe quel nom, <strong>y compris un wildcard</strong>. C'est la seule option ici.</li>
 </ul>
 <pre><code>cert-manager ──&gt; crée un TXT _acme-challenge.domaine ──&gt; via API du registrar
       │                                                        │
@@ -168,10 +57,10 @@
       V
   certificat *.domaine émis
 </code></pre>
-<p>Le défi technique : créer/supprimer ce TXT automatiquement. C'est le rôle du <strong>webhook</strong> du registrar.</p>
+<p>Le défi technique, créer/supprimer ce TXT automatiquement. C'est le rôle du <strong>webhook</strong> du registrar.</p>
 <hr>
 <h2>Le ClusterIssuer</h2>
-<p>Le <code>ClusterIssuer</code> décrit <em>comment</em> obtenir des certificats : l'autorité (Let's Encrypt) et le solveur (DNS-01 via le webhook Infomaniak).</p>
+<p>Le <code>ClusterIssuer</code> décrit <em>comment</em> obtenir des certificats, l'autorité (Let's Encrypt) et le solveur (DNS-01 via le webhook Infomaniak).</p>
 <pre><code class="language-yaml">apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -192,10 +81,10 @@ spec:
                 name: infomaniak-api-token
                 key: api-token
 </code></pre>
-<p><code>server: .../directory</code> : l'endpoint de production de Let's Encrypt. <strong>Pendant les tests</strong>, utiliser le staging (<code>acme-staging-v02...</code>) pour ne pas taper les quotas de production. Ils sont vite atteints à force d'essais, demande à celui qui a dû attendre une semaine après les avoir grillés.</p>
-<p><code>solvers.dns01.webhook</code> : c'est là que la magie opère. Le webhook <code>infomaniak</code> sait parler à l'API DNS d'Infomaniak pour créer/supprimer les enregistrements TXT.</p>
-<p><code>apiTokenSecretRef</code> : le token API du registrar, stocké dans un Secret (scellé avec Sealed Secrets, évidemment).</p>
-<p>Le webhook a besoin de <strong>lire</strong> ce token, ce qui demande un peu de RBAC :</p>
+<p><code>server: .../directory</code> est l'endpoint de production de Let's Encrypt. <strong>Pendant les tests</strong>, utiliser le staging (<code>acme-staging-v02...</code>) pour ne pas taper les quotas de production. Ils sont vite atteints à force d'essais, demande à celui qui a dû attendre une semaine après les avoir grillés.</p>
+<p><code>solvers.dns01.webhook</code>, c'est là que la magie opère. Le webhook <code>infomaniak</code> sait parler à l'API DNS d'Infomaniak pour créer/supprimer les enregistrements TXT.</p>
+<p><code>apiTokenSecretRef</code> référence le token API du registrar, stocké dans un Secret (scellé avec Sealed Secrets, évidemment).</p>
+<p>Le webhook a besoin de <strong>lire</strong> ce token, ce qui demande un peu de RBAC.</p>
 <pre><code class="language-yaml">kind: Role
 metadata:
   name: infomaniak-webhook-secret-reader
@@ -206,10 +95,10 @@ rules:
     resourceNames: [&quot;infomaniak-api-token&quot;]
     verbs: [&quot;get&quot;, &quot;watch&quot;, &quot;list&quot;]
 </code></pre>
-<p>On restreint au strict nécessaire : le webhook peut lire <em>uniquement</em> le secret <code>infomaniak-api-token</code>, rien d'autre. Principe du moindre privilège.</p>
+<p>On restreint au strict nécessaire, le webhook peut lire <em>uniquement</em> le secret <code>infomaniak-api-token</code>, rien d'autre. Principe du moindre privilège.</p>
 <hr>
 <h2>La ressource Certificate</h2>
-<p>Une fois l'issuer prêt, demander un certificat tient en quelques lignes :</p>
+<p>Une fois l'issuer prêt, demander un certificat tient en quelques lignes.</p>
 <pre><code class="language-yaml">apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -225,9 +114,9 @@ spec:
     - &quot;fariadossantos.com&quot;
     - &quot;*.fariadossantos.com&quot;
 </code></pre>
-<p><code>secretName</code> : cert-manager dépose le certificat (et le renouvelle) dans ce Secret. Les Ingress Traefik le référencent, et voilà, tous les services sont en HTTPS.</p>
-<p><code>dnsNames</code> : on met à la fois le domaine nu et le wildcard. Le wildcard <code>*.fariadossantos.com</code> ne couvre PAS <code>fariadossantos.com</code> lui-même, il faut les deux.</p>
-<p>Vérifier que tout roule :</p>
+<p><code>secretName</code> désigne où cert-manager dépose le certificat (et le renouvelle). Les Ingress Traefik le référencent, et voilà, tous les services sont en HTTPS.</p>
+<p><code>dnsNames</code> liste à la fois le domaine nu et le wildcard. Le wildcard <code>*.fariadossantos.com</code> ne couvre PAS <code>fariadossantos.com</code> lui-même, il faut les deux.</p>
+<p>Vérifier que tout roule.</p>
 <pre><code class="language-bash">kubectl get certificate -n homelab
 kubectl describe certificate fariadossantos-wildcard -n homelab
 </code></pre>
@@ -235,17 +124,17 @@ kubectl describe certificate fariadossantos-wildcard -n homelab
 <hr>
 <h2>Le cas des services hors cluster</h2>
 <p>Voilà le point que les tutos oublient. Mon Proxmox et mon TrueNAS ne sont <strong>pas</strong> dans Kubernetes, ce sont les hyperviseur et NAS <em>sous</em> le cluster. Ils ne peuvent pas consommer directement le Secret K8s. Mais je veux quand même qu'ils servent le même wildcard.</p>
-<p>La solution : <strong>exporter le cert depuis K8s et l'importer manuellement</strong>, à chaque renouvellement (~90 jours).</p>
+<p>La solution, <strong>exporter le cert depuis K8s et l'importer manuellement</strong>, à chaque renouvellement (~90 jours).</p>
 <pre><code class="language-bash"># Exporter le cert et la clé depuis le Secret K8s
 kubectl get secret fariadossantos-wildcard-tls -n homelab \
   -o jsonpath='{.data.tls\.crt}' | base64 -d &gt; tls.crt
 kubectl get secret fariadossantos-wildcard-tls -n homelab \
   -o jsonpath='{.data.tls\.key}' | base64 -d &gt; tls.key
 </code></pre>
-<p>Puis on importe <code>tls.crt</code> / <code>tls.key</code> dans les interfaces respectives :</p>
+<p>Puis on importe <code>tls.crt</code> / <code>tls.key</code> dans les interfaces respectives.</p>
 <ul>
-<li><strong>TrueNAS</strong> : <em>Credentials → Certificates → Import</em>, puis <em>System → GUI → HTTPS Certificate</em>.</li>
-<li><strong>Proxmox</strong> : <em>Node → System → Certificates → Upload Custom Certificate</em>.</li>
+<li><strong>TrueNAS.</strong> <em>Credentials → Certificates → Import</em>, puis <em>System → GUI → HTTPS Certificate</em>.</li>
+<li><strong>Proxmox.</strong> <em>Node → System → Certificates → Upload Custom Certificate</em>.</li>
 </ul>
 <blockquote>
 <p>C'est l'exception manuelle dans un homelab par ailleurs automatisé. On pourrait scripter cette synchro (un CronJob qui pousse le cert via les API de Proxmox/TrueNAS), mais tous les ~90 jours, le faire à la main reste acceptable. À noter dans l'agenda, sinon c'est le certificat expiré qui le rappelle, et jamais au bon moment.</p>
@@ -281,12 +170,11 @@ kubectl get secret fariadossantos-wildcard-tls -n homelab \
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Automatiser l'export</strong> : un CronJob qui pousse le wildcard vers les API Proxmox/TrueNAS après chaque renouvellement, pour éliminer la dernière étape manuelle.</li>
-<li><strong>DNS-over-HTTPS interne</strong> : coupler avec un DNS qui résout les noms en interne (voir l'article CoreDNS + Pi-hole).</li>
-<li><strong>Certificats par namespace</strong> : plutôt qu'un wildcard partagé, un cert dédié par app pour cloisonner davantage.</li>
-<li><strong>Monitoring d'expiration</strong> : une alerte Prometheus (<code>certmanager_certificate_expiration_timestamp_seconds</code>) pour être prévenu si un renouvellement échoue.</li>
+<li><strong>Automatiser l'export.</strong> Un CronJob qui pousse le wildcard vers les API Proxmox/TrueNAS après chaque renouvellement, pour éliminer la dernière étape manuelle.</li>
+<li><strong>DNS-over-HTTPS interne.</strong> Coupler avec un DNS qui résout les noms en interne (voir l'article CoreDNS + Pi-hole).</li>
+<li><strong>Certificats par namespace.</strong> Plutôt qu'un wildcard partagé, un cert dédié par app pour cloisonner davantage.</li>
+<li><strong>Monitoring d'expiration.</strong> Une alerte Prometheus (<code>certmanager_certificate_expiration_timestamp_seconds</code>) pour être prévenu si un renouvellement échoue.</li>
 </ul>
-<p><em>Un wildcard, un webhook, et plus jamais à courir après un cert expiré un dimanche soir, sauf sur Proxmox et TrueNAS, qui n'ont pas eu ce mémo.</em></p>
 
     </div>
   </article>

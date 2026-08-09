@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -141,8 +30,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Le DNS, personne n'y pense, jusqu'à ce qu'il tombe et que <em>tout</em> casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel qui guette : si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne <em>dans</em> ce cluster. Un cluster qui a besoin de lui-même pour démarrer.</p>
-<p>La solution : une architecture DNS à <strong>deux niveaux</strong>, où chaque résolveur a un rôle clair et où Pi-hole n'est jamais dans le chemin critique. Dans ce post :</p>
+      <p>Le DNS, personne n'y pense, jusqu'à ce qu'il tombe et que <em>tout</em> casse d'un coup. Dans un homelab avec un cluster Kubernetes et un Pi-hole self-hosted, il y a un piège structurel qui guette, si on n'y prend pas garde, la résolution du cluster finit par dépendre d'un service qui tourne <em>dans</em> ce cluster. Un cluster qui a besoin de lui-même pour démarrer.</p>
+<p>La solution, une architecture DNS à <strong>deux niveaux</strong>, où chaque résolveur a un rôle clair et où Pi-hole n'est jamais dans le chemin critique. Dans ce post.</p>
 <ol>
 <li>Les deux résolveurs et qui résout quoi</li>
 <li>CoreDNS avec des entrées statiques vers Traefik</li>
@@ -168,11 +57,11 @@ Machines du LAN ───&gt;│ Pi-hole (10.0.0.101)        │──&gt; bloca
                     │ DNS réseau + adblock        │
                     └─────────────────────────────┘
 </code></pre>
-<p>L'idée directrice : <strong>CoreDNS ne dépend pas de Pi-hole</strong>. Les pods du cluster résolvent les services via CoreDNS, qui pointe directement sur Traefik. Si Pi-hole tombe, les pods continuent de se parler. Pi-hole ne sert que le réseau (machines physiques) et le confort (blocage de pub).</p>
+<p>L'idée directrice, <strong>CoreDNS ne dépend pas de Pi-hole</strong>. Les pods du cluster résolvent les services via CoreDNS, qui pointe directement sur Traefik. Si Pi-hole tombe, les pods continuent de se parler. Pi-hole ne sert que le réseau (machines physiques) et le confort (blocage de pub).</p>
 <hr>
-<h2>Niveau 1 : CoreDNS pour l'intérieur du cluster</h2>
+<h2>Niveau 1, CoreDNS pour l'intérieur du cluster</h2>
 <p>K3s embarque CoreDNS. Par défaut, il résout les services internes du cluster. Mais nos pods ont aussi besoin de résoudre les noms publics des services (<code>grafana.fariadossantos.com</code>, etc.), et on veut qu'ils tapent <strong>directement Traefik</strong>, sans faire un aller-retour par le réseau externe.</p>
-<p>On ajoute un ConfigMap <code>coredns-custom</code> (mécanisme prévu par K3s) avec des entrées <code>hosts</code> statiques :</p>
+<p>On ajoute un ConfigMap <code>coredns-custom</code> (mécanisme prévu par K3s) avec des entrées <code>hosts</code> statiques.</p>
 <pre><code>fariadossantos.com:53 {
     hosts {
         10.0.0.100 grafana.fariadossantos.com
@@ -184,13 +73,13 @@ Machines du LAN ───&gt;│ Pi-hole (10.0.0.101)        │──&gt; bloca
     forward . /etc/resolv.conf
 }
 </code></pre>
-<p>Ce que ça fait, dans l'ordre :</p>
+<p>Ce que ça fait, dans l'ordre.</p>
 <ul>
 <li>Un pod qui demande <code>grafana.fariadossantos.com</code> reçoit <code>10.0.0.100</code> (Traefik) <strong>directement</strong>, résolu à l'intérieur du cluster.</li>
-<li>Le <code>fallthrough</code> : si le nom n'est pas dans la liste, on continue vers les résolveurs suivants (le <code>forward</code>).</li>
+<li>Le <code>fallthrough</code> fait que si le nom n'est pas dans la liste, on continue vers les résolveurs suivants (le <code>forward</code>).</li>
 <li>Aucun passage par Pi-hole. CoreDNS est <strong>autonome</strong>.</li>
 </ul>
-<p>Pour ajouter un service, on édite le ConfigMap, CoreDNS recharge sans redémarrage :</p>
+<p>Pour ajouter un service, on édite le ConfigMap, CoreDNS recharge sans redémarrage.</p>
 <pre><code class="language-bash">kubectl edit configmap coredns-custom -n kube-system
 # ajouter la ligne dans le bloc hosts, sauvegarder, c'est pris en compte
 </code></pre>
@@ -198,9 +87,9 @@ Machines du LAN ───&gt;│ Pi-hole (10.0.0.101)        │──&gt; bloca
 <p>Le choix de mettre Traefik en dur dans CoreDNS, c'est précisément pour <strong>sortir Pi-hole du chemin critique</strong>. Si la résolution des pods passait par Pi-hole et que Pi-hole crashait, tout le cluster deviendrait aveugle. Là, non.</p>
 </blockquote>
 <hr>
-<h2>Niveau 2 : Pi-hole pour le réseau et l'adblock</h2>
-<p>Pi-hole joue le résolveur du <strong>réseau physique</strong> : les machines du LAN (via le DHCP du MikroTik) l'utilisent comme DNS. Il apporte deux choses : la résolution des noms internes et le <strong>blocage des pubs/trackers</strong> à l'échelle du réseau.</p>
-<p>Il tourne dans le cluster, avec sa liste DNS custom montée en ConfigMap :</p>
+<h2>Niveau 2, Pi-hole pour le réseau et l'adblock</h2>
+<p>Pi-hole joue le résolveur du <strong>réseau physique</strong>, les machines du LAN (via le DHCP du MikroTik) l'utilisent comme DNS. Il apporte deux choses, la résolution des noms internes et le <strong>blocage des pubs/trackers</strong> à l'échelle du réseau.</p>
+<p>Il tourne dans le cluster, avec sa liste DNS custom montée en ConfigMap.</p>
 <pre><code class="language-yaml">data:
   custom.list: |
     10.0.0.100 grafana.fariadossantos.com
@@ -210,19 +99,19 @@ Machines du LAN ───&gt;│ Pi-hole (10.0.0.101)        │──&gt; bloca
     10.0.0.20  k8s.fariadossantos.com
     # ...
 </code></pre>
-<p>On note que Pi-hole résout aussi les services <strong>hors cluster</strong> (NAS <code>.11</code>, Proxmox <code>.10</code>) que CoreDNS n'a pas à connaître. Les deux listes se recoupent en partie, mais servent des populations différentes : CoreDNS pour les pods, Pi-hole pour les humains et leurs machines.</p>
-<p>L'upstream de Pi-hole va directement vers un résolveur public :</p>
+<p>On note que Pi-hole résout aussi les services <strong>hors cluster</strong> (NAS <code>.11</code>, Proxmox <code>.10</code>) que CoreDNS n'a pas à connaître. Les deux listes se recoupent en partie, mais servent des populations différentes, CoreDNS pour les pods, Pi-hole pour les humains et leurs machines.</p>
+<p>L'upstream de Pi-hole va directement vers un résolveur public.</p>
 <pre><code class="language-yaml">env:
   - name: PIHOLE_DNS_
     value: &quot;1.1.1.1;&quot;
 </code></pre>
-<p>Les deux réseaux y accèdent différemment (rappel de la config MikroTik) :</p>
+<p>Les deux réseaux y accèdent différemment (rappel de la config MikroTik).</p>
 <ul>
-<li>Depuis le lab (<code>10.0.0.x</code>) : <code>10.0.0.101</code> directement.</li>
-<li>Depuis la maison (<code>192.168.1.x</code>) : <code>192.168.1.2</code> (le MikroTik forwarde le port 53 vers Pi-hole).</li>
+<li>Depuis le lab (<code>10.0.0.x</code>), <code>10.0.0.101</code> directement.</li>
+<li>Depuis la maison (<code>192.168.1.x</code>), <code>192.168.1.2</code> (le MikroTik forwarde le port 53 vers Pi-hole).</li>
 </ul>
 <hr>
-<h2>Le piège : le node K3s ne doit PAS utiliser Pi-hole</h2>
+<h2>Le piège, le node K3s ne doit PAS utiliser Pi-hole</h2>
 <p>Voici l'erreur qui semble logique et qui casse tout. Pi-hole est le DNS du réseau, donc on serait tenté de configurer le node K3s pour l'utiliser aussi. <strong>Surtout pas.</strong></p>
 <pre><code>Pi-hole tourne DANS K8s
       │
@@ -242,19 +131,19 @@ si le node utilise Pi-hole comme DNS...
 │ → chicken-and-egg, blocage au boot    │
 └──────────────────────────────────────┘
 </code></pre>
-<p>C'est exactement la même famille de bug que la dépendance circulaire RADIUS : un service d'infra qui dépend de ce qu'il rend possible. Au démarrage à froid, personne ne cède.</p>
-<p>La règle est simple et non négociable : <strong>le node K3s utilise un DNS externe</strong> (<code>1.1.1.1</code>), jamais Pi-hole.</p>
+<p>C'est exactement la même famille de bug que la dépendance circulaire RADIUS, un service d'infra qui dépend de ce qu'il rend possible. Au démarrage à froid, personne ne cède.</p>
+<p>La règle est simple et non négociable, <strong>le node K3s utilise un DNS externe</strong> (<code>1.1.1.1</code>), jamais Pi-hole.</p>
 <p>C'est d'ailleurs un point de vigilance dans la config Ansible du node. Le <code>defaults/main.yml</code> du rôle définit <code>k3s_dns: &quot;10.0.0.101&quot;</code> (Pi-hole), pratique en fonctionnement normal, mais un piège au boot à froid. En pratique, le resolver du node doit pointer sur <code>1.1.1.1</code> pour casser le cycle.</p>
-<p>Si le node perd sa résolution DNS après un changement :</p>
+<p>Si le node perd sa résolution DNS après un changement.</p>
 <pre><code class="language-bash">echo &quot;nameserver 1.1.1.1&quot; | sudo tee /etc/resolv.conf
 # ou relancer systemd-resolved
 sudo systemctl start systemd-resolved
 </code></pre>
 <blockquote>
-<p>La leçon se répète d'un service d'infra à l'autre : <strong>DNS, DHCP, auth réseau, ces briques doivent démarrer de façon autonome.</strong> Un résolveur qui tourne dans le cluster ne peut pas être le résolveur <em>du</em> cluster.</p>
+<p>La leçon se répète d'un service d'infra à l'autre, <strong>DNS, DHCP, auth réseau, ces briques doivent démarrer de façon autonome.</strong> Un résolveur qui tourne dans le cluster ne peut pas être le résolveur <em>du</em> cluster.</p>
 </blockquote>
 <hr>
-<h2>Récapitulatif : qui résout quoi</h2>
+<h2>Récapitulatif, qui résout quoi</h2>
 <table>
 <thead>
 <tr>
@@ -289,12 +178,11 @@ sudo systemctl start systemd-resolved
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>DNS-over-HTTPS en upstream</strong> : configurer Pi-hole pour chiffrer ses requêtes vers l'upstream (cloudflared), au lieu du DNS en clair vers <code>1.1.1.1</code>.</li>
-<li><strong>Redondance Pi-hole</strong> : une seconde instance + <code>keepalived</code> pour que le blocage de pub survive à un crash. Attention à ne pas recréer une dépendance au cluster.</li>
-<li><strong>La dépendance circulaire RADIUS</strong> : le même raisonnement, appliqué à l'authentification réseau, sujet d'un article dédié.</li>
-<li><strong>Métriques Pi-hole</strong> : exporter les stats (requêtes bloquées, top domaines) vers Prometheus/Grafana pour visualiser ce que le réseau raconte.</li>
+<li><strong>DNS-over-HTTPS en upstream.</strong> Configurer Pi-hole pour chiffrer ses requêtes vers l'upstream (cloudflared), au lieu du DNS en clair vers <code>1.1.1.1</code>.</li>
+<li><strong>Redondance Pi-hole.</strong> Une seconde instance + <code>keepalived</code> pour que le blocage de pub survive à un crash. Attention à ne pas recréer une dépendance au cluster.</li>
+<li><strong>La dépendance circulaire RADIUS.</strong> Le même raisonnement, appliqué à l'authentification réseau, sujet d'un article dédié.</li>
+<li><strong>Métriques Pi-hole.</strong> Exporter les stats (requêtes bloquées, top domaines) vers Prometheus/Grafana pour visualiser ce que le réseau raconte.</li>
 </ul>
-<p><em>Le jour où le DNS tombe, on redécouvre en combien de choses on avait confiance sans le savoir.</em></p>
 
     </div>
   </article>

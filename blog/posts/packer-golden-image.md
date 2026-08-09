@@ -6,9 +6,9 @@ date: 2025-05-21
 tags: [homelab, packer, proxmox, iac]
 ---
 
-Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner : un **template**. On peut le fabriquer à la main : installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.
+Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner, un **template**. On peut le fabriquer à la main, installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.
 
-C'est le principe de la *golden image* : une image de base, propre, réutilisable, versionnée dans Git. Dans ce post, on construit une image Debian 12 pour Proxmox avec Packer. On va voir :
+C'est le principe de la *golden image*, une image de base, propre, réutilisable, versionnée dans Git. Dans ce post, on construit une image Debian 12 pour Proxmox avec Packer. On va voir.
 
 1. Installer Debian **sans interaction** grâce au preseed
 2. Provisionner les paquets et la config système
@@ -22,7 +22,7 @@ C'est le principe de la *golden image* : une image de base, propre, réutilisabl
 
 ---
 
-## L'idée : de l'ISO au template
+## L'idée, de l'ISO au template
 
 ```
 ISO Debian netinst
@@ -40,11 +40,11 @@ ISO Debian netinst
 Template 9000       ──── prêt à être cloné par Terraform
 ```
 
-Le fichier Packer principal (`k8s-debian.pkr.hcl`) est en deux morceaux : une **source** (comment construire la VM) et un **build** (quoi faire dessus une fois installée).
+Le fichier Packer principal (`k8s-debian.pkr.hcl`) est en deux morceaux, une **source** (comment construire la VM) et un **build** (quoi faire dessus une fois installée).
 
 ---
 
-## Étape 1 : la source, installer Debian sans y toucher
+## Étape 1, la source, installer Debian sans y toucher
 
 ```hcl
 source "proxmox-iso" "debian-k8s" {
@@ -98,21 +98,21 @@ source "proxmox-iso" "debian-k8s" {
 }
 ```
 
-Le mécanisme clé, c'est le duo `boot_command` + `http_directory` :
+Le mécanisme clé, c'est le duo `boot_command` + `http_directory`.
 
-`http_directory = "http"` : Packer démarre un petit serveur HTTP local qui sert le contenu du dossier `http/`, notre fichier `preseed.cfg`.
+`http_directory = "http"` fait que Packer démarre un petit serveur HTTP local qui sert le contenu du dossier `http/`, notre fichier `preseed.cfg`.
 
-`boot_command` : Packer simule des frappes clavier au boot de l'ISO. Il tape littéralement `install auto=true ...` puis pointe l'installeur Debian vers le preseed via `http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg`. Debian télécharge le preseed et s'installe tout seul.
+`boot_command` simule des frappes clavier au boot de l'ISO. Il tape littéralement `install auto=true ...` puis pointe l'installeur Debian vers le preseed via `http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg`. Debian télécharge le preseed et s'installe tout seul.
 
-`cloud_init = true` : Packer attache un lecteur cloud-init au template. C'est ce qui permettra à Terraform, plus tard, d'injecter l'IP et l'utilisateur au clonage.
+`cloud_init = true` fait que Packer attache un lecteur cloud-init au template. C'est ce qui permettra à Terraform, plus tard, d'injecter l'IP et l'utilisateur au clonage.
 
-`ssh_username = "packer"` : une fois l'install finie, Packer se connecte en SSH pour lancer les provisioners. Ce user `packer` est créé par le preseed.
+`ssh_username = "packer"`, une fois l'install finie, Packer se connecte en SSH pour lancer les provisioners. Ce user `packer` est créé par le preseed.
 
 ---
 
-## Le preseed : répondre à l'installeur à l'avance
+## Le preseed, répondre à l'installeur à l'avance
 
-Le `preseed.cfg` répond à toutes les questions que l'installeur Debian poserait normalement. Les blocs importants :
+Le `preseed.cfg` répond à toutes les questions que l'installeur Debian poserait normalement. Les blocs importants.
 
 ```
 # Partitionnement : tout sur une partition, automatique
@@ -129,7 +129,7 @@ d-i passwd/user-password password packer
 d-i pkgsel/include string openssh-server sudo curl
 ```
 
-Et un détail qui vaut de l'or : le `late_command`, qui donne à `packer` un sudo sans mot de passe.
+Et un détail qui vaut de l'or, le `late_command`, qui donne à `packer` un sudo sans mot de passe.
 
 ```
 d-i preseed/late_command string \
@@ -139,13 +139,13 @@ d-i preseed/late_command string \
 
 Sans ce `NOPASSWD`, les provisioners Packer qui font du `sudo` se bloqueraient à attendre un mot de passe. Là, tout passe tout seul.
 
-> `root-login boolean false` : pas de compte root activé. On passe par `packer` + sudo. Bonne pratique reprise directement de l'installeur.
+> `root-login boolean false`, pas de compte root activé. On passe par `packer` + sudo. Bonne pratique reprise directement de l'installeur.
 
 ---
 
-## Étape 2 : Provisionner l'image
+## Étape 2, provisionner l'image
 
-Une fois Debian installé, le bloc `build` lance nos scripts :
+Une fois Debian installé, le bloc `build` lance nos scripts.
 
 ```hcl
 build {
@@ -160,7 +160,7 @@ build {
 }
 ```
 
-Le `setup.sh` installe tout ce qu'on veut retrouver dans **chaque** VM issue de ce template :
+Le `setup.sh` installe tout ce qu'on veut retrouver dans **chaque** VM issue de ce template.
 
 ```bash
 #!/usr/bin/env bash
@@ -183,17 +183,17 @@ datasource_list: [ConfigDrive, NoCloud]
 EOF
 ```
 
-Trois paquets méritent qu'on s'y arrête :
+Trois paquets méritent qu'on s'y arrête.
 
-`qemu-guest-agent` : sans lui, Terraform ne saura jamais l'IP de la VM clonée. Indispensable.
+`qemu-guest-agent`, sans lui, Terraform ne saura jamais l'IP de la VM clonée. Indispensable.
 
-`cloud-initramfs-growroot` : au premier boot, la partition s'étend automatiquement à toute la taille du disque. Le template fait 20 Go ; si Terraform clone avec un disque de 80 Go, la VM utilise bien les 80 Go sans intervention.
+`cloud-initramfs-growroot`, au premier boot, la partition s'étend automatiquement à toute la taille du disque. Le template fait 20 Go ; si Terraform clone avec un disque de 80 Go, la VM utilise bien les 80 Go sans intervention.
 
-Le `datasource_list: [ConfigDrive, NoCloud]` : dit à cloud-init d'aller lire la config que Proxmox lui injecte, plutôt que de chercher un datasource cloud (AWS, GCP…) qui n'existe pas ici.
+Le `datasource_list: [ConfigDrive, NoCloud]` dit à cloud-init d'aller lire la config que Proxmox lui injecte, plutôt que de chercher un datasource cloud (AWS, GCP…) qui n'existe pas ici.
 
 ---
 
-## Étape 3 : le nettoyage, le secret d'un template clonable
+## Étape 3, le nettoyage, le secret d'un template clonable
 
 C'est l'étape que **tout le monde oublie**, et qui casse tout ensuite. Un template, ce n'est pas juste « une VM éteinte ». Il faut effacer toute l'identité unique de la machine, sinon toutes les VMs clonées la partageront.
 
@@ -211,15 +211,15 @@ provisioner "shell" {
 }
 ```
 
-Pourquoi chaque ligne compte :
+Pourquoi chaque ligne compte.
 
-`cloud-init clean` : efface l'état de cloud-init pour qu'il se relance proprement au premier boot du clone (et applique la nouvelle IP, le nouveau user…).
+`cloud-init clean` efface l'état de cloud-init pour qu'il se relance proprement au premier boot du clone (et applique la nouvelle IP, le nouveau user…).
 
-`rm /etc/ssh/ssh_host_*` : supprime les clés d'hôte SSH. **Critique.** Sinon, toutes les VMs auraient la même empreinte SSH, un désastre de sécurité et une source d'avertissements `known_hosts`. Elles sont régénérées au premier boot.
+`rm /etc/ssh/ssh_host_*` supprime les clés d'hôte SSH. **Critique.** Sinon, toutes les VMs auraient la même empreinte SSH, un désastre de sécurité et une source d'avertissements `known_hosts`. Elles sont régénérées au premier boot.
 
-`truncate /etc/machine-id` : vide l'ID machine. S'il n'est pas vide, toutes les VMs clonées partagent le même `machine-id`, ce qui casse la résolution DHCP, systemd, journald… Vidé, il est regénéré au boot, unique par VM.
+`truncate /etc/machine-id` vide l'ID machine. S'il n'est pas vide, toutes les VMs clonées partagent le même `machine-id`, ce qui casse la résolution DHCP, systemd, journald… Vidé, il est regénéré au boot, unique par VM.
 
-> Règle du template : **tout ce qui est unique à une machine doit être effacé.** Clés SSH, machine-id, logs, état cloud-init. Ce qui reste, c'est le socle commun. C'est exactement ça, une golden image.
+> Règle du template, **tout ce qui est unique à une machine doit être effacé.** Clés SSH, machine-id, logs, état cloud-init. Ce qui reste, c'est le socle commun. C'est exactement ça, une golden image.
 
 ---
 
@@ -241,9 +241,7 @@ packer build -var-file="variables.pkrvars.hcl" .
 
 ## Aller plus loin
 
-- **Terraform derrière** : la golden image n'a de sens que si quelque chose la clone. C'est le job de Terraform (`clone { vm_id = 9000 }`), sujet d'un autre article.
-- **Versionner les images** : incrémenter le `template_description` ou tagguer avec une date à chaque build permet de savoir quelle image tourne sur quelle VM.
-- **Un template par usage** : ici c'est une image « K8s ». On pourrait en avoir une pour Docker, une pour les VMs de test… chacune avec son `setup.sh`.
-- **CI** : lancer `packer build` automatiquement quand le `.pkr.hcl` change, pour régénérer l'image à chaque mise à jour de sécurité Debian.
-
-*Le jour où j'oublierai le `rm /etc/ssh/ssh_host_*`, toutes mes VMs partageront la même clé et `known_hosts` hurlera en chœur. La checklist de nettoyage existe précisément pour ce jour-là.*
+- **Terraform derrière.** La golden image n'a de sens que si quelque chose la clone. C'est le job de Terraform (`clone { vm_id = 9000 }`), sujet d'un autre article.
+- **Versionner les images.** Incrémenter le `template_description` ou tagguer avec une date à chaque build permet de savoir quelle image tourne sur quelle VM.
+- **Un template par usage.** Ici c'est une image « K8s ». On pourrait en avoir une pour Docker, une pour les VMs de test… chacune avec son `setup.sh`.
+- **CI.** Lancer `packer build` automatiquement quand le `.pkr.hcl` change, pour régénérer l'image à chaque mise à jour de sécurité Debian.

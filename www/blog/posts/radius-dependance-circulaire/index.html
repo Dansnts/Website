@@ -4,123 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dépendance circulaire entre RADIUS et 802.1X — Dani Faria dos Santos</title>
-  <meta name="description" content="Retour d&#39;expérience : mettre son serveur RADIUS derrière son propre 802.1X crée un deadlock dont on ne sort pas tout seul." />
+  <meta name="description" content="Retour d&#39;expérience, mettre son serveur RADIUS derrière son propre 802.1X crée un deadlock dont on ne sort pas tout seul." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -142,9 +31,9 @@
 
     <div class="blog-body">
       <p>Cet article est un retour d'expérience, pas un tutoriel. Il raconte une erreur d'architecture qui semble anodine et qui peut te couper complètement du réseau, sans porte de sortie logicielle. Le genre de piège qu'on ne voit pas venir, jusqu'à ce qu'on soit dedans.</p>
-<p>Le contexte : j'ai monté du 802.1X sur les ports de mon switch, avec FreeRADIUS comme serveur d'authentification (voir l'article précédent). FreeRADIUS tourne dans mon cluster Kubernetes. Et c'est là que le piège se referme.</p>
+<p>Le contexte, j'ai monté du 802.1X sur les ports de mon switch, avec FreeRADIUS comme serveur d'authentification (voir l'article précédent). FreeRADIUS tourne dans mon cluster Kubernetes. Et c'est là que le piège se referme.</p>
 <h2>Le décor</h2>
-<p>Trois faits, chacun anodin :</p>
+<p>Trois faits, chacun anodin.</p>
 <ol>
 <li>Le <strong>serveur RADIUS</strong> (FreeRADIUS) tourne <strong>dans Kubernetes</strong>, sur le node K3s.</li>
 <li>Le node K3s est <strong>branché sur un port du switch</strong>.</li>
@@ -152,7 +41,7 @@
 </ol>
 <p>Tu vois déjà le problème se dessiner ? Le serveur qui autorise les ports dépend d'un port qui a besoin de ce serveur pour s'ouvrir. Un serpent qui se mord la queue, sauf que le serpent héberge aussi mes conteneurs.</p>
 <h2>L'enchaînement fatal</h2>
-<p>Imaginons que FreeRADIUS redémarre (mise à jour, crash, reboot du node). Voici ce qui se passe :</p>
+<p>Imaginons que FreeRADIUS redémarre (mise à jour, crash, reboot du node). Voici ce qui se passe.</p>
 <pre><code>FreeRADIUS down
       │
       V
@@ -177,35 +66,35 @@ impossible de redémarrer FreeRADIUS (pas de réseau, pas d'image)
 │  → deadlock, personne ne cède                │
 └─────────────────────────────────────────────┘
 </code></pre>
-<p>C'est une <strong>dépendance circulaire</strong> classique, mais particulièrement vicieuse : elle ne se déclenche qu'au <em>pire</em> moment, quand RADIUS est déjà tombé, et aucune action logicielle ne permet d'en sortir. Le node est isolé. Pas de SSH, pas de <code>kubectl</code>, pas d'internet.</p>
-<p>La seule issue à ce stade : un accès physique/console au switch pour désactiver 802.1X à la main. En pleine nuit, ce n'est pas idéal, et on devine à quelle heure ces choses-là arrivent toujours.</p>
+<p>C'est une <strong>dépendance circulaire</strong> classique, mais particulièrement vicieuse, elle ne se déclenche qu'au <em>pire</em> moment, quand RADIUS est déjà tombé, et aucune action logicielle ne permet d'en sortir. Le node est isolé. Pas de SSH, pas de <code>kubectl</code>, pas d'internet.</p>
+<p>La seule issue à ce stade, un accès physique/console au switch pour désactiver 802.1X à la main. En pleine nuit, ce n'est pas idéal, et on devine à quelle heure ces choses-là arrivent toujours.</p>
 <h2>Pourquoi c'est un piège si courant</h2>
-<p>Ce genre de deadlock revient dès qu'un service d'infrastructure critique <strong>dépend de la chose qu'il rend possible</strong> :</p>
+<p>Ce genre de deadlock revient dès qu'un service d'infrastructure critique <strong>dépend de la chose qu'il rend possible</strong>.</p>
 <ul>
 <li>Le DNS qui tourne sur une machine dont l'adresse se résout par DNS.</li>
 <li>Le serveur DHCP qui a besoin d'une IP fournie par DHCP.</li>
 <li>Le serveur d'auth réseau qui est derrière l'auth réseau qu'il fournit.</li>
 </ul>
-<p>Le point commun : ça marche parfaitement tant que tout tourne. Le problème n'apparaît qu'au redémarrage à froid ou après une panne, exactement quand on a le moins envie de déboguer.</p>
-<h2>La solution : casser le cycle sur un port</h2>
+<p>Le point commun, ça marche parfaitement tant que tout tourne. Le problème n'apparaît qu'au redémarrage à froid ou après une panne, exactement quand on a le moins envie de déboguer.</p>
+<h2>La solution, casser le cycle sur un port</h2>
 <p>Il faut qu'<strong>au moins un port</strong>, celui du serveur RADIUS lui-même, ne dépende pas de RADIUS pour fonctionner. Deux approches, que j'ai combinées.</p>
-<h3>1. Sortir le node du 802.1X : le mettre en MAB</h3>
-<p>Plutôt que du 802.1X (qui exige que RADIUS valide un login), le port du node K8s est passé en <strong>MAB</strong> (auth par adresse MAC). C'est moins strict, mais surtout, sur MikroTik, on peut le faire avec un simple <strong>filtre de bridge par MAC</strong>, qui ne dépend pas du tout de RADIUS :</p>
+<h3>1. Sortir le node du 802.1X, le mettre en MAB</h3>
+<p>Plutôt que du 802.1X (qui exige que RADIUS valide un login), le port du node K8s est passé en <strong>MAB</strong> (auth par adresse MAC). C'est moins strict, mais surtout, sur MikroTik, on peut le faire avec un simple <strong>filtre de bridge par MAC</strong>, qui ne dépend pas du tout de RADIUS.</p>
 <pre><code class="language-rsc"># ether2 : serveur K8s, whitelist MAC au niveau du bridge, PAS de dot1x
 /interface bridge filter
 add chain=input   in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=drop
 add chain=forward in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=drop
 </code></pre>
-<p>Ce filtre laisse passer uniquement la MAC du node K8s, et il vit <strong>entièrement dans le switch</strong>. Si FreeRADIUS est mort, ça ne change rien : le port du node reste ouvert. Le cycle est brisé.</p>
+<p>Ce filtre laisse passer uniquement la MAC du node K8s, et il vit <strong>entièrement dans le switch</strong>. Si FreeRADIUS est mort, ça ne change rien, le port du node reste ouvert. Le cycle est brisé.</p>
 <p>Les autres ports (<code>ether3-5</code>), eux, restent en vrai 802.1X. Seul le port qui héberge l'infra RADIUS est exempté. On ne sacrifie la sécurité que là où c'est strictement nécessaire, pas partout par flemme.</p>
-<h3>2. Le filet de sécurité : <code>auth-timeout-action=allow</code></h3>
-<p>Si un jour je veux quand même mettre le node en 802.1X, il existe un garde-fou côté MikroTik : dire au port « si le serveur RADIUS ne répond pas dans le délai, <strong>ouvre</strong> le port au lieu de le fermer ».</p>
+<h3>2. Le filet de sécurité, <code>auth-timeout-action=allow</code></h3>
+<p>Si un jour je veux quand même mettre le node en 802.1X, il existe un garde-fou côté MikroTik, dire au port « si le serveur RADIUS ne répond pas dans le délai, <strong>ouvre</strong> le port au lieu de le fermer ».</p>
 <pre><code class="language-rsc">/interface dot1x server set interface=ether2 auth-timeout-action=allow
 </code></pre>
-<p><code>auth-timeout-action=allow</code> inverse le comportement par défaut. Normalement, pas de réponse RADIUS = port fermé (fail-closed). Là, on passe en <strong>fail-open</strong> sur ce port précis : le timeout ouvre le port. RADIUS peut tomber, le node garde le réseau, et peut redémarrer FreeRADIUS lui-même.</p>
-<p>Le compromis est explicite : fail-open, c'est moins sûr, si RADIUS tombe, ce port n'est plus protégé du tout. On ne l'active que sur le port de l'infra critique, jamais sur les ports clients.</p>
-<h2>Fail-closed vs fail-open : le vrai arbitrage</h2>
-<p>Toute la leçon tient dans ce choix :</p>
+<p><code>auth-timeout-action=allow</code> inverse le comportement par défaut. Normalement, pas de réponse RADIUS = port fermé (fail-closed). Là, on passe en <strong>fail-open</strong> sur ce port précis, le timeout ouvre le port. RADIUS peut tomber, le node garde le réseau, et peut redémarrer FreeRADIUS lui-même.</p>
+<p>Le compromis est explicite, fail-open, c'est moins sûr, si RADIUS tombe, ce port n'est plus protégé du tout. On ne l'active que sur le port de l'infra critique, jamais sur les ports clients.</p>
+<h2>Fail-closed contre fail-open, le vrai arbitrage</h2>
+<p>Toute la leçon tient dans ce choix.</p>
 <table>
 <thead>
 <tr>
@@ -230,19 +119,18 @@ add chain=forward in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=
 <p>La sécurité par défaut (fail-closed) est la bonne, sauf pour le maillon dont dépend la sécurité elle-même. Là, il faut accepter un fail-open, sinon on se verrouille dehors soi-même, le pire genre d'incident, celui qu'on s'inflige.</p>
 <h2>Ce que j'en retiens</h2>
 <ul>
-<li><strong>Cartographier les dépendances de démarrage à froid.</strong> Se poser la question : « si tout est éteint et que je rallume, dans quel ordre ça doit remonter ? ». Si A a besoin de B qui a besoin de A, il y a un problème.</li>
+<li><strong>Cartographier les dépendances de démarrage à froid.</strong> Se poser la question, « si tout est éteint et que je rallume, dans quel ordre ça doit remonter ? ». Si A a besoin de B qui a besoin de A, il y a un problème.</li>
 <li><strong>Un service d'infra ne doit jamais dépendre de ce qu'il fournit.</strong> DNS, DHCP, auth réseau, ces briques doivent pouvoir démarrer de façon autonome.</li>
 <li><strong>Prévoir une porte de sortie hors-bande.</strong> Un accès console au switch, une IP de management non filtrée, un port « toujours ouvert ». Le jour où le cycle se referme, c'est la seule issue.</li>
 <li><strong>Le pire moment est le seul moment.</strong> Ces bugs ne se manifestent qu'en panne. Les tester volontairement, couper RADIUS et vérifier qu'on s'en sort, vaut mieux que les découvrir en vrai à 2h du matin.</li>
 </ul>
-<p>Mon garde-fou actuel : le node K8s est en MAB (filtre bridge, indépendant de RADIUS), et <code>auth-timeout-action=allow</code> est documenté comme prérequis avant toute réactivation du 802.1X sur ce port. Le cycle ne peut plus se refermer.</p>
+<p>Mon garde-fou actuel, le node K8s est en MAB (filtre bridge, indépendant de RADIUS), et <code>auth-timeout-action=allow</code> est documenté comme prérequis avant toute réactivation du 802.1X sur ce port. Le cycle ne peut plus se refermer.</p>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Un RADIUS secondaire hors-cluster</strong> : héberger une instance FreeRADIUS de secours sur une machine qui n'est pas derrière 802.1X (le Proxmox lui-même, par exemple), pour la redondance.</li>
-<li><strong>Watchdog de démarrage</strong> : un script au boot du node qui vérifie l'ordre des dépendances et alerte si un cycle est détecté.</li>
-<li><strong>Le même raisonnement pour le DNS</strong> : mon Pi-hole tourne aussi dans K8s, j'en parle dans l'article sur le DNS à deux niveaux, où le node ne doit surtout pas utiliser Pi-hole comme résolveur.</li>
+<li><strong>Un RADIUS secondaire hors-cluster.</strong> Héberger une instance FreeRADIUS de secours sur une machine qui n'est pas derrière 802.1X (le Proxmox lui-même, par exemple), pour la redondance.</li>
+<li><strong>Watchdog de démarrage.</strong> Un script au boot du node qui vérifie l'ordre des dépendances et alerte si un cycle est détecté.</li>
+<li><strong>Le même raisonnement pour le DNS.</strong> Mon Pi-hole tourne aussi dans K8s, j'en parle dans l'article sur le DNS à deux niveaux, où le node ne doit surtout pas utiliser Pi-hole comme résolveur.</li>
 </ul>
-<p><em>La prochaine fois que quelque chose « ne peut logiquement pas planter en même temps que son propre prérequis », je vérifie quand même.</em></p>
 
     </div>
   </article>

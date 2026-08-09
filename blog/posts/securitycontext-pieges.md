@@ -175,5 +175,3 @@ docker run --rm <image> id
 - **seccomp profiles** : restreindre les appels système autorisés, un cran plus fin que les capabilities.
 - **Distroless / rootless images** : choisir des images conçues pour tourner non-root dès le départ, qui acceptent le `drop ALL` sans broncher.
 - **Un rootful à part** : isoler les rares services qui ont besoin de privilèges (wireguard) et durcir agressivement tout le reste.
-
-*Chaque `CrashLoopBackOff` de cette liste m'a coûté un `kubectl describe` et un peu de fierté.*

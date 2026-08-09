@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -141,8 +30,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Cliquer dans l'interface Proxmox pour créer une VM, ça va une fois. Le refaire dix fois, à l'identique, sans oublier un paramètre, c'est une autre histoire. L'<em>Infrastructure as Code</em> règle ça : la VM est décrite dans un fichier, versionnée dans Git, recréable à l'identique en une commande.</p>
-<p>On va provisionner une VM K3s sur Proxmox avec Terraform, provider <code>bpg/proxmox</code>. Au programme :</p>
+      <p>Cliquer dans l'interface Proxmox pour créer une VM, ça va une fois. Le refaire dix fois, à l'identique, sans oublier un paramètre, c'est une autre histoire. L'<em>Infrastructure as Code</em> règle ça, la VM est décrite dans un fichier, versionnée dans Git, recréable à l'identique en une commande.</p>
+<p>On va provisionner une VM K3s sur Proxmox avec Terraform, provider <code>bpg/proxmox</code>. Au programme.</p>
 <ol>
 <li>Le provider et l'authentification par token</li>
 <li>Cloner un template et injecter la config réseau via cloud-init</li>
@@ -166,9 +55,9 @@
     └── cloud-init/
         └── k3s.yaml         # Le cloud-init injecté dans la VM
 </code></pre>
-<p>Un mot sur le provider : <strong><code>bpg/proxmox</code></strong>, pas le vieux <code>telmate/proxmox</code>. Le <code>bpg</code> est à jour, bien documenté, et gère proprement cloud-init. C'est celui-là qu'il faut prendre en 2026.</p>
+<p>Un mot sur le provider, <strong><code>bpg/proxmox</code></strong>, pas le vieux <code>telmate/proxmox</code>. Le <code>bpg</code> est à jour, bien documenté, et gère proprement cloud-init. C'est celui-là qu'il faut prendre en 2026.</p>
 <hr>
-<h2>Étape 1 : Le provider et l'authentification</h2>
+<h2>Étape 1, le provider et l'authentification</h2>
 <pre><code class="language-hcl">terraform {
   required_providers {
     proxmox = {
@@ -197,24 +86,24 @@ provider &quot;proxmox&quot; {
   }
 }
 </code></pre>
-<p>Deux mécanismes d'auth cohabitent, et c'est <strong>voulu</strong> :</p>
-<p><code>api_token</code> : l'API REST de Proxmox (créer/cloner/configurer les VMs). Le token se génère dans <em>Datacenter → Permissions → API Tokens</em>, format <code>user@realm!nom-du-token=secret</code>.</p>
-<p>Le bloc <code>ssh</code> : le provider a <strong>aussi</strong> besoin d'un accès SSH au node. Certaines opérations, uploader un snippet cloud-init typiquement, ne passent pas par l'API. Sans ce bloc, on tombe sur des erreurs obscures au moment de l'upload du cloud-init, et on perd vingt minutes à chercher pourquoi.</p>
-<p><code>insecure = true</code> : le certificat auto-signé de Proxmox. En homelab, on assume. En prod, on importe un vrai cert.</p>
-<p>Les variables sont déclarées à part, le secret marqué comme tel :</p>
+<p>Deux mécanismes d'auth cohabitent, et c'est <strong>voulu</strong>.</p>
+<p><code>api_token</code> sert à l'API REST de Proxmox (créer/cloner/configurer les VMs). Le token se génère dans <em>Datacenter → Permissions → API Tokens</em>, format <code>user@realm!nom-du-token=secret</code>.</p>
+<p>Le bloc <code>ssh</code>, le provider a <strong>aussi</strong> besoin d'un accès SSH au node. Certaines opérations, uploader un snippet cloud-init typiquement, ne passent pas par l'API. Sans ce bloc, on tombe sur des erreurs obscures au moment de l'upload du cloud-init, et on perd vingt minutes à chercher pourquoi.</p>
+<p><code>insecure = true</code> accepte le certificat auto-signé de Proxmox. En homelab, on assume. En prod, on importe un vrai cert.</p>
+<p>Les variables sont déclarées à part, le secret marqué comme tel.</p>
 <pre><code class="language-hcl">variable &quot;proxmox_token_secret&quot; {
   type      = string
   sensitive = true
 }
 </code></pre>
-<p>Et remplies dans <code>.secrets.tfvars</code>, <strong>jamais commité</strong> :</p>
+<p>Et remplies dans <code>.secrets.tfvars</code>, <strong>jamais commité</strong>.</p>
 <pre><code class="language-hcl">proxmox_api_url      = &quot;https://10.0.0.10:8006/api2/json&quot;
 proxmox_token_id     = &quot;terraform@pve!terraform-token&quot;
 proxmox_token_secret = &quot;TON_SECRET&quot;
 </code></pre>
 <hr>
-<h2>Étape 2 : Cloner le template et injecter cloud-init</h2>
-<p>Le cœur du sujet. On ne construit pas la VM depuis rien : on <strong>clone</strong> un template Ubuntu (VM 9000) et on lui injecte sa personnalité via cloud-init.</p>
+<h2>Étape 2, cloner le template et injecter cloud-init</h2>
+<p>Le cœur du sujet. On ne construit pas la VM depuis rien, on <strong>clone</strong> un template Ubuntu (VM 9000) et on lui injecte sa personnalité via cloud-init.</p>
 <pre><code class="language-hcl">resource &quot;proxmox_virtual_environment_vm&quot; &quot;k3s&quot; {
   name      = &quot;k3s&quot;
   node_name = &quot;proxmox&quot;
@@ -264,12 +153,12 @@ proxmox_token_secret = &quot;TON_SECRET&quot;
   }
 }
 </code></pre>
-<p>Ce qui compte vraiment ici :</p>
-<p><code>clone { full = true }</code> : clone <strong>complet</strong>, pas lié. La nouvelle VM est totalement indépendante du template, on peut supprimer le template sans rien casser.</p>
-<p><code>cpu { type = &quot;host&quot; }</code> : la VM voit le vrai CPU de l'hôte, pas un CPU générique émulé. Meilleures perfs, indispensable pour les instructions modernes.</p>
-<p><code>agent { enabled = true }</code> : active le QEMU guest agent. Sans lui, Terraform ne connaît jamais l'IP réelle de la VM et attend indéfiniment. Le paquet <code>qemu-guest-agent</code> doit déjà être dans le template, sinon on attend pour rien.</p>
-<p><code>initialization.ip_config</code> : cloud-init applique cette IP au premier boot. On fixe l'IP ici plutôt que de dépendre du DHCP.</p>
-<p><code>user_data_file_id</code> : pointe vers le fichier cloud-init, déclaré comme ressource séparée :</p>
+<p>Ce qui compte vraiment ici.</p>
+<p><code>clone { full = true }</code> fait un clone <strong>complet</strong>, pas lié. La nouvelle VM est totalement indépendante du template, on peut supprimer le template sans rien casser.</p>
+<p><code>cpu { type = &quot;host&quot; }</code> fait que la VM voit le vrai CPU de l'hôte, pas un CPU générique émulé. Meilleures perfs, indispensable pour les instructions modernes.</p>
+<p><code>agent { enabled = true }</code> active le QEMU guest agent. Sans lui, Terraform ne connaît jamais l'IP réelle de la VM et attend indéfiniment. Le paquet <code>qemu-guest-agent</code> doit déjà être dans le template, sinon on attend pour rien.</p>
+<p><code>initialization.ip_config</code> fait que cloud-init applique cette IP au premier boot. On fixe l'IP ici plutôt que de dépendre du DHCP.</p>
+<p><code>user_data_file_id</code> pointe vers le fichier cloud-init, déclaré comme ressource séparée.</p>
 <pre><code class="language-hcl">resource &quot;proxmox_virtual_environment_file&quot; &quot;k3s_cloud_init&quot; {
   content_type = &quot;snippets&quot;
   datastore_id = &quot;local&quot;
@@ -281,7 +170,7 @@ proxmox_token_secret = &quot;TON_SECRET&quot;
   }
 }
 </code></pre>
-<p>Terraform lit <code>cloud-init/k3s.yaml</code> en local et l'uploade comme <em>snippet</em> sur Proxmox, c'est là que le SSH sert. Ce snippet installe K3s au premier boot :</p>
+<p>Terraform lit <code>cloud-init/k3s.yaml</code> en local et l'uploade comme <em>snippet</em> sur Proxmox, c'est là que le SSH sert. Ce snippet installe K3s au premier boot.</p>
 <pre><code class="language-yaml">#cloud-config
 package_update: true
 packages:
@@ -295,11 +184,11 @@ runcmd:
   - systemctl enable k3s
 </code></pre>
 <blockquote>
-<p>Le combo est propre : Terraform crée la VM et pose le cloud-init, cloud-init installe K3s. À la fin du <code>apply</code>, un cluster K3s tourne. Zéro clavier touché après le premier Enter.</p>
+<p>Le combo est propre, Terraform crée la VM et pose le cloud-init, cloud-init installe K3s. À la fin du <code>apply</code>, un cluster K3s tourne. Zéro clavier touché après le premier Enter.</p>
 </blockquote>
 <hr>
 <h2>Un garde-fou avant de commencer</h2>
-<p>Un détail que j'aime bien : un <code>null_resource</code> qui vérifie que Proxmox répond <strong>avant</strong> de tenter quoi que ce soit.</p>
+<p>Un détail que j'aime bien, un <code>null_resource</code> qui vérifie que Proxmox répond <strong>avant</strong> de tenter quoi que ce soit.</p>
 <pre><code class="language-hcl">resource &quot;null_resource&quot; &quot;check_proxmox&quot; {
   provisioner &quot;local-exec&quot; {
     command = &quot;ping -c 1 -W 3 10.0.0.10 || (echo 'Proxmox unreachable' &amp;&amp; exit 1)&quot;
@@ -308,10 +197,10 @@ runcmd:
 </code></pre>
 <p>Ça évite de partir dans un <code>apply</code> qui échoue à mi-chemin parce que l'hôte était éteint. Un ping, trois secondes de timeout, et on sait tout de suite si ça vaut le coup de continuer.</p>
 <hr>
-<h2>Étape 3 : Le piège du passthrough disque</h2>
+<h2>Étape 3, le piège du passthrough disque</h2>
 <p>Le vrai piège du setup. Ma VM TrueNAS a besoin d'accéder à des <strong>disques physiques entiers</strong> (passthrough), pas à des disques virtuels. Et là, <code>bpg/proxmox</code> ne suit plus.</p>
 <p>Le provider sait créer des disques virtuels dans un datastore. Il ne sait <strong>pas</strong> attacher un disque physique par son <code>/dev/disk/by-id/...</code>. Impossible à décrire en HCL. Pas une limitation qu'on contourne en cherchant mieux dans la doc, elle n'y est juste pas.</p>
-<p>La solution : déclarer la VM sans les disques data dans Terraform, puis les ajouter <strong>à la main</strong> avec <code>qm set</code> après le <code>apply</code> :</p>
+<p>La solution, déclarer la VM sans les disques data dans Terraform, puis les ajouter <strong>à la main</strong> avec <code>qm set</code> après le <code>apply</code>.</p>
 <pre><code class="language-hcl">resource &quot;proxmox_virtual_environment_vm&quot; &quot;truenas&quot; {
   name  = &quot;truenas&quot;
   vm_id = 102
@@ -324,13 +213,13 @@ runcmd:
   # qm set 102 --scsi3 /dev/disk/by-id/ata-ST6000VN006-2ZM186_WPR071LM
 }
 </code></pre>
-<p>Deux conseils tirés du terrain :</p>
+<p>Deux conseils tirés du terrain.</p>
 <ul>
 <li><strong>Toujours <code>/dev/disk/by-id/</code>, jamais <code>/dev/sdb</code>.</strong> Les lettres <code>sdX</code> peuvent changer d'ordre à un reboot ; l'ID (modèle + numéro de série) est stable, lui.</li>
 <li><strong>Garde la commande en commentaire dans le <code>.tf</code>.</strong> Terraform ne connaît pas ces disques, donc ils ne sont pas dans le state. Un <code>destroy</code>/<code>recreate</code> et il faudra les rebrancher à la main, autant avoir la commande sous les yeux plutôt que dans un coin de mémoire.</li>
 </ul>
 <blockquote>
-<p>À retenir : Terraform gère 95 % du provisioning, le passthrough matériel reste hors de sa portée. Pas un bug, une limite de ce que l'API Proxmox expose proprement. On documente le contournement et on avance.</p>
+<p>À retenir, Terraform gère 95 % du provisioning, le passthrough matériel reste hors de sa portée. Pas un bug, une limite de ce que l'API Proxmox expose proprement. On documente le contournement et on avance.</p>
 </blockquote>
 <hr>
 <h2>Le workflow complet</h2>
@@ -353,12 +242,11 @@ terraform apply -var-file=&quot;../.secrets.tfvars&quot;
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Golden image</strong> : ce provisioning suppose un template déjà prêt (VM 9000). Le construire proprement avec Packer plutôt qu'à la main mérite son propre article.</li>
-<li><strong>Ansible en relais</strong> : Terraform crée la VM, mais la config fine de l'OS (netplan fixe, node_exporter…) se fait mieux avec Ansible. Un outil pour le provisioning, un autre pour la configuration, ne pas mélanger les deux.</li>
-<li><strong><code>for_each</code></strong> : au lieu de dupliquer le bloc <code>resource</code> pour chaque VM, décrire un <code>map</code> de VMs et itérer dessus. À creuser quand le nombre de VMs grandit.</li>
-<li><strong>Backend distant</strong> : ici le state est local. Le mettre sur un backend partagé (S3, ou même un partage NAS) évite de le perdre le jour où le disque lâche, et permet de travailler à plusieurs sans se marcher dessus.</li>
+<li><strong>Golden image.</strong> Ce provisioning suppose un template déjà prêt (VM 9000). Le construire proprement avec Packer plutôt qu'à la main mérite son propre article.</li>
+<li><strong>Ansible en relais.</strong> Terraform crée la VM, mais la config fine de l'OS (netplan fixe, node_exporter…) se fait mieux avec Ansible. Un outil pour le provisioning, un autre pour la configuration, ne pas mélanger les deux.</li>
+<li><strong><code>for_each</code>.</strong> Au lieu de dupliquer le bloc <code>resource</code> pour chaque VM, décrire un <code>map</code> de VMs et itérer dessus. À creuser quand le nombre de VMs grandit.</li>
+<li><strong>Backend distant.</strong> Ici le state est local. Le mettre sur un backend partagé (S3, ou même un partage NAS) évite de le perdre le jour où le disque lâche, et permet de travailler à plusieurs sans se marcher dessus.</li>
 </ul>
-<p><em>Le jour où j'ajoute une quatrième VM, ce <code>.tf</code> devient un <code>for_each</code>. Pas avant.</em></p>
 
     </div>
   </article>

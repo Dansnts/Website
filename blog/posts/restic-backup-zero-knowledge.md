@@ -6,9 +6,9 @@ date: 2025-09-10
 tags: [homelab, backup, restic, kubernetes, chiffrement]
 ---
 
-Sauvegarder ses données hors site, c'est indispensable. Confier ses fichiers à un hébergeur cloud, c'est aussi lui confier leur contenu, sauf si on chiffre **avant** l'envoi. C'est le principe du *zero-knowledge* : l'hébergeur stocke des blobs opaques qu'il ne peut pas lire. Même sous contrainte légale, il n'a rien à donner.
+Sauvegarder ses données hors site, c'est indispensable. Confier ses fichiers à un hébergeur cloud, c'est aussi lui confier leur contenu, sauf si on chiffre **avant** l'envoi. C'est le principe du *zero-knowledge*, l'hébergeur stocke des blobs opaques qu'il ne peut pas lire. Même sous contrainte légale, il n'a rien à donner.
 
-**Restic** fait exactement ça : chunking, déduplication, compression et chiffrement AES-256, le tout côté client. On monte un backup Restic vers du S3, piloté par un CronJob Kubernetes :
+**Restic** fait exactement ça, chunking, déduplication, compression et chiffrement AES-256, le tout côté client. On monte un backup Restic vers du S3, piloté par un CronJob Kubernetes.
 
 1. Le fonctionnement zero-knowledge de Restic
 2. Le CronJob et son cycle backup / forget / check
@@ -25,7 +25,7 @@ Sauvegarder ses données hors site, c'est indispensable. Confier ses fichiers à
 
 ## Le zero-knowledge, concrètement
 
-Restic ne se contente pas de « chiffrer un tar ». Il découpe intelligemment les fichiers :
+Restic ne se contente pas de « chiffrer un tar ». Il découpe intelligemment les fichiers.
 
 ```
 Fichiers ──> découpage en blobs (content-defined chunking)
@@ -38,17 +38,17 @@ Fichiers ──> découpage en blobs (content-defined chunking)
                      S3 : que des blobs opaques identifiés par hash
 ```
 
-- **Chunking à taille variable** : un fichier est découpé en morceaux selon son contenu. Modifier 1 Ko dans un gros fichier ne réécrit que le chunk concerné.
-- **Déduplication** : deux fichiers identiques (ou deux versions proches) partagent leurs blobs. Énorme gain d'espace.
-- **Chiffrement local** : tout est chiffré **avant** l'upload avec un mot de passe qui ne quitte jamais la machine. Le S3 ne contient que du hash illisible.
+- **Chunking à taille variable.** Un fichier est découpé en morceaux selon son contenu. Modifier 1 Ko dans un gros fichier ne réécrit que le chunk concerné.
+- **Déduplication.** Deux fichiers identiques (ou deux versions proches) partagent leurs blobs. Énorme gain d'espace.
+- **Chiffrement local.** Tout est chiffré **avant** l'upload avec un mot de passe qui ne quitte jamais la machine. Le S3 ne contient que du hash illisible.
 
-Résultat : Infomaniak (l'hébergeur) ne voit rien. Du vrai zero-knowledge, pas du marketing.
+Résultat, Infomaniak (l'hébergeur) ne voit rien. Du vrai zero-knowledge, pas du marketing.
 
 ---
 
-## Le CronJob : backup, forget, check
+## Le CronJob, backup, forget, check
 
-Le backup tourne chaque nuit à 2h. Le conteneur Restic enchaîne trois opérations dans un ordre précis :
+Le backup tourne chaque nuit à 2h. Le conteneur Restic enchaîne trois opérations dans un ordre précis.
 
 ```yaml
 apiVersion: batch/v1
@@ -95,25 +95,25 @@ spec:
                     name: restic-credentials
 ```
 
-Les trois étapes, et pourquoi cet ordre :
+Les trois étapes, et pourquoi cet ordre.
 
-`restic backup` : crée un **snapshot incrémental**. Grâce à la déduplication, seuls les blobs nouveaux sont uploadés, un backup quotidien ne transfère que le delta.
+`restic backup` crée un **snapshot incrémental**. Grâce à la déduplication, seuls les blobs nouveaux sont uploadés, un backup quotidien ne transfère que le delta.
 
-`restic forget --prune` : applique la politique de rétention **puis** libère réellement l'espace S3 (`--prune` supprime les blobs qui ne sont plus référencés par aucun snapshot).
+`restic forget --prune` applique la politique de rétention **puis** libère réellement l'espace S3 (`--prune` supprime les blobs qui ne sont plus référencés par aucun snapshot).
 
-`restic check` : vérifie l'intégrité structurelle du repo (index + packs). Un backup qu'on ne vérifie jamais, c'est un backup qu'on *espère* avoir.
+`restic check` vérifie l'intégrité structurelle du repo (index + packs). Un backup qu'on ne vérifie jamais, c'est un backup qu'on *espère* avoir.
 
-`concurrencyPolicy: Forbid` : si un backup dure plus de 24h (peu probable mais possible au premier run), on n'en lance pas un deuxième par-dessus.
+`concurrencyPolicy: Forbid` fait que si un backup dure plus de 24h (peu probable mais possible au premier run), on n'en lance pas un deuxième par-dessus.
 
-`restic snapshots || restic init` : idempotence : on n'initialise le repo que la première fois, sans erreur les fois suivantes.
+`restic snapshots || restic init` assure l'idempotence, on n'initialise le repo que la première fois, sans erreur les fois suivantes.
 
-`envFrom secretRef` : toutes les variables sensibles (`RESTIC_REPOSITORY`, `RESTIC_PASSWORD`, clés S3) viennent d'un Secret scellé.
+`envFrom secretRef` fait que toutes les variables sensibles (`RESTIC_REPOSITORY`, `RESTIC_PASSWORD`, clés S3) viennent d'un Secret scellé.
 
 ---
 
 ## La politique de rétention
 
-C'est le cœur d'une stratégie de backup : garder assez d'historique sans exploser le stockage.
+C'est le cœur d'une stratégie de backup, garder assez d'historique sans exploser le stockage.
 
 ```
 --keep-daily   7    → 7 sauvegardes quotidiennes  (la dernière semaine)
@@ -130,11 +130,11 @@ Cette rétention « en escalier » (*grandfather-father-son*) donne une granular
 
 ## L'avertissement à graver
 
-Une seule chose peut rendre tout ce système inutile :
+Une seule chose peut rendre tout ce système inutile.
 
-> **Sans le `RESTIC_PASSWORD`, les données sont définitivement inaccessibles.** C'est la contrepartie du zero-knowledge : personne, pas même le propriétaire des données, ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé **hors de la machine** (gestionnaire de mots de passe, coffre physique). Le perdre égale perdre le backup.
+> **Sans le `RESTIC_PASSWORD`, les données sont définitivement inaccessibles.** C'est la contrepartie du zero-knowledge, personne, pas même le propriétaire des données, ne peut déchiffrer sans ce mot de passe. Il DOIT être sauvegardé **hors de la machine** (gestionnaire de mots de passe, coffre physique). Le perdre égale perdre le backup.
 
-C'est le paradoxe du chiffrement fort : la sécurité qui protège les données de l'hébergeur les protège aussi de leur propriétaire en cas de perte de la clé.
+C'est le paradoxe du chiffrement fort, la sécurité qui protège les données de l'hébergeur les protège aussi de leur propriétaire en cas de perte de la clé.
 
 ---
 
@@ -161,9 +161,7 @@ restic mount /mnt/restic-restore
 
 ## Aller plus loin
 
-- **Backup d'une base live** : sauvegarder un fichier SQLite pendant que l'app écrit dedans demande une précaution (un dump WAL-safe). Sujet d'un article dédié.
-- **Les inodes SMB** : le `--ignore-inode` de la commande cache un vrai piège des montages réseau, j'en parle dans l'article sur les galères de backup SMB.
-- **Monitoring** : exporter le résultat des runs (durée, taille, succès) vers Prometheus pour être alerté si un backup échoue plutôt que de le découvrir six mois plus tard.
-- **Règle 3-2-1** : Restic couvre l'off-site chiffré ; à compléter avec une copie locale (snapshots ZFS) pour respecter le 3-2-1 en entier.
-
-*Le mot de passe Restic vit dans un coffre séparé de tout le reste. Le jour où je le perds, je perds aussi le droit de me plaindre.*
+- **Backup d'une base live.** Sauvegarder un fichier SQLite pendant que l'app écrit dedans demande une précaution (un dump WAL-safe). Sujet d'un article dédié.
+- **Les inodes SMB.** Le `--ignore-inode` de la commande cache un vrai piège des montages réseau, j'en parle dans l'article sur les galères de backup SMB.
+- **Monitoring.** Exporter le résultat des runs (durée, taille, succès) vers Prometheus pour être alerté si un backup échoue plutôt que de le découvrir six mois plus tard.
+- **Règle 3-2-1.** Restic couvre l'off-site chiffré ; à compléter avec une copie locale (snapshots ZFS) pour respecter le 3-2-1 en entier.

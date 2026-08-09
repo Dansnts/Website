@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -141,9 +30,9 @@
     </header>
 
     <div class="blog-body">
-      <p>Quand on gère un cluster Kubernetes à la main, on finit toujours par se poser la même question : est-ce que ce qui tourne dans le cluster correspond vraiment à ce qu'il y a dans le repo ? Un <code>kubectl apply</code> oublié, un patch fait en urgence un soir de panne, et le cluster diverge silencieusement de Git. Plus personne ne sait quel est l'état réel.</p>
-<p>Le <strong>GitOps</strong> renverse le problème : Git devient la <strong>seule source de vérité</strong>, et un contrôleur dans le cluster se charge de faire correspondre le réel au désiré. On ne pousse plus vers le cluster, le cluster tire depuis Git.</p>
-<p>Dans ce post, on met en place ArgoCD. On va voir :</p>
+      <p>Quand on gère un cluster Kubernetes à la main, on finit toujours par se poser la même question, est-ce que ce qui tourne dans le cluster correspond vraiment à ce qu'il y a dans le repo ? Un <code>kubectl apply</code> oublié, un patch fait en urgence un soir de panne, et le cluster diverge silencieusement de Git. Plus personne ne sait quel est l'état réel.</p>
+<p>Le <strong>GitOps</strong> renverse le problème, Git devient la <strong>seule source de vérité</strong>, et un contrôleur dans le cluster se charge de faire correspondre le réel au désiré. On ne pousse plus vers le cluster, le cluster tire depuis Git.</p>
+<p>Dans ce post, on met en place ArgoCD. On va voir.</p>
 <ol>
 <li>Ce que change le GitOps par rapport à <code>kubectl apply</code></li>
 <li>Le principe de synchronisation d'ArgoCD</li>
@@ -158,7 +47,7 @@
 </ul>
 <hr>
 <h2><code>kubectl apply</code> vs GitOps</h2>
-<p>Voici le changement de mentalité, résumé :</p>
+<p>Voici le changement de mentalité, résumé.</p>
 <table>
 <thead>
 <tr>
@@ -195,7 +84,7 @@
 </tr>
 </tbody>
 </table>
-<p>Le mode <code>kubectl apply</code>, c'est <strong>impératif</strong> : on dit au cluster <em>quoi faire</em>. Le GitOps, c'est <strong>déclaratif</strong> : on déclare l'état voulu dans Git, et ArgoCD réconcilie en boucle. Si quelqu'un modifie une ressource à la main dans le cluster, ArgoCD le voit (<code>OutOfSync</code>) et peut la remettre en conformité.</p>
+<p>Le mode <code>kubectl apply</code>, c'est <strong>impératif</strong>, on dit au cluster <em>quoi faire</em>. Le GitOps, c'est <strong>déclaratif</strong>, on déclare l'état voulu dans Git, et ArgoCD réconcilie en boucle. Si quelqu'un modifie une ressource à la main dans le cluster, ArgoCD le voit (<code>OutOfSync</code>) et peut la remettre en conformité.</p>
 <pre><code>        AVANT (push)                       APRÈS (pull, GitOps)
 
    toi ──kubectl apply──&gt; cluster     Git &lt;──git push── toi
@@ -206,13 +95,13 @@
 </code></pre>
 <hr>
 <h2>Le principe ArgoCD</h2>
-<p>ArgoCD tourne dans le cluster (namespace <code>argocd</code>) et surveille en continu le repo. Pour chaque application déclarée, il compare deux états :</p>
+<p>ArgoCD tourne dans le cluster (namespace <code>argocd</code>) et surveille en continu le repo. Pour chaque application déclarée, il compare deux états.</p>
 <ul>
-<li><strong>Desired state</strong> : ce qui est dans Git (les manifests)</li>
-<li><strong>Live state</strong> : ce qui tourne réellement dans le cluster</li>
+<li><strong>Desired state.</strong> Ce qui est dans Git (les manifests)</li>
+<li><strong>Live state.</strong> Ce qui tourne réellement dans le cluster</li>
 </ul>
-<p>S'ils diffèrent, l'app est marquée <code>OutOfSync</code>. Selon la politique, ArgoCD synchronise automatiquement (ou attend une validation manuelle). Le résultat : le cluster converge toujours vers Git.</p>
-<p>L'accès à l'UI passe par un Ingress Traefik classique, avec le wildcard TLS :</p>
+<p>S'ils diffèrent, l'app est marquée <code>OutOfSync</code>. Selon la politique, ArgoCD synchronise automatiquement (ou attend une validation manuelle). Résultat, le cluster converge toujours vers Git.</p>
+<p>L'accès à l'UI passe par un Ingress Traefik classique, avec le wildcard TLS.</p>
 <pre><code class="language-yaml">apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -239,7 +128,7 @@ spec:
                   number: 80
 </code></pre>
 <hr>
-<h2>SSO : brancher ArgoCD sur Keycloak</h2>
+<h2>SSO, brancher ArgoCD sur Keycloak</h2>
 <p>Plutôt qu'un compte <code>admin</code> local, on connecte ArgoCD à Keycloak en OIDC. Un seul login pour tous les services, géré au même endroit.</p>
 <pre><code class="language-yaml">apiVersion: v1
 kind: ConfigMap
@@ -255,12 +144,12 @@ data:
     refreshTokenThreshold: 2m
     requestedScopes: [&quot;openid&quot;, &quot;profile&quot;, &quot;email&quot;, &quot;groups&quot;]
 </code></pre>
-<p><code>issuer</code> : l'URL du realm Keycloak. ArgoCD y découvre automatiquement les endpoints OIDC.</p>
-<p><code>clientSecret: $oidc.keycloak.clientSecret</code> : le <code>$</code> fait référence à une clé stockée dans un Secret K8s, le secret n'est pas en clair dans le ConfigMap.</p>
-<p><code>requestedScopes: [... &quot;groups&quot;]</code> : c'est le scope <code>groups</code> qui va permettre de mapper les groupes Keycloak vers des rôles ArgoCD. Essentiel pour le RBAC juste après.</p>
+<p><code>issuer</code> est l'URL du realm Keycloak. ArgoCD y découvre automatiquement les endpoints OIDC.</p>
+<p><code>clientSecret: $oidc.keycloak.clientSecret</code>, le <code>$</code> fait référence à une clé stockée dans un Secret K8s, le secret n'est pas en clair dans le ConfigMap.</p>
+<p><code>requestedScopes: [... &quot;groups&quot;]</code>, c'est le scope <code>groups</code> qui va permettre de mapper les groupes Keycloak vers des rôles ArgoCD. Essentiel pour le RBAC juste après.</p>
 <hr>
-<h2>RBAC : qui a le droit de quoi</h2>
-<p>Par défaut, on veut que personne ne puisse tout casser. La politique par défaut est <code>readonly</code>, et seul un groupe précis obtient les droits admin :</p>
+<h2>RBAC, qui a le droit de quoi</h2>
+<p>Par défaut, on veut que personne ne puisse tout casser. La politique par défaut est <code>readonly</code>, et seul un groupe précis obtient les droits admin.</p>
 <pre><code class="language-yaml">apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -271,26 +160,25 @@ data:
   policy.csv: |
     g, /argocd-admin, role:admin
 </code></pre>
-<p><code>policy.default: role:readonly</code> : tout utilisateur authentifié peut <em>voir</em>, mais pas <em>modifier</em>.</p>
-<p><code>g, /argocd-admin, role:admin</code> : les membres du groupe Keycloak <code>argocd-admin</code> héritent du rôle admin. On gère les droits depuis Keycloak, pas dans ArgoCD.</p>
+<p><code>policy.default: role:readonly</code> fait que tout utilisateur authentifié peut <em>voir</em>, mais pas <em>modifier</em>.</p>
+<p><code>g, /argocd-admin, role:admin</code> fait que les membres du groupe Keycloak <code>argocd-admin</code> héritent du rôle admin. On gère les droits depuis Keycloak, pas dans ArgoCD.</p>
 <blockquote>
-<p>Le combo OIDC + <code>groups</code> + RBAC, c'est ce qui rend l'ensemble propre : on ajoute quelqu'un au bon groupe dans Keycloak, et il obtient (ou perd) ses droits ArgoCD sans toucher à un seul manifest.</p>
+<p>Le combo OIDC + <code>groups</code> + RBAC, c'est ce qui rend l'ensemble propre, on ajoute quelqu'un au bon groupe dans Keycloak, et il obtient (ou perd) ses droits ArgoCD sans toucher à un seul manifest.</p>
 </blockquote>
 <hr>
-<h2>Le piège du single-node : les patchs du repo-server</h2>
-<p>Petit retour d'expérience, gratuit. Sur un cluster single-node, certaines valeurs par défaut d'ArgoCD (anti-affinité, réplicas multiples du <code>repo-server</code>) ne collent pas : il n'y a qu'un seul nœud, pas grand-chose à répartir. J'ai dû patcher le Deployment du <code>repo-server</code> pour satisfaire la validation K8s (nom de conteneur, champs requis) et utiliser l'annotation <code>ServerSideApply</code>.</p>
+<h2>Le piège du single-node, les patchs du repo-server</h2>
+<p>Petit retour d'expérience, gratuit. Sur un cluster single-node, certaines valeurs par défaut d'ArgoCD (anti-affinité, réplicas multiples du <code>repo-server</code>) ne collent pas, il n'y a qu'un seul nœud, pas grand-chose à répartir. J'ai dû patcher le Deployment du <code>repo-server</code> pour satisfaire la validation K8s (nom de conteneur, champs requis) et utiliser l'annotation <code>ServerSideApply</code>.</p>
 <blockquote>
-<p>La leçon : ArgoCD est pensé pour du multi-node HA. En single-node, il faut parfois adapter les manifests fournis. Rien de dramatique, mais à prévoir.</p>
+<p>La leçon, ArgoCD est pensé pour du multi-node HA. En single-node, il faut parfois adapter les manifests fournis. Rien de dramatique, mais à prévoir.</p>
 </blockquote>
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>App of Apps</strong> : déclarer une application ArgoCD qui elle-même déclare toutes les autres. Un seul point d'entrée pour tout le cluster.</li>
-<li><strong>Sync waves</strong> : ordonner le déploiement (les CRDs avant les ressources qui les utilisent, les secrets avant les pods).</li>
-<li><strong>Sealed Secrets</strong> : le GitOps suppose que <em>tout</em> est dans Git, y compris les secrets, mais chiffrés. C'est le sujet d'un article dédié.</li>
-<li><strong>Notifications</strong> : brancher ArgoCD sur un webhook pour être alerté quand une app passe <code>OutOfSync</code> ou <code>Degraded</code>.</li>
+<li><strong>App of Apps.</strong> Déclarer une application ArgoCD qui elle-même déclare toutes les autres. Un seul point d'entrée pour tout le cluster.</li>
+<li><strong>Sync waves.</strong> Ordonner le déploiement (les CRDs avant les ressources qui les utilisent, les secrets avant les pods).</li>
+<li><strong>Sealed Secrets.</strong> Le GitOps suppose que <em>tout</em> est dans Git, y compris les secrets, mais chiffrés. C'est le sujet d'un article dédié.</li>
+<li><strong>Notifications.</strong> Brancher ArgoCD sur un webhook pour être alerté quand une app passe <code>OutOfSync</code> ou <code>Degraded</code>.</li>
 </ul>
-<p><em>Git ne ment jamais. Le cluster, si on le laisse faire, oui.</em></p>
 
     </div>
   </article>

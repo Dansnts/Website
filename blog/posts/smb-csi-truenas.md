@@ -154,5 +154,3 @@ kubectl apply -f k8s/storageclass-smb.yaml
 - **Snapshots** : côté TrueNAS (ZFS), planifier des snapshots des datasets pour un point de restauration côté stockage, en plus des backups applicatifs.
 - **Les inodes SMB** : les montages SMB ont des inodes instables, ce qui pose problème aux outils de backup, un piège que j'aborde dans l'article sur les galères de backup SMB.
 - **Sécuriser les credentials** : les secrets SMB sont scellés avec Sealed Secrets, voir l'article dédié.
-
-*`canary` en prod, c'est comme goûter le gâteau avec la main dans le four allumé.*

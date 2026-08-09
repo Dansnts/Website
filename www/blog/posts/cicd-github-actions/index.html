@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -141,8 +30,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Une CI/CD (Intégration Continue / Déploiement Continu) est un pipeline automatique qui se déclenche à chaque push. Le but : plus jamais déployer à la main, et un flux qui trace tout le processus.</p>
-<p>On construit un pipeline <em>GitHub Actions</em> pour une application Node.js qui :</p>
+      <p>Une CI/CD (Intégration Continue / Déploiement Continu) est un pipeline automatique qui se déclenche à chaque push. Le but, plus jamais déployer à la main, et un flux qui trace tout le processus.</p>
+<p>On construit un pipeline <em>GitHub Actions</em> pour une application Node.js. Il fait quatre choses.</p>
 <ol>
 <li>Lance les tests automatiquement</li>
 <li>Build une image Docker</li>
@@ -165,10 +54,10 @@
         └── ci.yml   ← ici
 </code></pre>
 <p>Chaque workflow contient des <strong>jobs</strong>, chaque job contient des <strong>steps</strong>.</p>
-<p>En gros : un container qui exécute des tâches en cascade. Ce qui sort en stdout détermine si le job passe ou casse.</p>
+<p>En gros, un container qui exécute des tâches en cascade. Ce qui sort en stdout détermine si le job passe ou casse.</p>
 <hr>
-<h2>Étape 1 : Lancer les tests à chaque push</h2>
-<p>Le fichier ci.yml :</p>
+<h2>Étape 1, lancer les tests à chaque push</h2>
+<p>Le fichier ci.yml.</p>
 <pre><code class="language-yaml">name: CI/CD
 
 on:
@@ -191,14 +80,14 @@ jobs:
 
       - run: npm test
 </code></pre>
-<p><code>on: push: branches: [main]</code> : déclenche uniquement sur les pushs vers <code>main</code>.</p>
-<p><code>actions/checkout@v4</code> : clone la branche dans le runner.</p>
-<p><code>npm ci</code> : installe les dépendances depuis le lock file. Plus strict que <code>npm install</code>, il échoue si le lock file et le <code>package.json</code> ne correspondent pas.</p>
+<p><code>on: push: branches: [main]</code> déclenche uniquement sur les pushs vers <code>main</code>.</p>
+<p><code>actions/checkout@v4</code> clone la branche dans le runner.</p>
+<p><code>npm ci</code> installe les dépendances depuis le lock file. Plus strict que <code>npm install</code>, il échoue si le lock file et le <code>package.json</code> ne correspondent pas.</p>
 <blockquote>
 <p>Chaque push vers main lance les tests. Un test qui échoue, le job passe rouge, notification envoyée.</p>
 </blockquote>
 <hr>
-<h2>Étape 2 : Builder une image Docker</h2>
+<h2>Étape 2, builder une image Docker</h2>
 <p>On ajoute un job <code>build</code> qui dépend de <code>test</code> grâce à l'argument <code>needs</code>.</p>
 <pre><code class="language-yaml">  build:
     runs-on: ubuntu-latest
@@ -220,12 +109,12 @@ jobs:
           push: true
           tags: ghcr.io/$:latest
 </code></pre>
-<p><code>ghcr.io</code> : registre Docker intégré à GitHub. Pas besoin de compte Docker Hub. <code>GITHUB_TOKEN</code> est disponible automatiquement dans chaque workflow, rien à configurer.</p>
+<p><code>ghcr.io</code> est le registre Docker intégré à GitHub. Pas besoin de compte Docker Hub. <code>GITHUB_TOKEN</code> est disponible automatiquement dans chaque workflow, rien à configurer.</p>
 <blockquote>
 <p>Le <code>Dockerfile</code> à la racine du projet est utilisé par défaut. Si le tien vit ailleurs, <code>context</code> et <code>file</code> existent pour ça.</p>
 </blockquote>
 <hr>
-<h2>Étape 3 : Déployer sur le serveur</h2>
+<h2>Étape 3, déployer sur le serveur</h2>
 <pre><code class="language-yaml">  deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -245,7 +134,7 @@ jobs:
               ghcr.io/$:latest
 </code></pre>
 <p>Le serveur pull la nouvelle image et relance le container.</p>
-<p><code>|| true</code> sur <code>stop</code> et <code>rm</code> : évite que le job échoue si le container n'existe pas encore, typiquement au tout premier déploiement.</p>
+<p><code>|| true</code> sur <code>stop</code> et <code>rm</code> évite que le job échoue si le container n'existe pas encore, typiquement au tout premier déploiement.</p>
 <hr>
 <h2>Le pipeline complet</h2>
 <pre><code>push → main
@@ -263,12 +152,11 @@ jobs:
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Environments</strong> : GitHub permet de définir des environnements (<code>staging</code>, <code>production</code>) avec approbation manuelle avant la prod.</li>
-<li><strong>Matrix builds</strong> : tester plusieurs versions de Node/Python en parallèle avec <code>strategy: matrix</code>.</li>
-<li><strong>Cache</strong> : <code>actions/cache</code> pour mettre en cache <code>node_modules</code> et accélérer les builds.</li>
-<li><strong>Gestion des secrets</strong> : un sujet entier à lui tout seul, ça mérite son propre article.</li>
+<li><strong>Environments.</strong> GitHub permet de définir des environnements (<code>staging</code>, <code>production</code>) avec approbation manuelle avant la prod.</li>
+<li><strong>Matrix builds.</strong> Tester plusieurs versions de Node/Python en parallèle avec <code>strategy: matrix</code>.</li>
+<li><strong>Cache.</strong> <code>actions/cache</code> pour mettre en cache <code>node_modules</code> et accélérer les builds.</li>
+<li><strong>Gestion des secrets.</strong> Un sujet entier à lui tout seul, ça mérite son propre article.</li>
 </ul>
-<p><em>Le jour où je remplace le SSH bricolé par un vrai GitOps (ArgoCD), je supprime ce <code>deploy</code> job avec un plaisir non dissimulé.</em></p>
 
     </div>
   </article>

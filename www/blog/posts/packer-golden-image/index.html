@@ -8,119 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=128" />
+  <link rel="stylesheet" href="/css/style.css?v=129" />
   <link rel="icon" href="/favicon.ico" />
-  <style>
-    /* ── Blog listing ── */
-    .blog-index-wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem 5rem; }
-    .post-list { list-style: none; padding: 0; margin-top: 1.5rem; }
-    .post-list li { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
-    .post-list li:first-child { border-top: 1px solid var(--border); }
-    .post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--subtle); letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .post-list a { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color var(--t); }
-    .post-list a:hover { color: var(--accent); }
-    .post-desc { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; line-height: 1.6; font-weight: 300; }
-
-    /* ── Blog post body (Markdown output inside .project-detail) ── */
-    .blog-body { padding-bottom: 5rem; }
-
-    .blog-body h2 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin: 2.5rem 0 1rem;
-    }
-    .blog-body h3 {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--subtle);
-      margin: 1.75rem 0 0.5rem;
-    }
-    .blog-body p {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      color: var(--subtle);
-      line-height: 1.75;
-      margin-bottom: 1rem;
-    }
-    .blog-body ul, .blog-body ol {
-      padding-left: 1.4rem;
-      margin-bottom: 1rem;
-      color: var(--subtle);
-    }
-    .blog-body li {
-      font-family: var(--sans);
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.75;
-      margin-bottom: 0.25rem;
-    }
-    .blog-body a { color: var(--accent); }
-    .blog-body a:hover { opacity: 0.75; }
-    .blog-body strong { color: var(--text); font-weight: 600; }
-    .blog-body em { color: var(--subtle); font-style: italic; }
-    /* Inline code only - scoped to prose contexts so it never matches
-       the <code> inside a <pre> (that one is a .code-block, styled by
-       style.css, and must stay plain text with no pill background). */
-    .blog-body p code, .blog-body li code, .blog-body td code, .blog-body blockquote code {
-      font-family: var(--code);
-      font-size: 0.8em;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.15em 0.4em;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-    .blog-body blockquote {
-      border-left: 2px solid var(--accent);
-      padding: 0.1rem 1rem;
-      color: var(--muted);
-      margin: 1.5rem 0;
-    }
-    .blog-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-    .blog-body img { max-width: 100%; border-radius: 8px; margin: 1rem 0; }
-    .blog-body table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: var(--sans);
-      font-size: 0.82rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .blog-body thead tr { border-bottom: 1px solid var(--border-hi); }
-    .blog-body th {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      padding: 0 1rem;
-      text-align: left;
-    }
-    .blog-body td {
-      padding: 0.6rem 1rem;
-      color: var(--subtle);
-      font-weight: 300;
-      line-height: 1.6;
-      border-bottom: 1px solid var(--border);
-    }
-    .blog-body tr:last-child td { border-bottom: none; }
-    .blog-body tbody tr:hover td { background: var(--surface); }
-
-    /* ── Code blocks ──
-       Markdown code fences get wrapped in .code-block by the script
-       below, at which point .code-block/.code-header/.code-filename/
-       .code-dots/.code-copy and their dark-theme variants all come
-       from style.css - the same terminal-style chrome the rest of the
-       site's hand-authored code blocks use, not redeclared here. */
-  </style>
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -141,8 +30,8 @@
     </header>
 
     <div class="blog-body">
-      <p>Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner : un <strong>template</strong>. On peut le fabriquer à la main : installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.</p>
-<p>C'est le principe de la <em>golden image</em> : une image de base, propre, réutilisable, versionnée dans Git. Dans ce post, on construit une image Debian 12 pour Proxmox avec Packer. On va voir :</p>
+      <p>Avant de cloner des VMs avec Terraform, il faut quelque chose à cloner, un <strong>template</strong>. On peut le fabriquer à la main, installer Debian, cliquer pendant vingt minutes, installer les paquets, convertir en template. Ou décrire tout ça dans un fichier et laisser Packer le construire à notre place, toujours à l'identique.</p>
+<p>C'est le principe de la <em>golden image</em>, une image de base, propre, réutilisable, versionnée dans Git. Dans ce post, on construit une image Debian 12 pour Proxmox avec Packer. On va voir.</p>
 <ol>
 <li>Installer Debian <strong>sans interaction</strong> grâce au preseed</li>
 <li>Provisionner les paquets et la config système</li>
@@ -155,7 +44,7 @@
 <li>Packer installé localement</li>
 </ul>
 <hr>
-<h2>L'idée : de l'ISO au template</h2>
+<h2>L'idée, de l'ISO au template</h2>
 <pre><code>ISO Debian netinst
        │
        V
@@ -170,9 +59,9 @@
        V
 Template 9000       ──── prêt à être cloné par Terraform
 </code></pre>
-<p>Le fichier Packer principal (<code>k8s-debian.pkr.hcl</code>) est en deux morceaux : une <strong>source</strong> (comment construire la VM) et un <strong>build</strong> (quoi faire dessus une fois installée).</p>
+<p>Le fichier Packer principal (<code>k8s-debian.pkr.hcl</code>) est en deux morceaux, une <strong>source</strong> (comment construire la VM) et un <strong>build</strong> (quoi faire dessus une fois installée).</p>
 <hr>
-<h2>Étape 1 : la source, installer Debian sans y toucher</h2>
+<h2>Étape 1, la source, installer Debian sans y toucher</h2>
 <pre><code class="language-hcl">source &quot;proxmox-iso&quot; &quot;debian-k8s&quot; {
   proxmox_url              = var.proxmox_url
   username                 = var.proxmox_username
@@ -223,14 +112,14 @@ Template 9000       ──── prêt à être cloné par Terraform
   ssh_timeout  = &quot;25m&quot;
 }
 </code></pre>
-<p>Le mécanisme clé, c'est le duo <code>boot_command</code> + <code>http_directory</code> :</p>
-<p><code>http_directory = &quot;http&quot;</code> : Packer démarre un petit serveur HTTP local qui sert le contenu du dossier <code>http/</code>, notre fichier <code>preseed.cfg</code>.</p>
-<p><code>boot_command</code> : Packer simule des frappes clavier au boot de l'ISO. Il tape littéralement <code>install auto=true ...</code> puis pointe l'installeur Debian vers le preseed via <code>http://:/preseed.cfg</code>. Debian télécharge le preseed et s'installe tout seul.</p>
-<p><code>cloud_init = true</code> : Packer attache un lecteur cloud-init au template. C'est ce qui permettra à Terraform, plus tard, d'injecter l'IP et l'utilisateur au clonage.</p>
-<p><code>ssh_username = &quot;packer&quot;</code> : une fois l'install finie, Packer se connecte en SSH pour lancer les provisioners. Ce user <code>packer</code> est créé par le preseed.</p>
+<p>Le mécanisme clé, c'est le duo <code>boot_command</code> + <code>http_directory</code>.</p>
+<p><code>http_directory = &quot;http&quot;</code> fait que Packer démarre un petit serveur HTTP local qui sert le contenu du dossier <code>http/</code>, notre fichier <code>preseed.cfg</code>.</p>
+<p><code>boot_command</code> simule des frappes clavier au boot de l'ISO. Il tape littéralement <code>install auto=true ...</code> puis pointe l'installeur Debian vers le preseed via <code>http://:/preseed.cfg</code>. Debian télécharge le preseed et s'installe tout seul.</p>
+<p><code>cloud_init = true</code> fait que Packer attache un lecteur cloud-init au template. C'est ce qui permettra à Terraform, plus tard, d'injecter l'IP et l'utilisateur au clonage.</p>
+<p><code>ssh_username = &quot;packer&quot;</code>, une fois l'install finie, Packer se connecte en SSH pour lancer les provisioners. Ce user <code>packer</code> est créé par le preseed.</p>
 <hr>
-<h2>Le preseed : répondre à l'installeur à l'avance</h2>
-<p>Le <code>preseed.cfg</code> répond à toutes les questions que l'installeur Debian poserait normalement. Les blocs importants :</p>
+<h2>Le preseed, répondre à l'installeur à l'avance</h2>
+<p>Le <code>preseed.cfg</code> répond à toutes les questions que l'installeur Debian poserait normalement. Les blocs importants.</p>
 <pre><code># Partitionnement : tout sur une partition, automatique
 d-i partman-auto/method string regular
 d-i partman-auto/choose_recipe select atomic
@@ -244,18 +133,18 @@ d-i passwd/user-password password packer
 # Packages de base
 d-i pkgsel/include string openssh-server sudo curl
 </code></pre>
-<p>Et un détail qui vaut de l'or : le <code>late_command</code>, qui donne à <code>packer</code> un sudo sans mot de passe.</p>
+<p>Et un détail qui vaut de l'or, le <code>late_command</code>, qui donne à <code>packer</code> un sudo sans mot de passe.</p>
 <pre><code>d-i preseed/late_command string \
   echo &quot;packer ALL=(ALL) NOPASSWD:ALL&quot; &gt; /target/etc/sudoers.d/packer; \
   chmod 440 /target/etc/sudoers.d/packer
 </code></pre>
 <p>Sans ce <code>NOPASSWD</code>, les provisioners Packer qui font du <code>sudo</code> se bloqueraient à attendre un mot de passe. Là, tout passe tout seul.</p>
 <blockquote>
-<p><code>root-login boolean false</code> : pas de compte root activé. On passe par <code>packer</code> + sudo. Bonne pratique reprise directement de l'installeur.</p>
+<p><code>root-login boolean false</code>, pas de compte root activé. On passe par <code>packer</code> + sudo. Bonne pratique reprise directement de l'installeur.</p>
 </blockquote>
 <hr>
-<h2>Étape 2 : Provisionner l'image</h2>
-<p>Une fois Debian installé, le bloc <code>build</code> lance nos scripts :</p>
+<h2>Étape 2, provisionner l'image</h2>
+<p>Une fois Debian installé, le bloc <code>build</code> lance nos scripts.</p>
 <pre><code class="language-hcl">build {
   sources = [&quot;source.proxmox-iso.debian-k8s&quot;]
 
@@ -267,7 +156,7 @@ d-i pkgsel/include string openssh-server sudo curl
   # ... nettoyage (voir plus bas)
 }
 </code></pre>
-<p>Le <code>setup.sh</code> installe tout ce qu'on veut retrouver dans <strong>chaque</strong> VM issue de ce template :</p>
+<p>Le <code>setup.sh</code> installe tout ce qu'on veut retrouver dans <strong>chaque</strong> VM issue de ce template.</p>
 <pre><code class="language-bash">#!/usr/bin/env bash
 set -euo pipefail
 
@@ -287,12 +176,12 @@ manage_etc_hosts: true
 datasource_list: [ConfigDrive, NoCloud]
 EOF
 </code></pre>
-<p>Trois paquets méritent qu'on s'y arrête :</p>
-<p><code>qemu-guest-agent</code> : sans lui, Terraform ne saura jamais l'IP de la VM clonée. Indispensable.</p>
-<p><code>cloud-initramfs-growroot</code> : au premier boot, la partition s'étend automatiquement à toute la taille du disque. Le template fait 20 Go ; si Terraform clone avec un disque de 80 Go, la VM utilise bien les 80 Go sans intervention.</p>
-<p>Le <code>datasource_list: [ConfigDrive, NoCloud]</code> : dit à cloud-init d'aller lire la config que Proxmox lui injecte, plutôt que de chercher un datasource cloud (AWS, GCP…) qui n'existe pas ici.</p>
+<p>Trois paquets méritent qu'on s'y arrête.</p>
+<p><code>qemu-guest-agent</code>, sans lui, Terraform ne saura jamais l'IP de la VM clonée. Indispensable.</p>
+<p><code>cloud-initramfs-growroot</code>, au premier boot, la partition s'étend automatiquement à toute la taille du disque. Le template fait 20 Go ; si Terraform clone avec un disque de 80 Go, la VM utilise bien les 80 Go sans intervention.</p>
+<p>Le <code>datasource_list: [ConfigDrive, NoCloud]</code> dit à cloud-init d'aller lire la config que Proxmox lui injecte, plutôt que de chercher un datasource cloud (AWS, GCP…) qui n'existe pas ici.</p>
 <hr>
-<h2>Étape 3 : le nettoyage, le secret d'un template clonable</h2>
+<h2>Étape 3, le nettoyage, le secret d'un template clonable</h2>
 <p>C'est l'étape que <strong>tout le monde oublie</strong>, et qui casse tout ensuite. Un template, ce n'est pas juste « une VM éteinte ». Il faut effacer toute l'identité unique de la machine, sinon toutes les VMs clonées la partageront.</p>
 <pre><code class="language-hcl">provisioner &quot;shell&quot; {
   inline = [
@@ -306,12 +195,12 @@ EOF
   ]
 }
 </code></pre>
-<p>Pourquoi chaque ligne compte :</p>
-<p><code>cloud-init clean</code> : efface l'état de cloud-init pour qu'il se relance proprement au premier boot du clone (et applique la nouvelle IP, le nouveau user…).</p>
-<p><code>rm /etc/ssh/ssh_host_*</code> : supprime les clés d'hôte SSH. <strong>Critique.</strong> Sinon, toutes les VMs auraient la même empreinte SSH, un désastre de sécurité et une source d'avertissements <code>known_hosts</code>. Elles sont régénérées au premier boot.</p>
-<p><code>truncate /etc/machine-id</code> : vide l'ID machine. S'il n'est pas vide, toutes les VMs clonées partagent le même <code>machine-id</code>, ce qui casse la résolution DHCP, systemd, journald… Vidé, il est regénéré au boot, unique par VM.</p>
+<p>Pourquoi chaque ligne compte.</p>
+<p><code>cloud-init clean</code> efface l'état de cloud-init pour qu'il se relance proprement au premier boot du clone (et applique la nouvelle IP, le nouveau user…).</p>
+<p><code>rm /etc/ssh/ssh_host_*</code> supprime les clés d'hôte SSH. <strong>Critique.</strong> Sinon, toutes les VMs auraient la même empreinte SSH, un désastre de sécurité et une source d'avertissements <code>known_hosts</code>. Elles sont régénérées au premier boot.</p>
+<p><code>truncate /etc/machine-id</code> vide l'ID machine. S'il n'est pas vide, toutes les VMs clonées partagent le même <code>machine-id</code>, ce qui casse la résolution DHCP, systemd, journald… Vidé, il est regénéré au boot, unique par VM.</p>
 <blockquote>
-<p>Règle du template : <strong>tout ce qui est unique à une machine doit être effacé.</strong> Clés SSH, machine-id, logs, état cloud-init. Ce qui reste, c'est le socle commun. C'est exactement ça, une golden image.</p>
+<p>Règle du template, <strong>tout ce qui est unique à une machine doit être effacé.</strong> Clés SSH, machine-id, logs, état cloud-init. Ce qui reste, c'est le socle commun. C'est exactement ça, une golden image.</p>
 </blockquote>
 <hr>
 <h2>Construire l'image</h2>
@@ -327,12 +216,11 @@ packer build -var-file=&quot;variables.pkrvars.hcl&quot; .
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Terraform derrière</strong> : la golden image n'a de sens que si quelque chose la clone. C'est le job de Terraform (<code>clone { vm_id = 9000 }</code>), sujet d'un autre article.</li>
-<li><strong>Versionner les images</strong> : incrémenter le <code>template_description</code> ou tagguer avec une date à chaque build permet de savoir quelle image tourne sur quelle VM.</li>
-<li><strong>Un template par usage</strong> : ici c'est une image « K8s ». On pourrait en avoir une pour Docker, une pour les VMs de test… chacune avec son <code>setup.sh</code>.</li>
-<li><strong>CI</strong> : lancer <code>packer build</code> automatiquement quand le <code>.pkr.hcl</code> change, pour régénérer l'image à chaque mise à jour de sécurité Debian.</li>
+<li><strong>Terraform derrière.</strong> La golden image n'a de sens que si quelque chose la clone. C'est le job de Terraform (<code>clone { vm_id = 9000 }</code>), sujet d'un autre article.</li>
+<li><strong>Versionner les images.</strong> Incrémenter le <code>template_description</code> ou tagguer avec une date à chaque build permet de savoir quelle image tourne sur quelle VM.</li>
+<li><strong>Un template par usage.</strong> Ici c'est une image « K8s ». On pourrait en avoir une pour Docker, une pour les VMs de test… chacune avec son <code>setup.sh</code>.</li>
+<li><strong>CI.</strong> Lancer <code>packer build</code> automatiquement quand le <code>.pkr.hcl</code> change, pour régénérer l'image à chaque mise à jour de sécurité Debian.</li>
 </ul>
-<p><em>Le jour où j'oublierai le <code>rm /etc/ssh/ssh_host_*</code>, toutes mes VMs partageront la même clé et <code>known_hosts</code> hurlera en chœur. La checklist de nettoyage existe précisément pour ce jour-là.</em></p>
 
     </div>
   </article>
