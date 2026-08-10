@@ -146,6 +146,5 @@ Un node `Ready`, Traefik en `Running`, le socle est prêt à accueillir les serv
 ## Aller plus loin
 
 - **GitOps avec ArgoCD.** Plutôt que `kubectl apply` à la main, faire synchroniser le cluster sur le repo Git. La suite logique du « tout est dans Git ».
-- **MetalLB.** Remplacer le LoadBalancer basique de K3s pour exposer proprement plusieurs services sur des IPs dédiées.
-- **cert-manager.** Générer et renouveler automatiquement les certificats TLS (wildcard Let's Encrypt) pour tous les services.
+- **MetalLB et cert-manager.** Remplacer le LoadBalancer basique de K3s pour exposer proprement plusieurs services sur des IPs dédiées, et générer/renouveler automatiquement les certificats TLS (wildcard Let's Encrypt).
 - **Multi-node.** Le jour où la HA compte, ajouter des nodes avec etcd embarqué et un token d'agent.

@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GitOps avec ArgoCD — Dani Faria dos Santos</title>
-  <meta name="description" content="Arrêter de faire kubectl apply à la main et laisser un contrôleur synchroniser le cluster sur le repo Git." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Arrêter de faire kubectl apply à la main et laisser un contrôleur synchroniser le cluster sur le repo Git.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -144,8 +144,8 @@ data:
     refreshTokenThreshold: 2m
     requestedScopes: [&quot;openid&quot;, &quot;profile&quot;, &quot;email&quot;, &quot;groups&quot;]
 </code></pre>
-<p><code>issuer</code> est l'URL du realm Keycloak. ArgoCD y découvre automatiquement les endpoints OIDC.</p>
-<p><code>clientSecret: $oidc.keycloak.clientSecret</code>, le <code>$</code> fait référence à une clé stockée dans un Secret K8s, le secret n'est pas en clair dans le ConfigMap.</p>
+<p>Le champ <code>issuer</code> pointe vers l'URL du realm Keycloak, ArgoCD y découvre automatiquement les endpoints OIDC.</p>
+<p>Dans <code>clientSecret: $oidc.keycloak.clientSecret</code>, le <code>$</code> renvoie à une clé stockée dans un Secret K8s. Le secret n'apparaît jamais en clair dans le ConfigMap.</p>
 <p><code>requestedScopes: [... &quot;groups&quot;]</code>, c'est le scope <code>groups</code> qui va permettre de mapper les groupes Keycloak vers des rôles ArgoCD. Essentiel pour le RBAC juste après.</p>
 <hr>
 <h2>RBAC, qui a le droit de quoi</h2>
@@ -160,8 +160,8 @@ data:
   policy.csv: |
     g, /argocd-admin, role:admin
 </code></pre>
-<p><code>policy.default: role:readonly</code> fait que tout utilisateur authentifié peut <em>voir</em>, mais pas <em>modifier</em>.</p>
-<p><code>g, /argocd-admin, role:admin</code> fait que les membres du groupe Keycloak <code>argocd-admin</code> héritent du rôle admin. On gère les droits depuis Keycloak, pas dans ArgoCD.</p>
+<p>Avec <code>policy.default: role:readonly</code>, tout utilisateur authentifié peut <em>voir</em>, mais pas <em>modifier</em>.</p>
+<p>La ligne <code>g, /argocd-admin, role:admin</code> donne le rôle admin aux membres du groupe Keycloak <code>argocd-admin</code>. On gère ainsi les droits depuis Keycloak, pas dans ArgoCD.</p>
 <blockquote>
 <p>Le combo OIDC + <code>groups</code> + RBAC, c'est ce qui rend l'ensemble propre, on ajoute quelqu'un au bon groupe dans Keycloak, et il obtient (ou perd) ses droits ArgoCD sans toucher à un seul manifest.</p>
 </blockquote>
@@ -175,8 +175,7 @@ data:
 <h2>Aller plus loin</h2>
 <ul>
 <li><strong>App of Apps.</strong> Déclarer une application ArgoCD qui elle-même déclare toutes les autres. Un seul point d'entrée pour tout le cluster.</li>
-<li><strong>Sync waves.</strong> Ordonner le déploiement (les CRDs avant les ressources qui les utilisent, les secrets avant les pods).</li>
-<li><strong>Sealed Secrets.</strong> Le GitOps suppose que <em>tout</em> est dans Git, y compris les secrets, mais chiffrés. C'est le sujet d'un article dédié.</li>
+<li><strong>Sync waves et Sealed Secrets.</strong> Ordonner le déploiement (les CRDs avant les ressources qui les utilisent, les secrets avant les pods) suppose que <em>tout</em> soit dans Git, y compris les secrets, mais chiffrés. C'est le sujet d'un article dédié.</li>
 <li><strong>Notifications.</strong> Brancher ArgoCD sur un webhook pour être alerté quand une app passe <code>OutOfSync</code> ou <code>Degraded</code>.</li>
 </ul>
 

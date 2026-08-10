@@ -103,11 +103,11 @@ Les trois étapes, et pourquoi cet ordre.
 
 `restic check` vérifie l'intégrité structurelle du repo (index + packs). Un backup qu'on ne vérifie jamais, c'est un backup qu'on *espère* avoir.
 
-`concurrencyPolicy: Forbid` fait que si un backup dure plus de 24h (peu probable mais possible au premier run), on n'en lance pas un deuxième par-dessus.
+`concurrencyPolicy: Forbid` empêche qu'un backup qui traîne plus de 24h, peu probable mais possible au tout premier run, se voie lancer un deuxième par-dessus.
 
 `restic snapshots || restic init` assure l'idempotence, on n'initialise le repo que la première fois, sans erreur les fois suivantes.
 
-`envFrom secretRef` fait que toutes les variables sensibles (`RESTIC_REPOSITORY`, `RESTIC_PASSWORD`, clés S3) viennent d'un Secret scellé.
+Toutes les variables sensibles (`RESTIC_REPOSITORY`, `RESTIC_PASSWORD`, clés S3) arrivent via `envFrom secretRef`, depuis un Secret scellé.
 
 ---
 
@@ -164,4 +164,3 @@ restic mount /mnt/restic-restore
 - **Backup d'une base live.** Sauvegarder un fichier SQLite pendant que l'app écrit dedans demande une précaution (un dump WAL-safe). Sujet d'un article dédié.
 - **Les inodes SMB.** Le `--ignore-inode` de la commande cache un vrai piège des montages réseau, j'en parle dans l'article sur les galères de backup SMB.
 - **Monitoring.** Exporter le résultat des runs (durée, taille, succès) vers Prometheus pour être alerté si un backup échoue plutôt que de le découvrir six mois plus tard.
-- **Règle 3-2-1.** Restic couvre l'off-site chiffré ; à compléter avec une copie locale (snapshots ZFS) pour respecter le 3-2-1 en entier.

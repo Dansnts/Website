@@ -60,7 +60,7 @@ spec:
     - homelab-pool
 ```
 
-`addresses: 10.0.0.100-10.0.0.110`, la plage réservée. **Crucial**, ces IP doivent être *hors* de la plage DHCP du routeur. Chez moi, le DHCP du MikroTik distribue `10.0.0.200-250`, donc `100-110` est libre. Aucun conflit possible, et c'est le genre de conflit qui, sinon, se découvre un dimanche soir.
+`addresses: 10.0.0.100-10.0.0.110`, la plage réservée. **Crucial**, ces IP doivent être *hors* de la plage DHCP du routeur. Chez moi, le DHCP du MikroTik distribue `10.0.0.200-250`, donc `100-110` est libre. Aucun conflit possible, alors qu'un chevauchement entre les deux plages passerait inaperçu jusqu'au premier bail DHCP écrasé.
 
 Avec `L2Advertisement`, le node répond aux requêtes ARP pour les IP du pool. Du point de vue du réseau, c'est comme si le node « possédait » ces IP. Pas de config routeur, pas de BGP, ça marche tel quel sur un LAN simple.
 
@@ -109,11 +109,10 @@ Chez moi, le pool sert à ceci.
 
 Traefik lui-même est un service MetalLB (`10.0.0.100`), c'est par cette IP que tout le trafic HTTP entre. Le DNS interne (CoreDNS, Pi-hole) pointe les noms de services vers cette adresse.
 
-Le pattern à retenir, HTTP passe par un Ingress derrière Traefik (`10.0.0.100`), non-HTTP passe par un Service LoadBalancer avec sa propre IP MetalLB. Chaque protocole trouve sa route, personne ne se marche dessus.
+Le pattern à retenir tient en une phrase, le HTTP passe par un Ingress derrière Traefik (`10.0.0.100`), le non-HTTP passe par un Service LoadBalancer avec sa propre IP MetalLB.
 
 ## Aller plus loin
 
 - **Mode BGP.** Sur du multi-node, remplacer le L2 par du BGP pour une vraie répartition de charge (nécessite un routeur qui parle BGP).
-- **IP partagées.** Plusieurs services peuvent partager une IP via l'annotation `allow-shared-ip` si les ports ne se chevauchent pas.
-- **Pools multiples.** Séparer un pool « interne » et un pool « exposé » pour clarifier ce qui est joignable depuis l'extérieur.
+- **IP partagées et pools multiples.** L'annotation `allow-shared-ip` permet à plusieurs services de partager une IP si les ports ne se chevauchent pas ; séparer un pool « interne » et un pool « exposé » clarifie ce qui est joignable depuis l'extérieur.
 - **Le lien avec le port-forward.** L'IP MetalLB n'est que la moitié du chemin, voir l'article MikroTik pour le DNAT qui expose ces services vers internet.

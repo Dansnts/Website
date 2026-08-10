@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Monter un cluster K3s single-node — Dani Faria dos Santos</title>
-  <meta name="description" content="Pourquoi K3s plutôt que Kubernetes complet, le Traefik intégré, et la chaîne Packer → Terraform → Ansible qui mène au cluster." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Pourquoi K3s plutôt que Kubernetes complet, le Traefik intégré, et la chaîne Packer → Terraform → Ansible qui mène au cluster.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -164,8 +164,7 @@ sudo k3s kubectl get pods -n kube-system | grep traefik
 <h2>Aller plus loin</h2>
 <ul>
 <li><strong>GitOps avec ArgoCD.</strong> Plutôt que <code>kubectl apply</code> à la main, faire synchroniser le cluster sur le repo Git. La suite logique du « tout est dans Git ».</li>
-<li><strong>MetalLB.</strong> Remplacer le LoadBalancer basique de K3s pour exposer proprement plusieurs services sur des IPs dédiées.</li>
-<li><strong>cert-manager.</strong> Générer et renouveler automatiquement les certificats TLS (wildcard Let's Encrypt) pour tous les services.</li>
+<li><strong>MetalLB et cert-manager.</strong> Remplacer le LoadBalancer basique de K3s pour exposer proprement plusieurs services sur des IPs dédiées, et générer/renouveler automatiquement les certificats TLS (wildcard Let's Encrypt).</li>
 <li><strong>Multi-node.</strong> Le jour où la HA compte, ajouter des nodes avec etcd embarqué et un token d'agent.</li>
 </ul>
 

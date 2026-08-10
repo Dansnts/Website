@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Filtrer du trafic avec les ACL Cisco, sans routeur dédié — Dani Faria dos Santos</title>
-  <meta name="description" content="Les bases des ACL Cisco, standard contre extended, wildcard mask, deny implicite en fin de liste, avec un exemple concret de restriction d&#39;accès SSH." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Les bases des ACL Cisco, standard contre extended, wildcard mask, deny implicite en fin de liste, avec un exemple concret de restriction d&#39;accès SSH.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -156,7 +156,7 @@ Router(config-if)# ip access-group MGMT-ACCESS in
 <p>Contrairement à <code>ip access-group</code>, <code>access-class</code> ne s'applique pas à une interface physique mais aux lignes <code>vty</code> (les sessions Telnet/SSH entrantes). Une ACL extended n'a d'ailleurs pas grand intérêt ici. Sur les VTY, on filtre déjà implicitement sur le protocole de management, inutile de préciser un port. Une ACL standard suffit.</p>
 <hr>
 <h2>Exemple concret, restreindre l'accès SSH</h2>
-<p>Testé en lab EVE-NG plutôt qu'en prod (par prudence, se couper l'accès management à distance sur un routeur physique est une excellente façon de finir en salle serveur un dimanche). Seule la station de management <code>192.168.1.10</code> doit pouvoir se connecter en SSH sur <code>R1</code>, tout le reste bloqué.</p>
+<p>Testé en lab EVE-NG plutôt qu'en prod, se couper l'accès management à distance sur un routeur physique se répare rarement à distance. Seule la station de management <code>192.168.1.10</code> doit pouvoir se connecter en SSH sur <code>R1</code>, tout le reste bloqué.</p>
 <pre><code class="language-ios">R1(config)# ip access-list standard MGMT-ACCESS
 R1(config-std-nacl)# permit host 192.168.1.10
 R1(config-std-nacl)# deny any log

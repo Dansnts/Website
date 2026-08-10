@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Provisionner ses VMs Proxmox avec Terraform — Dani Faria dos Santos</title>
-  <meta name="description" content="Cloner un template, injecter la config via cloud-init, et le piège du passthrough disque que le provider ne sait pas gérer." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Cloner un template, injecter la config via cloud-init, et le piège du passthrough disque que le provider ne sait pas gérer.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -154,10 +154,10 @@ proxmox_token_secret = &quot;TON_SECRET&quot;
 }
 </code></pre>
 <p>Ce qui compte vraiment ici.</p>
-<p><code>clone { full = true }</code> fait un clone <strong>complet</strong>, pas lié. La nouvelle VM est totalement indépendante du template, on peut supprimer le template sans rien casser.</p>
-<p><code>cpu { type = &quot;host&quot; }</code> fait que la VM voit le vrai CPU de l'hôte, pas un CPU générique émulé. Meilleures perfs, indispensable pour les instructions modernes.</p>
+<p>Le paramètre <code>full = true</code> clone la VM entièrement, sans lien vers le template. La nouvelle VM est totalement indépendante, on peut supprimer le template après coup sans rien casser.</p>
+<p>Avec <code>cpu { type = &quot;host&quot; }</code>, la VM voit le vrai CPU de l'hôte, pas un CPU générique émulé. Meilleures perfs, indispensable pour les instructions modernes.</p>
 <p><code>agent { enabled = true }</code> active le QEMU guest agent. Sans lui, Terraform ne connaît jamais l'IP réelle de la VM et attend indéfiniment. Le paquet <code>qemu-guest-agent</code> doit déjà être dans le template, sinon on attend pour rien.</p>
-<p><code>initialization.ip_config</code> fait que cloud-init applique cette IP au premier boot. On fixe l'IP ici plutôt que de dépendre du DHCP.</p>
+<p>Le bloc <code>initialization.ip_config</code> indique l'IP que cloud-init doit appliquer au premier boot. Autant la fixer ici plutôt que de dépendre du DHCP.</p>
 <p><code>user_data_file_id</code> pointe vers le fichier cloud-init, déclaré comme ressource séparée.</p>
 <pre><code class="language-hcl">resource &quot;proxmox_virtual_environment_file&quot; &quot;k3s_cloud_init&quot; {
   content_type = &quot;snippets&quot;

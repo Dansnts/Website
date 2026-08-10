@@ -100,11 +100,11 @@ source "proxmox-iso" "debian-k8s" {
 
 Le mécanisme clé, c'est le duo `boot_command` + `http_directory`.
 
-`http_directory = "http"` fait que Packer démarre un petit serveur HTTP local qui sert le contenu du dossier `http/`, notre fichier `preseed.cfg`.
+Le paramètre `http_directory = "http"` déclenche un petit serveur HTTP local chez Packer, qui sert le contenu du dossier `http/`, notre fichier `preseed.cfg`.
 
 `boot_command` simule des frappes clavier au boot de l'ISO. Il tape littéralement `install auto=true ...` puis pointe l'installeur Debian vers le preseed via `http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg`. Debian télécharge le preseed et s'installe tout seul.
 
-`cloud_init = true` fait que Packer attache un lecteur cloud-init au template. C'est ce qui permettra à Terraform, plus tard, d'injecter l'IP et l'utilisateur au clonage.
+En activant `cloud_init = true`, Packer attache un lecteur cloud-init au template. C'est ce qui permettra à Terraform, plus tard, d'injecter l'IP et l'utilisateur au clonage.
 
 `ssh_username = "packer"`, une fois l'install finie, Packer se connecte en SSH pour lancer les provisioners. Ce user `packer` est créé par le preseed.
 

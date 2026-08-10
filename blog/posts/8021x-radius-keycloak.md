@@ -250,5 +250,4 @@ Un `Access-Accept` en retour = toute la chaîne fonctionne (RADIUS → EAP → K
 
 - **La dépendance circulaire.** Mettre le node K8s (qui héberge FreeRADIUS) derrière un port 802.1X crée un deadlock potentiel. C'est un piège si sérieux qu'il mérite son propre article.
 - **VLAN dynamique.** RADIUS peut renvoyer un VLAN dans sa réponse, pour assigner automatiquement un client à un sous-réseau selon son identité.
-- **Accounting.** Les ports `1813` (acct) permettent de logguer qui s'est connecté, quand, combien de temps.
-- **CoA (Change of Authorization).** Révoquer une session active sans attendre la reconnexion.
+- **Accounting et CoA.** Le port `1813` (acct) permet de logguer qui s'est connecté, quand, combien de temps ; le CoA (Change of Authorization) permet de révoquer une session active sans attendre la reconnexion.

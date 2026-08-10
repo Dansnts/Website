@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Construire un service de health check en Python avec asyncio — Dani Faria dos Santos</title>
-  <meta name="description" content="Un petit service qui poll une liste d&#39;URLs en parallèle, stocke les résultats en mémoire et les expose via une API FastAPI." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Un petit service qui poll une liste d&#39;URLs en parallèle, stocke les résultats en mémoire et les expose via une API FastAPI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -30,7 +30,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Un <em>health check</em> est un service qui surveille en continu si une liste d'URLs répond correctement. L'objectif, savoir qu'un service est tombé avant que les utilisateurs ne s'en chargent à notre place.</p>
+      <p>Un <em>health check</em> est un service qui surveille en continu si une liste d'URLs répond correctement. Son objectif est de savoir qu'un service est tombé avant que les utilisateurs ne s'en chargent à notre place.</p>
 <p>On construit un petit service en Python. Il fait quatre choses.</p>
 <ol>
 <li>Poll une liste d'URLs configurables à intervalle régulier</li>
@@ -56,7 +56,7 @@
     ├── worker.py   # le worker async qui poll
     └── api.py      # l'API FastAPI + le lifespan
 </code></pre>
-<p>L'idée directrice, le <strong>worker</strong> écrit dans le <strong>store</strong>, l'<strong>API</strong> lit dans le <strong>store</strong>. Les deux ne se parlent jamais directement, ils passent par la donnée. Découplé, testable, rien à débattre.</p>
+<p>Le <strong>worker</strong> écrit dans le <strong>store</strong>, l'<strong>API</strong> s'y contente de lire. Les deux modules ne communiquent jamais directement entre eux, seule la donnée stockée les relie, ce qui permet de tester chacun séparément.</p>
 <hr>
 <h2>Étape 1, charger la configuration</h2>
 <p>On veut pouvoir éditer la liste des URLs sans retoucher au code. Un simple YAML fait l'affaire.</p>
@@ -68,7 +68,7 @@
 pollInterval: 60   # secondes entre chaque poll
 timeout: 10        # secondes avant de marquer TIMEOUT
 </code></pre>
-<p>Et le loader qui va avec.</p>
+<p>Le loader correspondant reste minimal.</p>
 <pre><code class="language-python">class Config:
     def __init__(self, path: str = &quot;config.yaml&quot;):
         with open(path) as stream:
@@ -81,8 +81,7 @@ timeout: 10        # secondes avant de marquer TIMEOUT
         self.polling_interval = data.get(&quot;pollInterval&quot;, 60)
         self.timeout = data.get(&quot;timeout&quot;, 10)
 </code></pre>
-<p>Deux détails qui comptent.</p>
-<p><code>yaml.safe_load(stream) or {}</code>, si le fichier est vide, <code>safe_load</code> renvoie <code>None</code>. Le <code>or {}</code> évite un crash sur un <code>.get()</code> derrière.</p>
+<p>Deux points méritent une explication. Si le fichier est vide, <code>yaml.safe_load(stream)</code> renvoie <code>None</code>, d'où le <code>or {}</code> qui évite un crash sur le <code>.get()</code> qui suit.</p>
 <p><code>_validate_urls</code> ne fait pas confiance au YAML. On filtre tout ce qui n'est pas une URL http(s) valide, et on log un warning plutôt que de planter.</p>
 <pre><code class="language-python">@staticmethod
 def _validate_urls(urls: list) -&gt; list[str]:
@@ -125,9 +124,9 @@ def add_result(url: str, timestamp: str, response_time: float, status_code: str)
 def get_result() -&gt; dict:
     return {url: list(results) for url, results in store.items()}
 </code></pre>
-<p><code>deque(maxlen=100)</code>, la structure parfaite ici. Quand elle atteint 100 éléments, elle <strong>évince automatiquement le plus ancien</strong>. Pas de logique de nettoyage à écrire, on garde toujours les 100 derniers checks par URL, et la stdlib fait tout le travail.</p>
+<p><code>deque(maxlen=100)</code> est exactement la structure qu'il faut ici. Quand elle atteint 100 éléments, elle <strong>évince automatiquement le plus ancien</strong>. Pas de logique de nettoyage à écrire, on garde toujours les 100 derniers checks par URL, et la stdlib fait tout le travail.</p>
 <blockquote>
-<p>Trade-off assumé, tout est perdu au redémarrage, et ça ne scale pas sur plusieurs instances. Pour de la prod, on brancherait une TimeSeries DB (InfluxDB) et un dashboard Grafana. Pour un service qui tient dans un seul fichier, c'est overkill. Chaque chose en son temps.</p>
+<p>Trade-off assumé, tout est perdu au redémarrage, et ça ne scale pas sur plusieurs instances. Pour de la prod, on brancherait une TimeSeries DB (InfluxDB) et un dashboard Grafana, mais pour un service qui tient dans un seul fichier, ce serait disproportionné.</p>
 </blockquote>
 <hr>
 <h2>Étape 3, le worker async</h2>
@@ -197,8 +196,8 @@ app = FastAPI(lifespan=lifespan)
 async def get_status():
     return get_result()
 </code></pre>
-<p>Le <code>lifespan</code> est le bon endroit pour lancer un worker, la tâche démarre <strong>avec</strong> l'app, dans la même boucle asyncio, un seul container suffit. Pas de process séparé à gérer, pas de supervisord.</p>
-<p>Le <code>add_done_callback</code> sert de garde-fou, si le worker crash sans qu'on l'ait annulé, on log l'erreur au lieu de la voir disparaître silencieusement dans le néant d'une tâche asyncio morte.</p>
+<p>Le <code>lifespan</code> est le bon endroit pour lancer un worker. La tâche démarre <strong>avec</strong> l'app, dans la même boucle asyncio, et un seul container suffit. Pas de process séparé à gérer, pas de supervisord.</p>
+<p>Si le worker crash sans qu'on l'ait annulé, le <code>add_done_callback</code> log l'erreur au lieu de la laisser disparaître silencieusement dans le néant d'une tâche asyncio morte.</p>
 <p>Un appel <code>GET /status</code> renvoie.</p>
 <pre><code class="language-json">{
   &quot;https://example.com&quot;: [
@@ -226,7 +225,6 @@ async def get_status():
      V              V
  (boucle)      [GET /status]  ----- lit le store et le renvoie en JSON
 </code></pre>
-<p>Le worker écrit, l'API lit. Ils ne se croisent jamais.</p>
 <hr>
 <h2>Le Dockerfile</h2>
 <p>On veut une image petite et sécurisée. Multi-stage pour ne pas embarquer les outils de build, et un user non-root.</p>
@@ -265,7 +263,7 @@ CMD [&quot;python&quot;, &quot;api.py&quot;]
     tmpfs:
       - /tmp
 </code></pre>
-<p>Le <code>config.yaml</code> est monté en volume read-only, on édite la liste des URLs <strong>sans rebuild l'image</strong>. Et <code>read_only</code>, <code>cap_drop: ALL</code>, <code>no-new-privileges</code> réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le <code>/tmp</code> en tmpfs. Même compromis, il n'a nulle part où poser quoi que ce soit.</p>
+<p>Monter <code>config.yaml</code> en volume read-only permet d'éditer la liste des URLs <strong>sans rebuild l'image</strong>. Et <code>read_only</code>, <code>cap_drop: ALL</code>, <code>no-new-privileges</code> réduisent la surface d'attaque au minimum. Le container ne peut rien écrire, sauf dans le <code>/tmp</code> en tmpfs. Même compromis, il n'a nulle part où poser quoi que ce soit.</p>
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
@@ -274,7 +272,6 @@ CMD [&quot;python&quot;, &quot;api.py&quot;]
 <li><strong>Config à chaud.</strong> Aujourd'hui la liste des URLs est lue une seule fois au démarrage. On pourrait la recharger sans restart.</li>
 <li><strong>Alerting.</strong> Déclencher une notification (Slack, mail) quand une URL enchaîne plusieurs échecs.</li>
 </ul>
-<p>Chacun de ces points mérite son propre article.</p>
 <p><em>Pour l'instant il tourne dans mon cluster et me dit quand quelque chose est mort avant que je m'en aperçoive tout seul. C'est déjà tout ce que je lui demandais.</em></p>
 
     </div>

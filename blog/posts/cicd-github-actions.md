@@ -6,7 +6,7 @@ date: 2025-05-03
 tags: [devops, ci-cd, github-actions]
 ---
 
-Une CI/CD (Intégration Continue / Déploiement Continu) est un pipeline automatique qui se déclenche à chaque push. Le but, plus jamais déployer à la main, et un flux qui trace tout le processus.
+Une CI/CD (Intégration Continue / Déploiement Continu) est un pipeline automatique qui se déclenche à chaque push. Il vise à ne plus jamais déployer à la main, avec un flux qui trace tout le processus.
 
 On construit un pipeline *GitHub Actions* pour une application Node.js. Il fait quatre choses.
 
@@ -159,7 +159,6 @@ Une étape échoue, les suivantes ne tournent pas. Simple.
 
 ## Aller plus loin
 
-- **Environments.** GitHub permet de définir des environnements (`staging`, `production`) avec approbation manuelle avant la prod.
-- **Matrix builds.** Tester plusieurs versions de Node/Python en parallèle avec `strategy: matrix`.
+- **Environments et matrix builds.** GitHub permet de définir des environnements (`staging`, `production`) avec approbation manuelle avant la prod, et de tester plusieurs versions de Node/Python en parallèle avec `strategy: matrix`.
 - **Cache.** `actions/cache` pour mettre en cache `node_modules` et accélérer les builds.
 - **Gestion des secrets.** Un sujet entier à lui tout seul, ça mérite son propre article.

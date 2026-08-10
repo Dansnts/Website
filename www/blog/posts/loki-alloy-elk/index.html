@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Centraliser ses logs avec Loki, Alloy et ELK — Dani Faria dos Santos</title>
-  <meta name="description" content="Comparaison de deux stacks de logs pour un homelab, Loki + Alloy (index sur labels) et ELK (full-text), testées toutes les deux en conditions réelles." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Comparaison de deux stacks de logs pour un homelab, Loki + Alloy (index sur labels) et ELK (full-text), testées toutes les deux en conditions réelles.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -223,6 +223,7 @@ loki.write &quot;loki&quot; {
 <li><strong>Alerting sur les logs.</strong> Loki sait déclencher des alertes sur des motifs (<code>|= &quot;error&quot;</code> qui dépasse un seuil), via les mêmes règles que Prometheus.</li>
 <li><strong>Structurer les logs à la source.</strong> Passer les applis en logs JSON permet à <code>stage.json</code> d'Alloy d'extraire des champs, sans payer le coût d'un index full-text.</li>
 <li><strong>Rétention par flux.</strong> Affiner la rétention Loki par label (garder les logs d'auth plus longtemps que le reste) plutôt qu'un <code>30d</code> global.</li>
+<li><strong>Multi-tenant.</strong> <code>auth_enabled: true</code> permettrait d'isoler des logs par tenant, utile si le cluster héberge plusieurs projets un jour.</li>
 </ul>
 
     </div>

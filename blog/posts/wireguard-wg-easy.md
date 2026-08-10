@@ -6,9 +6,9 @@ date: 2024-09-10
 tags: [homelab, réseau, vpn, wireguard, kubernetes]
 ---
 
-Accéder à son homelab depuis l'extérieur sans exposer chaque service sur internet, c'est le rôle d'un VPN. **WireGuard** est le choix moderne : rapide, simple, dans le kernel Linux. **wg-easy** lui ajoute une interface web pour gérer les clients sans éditer de fichiers à la main.
+Accéder à son homelab depuis l'extérieur sans exposer chaque service sur internet, c'est le rôle d'un VPN. **WireGuard** est le choix moderne, rapide, simple, dans le kernel Linux. **wg-easy** lui ajoute une interface web pour gérer les clients sans éditer de fichiers à la main.
 
-Faire tourner WireGuard *dans Kubernetes*, derrière une box FAI et un routeur, réserve quelques pièges. Au programme :
+Faire tourner WireGuard *dans Kubernetes*, derrière une box FAI et un routeur, réserve quelques pièges. Au programme.
 
 1. Le déploiement wg-easy dans K8s
 2. Le port forward en cascade (box → MikroTik → pod)
@@ -25,7 +25,7 @@ Faire tourner WireGuard *dans Kubernetes*, derrière une box FAI et un routeur, 
 
 ## Le déploiement wg-easy
 
-wg-easy tourne comme un Deployment, avec un securityContext particulier : WireGuard a besoin de privilèges réseau :
+wg-easy tourne comme un Deployment, avec un securityContext particulier, WireGuard a besoin de privilèges réseau.
 
 ```yaml
 spec:
@@ -50,15 +50,15 @@ spec:
           add: ["NET_ADMIN", "NET_RAW", "SYS_MODULE"]
 ```
 
-Les points sensibles :
+Les points sensibles.
 
-`WG_HOST` : le nom public que les clients utiliseront comme endpoint. Il doit résoudre vers l'IP publique de la box (via DDNS si l'IP est dynamique).
+`WG_HOST` est le nom public que les clients utiliseront comme endpoint. Il doit résoudre vers l'IP publique de la box (via DDNS si l'IP est dynamique).
 
-`INSECURE: "true"` : **obligatoire en v15 derrière Traefik**. L'UI est servie en HTTP côté pod (c'est Traefik qui fait le TLS devant). Sans cette variable, wg-easy v15 refuse tout bonnement de démarrer.
+`INSECURE: "true"` est **obligatoire en v15 derrière Traefik**. L'UI est servie en HTTP côté pod, c'est Traefik qui fait le TLS devant. Sans cette variable, wg-easy v15 refuse tout bonnement de démarrer.
 
-`capabilities: add: [NET_ADMIN, NET_RAW, SYS_MODULE]` : WireGuard manipule les interfaces réseau et le NAT iptables. Ces trois capabilities sont indispensables. Et **surtout pas** de `allowPrivilegeEscalation: false`, ça bloque iptables net (voir l'article sur les securityContext qui cassent tout, un classique du genre).
+`capabilities: add: [NET_ADMIN, NET_RAW, SYS_MODULE]` permet à WireGuard de manipuler les interfaces réseau et le NAT iptables. Ces trois capabilities sont indispensables. Et **surtout pas** de `allowPrivilegeEscalation: false`, ça bloque iptables net (voir l'article sur les securityContext qui cassent tout, un classique du genre).
 
-Le service utilise une IP MetalLB fixe pour permettre le port forward :
+Le service utilise une IP MetalLB fixe pour permettre le port forward.
 
 ```yaml
 metadata:
@@ -76,7 +76,7 @@ spec:
 
 ## Le port forward en cascade
 
-Voilà la partie qui déroute quand on a deux niveaux de routage. Le trafic VPN doit traverser **deux** équipements avant d'atteindre le pod :
+Voilà la partie qui déroute quand on a deux niveaux de routage. Le trafic VPN doit traverser **deux** équipements avant d'atteindre le pod.
 
 ```
 Client VPN (internet)
@@ -91,10 +91,10 @@ MikroTik (192.168.1.2 / WAN)     ← port forward #2 (DNAT) : 51820 → 10.0.0.1
 WireGuard pod (10.0.0.102)       ← IP MetalLB
 ```
 
-**Deux redirections** à configurer, une par équipement :
+**Deux redirections** à configurer, une par équipement.
 
-1. **Sur la box** : forward `51820/UDP` vers `192.168.1.2` (le MikroTik).
-2. **Sur le MikroTik** : un DNAT vers l'IP MetalLB de WireGuard :
+1. **Sur la box**, forward `51820/UDP` vers `192.168.1.2` (le MikroTik).
+2. **Sur le MikroTik**, un DNAT vers l'IP MetalLB de WireGuard.
 
 ```rsc
 /ip firewall nat add chain=dstnat protocol=udp dst-port=51820 \
@@ -102,7 +102,7 @@ WireGuard pod (10.0.0.102)       ← IP MetalLB
     to-addresses=10.0.0.102 to-ports=51820 comment="DNAT WireGuard"
 ```
 
-> Le piège classique du double NAT : le forward sur la box est configuré, ça ne marche toujours pas, une heure de recherche... parce que le deuxième forward sur le routeur a été oublié. **Chaque équipement traversé a besoin de sa propre règle.** Tracer le chemin complet du paquet évite bien des cheveux blancs.
+> Le piège classique du double NAT, le forward sur la box est configuré, ça ne marche toujours pas, une heure de recherche... parce que le deuxième forward sur le routeur a été oublié. **Chaque équipement traversé a besoin de sa propre règle.** Tracer le chemin complet du paquet, saut par saut, règle le problème directement.
 
 Comme l'IP publique de la box change (FAI résidentiel), un CronJob de DDNS met à jour `server.fariadossantos.com` toutes les 30 minutes pour qu'il pointe toujours sur la bonne IP.
 
@@ -121,7 +121,7 @@ sudo modprobe ip6table_nat
 # doit contenir iptable_nat et ip6table_nat
 ```
 
-> Sans ces modules, le tunnel s'établit (les clients se connectent) mais **aucun trafic ne passe** vers le reste du réseau. Symptôme trompeur : la poignée de main WireGuard réussit, puis plus rien. C'est presque toujours un module NAT manquant. Et sans la persistance dans `modules-load.d`, un simple reboot du node suffit à tout remettre en panne.
+> Sans ces modules, le tunnel s'établit (les clients se connectent) mais **aucun trafic ne passe** vers le reste du réseau. Symptôme trompeur, la poignée de main WireGuard réussit, puis plus rien. C'est presque toujours un module NAT manquant. Et sans la persistance dans `modules-load.d`, un simple reboot du node suffit à tout remettre en panne.
 
 ---
 
@@ -131,7 +131,7 @@ wg-easy v15 est une réécriture majeure. La migration depuis v14 est un champ d
 
 ### Des variables d'environnement supprimées
 
-En v14, on configurait tout par variables d'env. En v15, plusieurs sont **rejetées** : elles sont maintenant gérées depuis l'UI :
+En v14, on configurait tout par variables d'env. En v15, plusieurs sont **rejetées**, elles sont maintenant gérées depuis l'UI.
 
 ```
 #  Variables v14 à SUPPRIMER du manifest en v15 :
@@ -140,15 +140,15 @@ WG_DEFAULT_DNS
 WG_ALLOWED_IPS
 ```
 
-Si on les laisse, v15 peut refuser de démarrer. Le manifest v15 est minimal : `WG_HOST`, `INSECURE`, `TZ`, et c'est tout. Le reste se configure via l'assistant web.
+Si on les laisse, v15 peut refuser de démarrer. Le manifest v15 est minimal, `WG_HOST`, `INSECURE`, `TZ`, et c'est tout. Le reste se configure via l'assistant web.
 
 ### Le format de config qui change
 
 Le fichier `wg0.json` (qui stocke les clients) a changé de format entre v14 et v15. On ne peut pas juste réutiliser l'ancien. La migration se fait via l'**assistant de setup** (`/ui/init`) en réimportant la config.
 
-> Retour d'expérience : garder un **backup du `wg0.json`** avant toute migration (chez moi, dans Vaultwarden). Si la migration échoue, les clients peuvent être recréés depuis les données de l'ancien fichier. Sans backup, il faut regénérer et redistribuer toutes les configs clients, ce qui est pénible, et c'est toujours au proche le moins technophile qu'on doit réexpliquer comment scanner le QR code.
+> Retour d'expérience, garder un **backup du `wg0.json`** avant toute migration (chez moi, dans Vaultwarden). Si la migration échoue, les clients peuvent être recréés depuis les données de l'ancien fichier. Sans backup, il faut regénérer et redistribuer toutes les configs clients, ce qui est pénible, et c'est toujours au proche le moins technophile qu'on doit réexpliquer comment scanner le QR code.
 
-Le récap des changements v14 → v15 :
+Le récap des changements v14 → v15.
 
 | Aspect | v14 | v15 |
 |---|---|---|
@@ -161,7 +161,7 @@ Le récap des changements v14 → v15 :
 
 ## Aller plus loin
 
-- **DNS split-tunnel** : configurer les clients VPN pour n'router que le trafic homelab par le tunnel, et laisser le reste passer en direct.
-- **Le DDNS** : l'IP publique résidentielle change, un CronJob qui met à jour l'enregistrement DNS est indispensable (sujet connexe à creuser).
-- **Le double NAT** : cet article suppose la segmentation MikroTik déjà en place, voir l'article sur l'isolation du homelab derrière le MikroTik.
-- **Clients mobiles** : wg-easy génère des QR codes pour configurer WireGuard sur téléphone en un scan.
+- **DNS split-tunnel.** Configurer les clients VPN pour n'router que le trafic homelab par le tunnel, et laisser le reste passer en direct.
+- **Le DDNS.** L'IP publique résidentielle change, un CronJob qui met à jour l'enregistrement DNS est indispensable (sujet connexe à creuser).
+- **Le double NAT.** Cet article suppose la segmentation MikroTik déjà en place, voir l'article sur l'isolation du homelab derrière le MikroTik.
+- **Clients mobiles.** wg-easy génère des QR codes pour configurer WireGuard sur téléphone en un scan.

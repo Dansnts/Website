@@ -68,11 +68,11 @@ spec:
                 key: api-token
 ```
 
-`server: .../directory` est l'endpoint de production de Let's Encrypt. **Pendant les tests**, utiliser le staging (`acme-staging-v02...`) pour ne pas taper les quotas de production. Ils sont vite atteints à force d'essais, demande à celui qui a dû attendre une semaine après les avoir grillés.
+Le `server: .../directory` pointe vers l'endpoint de production de Let's Encrypt. **Pendant les tests**, mieux vaut passer par le staging (`acme-staging-v02...`) pour ne pas taper les quotas de production, vite atteints à force d'essais, demande à celui qui a dû attendre une semaine après les avoir grillés.
 
 `solvers.dns01.webhook`, c'est là que la magie opère. Le webhook `infomaniak` sait parler à l'API DNS d'Infomaniak pour créer/supprimer les enregistrements TXT.
 
-`apiTokenSecretRef` référence le token API du registrar, stocké dans un Secret (scellé avec Sealed Secrets, évidemment).
+Le champ `apiTokenSecretRef` pointe vers le token API du registrar, stocké dans un Secret (scellé avec Sealed Secrets, évidemment).
 
 Le webhook a besoin de **lire** ce token, ce qui demande un peu de RBAC.
 
@@ -113,7 +113,7 @@ spec:
     - "*.fariadossantos.com"
 ```
 
-`secretName` désigne où cert-manager dépose le certificat (et le renouvelle). Les Ingress Traefik le référencent, et voilà, tous les services sont en HTTPS.
+`secretName` indique où cert-manager doit déposer le certificat, et le renouveler. Les Ingress Traefik n'ont plus qu'à le référencer, tous les services passent en HTTPS.
 
 `dnsNames` liste à la fois le domaine nu et le wildcard. Le wildcard `*.fariadossantos.com` ne couvre PAS `fariadossantos.com` lui-même, il faut les deux.
 
@@ -150,7 +150,7 @@ Puis on importe `tls.crt` / `tls.key` dans les interfaces respectives.
 
 ---
 
-## Récapitulatif
+## Qui renouvelle quoi
 
 | Cible | Renouvellement | Comment |
 |---|---|---|
@@ -164,5 +164,4 @@ Puis on importe `tls.crt` / `tls.key` dans les interfaces respectives.
 
 - **Automatiser l'export.** Un CronJob qui pousse le wildcard vers les API Proxmox/TrueNAS après chaque renouvellement, pour éliminer la dernière étape manuelle.
 - **DNS-over-HTTPS interne.** Coupler avec un DNS qui résout les noms en interne (voir l'article CoreDNS + Pi-hole).
-- **Certificats par namespace.** Plutôt qu'un wildcard partagé, un cert dédié par app pour cloisonner davantage.
-- **Monitoring d'expiration.** Une alerte Prometheus (`certmanager_certificate_expiration_timestamp_seconds`) pour être prévenu si un renouvellement échoue.
+- **Certificats par namespace, et surveiller leur expiration.** Plutôt qu'un wildcard partagé, un cert dédié par app pour cloisonner davantage, et une alerte Prometheus (`certmanager_certificate_expiration_timestamp_seconds`) pour être prévenu si un renouvellement échoue.

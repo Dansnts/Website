@@ -156,13 +156,13 @@ resource "proxmox_virtual_environment_vm" "k3s" {
 
 Ce qui compte vraiment ici.
 
-`clone { full = true }` fait un clone **complet**, pas lié. La nouvelle VM est totalement indépendante du template, on peut supprimer le template sans rien casser.
+Le paramètre `full = true` clone la VM entièrement, sans lien vers le template. La nouvelle VM est totalement indépendante, on peut supprimer le template après coup sans rien casser.
 
-`cpu { type = "host" }` fait que la VM voit le vrai CPU de l'hôte, pas un CPU générique émulé. Meilleures perfs, indispensable pour les instructions modernes.
+Avec `cpu { type = "host" }`, la VM voit le vrai CPU de l'hôte, pas un CPU générique émulé. Meilleures perfs, indispensable pour les instructions modernes.
 
 `agent { enabled = true }` active le QEMU guest agent. Sans lui, Terraform ne connaît jamais l'IP réelle de la VM et attend indéfiniment. Le paquet `qemu-guest-agent` doit déjà être dans le template, sinon on attend pour rien.
 
-`initialization.ip_config` fait que cloud-init applique cette IP au premier boot. On fixe l'IP ici plutôt que de dépendre du DHCP.
+Le bloc `initialization.ip_config` indique l'IP que cloud-init doit appliquer au premier boot. Autant la fixer ici plutôt que de dépendre du DHCP.
 
 `user_data_file_id` pointe vers le fichier cloud-init, déclaré comme ressource séparée.
 

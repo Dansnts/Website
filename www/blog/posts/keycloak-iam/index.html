@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Keycloak, l&#39;IAM central de mon homelab — Dani Faria dos Santos</title>
-  <meta name="description" content="Un seul annuaire d&#39;identités pour tout le lab, realm homelab, SSO OIDC pour Grafana, et un client freeradius qui sert de pont vers l&#39;auth réseau 802.1X." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Un seul annuaire d&#39;identités pour tout le lab, realm homelab, SSO OIDC pour Grafana, et un client freeradius qui sert de pont vers l&#39;auth réseau 802.1X.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -192,6 +192,7 @@ navigateur ───────────────────────
 <li><strong>La dépendance circulaire.</strong> Héberger l'auth réseau dans le cluster qui dépend du réseau crée un deadlock, un piège que je raconte dans son propre article.</li>
 <li><strong>Brancher d'autres services.</strong> Vaultwarden, ArgoCD, le wiki… tout ce qui parle OIDC peut rejoindre le SSO avec le même pattern « deux URLs » que Grafana.</li>
 <li><strong>Sauvegarder le realm.</strong> Un export régulier de la base PostgreSQL de Keycloak (ou un <code>kc.sh export</code>) pour ne pas reconstruire clients et rôles à la main après un incident.</li>
+<li><strong>MFA obligatoire.</strong> Forcer le TOTP pour les comptes admin du realm <code>homelab</code>, le SSO ne devrait pas reposer sur un seul facteur.</li>
 </ul>
 
     </div>

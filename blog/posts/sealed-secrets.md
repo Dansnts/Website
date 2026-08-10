@@ -39,9 +39,9 @@ Sealed Secrets repose sur du chiffrement asymétrique **RSA-4096**.
 
 - Tu chiffres avec la **clé publique** (que tout le monde peut avoir).
 - Seul le **contrôleur**, avec sa clé privée, peut déchiffrer.
-- Le `SealedSecret` chiffré peut vivre dans Git : sans la clé privée, il est inutile.
+- Le `SealedSecret` chiffré peut vivre dans Git. Sans la clé privée, il ne vaut rien.
 
-Le contrôleur s'installe avec Helm, dans `kube-system` :
+Le contrôleur s'installe avec Helm, dans `kube-system`.
 
 ```bash
 helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
@@ -55,7 +55,7 @@ helm install sealed-secrets sealed-secrets/sealed-secrets \
 
 ## Le workflow kubeseal
 
-Trois étapes, dont une seule produit un fichier committable :
+Trois étapes, dont une seule produit un fichier committable.
 
 ```bash
 # 1. Créer le secret en clair (fichier temporaire, ne JAMAIS committer)
@@ -72,7 +72,7 @@ rm secret.yaml
 git add sealedsecret.yaml
 ```
 
-Le résultat ressemble à ça : de l'illisible, safe à committer.
+Le résultat est illisible, et c'est justement ce qui le rend safe à committer.
 
 ```yaml
 apiVersion: bitnami.com/v1alpha1
@@ -92,17 +92,17 @@ spec:
 
 Une fois committé et synchronisé (par ArgoCD ou `kubectl apply`), le contrôleur détecte le `SealedSecret`, le déchiffre, et crée le `Secret` K8s classique que les pods consomment normalement.
 
-> Détail important : un `SealedSecret` est **lié à son namespace et à son nom**. On ne peut pas le déplacer ou le renommer sans le re-sceller. C'est une protection : ça empêche de réutiliser un secret chiffré ailleurs pour extraire sa valeur.
+> Un `SealedSecret` est **lié à son namespace et à son nom**, on ne peut ni le déplacer ni le renommer sans le re-sceller. C'est une protection intentionnelle contre la réutilisation d'un secret chiffré ailleurs pour en extraire la valeur.
 
 ---
 
-## Le point critique : sauvegarder la master key
+## Sauvegarder la master key, le vrai point critique
 
 Voici ce que tout le monde néglige, et qui transforme un incident mineur en catastrophe pure.
 
 **La clé privée (master key) vit dans le cluster.** Si le cluster est perdu (disque mort, réinstallation, node détruit), la clé disparaît avec lui. Et sans la clé, **tous les `SealedSecret` deviennent définitivement indéchiffrables**. Les secrets restent chiffrés dans Git, mais plus aucun moyen de les ouvrir.
 
-La master key doit donc être **exportée et sauvegardée hors du cluster** :
+La master key doit donc être **exportée et sauvegardée hors du cluster**.
 
 ```bash
 kubectl get secret -n kube-system \
@@ -112,9 +112,9 @@ kubectl get secret -n kube-system \
 
 Où la stocker ? **Surtout pas dans Git** (ce serait rendre tout le chiffrement inutile). Chez moi, elle est dans Vaultwarden.
 
-> **Attention à la boucle** : chez moi la master key est dans Vaultwarden, mais le secret de Vaultwarden (`ADMIN_TOKEN`) est lui-même un SealedSecret... déchiffré par cette master key. Dépendance circulaire classique. Il faut une copie de la master key **vraiment hors ligne** (gestionnaire de mots de passe externe, coffre physique) pour pouvoir tout reconstruire depuis zéro.
+> **Attention à la boucle.** Chez moi la master key est dans Vaultwarden, mais le secret de Vaultwarden (`ADMIN_TOKEN`) est lui-même un SealedSecret... déchiffré par cette master key. Dépendance circulaire classique. Il faut une copie de la master key **vraiment hors ligne** (gestionnaire de mots de passe externe, coffre physique) pour pouvoir tout reconstruire depuis zéro.
 
-Restaurer, c'est simplement ré-appliquer la clé **avant** de réinstaller le contrôleur :
+Pour restaurer, il suffit de ré-appliquer la clé **avant** de réinstaller le contrôleur.
 
 ```bash
 kubectl apply -f sealed-secrets-master-key.yaml
@@ -125,20 +125,20 @@ kubectl apply -f sealed-secrets-master-key.yaml
 
 ## La rotation automatique des clés
 
-Par sécurité, le contrôleur génère une nouvelle clé périodiquement (les anciennes restent pour déchiffrer les vieux secrets). C'est configuré dans les values Helm :
+Par sécurité, le contrôleur génère une nouvelle clé périodiquement (les anciennes restent pour déchiffrer les vieux secrets). C'est configuré dans les values Helm.
 
 ```yaml
 # k8s/sealed-secrets/values.yaml
 keyrenewperiod: "720h"   # 30 jours
 ```
 
-`keyrenewperiod: "720h"` : une nouvelle clé tous les 30 jours. Les `SealedSecret` déjà en place continuent de marcher (le contrôleur garde l'historique des clés), mais les nouveaux sont chiffrés avec la clé la plus récente.
+`keyrenewperiod: "720h"` fixe une nouvelle clé tous les 30 jours. Les `SealedSecret` déjà en place continuent de marcher, le contrôleur garde l'historique des clés, mais les nouveaux sont chiffrés avec la plus récente.
 
-> Conséquence pratique : **après chaque rotation, ré-exporter la master key** (qui contient maintenant plusieurs clés). Un backup daté d'il y a 6 mois pourrait ne pas contenir les clés récentes. À automatiser ou à mettre dans sa routine.
+> En pratique, **après chaque rotation, ré-exporter la master key** (qui contient maintenant plusieurs clés). Un backup daté d'il y a 6 mois pourrait ne pas contenir les clés récentes. À automatiser, ou à mettre dans sa routine.
 
 ---
 
-## Récapitulatif
+## Ce qui vit où
 
 | Élément | Où il vit | Committable ? |
 |---|---|---|
@@ -151,7 +151,7 @@ keyrenewperiod: "720h"   # 30 jours
 
 ## Aller plus loin
 
-- **Rotation des secrets applicatifs** : Sealed Secrets chiffre, mais ne fait pas tourner les mots de passe eux-mêmes. Pour ça, on regarde du côté d'External Secrets + un vrai vault.
-- **External Secrets Operator** : l'alternative qui va chercher les secrets dans un backend externe (Vault, cloud) au lieu de les stocker chiffrés dans Git.
-- **Sauvegarde automatisée de la master key** : un CronJob qui exporte la clé vers un stockage chiffré hors cluster après chaque rotation.
-- **La dépendance circulaire** : master key dans Vaultwarden, secret Vaultwarden scellé par la master key, un thème récurrent du homelab que j'aborde ailleurs.
+- **Rotation des secrets applicatifs.** Sealed Secrets chiffre, mais ne fait pas tourner les mots de passe eux-mêmes. Pour ça, on regarde du côté d'External Secrets + un vrai vault.
+- **External Secrets Operator.** L'alternative qui va chercher les secrets dans un backend externe (Vault, cloud) au lieu de les stocker chiffrés dans Git.
+- **Sauvegarde automatisée de la master key.** Un CronJob qui exporte la clé vers un stockage chiffré hors cluster après chaque rotation.
+- **La dépendance circulaire.** Master key dans Vaultwarden, secret Vaultwarden scellé par la master key, un thème récurrent du homelab que j'aborde ailleurs.

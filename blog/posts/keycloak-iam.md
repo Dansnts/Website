@@ -195,3 +195,4 @@ Résultat, le mot de passe d'un utilisateur vit **à un seul endroit**, Keycloak
 - **La dépendance circulaire.** Héberger l'auth réseau dans le cluster qui dépend du réseau crée un deadlock, un piège que je raconte dans son propre article.
 - **Brancher d'autres services.** Vaultwarden, ArgoCD, le wiki… tout ce qui parle OIDC peut rejoindre le SSO avec le même pattern « deux URLs » que Grafana.
 - **Sauvegarder le realm.** Un export régulier de la base PostgreSQL de Keycloak (ou un `kc.sh export`) pour ne pas reconstruire clients et rôles à la main après un incident.
+- **MFA obligatoire.** Forcer le TOTP pour les comptes admin du realm `homelab`, le SSO ne devrait pas reposer sur un seul facteur.

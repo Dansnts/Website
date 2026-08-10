@@ -257,7 +257,6 @@ rejouable à l'infini → changed=0 au 2e run
 
 ## Aller plus loin
 
-- **`ansible-lint`.** Passe les rôles au linter, il attrape les tâches non idempotentes et les mauvaises pratiques avant qu'elles ne mordent.
+- **`ansible-lint` et `--check`.** Le linter attrape les tâches non idempotentes avant qu'elles ne mordent, et `ansible-playbook --check` montre ce qui *changerait* sans rien appliquer, un dry-run avant de lancer pour de vrai.
 - **Ansible Vault.** Pour chiffrer les secrets (mots de passe, tokens) directement dans le repo, au lieu de les garder à part.
-- **`--check` (dry-run).** `ansible-playbook --check` montre ce qui *changerait* sans rien appliquer. Idéal pour vérifier avant de lancer pour de vrai.
 - **Galaxy.** Beaucoup de rôles courants (node_exporter inclus) existent déjà sur Ansible Galaxy. Réinventer la roue est un bon exercice, mais en prod on réutilise.

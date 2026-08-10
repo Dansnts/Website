@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DNS à deux niveaux avec CoreDNS et Pi-hole — Dani Faria dos Santos</title>
-  <meta name="description" content="Garder Pi-hole hors du chemin critique du cluster, et pourquoi le node K3s ne doit surtout pas l&#39;utiliser comme résolveur." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Garder Pi-hole hors du chemin critique du cluster, et pourquoi le node K3s ne doit surtout pas l&#39;utiliser comme résolveur.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -182,6 +182,7 @@ sudo systemctl start systemd-resolved
 <li><strong>Redondance Pi-hole.</strong> Une seconde instance + <code>keepalived</code> pour que le blocage de pub survive à un crash. Attention à ne pas recréer une dépendance au cluster.</li>
 <li><strong>La dépendance circulaire RADIUS.</strong> Le même raisonnement, appliqué à l'authentification réseau, sujet d'un article dédié.</li>
 <li><strong>Métriques Pi-hole.</strong> Exporter les stats (requêtes bloquées, top domaines) vers Prometheus/Grafana pour visualiser ce que le réseau raconte.</li>
+<li><strong>Listes de blocage personnalisées.</strong> Au-delà des listes publiques, ajouter ses propres domaines (trackers spécifiques, pubs qui passent entre les mailles) à la main.</li>
 </ul>
 
     </div>

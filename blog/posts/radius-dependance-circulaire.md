@@ -111,7 +111,7 @@ La sécurité par défaut (fail-closed) est la bonne, sauf pour le maillon dont 
 - **Cartographier les dépendances de démarrage à froid.** Se poser la question, « si tout est éteint et que je rallume, dans quel ordre ça doit remonter ? ». Si A a besoin de B qui a besoin de A, il y a un problème.
 - **Un service d'infra ne doit jamais dépendre de ce qu'il fournit.** DNS, DHCP, auth réseau, ces briques doivent pouvoir démarrer de façon autonome.
 - **Prévoir une porte de sortie hors-bande.** Un accès console au switch, une IP de management non filtrée, un port « toujours ouvert ». Le jour où le cycle se referme, c'est la seule issue.
-- **Le pire moment est le seul moment.** Ces bugs ne se manifestent qu'en panne. Les tester volontairement, couper RADIUS et vérifier qu'on s'en sort, vaut mieux que les découvrir en vrai à 2h du matin.
+- **Le pire moment est le seul moment.** Ces bugs ne se manifestent qu'en panne. Les tester volontairement, couper RADIUS et vérifier qu'on s'en sort, coûte moins cher que de les découvrir pendant une vraie panne.
 
 Mon garde-fou actuel, le node K8s est en MAB (filtre bridge, indépendant de RADIUS), et `auth-timeout-action=allow` est documenté comme prérequis avant toute réactivation du 802.1X sur ce port. Le cycle ne peut plus se refermer.
 

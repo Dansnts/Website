@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dépendance circulaire entre RADIUS et 802.1X — Dani Faria dos Santos</title>
-  <meta name="description" content="Retour d&#39;expérience, mettre son serveur RADIUS derrière son propre 802.1X crée un deadlock dont on ne sort pas tout seul." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Retour d&#39;expérience, mettre son serveur RADIUS derrière son propre 802.1X crée un deadlock dont on ne sort pas tout seul.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -122,7 +122,7 @@ add chain=forward in-interface=ether2 src-mac-address=!fc:9d:05:63:b3:bf action=
 <li><strong>Cartographier les dépendances de démarrage à froid.</strong> Se poser la question, « si tout est éteint et que je rallume, dans quel ordre ça doit remonter ? ». Si A a besoin de B qui a besoin de A, il y a un problème.</li>
 <li><strong>Un service d'infra ne doit jamais dépendre de ce qu'il fournit.</strong> DNS, DHCP, auth réseau, ces briques doivent pouvoir démarrer de façon autonome.</li>
 <li><strong>Prévoir une porte de sortie hors-bande.</strong> Un accès console au switch, une IP de management non filtrée, un port « toujours ouvert ». Le jour où le cycle se referme, c'est la seule issue.</li>
-<li><strong>Le pire moment est le seul moment.</strong> Ces bugs ne se manifestent qu'en panne. Les tester volontairement, couper RADIUS et vérifier qu'on s'en sort, vaut mieux que les découvrir en vrai à 2h du matin.</li>
+<li><strong>Le pire moment est le seul moment.</strong> Ces bugs ne se manifestent qu'en panne. Les tester volontairement, couper RADIUS et vérifier qu'on s'en sort, coûte moins cher que de les découvrir pendant une vraie panne.</li>
 </ul>
 <p>Mon garde-fou actuel, le node K8s est en MAB (filtre bridge, indépendant de RADIUS), et <code>auth-timeout-action=allow</code> est documenté comme prérequis avant toute réactivation du 802.1X sur ce port. Le cycle ne peut plus se refermer.</p>
 <h2>Aller plus loin</h2>

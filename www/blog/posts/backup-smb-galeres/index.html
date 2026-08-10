@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Problèmes de backup sur montage SMB — Dani Faria dos Santos</title>
-  <meta name="description" content="Inodes qui changent, caractères spéciaux dans les noms de fichiers, node_modules trop profonds, les problèmes rencontrés en sauvegardant un montage SMB, et comment les résoudre." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Inodes qui changent, caractères spéciaux dans les noms de fichiers, node_modules trop profonds, les problèmes rencontrés en sauvegardant un montage SMB, et comment les résoudre.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -31,16 +31,11 @@
 
     <div class="blog-body">
       <p>Sauvegarder un partage réseau, sur le papier, c'est trivial, on pointe l'outil de backup sur le montage, et hop. En pratique, un montage <strong>SMB</strong> n'a aucune des garanties du stockage local. Inodes instables, noms de fichiers exotiques qui font planter le mount, dossiers énormes et 100% régénérables qui gonflent tout pour rien.</p>
-<p>Ce post est un journal de bord, pas un cours théorique, les vraies galères rencontrées en sauvegardant mon NAS SMB, et comment je les ai réglées.</p>
-<h2>Prérequis</h2>
-<ul>
-<li>Un partage SMB monté (voir l'article sur le CSI driver SMB)</li>
-<li>Un outil de backup (ici Restic et rclone)</li>
-</ul>
+<p>Ce post est un journal de bord, pas un cours théorique, les vraies galères rencontrées en sauvegardant mon NAS SMB (monté via le CSI driver SMB) avec Restic et rclone, et comment je les ai réglées.</p>
 <h2>Galère n°1, les inodes qui bougent</h2>
 <p>Restic utilise l'<strong>inode</strong> d'un fichier pour détecter s'il a changé. Sur un système de fichiers local, l'inode est stable, même fichier, même inode, toujours.</p>
-<p>Sur un <strong>montage SMB</strong>, cette garantie n'existe pas. Le protocole ne fournit pas d'inodes stables, ils peuvent changer d'un montage à l'autre, ou entre deux accès au même fichier. Résultat, Restic pense que <em>tout</em> a changé à chaque run, re-scanne l'intégralité du partage, et l'incrémental ne sert plus à rien.</p>
-<p>La solution, dire à Restic d'ignorer l'inode.</p>
+<p>Sur un <strong>montage SMB</strong>, cette garantie n'existe pas. Le protocole ne fournit pas d'inodes stables, ils peuvent changer d'un montage à l'autre, ou entre deux accès au même fichier. Restic finit par croire que <em>tout</em> a changé à chaque run, re-scanne l'intégralité du partage, et l'incrémental ne sert plus à rien.</p>
+<p>Il suffit de dire à Restic d'ignorer l'inode.</p>
 <pre><code class="language-bash">restic backup /mnt/data/Backup /mnt/dump \
   --tag auto --verbose \
   --ignore-inode \
@@ -51,15 +46,15 @@
 <h2>Galère n°2, les fichiers Pokémon (oui, vraiment)</h2>
 <p>Celle-là est ma préférée. Des fichiers de jeu Pokémon dont le nom contient des caractères Unicode, les symboles de genre ♂ et ♀. Sur un montage SMB, l'encodage de ces caractères est mal géré, le mount les traduit mal, et l'accès à ces fichiers déclenche des <strong>erreurs d'I/O</strong> qui font échouer le backup entier.</p>
 <p>Un seul fichier au nom exotique, et tout le run se plante. J'ai perdu du temps à comprendre pourquoi le backup échouait « sans raison » avant de trouver le coupable, un Pikachu mal encodé.</p>
-<p>La solution, exclure ces fichiers.</p>
+<p>Ici, exclure ces fichiers règle le problème.</p>
 <pre><code class="language-bash">--exclude '/mnt/data/Backup/Games/Pok*'
 </code></pre>
 <p><code>--exclude 'Pok*'</code> saute les fichiers problématiques. Ce sont des données de jeu, pas critiques, donc les exclure est acceptable. L'alternative propre serait de corriger l'encodage du mount SMB (<code>iocharset=utf8</code>), mais exclure trois fichiers de sauvegarde de jeu prend trente secondes de moins.</p>
-<p>Leçon retenue, caractères Unicode dans les noms de fichiers + SMB = source de bugs vicieux. Symboles de genre, emoji, accents exotiques, tout ça peut casser l'accès sur un partage réseau. Quand un backup échoue « sans raison », le premier suspect est un nom de fichier bizarre.</p>
+<p>Caractères Unicode dans les noms de fichiers plus SMB, ça reste une source de bugs vicieux. Symboles de genre, emoji, accents exotiques, tout ça peut casser l'accès sur un partage réseau. Quand un backup échoue « sans raison », le premier suspect est un nom de fichier bizarre.</p>
 <h2>Galère n°3, les dossiers qui gonflent tout (rclone)</h2>
 <p>Mon autre backup, vers Google Drive via rclone, synchronise des dossiers de cours et de projets. Problème, ces dossiers contiennent des trucs qu'on ne veut <strong>jamais</strong> sauvegarder. Des <code>node_modules</code> de plusieurs Go, des dépôts <code>.git</code>, des environnements virtuels Python.</p>
 <p>Sauvegarder ça, c'est transférer des milliers de petits fichiers régénérables en une commande, et faire exploser la durée du backup et le quota du Drive pour rien.</p>
-<p>La solution, des exclusions ciblées dans le <code>rclone sync</code>.</p>
+<p>Des exclusions ciblées dans le <code>rclone sync</code> réglent ça.</p>
 <pre><code class="language-bash">rclone sync &quot;$src&quot; &quot;${REMOTE}:${DEST_BASE}/${dir_name}&quot; \
   --transfers 4 --checkers 8 \
   --local-encoding None \
@@ -76,7 +71,7 @@
 <p><code>**/ModuleOutput/**</code> correspond, chez moi, à des données extraites par Autopsy (forensics). Volumineuses et reproductibles.</p>
 <p><code>--local-encoding None</code> est lié directement à la galère n°2, ça évite que rclone ré-encode les noms de fichiers et bute sur les caractères exotiques.</p>
 <p><code>**:Zone.Identifier</code> cible les fichiers parasites de Windows, la marque « fichier téléchargé d'internet » que personne n'a jamais demandée.</p>
-<p>Règle de sauvegarde, la vraie, on ne sauvegarde que ce qui n'est pas régénérable. Le code source, oui. Ses dépendances installables en une commande, non. Bien exclure, c'est diviser la taille et la durée du backup par dix.</p>
+<p>La vraie règle de sauvegarde est simple, on ne sauvegarde que ce qui n'est pas régénérable. Le code source, oui. Ses dépendances installables en une commande, non. Bien exclure, c'est diviser la taille et la durée du backup par dix.</p>
 <h2>Récapitulatif des pièges SMB / backup</h2>
 <table>
 <thead>
@@ -112,7 +107,6 @@
 <h2>Aller plus loin</h2>
 <ul>
 <li><strong>Corriger l'encodage à la source.</strong> Monter le partage SMB avec <code>iocharset=utf8</code> pour régler les noms Unicode proprement, plutôt que d'exclure.</li>
-<li><strong>Un <code>.backupignore</code>.</strong> Centraliser les exclusions dans un fichier versionné plutôt qu'en dur dans les commandes.</li>
 <li><strong>Vérifier ce qui est réellement sauvegardé.</strong> <code>restic ls latest</code> ou un dry-run rclone pour confirmer que les exclusions font bien leur travail.</li>
 <li><strong>Le montage SMB lui-même.</strong> Ces galères viennent du CSI driver SMB, voir l'article sur le montage des partages TrueNAS dans Kubernetes.</li>
 </ul>

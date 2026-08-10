@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Monitoring maison avec Prometheus, Grafana et node_exporter — Dani Faria dos Santos</title>
-  <meta name="description" content="Du scrape au dashboard. Deux node_exporter (hôtes en Ansible, pods en DaemonSet), un Prometheus qui agrège tout, et Grafana branché en SSO Keycloak." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Du scrape au dashboard. Deux node_exporter (hôtes en Ansible, pods en DaemonSet), un Prometheus qui agrège tout, et Grafana branché en SSO Keycloak.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -150,6 +150,7 @@ scrape_configs:
 <li><strong>Alerting.</strong> Prometheus a un langage de règles (PromQL) et un Alertmanager pour notifier (mail, Discord…) quand un disque dépasse 90 %.</li>
 <li><strong>Des dashboards prêts à l'emploi.</strong> Le dashboard « Node Exporter Full » (grafana.com/dashboards, ID 1860) donne une vue complète en quelques clics.</li>
 <li><strong>Surveiller Kubernetes lui-même.</strong> kube-state-metrics et cAdvisor exposent l'état des pods/deployments, au-delà des seules métriques d'hôte.</li>
+<li><strong>Remote write.</strong> Envoyer les métriques vers un stockage long terme (Mimir, Thanos) si la rétention locale de Prometheus finit par ne plus suffire.</li>
 </ul>
 
     </div>

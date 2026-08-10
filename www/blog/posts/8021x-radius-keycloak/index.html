@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sécuriser ses ports Ethernet avec 802.1X, FreeRADIUS et Keycloak — Dani Faria dos Santos</title>
-  <meta name="description" content="Brancher un câble ne devrait pas suffire à entrer sur le réseau. EAP-TTLS, MAB, et une auth qui remonte jusqu&#39;à Keycloak via ROPC." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Brancher un câble ne devrait pas suffire à entrer sur le réseau. EAP-TTLS, MAB, et une auth qui remonte jusqu&#39;à Keycloak via ROPC.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -209,8 +209,7 @@ fc9d0563b3bf   Auth-Type := Accept
 <ul>
 <li><strong>La dépendance circulaire.</strong> Mettre le node K8s (qui héberge FreeRADIUS) derrière un port 802.1X crée un deadlock potentiel. C'est un piège si sérieux qu'il mérite son propre article.</li>
 <li><strong>VLAN dynamique.</strong> RADIUS peut renvoyer un VLAN dans sa réponse, pour assigner automatiquement un client à un sous-réseau selon son identité.</li>
-<li><strong>Accounting.</strong> Les ports <code>1813</code> (acct) permettent de logguer qui s'est connecté, quand, combien de temps.</li>
-<li><strong>CoA (Change of Authorization).</strong> Révoquer une session active sans attendre la reconnexion.</li>
+<li><strong>Accounting et CoA.</strong> Le port <code>1813</code> (acct) permet de logguer qui s'est connecté, quand, combien de temps ; le CoA (Change of Authorization) permet de révoquer une session active sans attendre la reconnexion.</li>
 </ul>
 
     </div>

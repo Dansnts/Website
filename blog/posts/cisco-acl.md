@@ -165,7 +165,7 @@ Contrairement à `ip access-group`, `access-class` ne s'applique pas à une inte
 
 ## Exemple concret, restreindre l'accès SSH
 
-Testé en lab EVE-NG plutôt qu'en prod (par prudence, se couper l'accès management à distance sur un routeur physique est une excellente façon de finir en salle serveur un dimanche). Seule la station de management `192.168.1.10` doit pouvoir se connecter en SSH sur `R1`, tout le reste bloqué.
+Testé en lab EVE-NG plutôt qu'en prod, se couper l'accès management à distance sur un routeur physique se répare rarement à distance. Seule la station de management `192.168.1.10` doit pouvoir se connecter en SSH sur `R1`, tout le reste bloqué.
 
 ```ios
 R1(config)# ip access-list standard MGMT-ACCESS

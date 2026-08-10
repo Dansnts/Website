@@ -8,20 +8,15 @@ tags: [homelab, backup, smb, restic, rclone]
 
 Sauvegarder un partage réseau, sur le papier, c'est trivial, on pointe l'outil de backup sur le montage, et hop. En pratique, un montage **SMB** n'a aucune des garanties du stockage local. Inodes instables, noms de fichiers exotiques qui font planter le mount, dossiers énormes et 100% régénérables qui gonflent tout pour rien.
 
-Ce post est un journal de bord, pas un cours théorique, les vraies galères rencontrées en sauvegardant mon NAS SMB, et comment je les ai réglées.
-
-## Prérequis
-
-- Un partage SMB monté (voir l'article sur le CSI driver SMB)
-- Un outil de backup (ici Restic et rclone)
+Ce post est un journal de bord, pas un cours théorique, les vraies galères rencontrées en sauvegardant mon NAS SMB (monté via le CSI driver SMB) avec Restic et rclone, et comment je les ai réglées.
 
 ## Galère n°1, les inodes qui bougent
 
 Restic utilise l'**inode** d'un fichier pour détecter s'il a changé. Sur un système de fichiers local, l'inode est stable, même fichier, même inode, toujours.
 
-Sur un **montage SMB**, cette garantie n'existe pas. Le protocole ne fournit pas d'inodes stables, ils peuvent changer d'un montage à l'autre, ou entre deux accès au même fichier. Résultat, Restic pense que *tout* a changé à chaque run, re-scanne l'intégralité du partage, et l'incrémental ne sert plus à rien.
+Sur un **montage SMB**, cette garantie n'existe pas. Le protocole ne fournit pas d'inodes stables, ils peuvent changer d'un montage à l'autre, ou entre deux accès au même fichier. Restic finit par croire que *tout* a changé à chaque run, re-scanne l'intégralité du partage, et l'incrémental ne sert plus à rien.
 
-La solution, dire à Restic d'ignorer l'inode.
+Il suffit de dire à Restic d'ignorer l'inode.
 
 ```bash
 restic backup /mnt/data/Backup /mnt/dump \
@@ -40,7 +35,7 @@ Celle-là est ma préférée. Des fichiers de jeu Pokémon dont le nom contient 
 
 Un seul fichier au nom exotique, et tout le run se plante. J'ai perdu du temps à comprendre pourquoi le backup échouait « sans raison » avant de trouver le coupable, un Pikachu mal encodé.
 
-La solution, exclure ces fichiers.
+Ici, exclure ces fichiers règle le problème.
 
 ```bash
 --exclude '/mnt/data/Backup/Games/Pok*'
@@ -48,7 +43,7 @@ La solution, exclure ces fichiers.
 
 `--exclude 'Pok*'` saute les fichiers problématiques. Ce sont des données de jeu, pas critiques, donc les exclure est acceptable. L'alternative propre serait de corriger l'encodage du mount SMB (`iocharset=utf8`), mais exclure trois fichiers de sauvegarde de jeu prend trente secondes de moins.
 
-Leçon retenue, caractères Unicode dans les noms de fichiers + SMB = source de bugs vicieux. Symboles de genre, emoji, accents exotiques, tout ça peut casser l'accès sur un partage réseau. Quand un backup échoue « sans raison », le premier suspect est un nom de fichier bizarre.
+Caractères Unicode dans les noms de fichiers plus SMB, ça reste une source de bugs vicieux. Symboles de genre, emoji, accents exotiques, tout ça peut casser l'accès sur un partage réseau. Quand un backup échoue « sans raison », le premier suspect est un nom de fichier bizarre.
 
 ## Galère n°3, les dossiers qui gonflent tout (rclone)
 
@@ -56,7 +51,7 @@ Mon autre backup, vers Google Drive via rclone, synchronise des dossiers de cour
 
 Sauvegarder ça, c'est transférer des milliers de petits fichiers régénérables en une commande, et faire exploser la durée du backup et le quota du Drive pour rien.
 
-La solution, des exclusions ciblées dans le `rclone sync`.
+Des exclusions ciblées dans le `rclone sync` réglent ça.
 
 ```bash
 rclone sync "$src" "${REMOTE}:${DEST_BASE}/${dir_name}" \
@@ -83,7 +78,7 @@ Ce qu'on exclut et pourquoi.
 
 `**:Zone.Identifier` cible les fichiers parasites de Windows, la marque « fichier téléchargé d'internet » que personne n'a jamais demandée.
 
-Règle de sauvegarde, la vraie, on ne sauvegarde que ce qui n'est pas régénérable. Le code source, oui. Ses dépendances installables en une commande, non. Bien exclure, c'est diviser la taille et la durée du backup par dix.
+La vraie règle de sauvegarde est simple, on ne sauvegarde que ce qui n'est pas régénérable. Le code source, oui. Ses dépendances installables en une commande, non. Bien exclure, c'est diviser la taille et la durée du backup par dix.
 
 ## Récapitulatif des pièges SMB / backup
 
@@ -97,6 +92,5 @@ Règle de sauvegarde, la vraie, on ne sauvegarde que ce qui n'est pas régénér
 ## Aller plus loin
 
 - **Corriger l'encodage à la source.** Monter le partage SMB avec `iocharset=utf8` pour régler les noms Unicode proprement, plutôt que d'exclure.
-- **Un `.backupignore`.** Centraliser les exclusions dans un fichier versionné plutôt qu'en dur dans les commandes.
 - **Vérifier ce qui est réellement sauvegardé.** `restic ls latest` ou un dry-run rclone pour confirmer que les exclusions font bien leur travail.
 - **Le montage SMB lui-même.** Ces galères viennent du CSI driver SMB, voir l'article sur le montage des partages TrueNAS dans Kubernetes.

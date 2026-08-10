@@ -170,3 +170,4 @@ sudo systemctl start systemd-resolved
 - **Redondance Pi-hole.** Une seconde instance + `keepalived` pour que le blocage de pub survive à un crash. Attention à ne pas recréer une dépendance au cluster.
 - **La dépendance circulaire RADIUS.** Le même raisonnement, appliqué à l'authentification réseau, sujet d'un article dédié.
 - **Métriques Pi-hole.** Exporter les stats (requêtes bloquées, top domaines) vers Prometheus/Grafana pour visualiser ce que le réseau raconte.
+- **Listes de blocage personnalisées.** Au-delà des listes publiques, ajouter ses propres domaines (trackers spécifiques, pubs qui passent entre les mailles) à la main.

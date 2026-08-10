@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mettre en place une CI/CD avec GitHub Actions — Dani Faria dos Santos</title>
-  <meta name="description" content="De zéro à un pipeline qui teste, build et déploie automatiquement à chaque push." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="De zéro à un pipeline qui teste, build et déploie automatiquement à chaque push.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -30,7 +30,7 @@
     </header>
 
     <div class="blog-body">
-      <p>Une CI/CD (Intégration Continue / Déploiement Continu) est un pipeline automatique qui se déclenche à chaque push. Le but, plus jamais déployer à la main, et un flux qui trace tout le processus.</p>
+      <p>Une CI/CD (Intégration Continue / Déploiement Continu) est un pipeline automatique qui se déclenche à chaque push. Il vise à ne plus jamais déployer à la main, avec un flux qui trace tout le processus.</p>
 <p>On construit un pipeline <em>GitHub Actions</em> pour une application Node.js. Il fait quatre choses.</p>
 <ol>
 <li>Lance les tests automatiquement</li>
@@ -152,8 +152,7 @@ jobs:
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Environments.</strong> GitHub permet de définir des environnements (<code>staging</code>, <code>production</code>) avec approbation manuelle avant la prod.</li>
-<li><strong>Matrix builds.</strong> Tester plusieurs versions de Node/Python en parallèle avec <code>strategy: matrix</code>.</li>
+<li><strong>Environments et matrix builds.</strong> GitHub permet de définir des environnements (<code>staging</code>, <code>production</code>) avec approbation manuelle avant la prod, et de tester plusieurs versions de Node/Python en parallèle avec <code>strategy: matrix</code>.</li>
 <li><strong>Cache.</strong> <code>actions/cache</code> pour mettre en cache <code>node_modules</code> et accélérer les builds.</li>
 <li><strong>Gestion des secrets.</strong> Un sujet entier à lui tout seul, ça mérite son propre article.</li>
 </ul>

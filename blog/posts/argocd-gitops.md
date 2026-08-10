@@ -111,9 +111,9 @@ data:
     requestedScopes: ["openid", "profile", "email", "groups"]
 ```
 
-`issuer` est l'URL du realm Keycloak. ArgoCD y découvre automatiquement les endpoints OIDC.
+Le champ `issuer` pointe vers l'URL du realm Keycloak, ArgoCD y découvre automatiquement les endpoints OIDC.
 
-`clientSecret: $oidc.keycloak.clientSecret`, le `$` fait référence à une clé stockée dans un Secret K8s, le secret n'est pas en clair dans le ConfigMap.
+Dans `clientSecret: $oidc.keycloak.clientSecret`, le `$` renvoie à une clé stockée dans un Secret K8s. Le secret n'apparaît jamais en clair dans le ConfigMap.
 
 `requestedScopes: [... "groups"]`, c'est le scope `groups` qui va permettre de mapper les groupes Keycloak vers des rôles ArgoCD. Essentiel pour le RBAC juste après.
 
@@ -135,9 +135,9 @@ data:
     g, /argocd-admin, role:admin
 ```
 
-`policy.default: role:readonly` fait que tout utilisateur authentifié peut *voir*, mais pas *modifier*.
+Avec `policy.default: role:readonly`, tout utilisateur authentifié peut *voir*, mais pas *modifier*.
 
-`g, /argocd-admin, role:admin` fait que les membres du groupe Keycloak `argocd-admin` héritent du rôle admin. On gère les droits depuis Keycloak, pas dans ArgoCD.
+La ligne `g, /argocd-admin, role:admin` donne le rôle admin aux membres du groupe Keycloak `argocd-admin`. On gère ainsi les droits depuis Keycloak, pas dans ArgoCD.
 
 > Le combo OIDC + `groups` + RBAC, c'est ce qui rend l'ensemble propre, on ajoute quelqu'un au bon groupe dans Keycloak, et il obtient (ou perd) ses droits ArgoCD sans toucher à un seul manifest.
 
@@ -154,6 +154,5 @@ Petit retour d'expérience, gratuit. Sur un cluster single-node, certaines valeu
 ## Aller plus loin
 
 - **App of Apps.** Déclarer une application ArgoCD qui elle-même déclare toutes les autres. Un seul point d'entrée pour tout le cluster.
-- **Sync waves.** Ordonner le déploiement (les CRDs avant les ressources qui les utilisent, les secrets avant les pods).
-- **Sealed Secrets.** Le GitOps suppose que *tout* est dans Git, y compris les secrets, mais chiffrés. C'est le sujet d'un article dédié.
+- **Sync waves et Sealed Secrets.** Ordonner le déploiement (les CRDs avant les ressources qui les utilisent, les secrets avant les pods) suppose que *tout* soit dans Git, y compris les secrets, mais chiffrés. C'est le sujet d'un article dédié.
 - **Notifications.** Brancher ArgoCD sur un webhook pour être alerté quand une app passe `OutOfSync` ou `Degraded`.

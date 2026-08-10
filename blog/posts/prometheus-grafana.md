@@ -163,3 +163,4 @@ Le pod tourne en `runAsUser: 472` (l'UID attendu par l'image Grafana), avec sa c
 - **Alerting.** Prometheus a un langage de règles (PromQL) et un Alertmanager pour notifier (mail, Discord…) quand un disque dépasse 90 %.
 - **Des dashboards prêts à l'emploi.** Le dashboard « Node Exporter Full » (grafana.com/dashboards, ID 1860) donne une vue complète en quelques clics.
 - **Surveiller Kubernetes lui-même.** kube-state-metrics et cAdvisor exposent l'état des pods/deployments, au-delà des seules métriques d'hôte.
+- **Remote write.** Envoyer les métriques vers un stockage long terme (Mimir, Thanos) si la rétention locale de Prometheus finit par ne plus suffire.

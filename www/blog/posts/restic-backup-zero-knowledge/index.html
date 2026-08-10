@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Backup zero-knowledge avec Restic — Dani Faria dos Santos</title>
-  <meta name="description" content="Chiffrement côté client, déduplication, et un repo S3 où même l&#39;hébergeur ne peut rien lire. Le tout piloté par un CronJob Kubernetes." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Chiffrement côté client, déduplication, et un repo S3 où même l&#39;hébergeur ne peut rien lire. Le tout piloté par un CronJob Kubernetes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -112,9 +112,9 @@ spec:
 <p><code>restic backup</code> crée un <strong>snapshot incrémental</strong>. Grâce à la déduplication, seuls les blobs nouveaux sont uploadés, un backup quotidien ne transfère que le delta.</p>
 <p><code>restic forget --prune</code> applique la politique de rétention <strong>puis</strong> libère réellement l'espace S3 (<code>--prune</code> supprime les blobs qui ne sont plus référencés par aucun snapshot).</p>
 <p><code>restic check</code> vérifie l'intégrité structurelle du repo (index + packs). Un backup qu'on ne vérifie jamais, c'est un backup qu'on <em>espère</em> avoir.</p>
-<p><code>concurrencyPolicy: Forbid</code> fait que si un backup dure plus de 24h (peu probable mais possible au premier run), on n'en lance pas un deuxième par-dessus.</p>
+<p><code>concurrencyPolicy: Forbid</code> empêche qu'un backup qui traîne plus de 24h, peu probable mais possible au tout premier run, se voie lancer un deuxième par-dessus.</p>
 <p><code>restic snapshots || restic init</code> assure l'idempotence, on n'initialise le repo que la première fois, sans erreur les fois suivantes.</p>
-<p><code>envFrom secretRef</code> fait que toutes les variables sensibles (<code>RESTIC_REPOSITORY</code>, <code>RESTIC_PASSWORD</code>, clés S3) viennent d'un Secret scellé.</p>
+<p>Toutes les variables sensibles (<code>RESTIC_REPOSITORY</code>, <code>RESTIC_PASSWORD</code>, clés S3) arrivent via <code>envFrom secretRef</code>, depuis un Secret scellé.</p>
 <hr>
 <h2>La politique de rétention</h2>
 <p>C'est le cœur d'une stratégie de backup, garder assez d'historique sans exploser le stockage.</p>
@@ -158,7 +158,6 @@ restic mount /mnt/restic-restore
 <li><strong>Backup d'une base live.</strong> Sauvegarder un fichier SQLite pendant que l'app écrit dedans demande une précaution (un dump WAL-safe). Sujet d'un article dédié.</li>
 <li><strong>Les inodes SMB.</strong> Le <code>--ignore-inode</code> de la commande cache un vrai piège des montages réseau, j'en parle dans l'article sur les galères de backup SMB.</li>
 <li><strong>Monitoring.</strong> Exporter le résultat des runs (durée, taille, succès) vers Prometheus pour être alerté si un backup échoue plutôt que de le découvrir six mois plus tard.</li>
-<li><strong>Règle 3-2-1.</strong> Restic couvre l'off-site chiffré ; à compléter avec une copie locale (snapshots ZFS) pour respecter le 3-2-1 en entier.</li>
 </ul>
 
     </div>

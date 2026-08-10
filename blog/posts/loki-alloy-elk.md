@@ -199,3 +199,4 @@ La règle que j'en tire, **on choisit ELK pour ce qu'il fait de mieux, le full-t
 - **Alerting sur les logs.** Loki sait déclencher des alertes sur des motifs (`|= "error"` qui dépasse un seuil), via les mêmes règles que Prometheus.
 - **Structurer les logs à la source.** Passer les applis en logs JSON permet à `stage.json` d'Alloy d'extraire des champs, sans payer le coût d'un index full-text.
 - **Rétention par flux.** Affiner la rétention Loki par label (garder les logs d'auth plus longtemps que le reste) plutôt qu'un `30d` global.
+- **Multi-tenant.** `auth_enabled: true` permettrait d'isoler des logs par tenant, utile si le cluster héberge plusieurs projets un jour.

@@ -6,9 +6,9 @@ date: 2024-08-02
 tags: [homelab, kubernetes, sécurité, securitycontext]
 ---
 
-On lit partout qu'il faut durcir ses pods : `runAsNonRoot`, `allowPrivilegeEscalation: false`, `capabilities: drop: ["ALL"]`. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique, ou pire, aucun message du tout.
+On lit partout qu'il faut durcir ses pods avec `runAsNonRoot`, `allowPrivilegeEscalation: false`, `capabilities: drop: ["ALL"]`. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique, ou pire, aucun message du tout.
 
-Cet article est un catalogue de pièges **vécus** sur mon homelab. À chaque fois : un durcissement trop zélé, un service cassé, une subtilité qui explique pourquoi. Le but n'est pas de tout durcir. C'est de durcir *juste ce qu'il faut*.
+Cet article est un catalogue de pièges **vécus** sur mon homelab. À chaque fois, un durcissement trop zélé, un service cassé, une subtilité qui explique pourquoi. Le but n'est pas de tout durcir. C'est de durcir *juste ce qu'il faut*.
 
 ## Prérequis
 
@@ -17,9 +17,9 @@ Cet article est un catalogue de pièges **vécus** sur mon homelab. À chaque fo
 
 ---
 
-## Le principe : durcir sans casser
+## Durcir sans casser, le principe
 
-Trois leviers de durcissement, et ce qu'ils font vraiment :
+Trois leviers de durcissement, et ce qu'ils font vraiment.
 
 | Réglage | Effet | Risque de casse |
 |---|---|---|
@@ -33,7 +33,7 @@ Le problème vient presque toujours d'images qui font des opérations **root au 
 
 ## Quand le durcissement complet fonctionne
 
-Commençons par un service qui accepte le durcissement complet : Vaultwarden, un binaire Rust statique.
+Vaultwarden ouvre le bal. Binaire Rust statique, il accepte le durcissement complet sans broncher.
 
 ```yaml
 securityContext:
@@ -47,15 +47,15 @@ securityContext:
     drop: ["ALL"]
 ```
 
-Vaultwarden ne fait aucune opération root au boot : il écoute, point. Donc `drop ALL` + `runAsUser` arbitraire = aucun problème. **C'est le cas idéal, et malheureusement pas la majorité.**
+Vaultwarden ne fait aucune opération root au boot, il écoute, point final. Donc `drop ALL` + `runAsUser` arbitraire = aucun problème. **C'est le cas idéal, et malheureusement pas la majorité.**
 
 ---
 
-## Piège n°1 : Postgres et l'UID 70
+## Piège n°1, Postgres et l'UID 70
 
-Le classique qui fait perdre une soirée. `postgres:16-alpine` tourne en **UID 70** (pas 999 comme la version Debian). Son entrypoint fait un `chown` du data dir en root, *puis* drop vers l'utilisateur postgres.
+Un cas classique. `postgres:16-alpine` tourne en **UID 70** (pas 999 comme la version Debian). Son entrypoint fait un `chown` du data dir en root, *puis* drop vers l'utilisateur postgres.
 
-Si on impose `runAsUser: 999` + `drop ALL` :
+Imposer `runAsUser: 999` + `drop ALL` déclenche ceci.
 
 ```
 FATAL: data directory has wrong ownership
@@ -63,7 +63,7 @@ FATAL: data directory has wrong ownership
 
 L'entrypoint ne peut plus chown (pas la capability), et l'UID ne correspond pas. Crash.
 
-**Solution** : ne pas mettre de securityContext qui force l'UID. Laisser l'image gérer :
+**Solution.** Ne pas mettre de securityContext qui force l'UID, laisser l'image gérer.
 
 ```yaml
 #  Pour postgres:alpine, laisser tranquille
@@ -72,18 +72,18 @@ securityContext:
   # PAS de runAsUser, PAS de drop ALL
 ```
 
-> La leçon : **vérifier l'UID réel de l'image avant de forcer quoi que ce soit.** `docker run --rm postgres:16-alpine id` te dit tout de suite en quel utilisateur elle tourne.
+> La leçon, **vérifier l'UID réel de l'image avant de forcer quoi que ce soit.** `docker run --rm postgres:16-alpine id` te dit tout de suite en quel utilisateur elle tourne.
 
 ---
 
-## Piège n°2 : Pi-hole et setcap
+## Piège n°2, Pi-hole et setcap
 
 pihole-FTL utilise `setcap` et `setgid` au démarrage pour se lier au port 53 en tant que non-root.
 
 - `allowPrivilegeEscalation: false` → bloque `setcap` → FTL ne démarre pas.
 - `drop ALL` → retire `CAP_SETGID` → « Unable to set group list ».
 
-**Solution** : aucun securityContext restrictif, et une variable pour contourner :
+**Solution.** Aucun securityContext restrictif, et une variable pour contourner le problème.
 
 ```yaml
 env:
@@ -94,16 +94,16 @@ env:
 
 ---
 
-## Piège n°3 : les images qui chown au démarrage (nginx, TeamSpeak)
+## Piège n°3, les images qui chown au démarrage (nginx, TeamSpeak)
 
-Beaucoup d'images font un `chown` de leur répertoire de travail au boot :
+Beaucoup d'images font un `chown` de leur répertoire de travail au boot.
 
 - **nginx** (image root) chown `/var/cache/nginx` → besoin de `CAP_CHOWN`.
 - **TeamSpeak** chown `/var/ts3server` → même besoin.
 
 Un `drop ALL` retire `CAP_CHOWN`, et le conteneur plante au démarrage.
 
-**Solution** : garder `allowPrivilegeEscalation: false` mais **pas** de `drop ALL` :
+**Solution.** Garder `allowPrivilegeEscalation: false` mais **pas** de `drop ALL`.
 
 ```yaml
 securityContext:
@@ -113,9 +113,9 @@ securityContext:
 
 ---
 
-## Piège n°4 : WireGuard a besoin de plus de capabilities, pas de moins
+## Piège n°4, WireGuard a besoin de plus de capabilities, pas de moins
 
-Le cas symétrique. WireGuard (wg-easy) fait du NAT iptables : il lui faut **plus** de privilèges, pas moins.
+Le cas symétrique. WireGuard (wg-easy) fait du NAT iptables, il lui faut **plus** de privilèges, pas moins.
 
 ```yaml
 securityContext:
@@ -124,21 +124,21 @@ securityContext:
   # et surtout PAS de allowPrivilegeEscalation: false (bloquerait iptables)
 ```
 
-`NET_ADMIN` + `NET_RAW` : pour manipuler les interfaces réseau et iptables. `SYS_MODULE` : pour charger le module kernel wireguard. Ici, durcir reviendrait à empêcher le service de faire son travail.
+`NET_ADMIN` et `NET_RAW` servent à manipuler les interfaces réseau et iptables, `SYS_MODULE` charge le module kernel wireguard. Ici, durcir reviendrait à empêcher le service de faire son travail.
 
 ---
 
 ## La règle qui résume tout
 
-Après tous ces pièges, voici l'heuristique que j'applique :
+Après tous ces pièges, voici l'heuristique que j'applique.
 
-> **Image stateless sans setup root** (Go/Rust statiques, comme Vaultwarden) → durcissement complet : `drop ALL` + `runAsNonRoot` + `allowPrivilegeEscalation: false`.
+> **Image stateless sans setup root** (Go/Rust statiques, comme Vaultwarden) → durcissement complet, `drop ALL` + `runAsNonRoot` + `allowPrivilegeEscalation: false`.
 >
 > **Image qui chown/setcap/setgid au démarrage** (postgres, pihole, nginx, teamspeak) → garder **uniquement** `allowPrivilegeEscalation: false`, pas de `drop ALL`, pas de `runAsUser` forcé.
 >
 > **Image qui manipule le réseau/kernel** (wireguard) → **ajouter** les capabilities nécessaires, ne rien restreindre qui bloque iptables.
 
-Tableau récap des services de mon cluster :
+Tableau récap des services de mon cluster.
 
 | Service | Piège | Bon réglage |
 |---|---|---|
@@ -152,7 +152,7 @@ Tableau récap des services de mon cluster :
 
 ## Comment débugger un pod qui crashe au boot
 
-Quand un durcissement casse quelque chose, la démarche :
+Quand un durcissement casse quelque chose, voici la démarche.
 
 ```bash
 # Les logs du conteneur (souvent le message est là... ou pas)
@@ -171,7 +171,7 @@ docker run --rm <image> id
 
 ## Aller plus loin
 
-- **Pod Security Standards** : les niveaux `baseline` / `restricted` de K8s, pour appliquer des politiques cohérentes à l'échelle d'un namespace.
-- **seccomp profiles** : restreindre les appels système autorisés, un cran plus fin que les capabilities.
-- **Distroless / rootless images** : choisir des images conçues pour tourner non-root dès le départ, qui acceptent le `drop ALL` sans broncher.
-- **Un rootful à part** : isoler les rares services qui ont besoin de privilèges (wireguard) et durcir agressivement tout le reste.
+- **Pod Security Standards.** Les niveaux `baseline` / `restricted` de K8s, pour appliquer des politiques cohérentes à l'échelle d'un namespace.
+- **seccomp profiles.** Restreindre les appels système autorisés, un cran plus fin que les capabilities.
+- **Distroless / rootless images.** Choisir des images conçues pour tourner non-root dès le départ, qui acceptent le `drop ALL` sans broncher.
+- **Un rootful à part.** Isoler les rares services qui ont besoin de privilèges (wireguard) et durcir agressivement tout le reste.

@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pièges des securityContext Kubernetes — Dani Faria dos Santos</title>
-  <meta name="description" content="Durcir ses pods, c&#39;est bien, jusqu&#39;à ce qu&#39;un drop ALL fasse planter Postgres sans un message d&#39;erreur clair. Guide des pièges vécus." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Durcir ses pods, c&#39;est bien, jusqu&#39;à ce qu&#39;un drop ALL fasse planter Postgres sans un message d&#39;erreur clair. Guide des pièges vécus.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -30,16 +30,16 @@
     </header>
 
     <div class="blog-body">
-      <p>On lit partout qu'il faut durcir ses pods : <code>runAsNonRoot</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities: drop: [&quot;ALL&quot;]</code>. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique, ou pire, aucun message du tout.</p>
-<p>Cet article est un catalogue de pièges <strong>vécus</strong> sur mon homelab. À chaque fois : un durcissement trop zélé, un service cassé, une subtilité qui explique pourquoi. Le but n'est pas de tout durcir. C'est de durcir <em>juste ce qu'il faut</em>.</p>
+      <p>On lit partout qu'il faut durcir ses pods avec <code>runAsNonRoot</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities: drop: [&quot;ALL&quot;]</code>. Bon conseil. Jusqu'au jour où on l'applique aveuglément et qu'un conteneur refuse de démarrer, avec un message d'erreur cryptique, ou pire, aucun message du tout.</p>
+<p>Cet article est un catalogue de pièges <strong>vécus</strong> sur mon homelab. À chaque fois, un durcissement trop zélé, un service cassé, une subtilité qui explique pourquoi. Le but n'est pas de tout durcir. C'est de durcir <em>juste ce qu'il faut</em>.</p>
 <h2>Prérequis</h2>
 <ul>
 <li>Des bases sur les <code>securityContext</code> K8s</li>
 <li>L'envie de comprendre <em>pourquoi</em> un pod crashe, pas juste de copier-coller</li>
 </ul>
 <hr>
-<h2>Le principe : durcir sans casser</h2>
-<p>Trois leviers de durcissement, et ce qu'ils font vraiment :</p>
+<h2>Durcir sans casser, le principe</h2>
+<p>Trois leviers de durcissement, et ce qu'ils font vraiment.</p>
 <table>
 <thead>
 <tr>
@@ -69,7 +69,7 @@
 <p>Le problème vient presque toujours d'images qui font des opérations <strong>root au démarrage</strong> (chown, setcap, setgid) avant de laisser la main. Les durcir comme un service stateless les casse.</p>
 <hr>
 <h2>Quand le durcissement complet fonctionne</h2>
-<p>Commençons par un service qui accepte le durcissement complet : Vaultwarden, un binaire Rust statique.</p>
+<p>Vaultwarden ouvre le bal. Binaire Rust statique, il accepte le durcissement complet sans broncher.</p>
 <pre><code class="language-yaml">securityContext:
   runAsNonRoot: true
   runAsUser: 65534
@@ -80,67 +80,67 @@
   capabilities:
     drop: [&quot;ALL&quot;]
 </code></pre>
-<p>Vaultwarden ne fait aucune opération root au boot : il écoute, point. Donc <code>drop ALL</code> + <code>runAsUser</code> arbitraire = aucun problème. <strong>C'est le cas idéal, et malheureusement pas la majorité.</strong></p>
+<p>Vaultwarden ne fait aucune opération root au boot, il écoute, point final. Donc <code>drop ALL</code> + <code>runAsUser</code> arbitraire = aucun problème. <strong>C'est le cas idéal, et malheureusement pas la majorité.</strong></p>
 <hr>
-<h2>Piège n°1 : Postgres et l'UID 70</h2>
-<p>Le classique qui fait perdre une soirée. <code>postgres:16-alpine</code> tourne en <strong>UID 70</strong> (pas 999 comme la version Debian). Son entrypoint fait un <code>chown</code> du data dir en root, <em>puis</em> drop vers l'utilisateur postgres.</p>
-<p>Si on impose <code>runAsUser: 999</code> + <code>drop ALL</code> :</p>
+<h2>Piège n°1, Postgres et l'UID 70</h2>
+<p>Un cas classique. <code>postgres:16-alpine</code> tourne en <strong>UID 70</strong> (pas 999 comme la version Debian). Son entrypoint fait un <code>chown</code> du data dir en root, <em>puis</em> drop vers l'utilisateur postgres.</p>
+<p>Imposer <code>runAsUser: 999</code> + <code>drop ALL</code> déclenche ceci.</p>
 <pre><code>FATAL: data directory has wrong ownership
 </code></pre>
 <p>L'entrypoint ne peut plus chown (pas la capability), et l'UID ne correspond pas. Crash.</p>
-<p><strong>Solution</strong> : ne pas mettre de securityContext qui force l'UID. Laisser l'image gérer :</p>
+<p><strong>Solution.</strong> Ne pas mettre de securityContext qui force l'UID, laisser l'image gérer.</p>
 <pre><code class="language-yaml">#  Pour postgres:alpine, laisser tranquille
 securityContext:
   allowPrivilegeEscalation: false
   # PAS de runAsUser, PAS de drop ALL
 </code></pre>
 <blockquote>
-<p>La leçon : <strong>vérifier l'UID réel de l'image avant de forcer quoi que ce soit.</strong> <code>docker run --rm postgres:16-alpine id</code> te dit tout de suite en quel utilisateur elle tourne.</p>
+<p>La leçon, <strong>vérifier l'UID réel de l'image avant de forcer quoi que ce soit.</strong> <code>docker run --rm postgres:16-alpine id</code> te dit tout de suite en quel utilisateur elle tourne.</p>
 </blockquote>
 <hr>
-<h2>Piège n°2 : Pi-hole et setcap</h2>
+<h2>Piège n°2, Pi-hole et setcap</h2>
 <p>pihole-FTL utilise <code>setcap</code> et <code>setgid</code> au démarrage pour se lier au port 53 en tant que non-root.</p>
 <ul>
 <li><code>allowPrivilegeEscalation: false</code> → bloque <code>setcap</code> → FTL ne démarre pas.</li>
 <li><code>drop ALL</code> → retire <code>CAP_SETGID</code> → « Unable to set group list ».</li>
 </ul>
-<p><strong>Solution</strong> : aucun securityContext restrictif, et une variable pour contourner :</p>
+<p><strong>Solution.</strong> Aucun securityContext restrictif, et une variable pour contourner le problème.</p>
 <pre><code class="language-yaml">env:
   - name: DNSMASQ_USER
     value: &quot;root&quot;
 # et surtout : pas de allowPrivilegeEscalation: false, pas de drop ALL
 </code></pre>
 <hr>
-<h2>Piège n°3 : les images qui chown au démarrage (nginx, TeamSpeak)</h2>
-<p>Beaucoup d'images font un <code>chown</code> de leur répertoire de travail au boot :</p>
+<h2>Piège n°3, les images qui chown au démarrage (nginx, TeamSpeak)</h2>
+<p>Beaucoup d'images font un <code>chown</code> de leur répertoire de travail au boot.</p>
 <ul>
 <li><strong>nginx</strong> (image root) chown <code>/var/cache/nginx</code> → besoin de <code>CAP_CHOWN</code>.</li>
 <li><strong>TeamSpeak</strong> chown <code>/var/ts3server</code> → même besoin.</li>
 </ul>
 <p>Un <code>drop ALL</code> retire <code>CAP_CHOWN</code>, et le conteneur plante au démarrage.</p>
-<p><strong>Solution</strong> : garder <code>allowPrivilegeEscalation: false</code> mais <strong>pas</strong> de <code>drop ALL</code> :</p>
+<p><strong>Solution.</strong> Garder <code>allowPrivilegeEscalation: false</code> mais <strong>pas</strong> de <code>drop ALL</code>.</p>
 <pre><code class="language-yaml">securityContext:
   allowPrivilegeEscalation: false
   # pas de drop ALL, l'image a besoin de CAP_CHOWN au boot
 </code></pre>
 <hr>
-<h2>Piège n°4 : WireGuard a besoin de plus de capabilities, pas de moins</h2>
-<p>Le cas symétrique. WireGuard (wg-easy) fait du NAT iptables : il lui faut <strong>plus</strong> de privilèges, pas moins.</p>
+<h2>Piège n°4, WireGuard a besoin de plus de capabilities, pas de moins</h2>
+<p>Le cas symétrique. WireGuard (wg-easy) fait du NAT iptables, il lui faut <strong>plus</strong> de privilèges, pas moins.</p>
 <pre><code class="language-yaml">securityContext:
   capabilities:
     add: [&quot;NET_ADMIN&quot;, &quot;NET_RAW&quot;, &quot;SYS_MODULE&quot;]
   # et surtout PAS de allowPrivilegeEscalation: false (bloquerait iptables)
 </code></pre>
-<p><code>NET_ADMIN</code> + <code>NET_RAW</code> : pour manipuler les interfaces réseau et iptables. <code>SYS_MODULE</code> : pour charger le module kernel wireguard. Ici, durcir reviendrait à empêcher le service de faire son travail.</p>
+<p><code>NET_ADMIN</code> et <code>NET_RAW</code> servent à manipuler les interfaces réseau et iptables, <code>SYS_MODULE</code> charge le module kernel wireguard. Ici, durcir reviendrait à empêcher le service de faire son travail.</p>
 <hr>
 <h2>La règle qui résume tout</h2>
-<p>Après tous ces pièges, voici l'heuristique que j'applique :</p>
+<p>Après tous ces pièges, voici l'heuristique que j'applique.</p>
 <blockquote>
-<p><strong>Image stateless sans setup root</strong> (Go/Rust statiques, comme Vaultwarden) → durcissement complet : <code>drop ALL</code> + <code>runAsNonRoot</code> + <code>allowPrivilegeEscalation: false</code>.</p>
+<p><strong>Image stateless sans setup root</strong> (Go/Rust statiques, comme Vaultwarden) → durcissement complet, <code>drop ALL</code> + <code>runAsNonRoot</code> + <code>allowPrivilegeEscalation: false</code>.</p>
 <p><strong>Image qui chown/setcap/setgid au démarrage</strong> (postgres, pihole, nginx, teamspeak) → garder <strong>uniquement</strong> <code>allowPrivilegeEscalation: false</code>, pas de <code>drop ALL</code>, pas de <code>runAsUser</code> forcé.</p>
 <p><strong>Image qui manipule le réseau/kernel</strong> (wireguard) → <strong>ajouter</strong> les capabilities nécessaires, ne rien restreindre qui bloque iptables.</p>
 </blockquote>
-<p>Tableau récap des services de mon cluster :</p>
+<p>Tableau récap des services de mon cluster.</p>
 <table>
 <thead>
 <tr>
@@ -179,7 +179,7 @@ securityContext:
 </table>
 <hr>
 <h2>Comment débugger un pod qui crashe au boot</h2>
-<p>Quand un durcissement casse quelque chose, la démarche :</p>
+<p>Quand un durcissement casse quelque chose, voici la démarche.</p>
 <pre><code class="language-bash"># Les logs du conteneur (souvent le message est là... ou pas)
 kubectl logs &lt;pod&gt; -n homelab --previous
 
@@ -195,10 +195,10 @@ docker run --rm &lt;image&gt; id
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong>Pod Security Standards</strong> : les niveaux <code>baseline</code> / <code>restricted</code> de K8s, pour appliquer des politiques cohérentes à l'échelle d'un namespace.</li>
-<li><strong>seccomp profiles</strong> : restreindre les appels système autorisés, un cran plus fin que les capabilities.</li>
-<li><strong>Distroless / rootless images</strong> : choisir des images conçues pour tourner non-root dès le départ, qui acceptent le <code>drop ALL</code> sans broncher.</li>
-<li><strong>Un rootful à part</strong> : isoler les rares services qui ont besoin de privilèges (wireguard) et durcir agressivement tout le reste.</li>
+<li><strong>Pod Security Standards.</strong> Les niveaux <code>baseline</code> / <code>restricted</code> de K8s, pour appliquer des politiques cohérentes à l'échelle d'un namespace.</li>
+<li><strong>seccomp profiles.</strong> Restreindre les appels système autorisés, un cran plus fin que les capabilities.</li>
+<li><strong>Distroless / rootless images.</strong> Choisir des images conçues pour tourner non-root dès le départ, qui acceptent le <code>drop ALL</code> sans broncher.</li>
+<li><strong>Un rootful à part.</strong> Isoler les rares services qui ont besoin de privilèges (wireguard) et durcir agressivement tout le reste.</li>
 </ul>
 
     </div>

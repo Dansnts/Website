@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Construire une golden image Debian 12 avec Packer — Dani Faria dos Santos</title>
-  <meta name="description" content="Un template versionné, installé automatiquement au preseed et nettoyé pour être cloné à l&#39;infini." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Un template versionné, installé automatiquement au preseed et nettoyé pour être cloné à l&#39;infini.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -113,9 +113,9 @@ Template 9000       ──── prêt à être cloné par Terraform
 }
 </code></pre>
 <p>Le mécanisme clé, c'est le duo <code>boot_command</code> + <code>http_directory</code>.</p>
-<p><code>http_directory = &quot;http&quot;</code> fait que Packer démarre un petit serveur HTTP local qui sert le contenu du dossier <code>http/</code>, notre fichier <code>preseed.cfg</code>.</p>
+<p>Le paramètre <code>http_directory = &quot;http&quot;</code> déclenche un petit serveur HTTP local chez Packer, qui sert le contenu du dossier <code>http/</code>, notre fichier <code>preseed.cfg</code>.</p>
 <p><code>boot_command</code> simule des frappes clavier au boot de l'ISO. Il tape littéralement <code>install auto=true ...</code> puis pointe l'installeur Debian vers le preseed via <code>http://:/preseed.cfg</code>. Debian télécharge le preseed et s'installe tout seul.</p>
-<p><code>cloud_init = true</code> fait que Packer attache un lecteur cloud-init au template. C'est ce qui permettra à Terraform, plus tard, d'injecter l'IP et l'utilisateur au clonage.</p>
+<p>En activant <code>cloud_init = true</code>, Packer attache un lecteur cloud-init au template. C'est ce qui permettra à Terraform, plus tard, d'injecter l'IP et l'utilisateur au clonage.</p>
 <p><code>ssh_username = &quot;packer&quot;</code>, une fois l'install finie, Packer se connecte en SSH pour lancer les provisioners. Ce user <code>packer</code> est créé par le preseed.</p>
 <hr>
 <h2>Le preseed, répondre à l'installeur à l'avance</h2>

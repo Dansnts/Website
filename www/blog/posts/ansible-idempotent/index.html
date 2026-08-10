@@ -1,15 +1,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Configurer ses hôtes avec Ansible de façon idempotente — Dani Faria dos Santos</title>
-  <meta name="description" content="Des rôles réutilisables, du netplan qui remplace cloud-init, et pourquoi rejouer un playbook dix fois ne casse rien." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=129" />
-  <link rel="icon" href="/favicon.ico" />
+  <meta name="description" content="Des rôles réutilisables, du netplan qui remplace cloud-init, et pourquoi rejouer un playbook dix fois ne casse rien.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geomini:wght@300;400;500;600;700&family=Cascadia+Code:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=129">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body class="framed">
   <div id="site-header"></div>
@@ -218,9 +218,8 @@ rejouable à l'infini → changed=0 au 2e run
 <hr>
 <h2>Aller plus loin</h2>
 <ul>
-<li><strong><code>ansible-lint</code>.</strong> Passe les rôles au linter, il attrape les tâches non idempotentes et les mauvaises pratiques avant qu'elles ne mordent.</li>
+<li><strong><code>ansible-lint</code> et <code>--check</code>.</strong> Le linter attrape les tâches non idempotentes avant qu'elles ne mordent, et <code>ansible-playbook --check</code> montre ce qui <em>changerait</em> sans rien appliquer, un dry-run avant de lancer pour de vrai.</li>
 <li><strong>Ansible Vault.</strong> Pour chiffrer les secrets (mots de passe, tokens) directement dans le repo, au lieu de les garder à part.</li>
-<li><strong><code>--check</code> (dry-run).</strong> <code>ansible-playbook --check</code> montre ce qui <em>changerait</em> sans rien appliquer. Idéal pour vérifier avant de lancer pour de vrai.</li>
 <li><strong>Galaxy.</strong> Beaucoup de rôles courants (node_exporter inclus) existent déjà sur Ansible Galaxy. Réinventer la roue est un bon exercice, mais en prod on réutilise.</li>
 </ul>
 
