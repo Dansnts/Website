@@ -422,7 +422,17 @@ function initTerminalType() {
     return;
   }
 
-  const speed = 9; // ms per character
+  // Target a fixed total typing time instead of a fixed per-character
+  // delay: a fixed ms/char made the whole sequence take ~4s+ (470+
+  // characters across 6 rows), which reads as "still loading" to
+  // performance tooling long after the page is actually done. Deriving
+  // the per-character delay from the total character count keeps the
+  // animation feeling the same regardless of content/language length,
+  // while capping the total wall-clock time it takes.
+  const TOTAL_TYPE_MS = 1400;
+  const totalChars = Array.from(rows)
+    .reduce((sum, row) => sum + (row.querySelector('.skill-val')?.textContent.length || 0), 0);
+  const speed = Math.min(9, Math.max(2, TOTAL_TYPE_MS / (totalChars || 1)));
 
   function typeRow(row) {
     return new Promise(resolve => {
