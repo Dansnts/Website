@@ -388,89 +388,27 @@ function initAge() {
   el.textContent = age;
 }
 
-// ─── Skills terminal (type-on-scroll) ────────
-// Reads the current (already-translated) text at the moment each row
-// scrolls into view rather than at page load, so a language switch
-// before that point doesn't leave it typing out stale text.
+// ─── Skills terminal (reveal-on-scroll) ────────
+// Used to type each row out character by character, but that read as
+// "still loading" to performance tooling for several seconds after the
+// page was actually done (see git history). Rows now appear all at
+// once on scroll into view, then the idle CLI prompt with its blinking
+// cursor takes over - same terminal feel, without the wait.
 function initTerminalType() {
   const terminal = document.querySelector('.terminal');
   const rows = document.querySelectorAll('.terminal .skill-row');
-  const section = terminal ? terminal.closest('.section') : null;
   if (!terminal || !rows.length) return;
 
-  // The terminal itself is meant to visibly grow row by row - that's
-  // the point. What shouldn't move is everything BELOW it: reserve the
-  // section's fully-typed height up front (reveal every row for a
-  // moment to measure it, then hide them again) so the terminal grows
-  // into space that's already there instead of pushing the rest of the
-  // page down as it goes.
-  if (section) {
+  function reveal() {
     rows.forEach(row => row.classList.add('is-revealed'));
-    terminal.classList.add('is-done'); // also reserve room for the idle cursor line below the rows
-    section.style.minHeight = section.getBoundingClientRect().height + 'px';
-    terminal.classList.remove('is-done');
-    rows.forEach(row => row.classList.remove('is-revealed'));
+    terminal.classList.add('is-done'); // shows the idle prompt + blinking cursor
   }
 
-  // Whole rows (prompt label + value) are CSS-hidden by default so
-  // there's no flash of content before JS reveals them one at a time -
-  // see .terminal .skill-row in style.css. reduced-motion (or if this
-  // never got the chance to run) just reveals everything straight away.
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    rows.forEach(row => row.classList.add('is-revealed'));
-    if (section) section.style.minHeight = '';
-    return;
-  }
-
-  // Target a fixed total typing time instead of a fixed per-character
-  // delay: a fixed ms/char made the whole sequence take ~4s+ (470+
-  // characters across 6 rows), which reads as "still loading" to
-  // performance tooling long after the page is actually done. Deriving
-  // the per-character delay from the total character count keeps the
-  // animation feeling the same regardless of content/language length,
-  // while capping the total wall-clock time it takes.
-  const TOTAL_TYPE_MS = 1400;
-  const totalChars = Array.from(rows)
-    .reduce((sum, row) => sum + (row.querySelector('.skill-val')?.textContent.length || 0), 0);
-  const speed = Math.min(9, Math.max(2, TOTAL_TYPE_MS / (totalChars || 1)));
-
-  function typeRow(row) {
-    return new Promise(resolve => {
-      row.classList.add('is-revealed');
-      const el = row.querySelector('.skill-val');
-      const text = el.textContent;
-      el.textContent = '';
-      el.classList.add('is-typing');
-      let i = 0;
-      (function tick() {
-        el.textContent = text.slice(0, i);
-        i++;
-        if (i <= text.length) {
-          setTimeout(tick, speed);
-        } else {
-          el.classList.remove('is-typing');
-          resolve();
-        }
-      })();
-    });
-  }
-
-  async function typeAll() {
-    for (const row of rows) {
-      await typeRow(row);
-    }
-    // Idle CLI prompt with a blinking cursor once everything's typed.
-    terminal.classList.add('is-done');
-    if (section) section.style.minHeight = '';
-  }
-
-  // One trigger on the whole terminal (not per row) so lines type out
-  // one after another instead of all at once.
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
       obs.unobserve(entry.target);
-      typeAll();
+      reveal();
     });
   }, { threshold: 0.3 });
 
