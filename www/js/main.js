@@ -98,9 +98,13 @@ async function loadComponents() {
   const headerEl = document.getElementById('site-header');
   const footerEl = document.getElementById('site-footer');
 
+  // Versioned instead of cache: 'no-store' - these barely change, so let
+  // the browser cache them normally between pages/visits. Bump the ?v=
+  // whenever header.html/footer.html actually change, same convention
+  // as the CSS/JS cache-busting elsewhere on the site.
   const [headerRes, footerRes] = await Promise.all([
-    headerEl ? fetch('/includes/header.html', { cache: 'no-store' }) : null,
-    footerEl ? fetch('/includes/footer.html', { cache: 'no-store' }) : null
+    headerEl ? fetch('/includes/header.html?v=1') : null,
+    footerEl ? fetch('/includes/footer.html?v=1') : null
   ]);
 
   if (headerEl && headerRes) {
@@ -196,14 +200,19 @@ function initSectionSpy() {
   // Only run on root page where the sections exist
   if (!document.getElementById('home')) { initStaticActiveNav(); return; }
 
+  // Looked these up fresh on every scroll event before (up to 60x/sec) -
+  // nav/sections don't change shape once loaded, so query them once and
+  // reuse the same references.
+  const navLinks = Array.from(document.querySelectorAll('.nav-links a[href^="/#"]'));
+  const indicator = document.querySelector('.nav-indicator');
+  const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+  if (!navLinks.length) return;
+
   const update = () => {
-    const navLinks = document.querySelectorAll('.nav-links a[href^="/#"]');
-    if (!navLinks.length) return;
     const scrollY = window.scrollY + 120;
     let current = sectionIds[0];
-    for (const id of sectionIds) {
-      const el = document.getElementById(id);
-      if (el && el.offsetTop <= scrollY) current = id;
+    for (const el of sections) {
+      if (el.offsetTop <= scrollY) current = el.id;
     }
     let activeLink = null;
     navLinks.forEach(link => {
@@ -212,7 +221,6 @@ function initSectionSpy() {
       if (isActive) activeLink = link;
     });
 
-    const indicator = document.querySelector('.nav-indicator');
     if (indicator && activeLink) {
       indicator.style.transform = `translateX(${activeLink.offsetLeft}px)`;
       indicator.style.width = `${activeLink.offsetWidth}px`;
@@ -251,10 +259,9 @@ function initScrollReveal() {
 
 // ─── Nav scroll glassmorphism ────────────────
 function initNavScroll() {
-  const update = () => {
-    const nav = document.querySelector('nav');
-    if (nav) nav.classList.toggle('nav-scrolled', window.scrollY > 60);
-  };
+  const nav = document.querySelector('nav');
+  if (!nav) return;
+  const update = () => nav.classList.toggle('nav-scrolled', window.scrollY > 60);
   window.addEventListener('scroll', update, { passive: true });
   update();
 }

@@ -10,24 +10,36 @@
 // the same reference line (35% down the viewport) so the fill height
 // and the "passed" dots always agree with each other.
 function initTimelineScroll() {
-  const timelines = Array.from(document.querySelectorAll('.timeline'));
+  // Queried once instead of re-querying .timeline-rail-fill/.timeline-item
+  // on every scroll frame.
+  const timelines = Array.from(document.querySelectorAll('.timeline')).map(el => ({
+    el,
+    fill: el.querySelector('.timeline-rail-fill'),
+    items: Array.from(el.querySelectorAll('.timeline-item')),
+  }));
   if (!timelines.length) return;
 
   let ticking = false;
   const update = () => {
     ticking = false;
     const refY = window.innerHeight * 0.35;
-    timelines.forEach(timeline => {
-      const fill = timeline.querySelector('.timeline-rail-fill');
-      const items = timeline.querySelectorAll('.timeline-item');
-      if (!fill || !items.length) return;
-      const rect = timeline.getBoundingClientRect();
-      const progress = Math.min(1, Math.max(0, (refY - rect.top) / rect.height));
-      fill.style.height = (progress * 100) + '%';
-      items.forEach(item => {
-        item.classList.toggle('is-passed', item.getBoundingClientRect().top <= refY);
-      });
-    });
+
+    // Read phase: every getBoundingClientRect() first, no style writes
+    // in between - interleaving read/write per timeline was forcing a
+    // layout recalc on each iteration (layout thrashing).
+    for (const t of timelines) {
+      if (!t.fill || !t.items.length) continue;
+      const rect = t.el.getBoundingClientRect();
+      t.progress = Math.min(1, Math.max(0, (refY - rect.top) / rect.height));
+      t.passed = t.items.map(item => item.getBoundingClientRect().top <= refY);
+    }
+
+    // Write phase.
+    for (const t of timelines) {
+      if (!t.fill || !t.items.length) continue;
+      t.fill.style.height = (t.progress * 100) + '%';
+      t.items.forEach((item, i) => item.classList.toggle('is-passed', t.passed[i]));
+    }
   };
 
   window.addEventListener('scroll', () => {
