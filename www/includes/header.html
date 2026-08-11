@@ -1,8 +1,8 @@
 <nav>
   <div class="nav-inner">
-    <span class="nav-logo">
+    <a href="/#home" class="nav-logo" aria-label="Accueil">
       <span class="nav-logo-first">Dani</span><span class="nav-logo-last">Faria dos Santos</span>
-    </span>
+    </a>
     <div class="nav-links">
       <span class="nav-indicator"></span>
       <a href="/#home" data-i18n="nav-home">Accueil</a>
@@ -10,6 +10,29 @@
       <a href="/#cv" data-i18n="nav-resume">CV</a>
       <a href="/#contact" data-i18n="nav-contact">Contact</a>
       <a href="/blog/" data-i18n="nav-blog">Blog</a>
+      <div class="nav-links-actions">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Changer de thème" data-tooltip="Changer de thème" data-i18n-aria="tooltip-theme">
+          <svg class="icon-theme" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <g class="rays">
+              <line x1="12" y1="3.5" x2="12" y2="1.7"></line>
+              <line x1="18.01" y1="5.99" x2="19.28" y2="4.72"></line>
+              <line x1="20.5" y1="12" x2="22.3" y2="12"></line>
+              <line x1="18.01" y1="18.01" x2="19.28" y2="19.28"></line>
+              <line x1="12" y1="20.5" x2="12" y2="22.3"></line>
+              <line x1="5.99" y1="18.01" x2="4.72" y2="19.28"></line>
+              <line x1="3.5" y1="12" x2="1.7" y2="12"></line>
+              <line x1="5.99" y1="5.99" x2="4.72" y2="4.72"></line>
+            </g>
+            <circle class="body" cx="12" cy="12" r="5.1"></circle>
+            <circle class="mask" cx="30" cy="6" r="4.9"></circle>
+          </svg>
+        </button>
+        <button class="lang-toggle" onclick="toggleLanguage()" aria-label="Changer de langue" data-tooltip="Changer de langue" data-i18n-aria="tooltip-lang">
+          <span class="lang-option lang-fr">FR</span>
+          <span class="lang-option lang-en">EN</span>
+          <span class="lang-slider"></span>
+        </button>
+      </div>
     </div>
     <div class="nav-right">
       <button class="lang-toggle" onclick="toggleLanguage()" aria-label="Changer de langue" data-tooltip="Changer de langue" data-i18n-aria="tooltip-lang">

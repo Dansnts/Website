@@ -191,6 +191,11 @@ nav .nav-logo-last {
 
 nav .nav-links { display: flex; gap: var(--sp-4-5); position: relative; }
 
+/* Mobile-only copies of the lang/theme toggles, tucked into the
+   dropdown menu - see the 480px query. Hidden here so they don't
+   show up in the desktop/tablet inline nav-links row. */
+.nav-links-actions { display: none; }
+
 nav .nav-links a {
   color: var(--muted);
   font-family: var(--mono);
@@ -2112,11 +2117,17 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
   nav .nav-links { position: static; flex-direction: row; gap: 1.5rem; opacity: 1; pointer-events: auto; transform: none; background: transparent; }
   nav .nav-links a { font-size: var(--fs-micro) !important; }
   nav .nav-logo-last { display: none; }
-  main { padding-top: 0; }
+  main, body.framed main { padding-top: 0; }
 }
 
 @media (max-width: 480px) {
+  nav .nav-inner { padding: var(--sp-3) 0.75rem; }
+
   .nav-hamburger { display: flex; }
+
+  /* Lang + theme toggles move out of the top bar on mobile (below),
+     freeing up enough room to show the full name again. */
+  nav .nav-logo-last { display: inline; }
 
   nav .nav-links {
     position: absolute;
@@ -2142,6 +2153,26 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
     padding: 0.35rem 0;
     font-size: var(--fs-title) !important;
   }
+
+  /* Lang + theme toggles move into the dropdown on mobile instead of
+     sitting in the top bar / floating over the page - see
+     includes/header.html for the duplicated buttons. */
+  nav .nav-right > .lang-toggle { display: none; }
+  .frame > .theme-toggle { display: none; }
+
+  .nav-links-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-top: var(--sp-1);
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--border);
+  }
+  .nav-links-actions .theme-toggle {
+    position: relative;
+    bottom: auto;
+    right: auto;
+  }
 }
 
 @media (max-width: 580px) {
@@ -2154,7 +2185,7 @@ nav.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) ro
   .page-section-header { padding: 1.75rem 0 0; }
   .cv-section-top { padding: 1.75rem 0 0; }
 
-  .hero { padding: 5rem 0 3rem; }
+  .hero { padding: 1.5rem 0 2rem; }
   .hero-name-first { font-size: clamp(3.25rem, 15vw, 5rem); line-height: 0.96; }
   .hero-name-last { font-size: clamp(2rem, 9vw, 3rem); }
 

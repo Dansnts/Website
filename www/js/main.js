@@ -35,21 +35,20 @@ function toggleTheme() {
   }
 }
 
-function exportPdf() {
-  window.print();
-}
-
 // Language
 let currentLang = localStorage.getItem('site-lang') || 'fr';
 
 function updateLangButton() {
-  const toggle = document.querySelector('.lang-toggle');
-  if (!toggle) return;
-  toggle.setAttribute('data-lang', currentLang);
-  const fr = toggle.querySelector('.lang-fr');
-  const en = toggle.querySelector('.lang-en');
-  if (fr) fr.classList.toggle('active', currentLang === 'fr');
-  if (en) en.classList.toggle('active', currentLang === 'en');
+  // There are two of these in the DOM (top bar + mobile menu copy, see
+  // includes/header.html), keep both in sync regardless of which one
+  // was clicked.
+  document.querySelectorAll('.lang-toggle').forEach(toggle => {
+    toggle.setAttribute('data-lang', currentLang);
+    const fr = toggle.querySelector('.lang-fr');
+    const en = toggle.querySelector('.lang-en');
+    if (fr) fr.classList.toggle('active', currentLang === 'fr');
+    if (en) en.classList.toggle('active', currentLang === 'en');
+  });
 }
 
 function updatePdfLink() {
@@ -260,62 +259,6 @@ function initNavScroll() {
   update();
 }
 
-// ─── Timeline scroll rail ─────────────────────
-// Each .timeline gets a rail that fills as you scroll through it, and
-// its items light up their dot once scrolled past - both driven off
-// the same reference line (35% down the viewport) so the fill height
-// and the "passed" dots always agree with each other.
-function initTimelineScroll() {
-  const timelines = Array.from(document.querySelectorAll('.timeline'));
-  if (!timelines.length) return;
-
-  let ticking = false;
-  const update = () => {
-    ticking = false;
-    const refY = window.innerHeight * 0.35;
-    timelines.forEach(timeline => {
-      const fill = timeline.querySelector('.timeline-rail-fill');
-      const items = timeline.querySelectorAll('.timeline-item');
-      if (!fill || !items.length) return;
-      const rect = timeline.getBoundingClientRect();
-      const progress = Math.min(1, Math.max(0, (refY - rect.top) / rect.height));
-      fill.style.height = (progress * 100) + '%';
-      items.forEach(item => {
-        item.classList.toggle('is-passed', item.getBoundingClientRect().top <= refY);
-      });
-    });
-  };
-
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(update);
-    }
-  }, { passive: true });
-  window.addEventListener('resize', update);
-  update();
-}
-
-// ─── Accordion (Q&A) ──────────────────────────
-function initAccordion() {
-  const items = document.querySelectorAll('.qa-item');
-  items.forEach(item => {
-    const btn = item.querySelector('.qa-question');
-    if (!btn) return;
-    btn.addEventListener('click', () => {
-      const wasOpen = item.classList.contains('is-open');
-      items.forEach(other => {
-        other.classList.remove('is-open');
-        other.querySelector('.qa-question')?.setAttribute('aria-expanded', false);
-      });
-      if (!wasOpen) {
-        item.classList.add('is-open');
-        btn.setAttribute('aria-expanded', true);
-      }
-    });
-  });
-}
-
 // ─── Code block copy button ───────────────────
 // Single source of truth for every .code-block's copy button, whether
 // it's hand-authored (project pages, onclick="copyCode(this)") or
@@ -331,90 +274,6 @@ function copyCode(btn) {
 }
 window.copyCode = copyCode;
 
-// ─── Lightbox (project figures) ──────────────
-function initLightbox() {
-  const images = document.querySelectorAll('.project-figure img');
-  if (!images.length) return;
-
-  const overlay = document.createElement('div');
-  overlay.className = 'lightbox-overlay';
-  overlay.innerHTML = `
-    <button class="lightbox-close" aria-label="Fermer" data-tooltip="Fermer">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg>
-    </button>
-    <figure class="lightbox-figure">
-      <img alt="">
-      <figcaption class="lightbox-caption"></figcaption>
-    </figure>`;
-  document.body.appendChild(overlay);
-
-  const imgEl = overlay.querySelector('img');
-  const captionEl = overlay.querySelector('.lightbox-caption');
-  const closeBtn = overlay.querySelector('.lightbox-close');
-
-  function openLightbox(src, alt, caption) {
-    imgEl.src = src;
-    imgEl.alt = alt || '';
-    captionEl.textContent = caption || '';
-    captionEl.style.display = caption ? '' : 'none';
-    overlay.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeLightbox() {
-    overlay.classList.remove('is-open');
-    document.body.style.overflow = '';
-  }
-
-  images.forEach(img => {
-    img.addEventListener('click', () => {
-      const caption = img.closest('figure')?.querySelector('figcaption');
-      openLightbox(img.src, img.alt, caption ? caption.textContent.trim() : '');
-    });
-  });
-
-  closeBtn.addEventListener('click', closeLightbox);
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeLightbox(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
-}
-
-// ─── Age (born 2000-04-30) ────────────────────
-function initAge() {
-  const el = document.getElementById('cv-age');
-  if (!el) return;
-  const birth = new Date(2000, 3, 30); // month is 0-indexed
-  const now = new Date();
-  let age = now.getFullYear() - birth.getFullYear();
-  if (now < new Date(now.getFullYear(), birth.getMonth(), birth.getDate())) age--;
-  el.textContent = age;
-}
-
-// ─── Skills terminal (reveal-on-scroll) ────────
-// Used to type each row out character by character, but that read as
-// "still loading" to performance tooling for several seconds after the
-// page was actually done (see git history). Rows now appear all at
-// once on scroll into view, then the idle CLI prompt with its blinking
-// cursor takes over - same terminal feel, without the wait.
-function initTerminalType() {
-  const terminal = document.querySelector('.terminal');
-  const rows = document.querySelectorAll('.terminal .skill-row');
-  if (!terminal || !rows.length) return;
-
-  function reveal() {
-    rows.forEach(row => row.classList.add('is-revealed'));
-    terminal.classList.add('is-done'); // shows the idle prompt + blinking cursor
-  }
-
-  const observer = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      obs.unobserve(entry.target);
-      reveal();
-    });
-  }, { threshold: 0.3 });
-
-  observer.observe(terminal);
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
   await loadComponents();
   updateLangButton();
@@ -422,9 +281,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.dispatchEvent(new CustomEvent('langChange', { detail: currentLang }));
   initScrollReveal();
   initNavScroll();
-  initTerminalType();
-  initTimelineScroll();
-  initAge();
-  initAccordion();
-  initLightbox();
 });

@@ -1,0 +1,106 @@
+// Home page only (index.html) - the hero terminal, career timeline rail,
+// age calculation and FAQ accordion don't exist anywhere else on the
+// site, so this doesn't need to be loaded on project or blog pages.
+// See main.js for everything shared site-wide (nav, theme, lang, copy
+// buttons, scroll reveal).
+
+// ─── Timeline scroll rail ─────────────────────
+// Each .timeline gets a rail that fills as you scroll through it, and
+// its items light up their dot once scrolled past - both driven off
+// the same reference line (35% down the viewport) so the fill height
+// and the "passed" dots always agree with each other.
+function initTimelineScroll() {
+  const timelines = Array.from(document.querySelectorAll('.timeline'));
+  if (!timelines.length) return;
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const refY = window.innerHeight * 0.35;
+    timelines.forEach(timeline => {
+      const fill = timeline.querySelector('.timeline-rail-fill');
+      const items = timeline.querySelectorAll('.timeline-item');
+      if (!fill || !items.length) return;
+      const rect = timeline.getBoundingClientRect();
+      const progress = Math.min(1, Math.max(0, (refY - rect.top) / rect.height));
+      fill.style.height = (progress * 100) + '%';
+      items.forEach(item => {
+        item.classList.toggle('is-passed', item.getBoundingClientRect().top <= refY);
+      });
+    });
+  };
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+}
+
+// ─── Accordion (Q&A) ──────────────────────────
+function initAccordion() {
+  const items = document.querySelectorAll('.qa-item');
+  items.forEach(item => {
+    const btn = item.querySelector('.qa-question');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const wasOpen = item.classList.contains('is-open');
+      items.forEach(other => {
+        other.classList.remove('is-open');
+        other.querySelector('.qa-question')?.setAttribute('aria-expanded', false);
+      });
+      if (!wasOpen) {
+        item.classList.add('is-open');
+        btn.setAttribute('aria-expanded', true);
+      }
+    });
+  });
+}
+
+// ─── Age (born 2000-04-30) ────────────────────
+function initAge() {
+  const el = document.getElementById('cv-age');
+  if (!el) return;
+  const birth = new Date(2000, 3, 30); // month is 0-indexed
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  if (now < new Date(now.getFullYear(), birth.getMonth(), birth.getDate())) age--;
+  el.textContent = age;
+}
+
+// ─── Skills terminal (reveal-on-scroll) ────────
+// Used to type each row out character by character, but that read as
+// "still loading" to performance tooling for several seconds after the
+// page was actually done (see git history). Rows now appear all at
+// once on scroll into view, then the idle CLI prompt with its blinking
+// cursor takes over - same terminal feel, without the wait.
+function initTerminalType() {
+  const terminal = document.querySelector('.terminal');
+  const rows = document.querySelectorAll('.terminal .skill-row');
+  if (!terminal || !rows.length) return;
+
+  function reveal() {
+    rows.forEach(row => row.classList.add('is-revealed'));
+    terminal.classList.add('is-done'); // shows the idle prompt + blinking cursor
+  }
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      obs.unobserve(entry.target);
+      reveal();
+    });
+  }, { threshold: 0.3 });
+
+  observer.observe(terminal);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initTerminalType();
+  initTimelineScroll();
+  initAge();
+  initAccordion();
+});
